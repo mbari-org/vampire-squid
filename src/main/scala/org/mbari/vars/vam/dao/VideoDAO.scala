@@ -6,15 +6,15 @@ import java.util.UUID
 import org.mbari.vars.vam.model.v1.Video
 
 /**
-  *
-  *
-  * @author Brian Schlining
-  * @since 2016-05-05T12:59:00
-  */
-trait VideoDAO extends DAO[Video] {
+ *
+ *
+ * @author Brian Schlining
+ * @since 2016-05-05T12:59:00
+ */
+trait VideoDAO[T <: PersistentObject[UUID]] extends DAO[UUID, T] {
 
-  def findByTimestamp(start: Instant): Iterable[Video]
-  def findByName(name: String): Option[Video]
-  def findByVideoSequenceUUID(uuid: UUID): Iterable[Video]
+  def findByTimestamp(start: Instant): Iterable[T]
+  def findByName(name: String): Option[T]
+  def findByVideoSequenceUUID(uuid: UUID): Iterable[T]
 
 }

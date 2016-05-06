@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  */
 public class TransactionLogger {
 
-    private static final Logger log = LoggerFactory.getLogger(TransactionLogger.class);
+    private final Logger log = LoggerFactory.getLogger(TransactionLogger.class);
 
     public TransactionLogger() {
     }
@@ -27,20 +27,20 @@ public class TransactionLogger {
 
     @PrePersist
     public void logPersist(Object object) {
-        logTransaction(object, DAO.TransactionType.PERSIST);
+        logTransaction(object, TransactionType.PERSIST);
     }
 
     @PreRemove
     public void logRemove(Object object) {
-        logTransaction(object, DAO.TransactionType.REMOVE);
+        logTransaction(object, TransactionType.REMOVE);
     }
 
     @PreUpdate
     public void logUpdate(Object object) {
-        logTransaction(object, DAO.TransactionType.MERGE);
+        logTransaction(object, TransactionType.MERGE);
     }
 
-    private void logTransaction(Object object, DAO.TransactionType transactionType) {
+    private void logTransaction(Object object, TransactionType transactionType) {
         if (log.isDebugEnabled()) {
             log.debug("Performing '{}' on {}", transactionType, object);
         }
