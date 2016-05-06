@@ -32,7 +32,7 @@ import scala.collection.JavaConverters._
   ),
   new NamedQuery(
     name = "VideoSequence.findBetweenDates",
-    query = "SELECT v, W FROM VideoSequence v LEFT JOIN v.videos w WHERE w.startDate BETWEEN :startDate AND :endDate"
+    query = "SELECT v, w FROM VideoSequence v LEFT JOIN v.javaVideos w WHERE w.startDate BETWEEN :startDate AND :endDate"
   )
 ))
 class VideoSequence extends HasUUID with HasOptimisticLock {

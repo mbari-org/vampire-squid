@@ -37,6 +37,7 @@ updateOptions := updateOptions.value.withCachedResolution(true)
 libraryDependencies ++= {
   val slf4jVersion = "1.7.21"
   val logbackVersion = "1.1.7"
+  val derbyVersion = "10.12.1.1"
   Seq(
     "ch.qos.logback" % "logback-classic" % logbackVersion,
     "ch.qos.logback" % "logback-core" % logbackVersion,
@@ -44,6 +45,9 @@ libraryDependencies ++= {
     "javax.transaction" % "jta" % "1.1",
     "junit" % "junit" % "4.12" % "test",
     "net.sourceforge.jtds" % "jtds" % "1.3.1",
+    "org.apache.derby" % "derby" % derbyVersion % "test",
+    "org.apache.derby" % "derbyclient" % derbyVersion % "test",
+    "org.apache.derby" % "derbynet" % derbyVersion % "test",
     "org.eclipse.persistence" % "eclipselink" % "2.6.2",
     "org.scalatest" %% "scalatest" % "2.2.6" % "test",
     "org.slf4j" % "log4j-over-slf4j" % slf4jVersion,

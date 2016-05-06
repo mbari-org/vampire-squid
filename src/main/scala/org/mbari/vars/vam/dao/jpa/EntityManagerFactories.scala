@@ -20,14 +20,22 @@ object EntityManagerFactories {
     Persistence.createEntityManagerFactory("video-asset-manager", customProps.asJava)
   }
 
-  def apply(url: String, username: String, password: String, driverName: String): EntityManagerFactory = {
+
+  def apply(url: String,
+            username: String,
+            password: String,
+            driverName: String,
+            properties: Map[String, String] = Map.empty): EntityManagerFactory = {
+
     val map = Map(
       "javax.persistence.jdbc.url" -> url,
       "javax.persistence.jdbc.user" -> username,
       "javax.persistence.jdbc.password" -> password,
       "javax.persistence.jdbc.driver" -> driverName
     )
-    apply(map)
+    apply(map ++ properties)
   }
+
+
 
 }

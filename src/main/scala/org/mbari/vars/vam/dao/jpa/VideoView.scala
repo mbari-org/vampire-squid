@@ -1,7 +1,7 @@
 package org.mbari.vars.vam.dao.jpa
 
 import java.net.URI
-import javax.persistence.{ Column, JoinColumn, ManyToOne, Transient }
+import javax.persistence.{EntityListeners, Table, _}
 
 import scala.util.Try
 
@@ -11,6 +11,9 @@ import scala.util.Try
  * @author Brian Schlining
  * @since 2016-05-05T18:19:00
  */
+@Entity(name = "VideoView")
+@Table(name = "video_view")
+@EntityListeners(value = Array(classOf[TransactionLogger]))
 class VideoView extends HasUUID with HasOptimisticLock {
 
   @Column(

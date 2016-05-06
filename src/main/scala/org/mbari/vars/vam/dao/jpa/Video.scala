@@ -13,6 +13,9 @@ import scala.util.Try
  * @author Brian Schlining
  * @since 2016-05-05T17:54:00
  */
+@Entity(name = "Video")
+@Table(name = "video")
+@EntityListeners(value = Array(classOf[TransactionLogger]))
 class Video extends HasUUID with HasOptimisticLock {
 
   @Column(
