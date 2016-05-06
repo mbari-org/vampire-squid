@@ -1,0 +1,21 @@
+excludeFiles = ",*.class"
+excludeDirectories = "**/{target,build}"
+includeFilesInBrowser = ".gitignore"
+
+showInvisibles = true
+spellChecking  = false
+
+[ text.plain ]
+softWrap       = true
+wrapColumn     = "Use Window Frame"
+softTabs       = false
+tabSize        = 8
+spellChecking  = true
+
+# special per-filetype rules can be specified like so:
+[ text.html.markdown ]
+softWrap       = true
+wrapColumn     = "Use Window Frame"
+softTabs       = true
+tabSize        = 4
+spellChecking  = true
