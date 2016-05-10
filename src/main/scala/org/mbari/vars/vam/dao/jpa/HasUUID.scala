@@ -22,7 +22,7 @@ trait HasUUID extends PersistentObject[UUID] {
     nullable = false,
     updatable = false
   )
-  private var uuid: String = _
+  protected var uuid: String = _
 
   def primaryKey: Option[UUID] = Try(UUID.fromString(uuid)).toOption
 

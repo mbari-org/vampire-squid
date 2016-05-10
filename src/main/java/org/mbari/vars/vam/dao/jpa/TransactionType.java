@@ -7,6 +7,6 @@ package org.mbari.vars.vam.dao.jpa;
 public enum TransactionType {
     REMOVE,
     FIND,
-    PERSIST,
+    CREATE,
     MERGE;
 }

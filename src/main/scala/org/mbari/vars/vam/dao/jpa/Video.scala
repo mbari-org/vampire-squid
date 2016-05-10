@@ -1,9 +1,10 @@
 package org.mbari.vars.vam.dao.jpa
 
 import java.sql.Timestamp
-import java.time.{ Duration, Instant }
-import java.util.{ ArrayList => JArrayList, List => JList }
-import javax.persistence.{ CascadeType, _ }
+import java.time.{Duration, Instant}
+import java.util.{Date, ArrayList => JArrayList, List => JList}
+import javax.persistence.{CascadeType, _}
+
 import scala.collection.JavaConverters._
 import scala.util.Try
 
@@ -29,7 +30,8 @@ class Video extends HasUUID with HasOptimisticLock {
     name = "start_time",
     nullable = false
   )
-  private var startDate: Timestamp = _
+  @Temporal(value = TemporalType.TIMESTAMP)
+  protected var startDate: Date = _
 
   def start: Instant = Try(startDate.toInstant).getOrElse(Instant.ofEpochSecond(0))
 
@@ -63,5 +65,42 @@ class Video extends HasUUID with HasOptimisticLock {
   }
 
   def videoViews: Seq[VideoView] = javaVideoViews.asScala
+
+}
+
+object Video {
+
+  def apply(name: String, start: Instant): Video = {
+    val v = new Video
+    v.name = name
+    v.startDate = Date.from(start)
+    v
+  }
+
+  def apply(name: String, start: Instant, duration: Duration): Video = {
+    val v = new Video
+    v.name = name
+    v.startDate = Date.from(start)
+    v.durationMillis = duration.toMillis
+    v
+  }
+
+  def apply(name: String, start: Instant, videoViews: Iterable[VideoView]): Video = {
+    val v = new Video
+    v.name = name
+    v.startDate = Date.from(start)
+    videoViews.foreach(v.addVideoView)
+    v
+  }
+
+  def apply(name: String, start: Instant, duration: Duration, videoViews: Iterable[VideoView]): Video = {
+    val v = new Video
+    v.name = name
+    v.startDate = Date.from(start)
+    v.durationMillis = duration.toMillis
+    videoViews.foreach(v.addVideoView)
+    v
+  }
+
 
 }

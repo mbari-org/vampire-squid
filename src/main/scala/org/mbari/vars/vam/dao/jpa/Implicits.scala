@@ -4,6 +4,7 @@ import javax.persistence.EntityManager
 
 import org.slf4j.LoggerFactory
 
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
 /**
@@ -17,20 +18,20 @@ object Implicits {
   private[this] val log = LoggerFactory.getLogger(getClass)
 
   implicit class RichEntityManager(entityManager: EntityManager) {
-    def runTransaction[R](fn: EntityManager => R): Option[R] = {
-      val transaction = entityManager.getTransaction
-      transaction.begin()
-      try {
-        val n = fn.apply(entityManager)
-        transaction.commit()
-        Option(n)
-      } catch {
-        case (NonFatal(e)) =>
-          log.warn("JPA transaction failed", e)
+    def runTransaction[R](fn: EntityManager => R)(implicit ec: ExecutionContext): Future[R] = {
+      Future {
+        val transaction = entityManager.getTransaction
+        transaction.begin()
+        try {
+          val n = fn.apply(entityManager)
+          transaction.commit()
+          n
+        }
+        finally {
           if (transaction.isActive) {
             transaction.rollback()
           }
-          None
+        }
       }
     }
   }

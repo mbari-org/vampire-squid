@@ -30,11 +30,11 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
   /**
    *
    * @param timestamp The moment of interest
-   * @param range A search window that so that the actual search is timestamp +/- (range / 2)
+   * @param window A search window that so that the actual search is timestamp +/- (range / 2)
    * @return
    */
-  override def findByTimestamp(timestamp: Instant, range: Duration = Duration.ofMinutes(120)): Iterable[VideoSequence] = {
-    val halfRange = range.dividedBy(2)
+  override def findByTimestamp(timestamp: Instant, window: Duration = Duration.ofMinutes(120)): Iterable[VideoSequence] = {
+    val halfRange = window.dividedBy(2)
     val startDate = Date.from(timestamp.minus(halfRange))
     val endDate = Date.from(timestamp.plus(halfRange))
     val videoSequences = findByNamedQuery(
@@ -42,18 +42,35 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
       Map("startDate" -> startDate, "endDate" -> endDate)
     )
 
-    def containsTimestamp(vs: VideoSequence): Boolean = vs.videos
+    val hasTimestamp = containsTimestamp(_: VideoSequence, timestamp) // Partially apply the function to timestamp
+
+    videoSequences.filter(hasTimestamp)
+
+  }
+
+  override def findByNameAndTimestamp(name: String, timestamp: Instant, window: Duration): Iterable[VideoSequence] = {
+    val halfRange = window.dividedBy(2)
+    val startDate = Date.from(timestamp.minus(halfRange))
+    val endDate = Date.from(timestamp.plus(halfRange))
+    val videoSequences = findByNamedQuery(
+      "VideoSequence.findByNameAndBetweenDates",
+      Map("startDate" -> startDate, "endDate" -> endDate, "name" -> name)
+    )
+
+    val hasTimestamp = containsTimestamp(_: VideoSequence, timestamp) // Partially apply the function to timestamp
+
+    videoSequences.filter(hasTimestamp)
+  }
+
+
+  private def containsTimestamp(vs: VideoSequence, timestamp: Instant): Boolean = vs.videos
       .map(v => (v.start, v.start.plus(v.duration)))
       .exists({
         case (a, b) =>
           a.equals(timestamp) ||
-            b.equals(timestamp) ||
-            (a.isBefore(timestamp) && b.isAfter(timestamp))
+              b.equals(timestamp) ||
+              (a.isBefore(timestamp) && b.isAfter(timestamp))
       })
-
-    videoSequences.filter(containsTimestamp)
-
-  }
 
   override def findAll(): Iterable[VideoSequence] = ???
 }

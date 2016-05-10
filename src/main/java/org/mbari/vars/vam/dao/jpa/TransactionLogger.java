@@ -27,7 +27,7 @@ public class TransactionLogger {
 
     @PrePersist
     public void logPersist(Object object) {
-        logTransaction(object, TransactionType.PERSIST);
+        logTransaction(object, TransactionType.CREATE);
     }
 
     @PreRemove

@@ -3,10 +3,11 @@ package org.mbari.vars.vam.dao.jpa
 import java.util.UUID
 import javax.persistence.EntityManager
 
-import org.mbari.vars.vam.dao.{ DAO, PersistentObject }
+import org.mbari.vars.vam.dao.{DAO, PersistentObject}
 import org.slf4j.LoggerFactory
 
 import scala.collection.JavaConverters._
+import scala.concurrent.{ExecutionContext, Future}
 import scala.reflect.ClassTag
 import scala.reflect.classTag
 
@@ -38,15 +39,16 @@ abstract class BaseDAO[A, B <: PersistentObject[A]: ClassTag](val entityManager:
   /**
    * Lookup entity by primary key. A DAO will only return entities of their type.
    * Also, note that I had to use a little scala reflection magic here
-   * @param primaryKey
+    *
+    * @param primaryKey
    * @return
    */
   def findByPrimaryKey(primaryKey: Any): Option[B] =
     Option(entityManager.find(classTag[B].runtimeClass, primaryKey).asInstanceOf[B])
 
-  override def runTransaction[R](fn: () => R): Option[R] = {
+  override def runTransaction[R](fn: this.type => R)(implicit ec: ExecutionContext): Future[R] = {
     import org.mbari.vars.vam.dao.jpa.Implicits.RichEntityManager
-    def fn2(em: EntityManager): R = fn.apply()
+    def fn2(em: EntityManager): R = fn.apply(this)
     entityManager.runTransaction(fn2)
   }
 

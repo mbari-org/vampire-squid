@@ -22,7 +22,6 @@ scalacOptions in ThisBuild ++= Seq(
   "-Xlint",
   "-Yno-adapted-args",
   "-Ywarn-numeric-widen",
-  "-Ywarn-value-discard",
   "-Xfuture")
 
 javacOptions in ThisBuild ++= Seq("-target", "1.8", "-source","1.8")

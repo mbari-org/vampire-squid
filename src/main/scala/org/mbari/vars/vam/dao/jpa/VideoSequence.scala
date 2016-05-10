@@ -32,7 +32,15 @@ import scala.collection.JavaConverters._
   ),
   new NamedQuery(
     name = "VideoSequence.findBetweenDates",
-    query = "SELECT v, w FROM VideoSequence v LEFT JOIN v.javaVideos w WHERE w.startDate BETWEEN :startDate AND :endDate"
+    query = "SELECT v FROM VideoSequence v LEFT JOIN v.javaVideos w WHERE w.startDate BETWEEN :startDate AND :endDate"
+  ),
+  new NamedQuery(
+    name = "VideoSequence.findByNameAndBetweenDates",
+    query = "SELECT v FROM VideoSequence v LEFT JOIN v.javaVideos w WHERE v.name = :name AND w.startDate BETWEEN :startDate AND :endDate"
+  ),
+  new NamedQuery(
+    name = "VideoSequence.deleteByUUID",
+    query = "DELETE v FROM VideoSequence WHERE v.uuid = :uuid"
   )
 ))
 class VideoSequence extends HasUUID with HasOptimisticLock {
@@ -69,5 +77,31 @@ class VideoSequence extends HasUUID with HasOptimisticLock {
     video.videoSequence = null
   }
   def videos: Seq[Video] = javaVideos.asScala
+
+
+  def canEqual(other: Any): Boolean = other.isInstanceOf[VideoSequence]
+
+  override def equals(other: Any): Boolean = other match {
+    case that: VideoSequence =>
+      (that canEqual this) &&
+          name == that.name
+    case _ => false
+  }
+
+  override def hashCode(): Int = {
+    val state = Seq(name)
+    state.map(_.hashCode()).foldLeft(0)((a, b) => 31 * a + b)
+  }
+}
+
+object VideoSequence {
+
+  def apply(name: String, cameraID: String, videos: Seq[Video] = Nil): VideoSequence = {
+    val vs = new VideoSequence
+    vs.name = name
+    vs.cameraID = cameraID
+    videos.foreach(v => vs.addVideo(v))
+    vs
+  }
 
 }
