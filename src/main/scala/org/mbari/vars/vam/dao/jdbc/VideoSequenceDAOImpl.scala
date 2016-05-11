@@ -33,6 +33,8 @@ class VideoSequenceDAOImpl(val connection: Connection) extends VideoSequenceDAO[
 
   override def delete(entity: VideoSequence): Unit = ???
 
+  override def deleteByPrimaryKey(primaryKey: UUID): Unit = ???
+
   override def create(entity: VideoSequence): Unit = ???
 
   override def runTransaction[R](fn: (VideoSequenceDAOImpl.this.type) => R)(implicit ec: ExecutionContext): Future[R] = ???

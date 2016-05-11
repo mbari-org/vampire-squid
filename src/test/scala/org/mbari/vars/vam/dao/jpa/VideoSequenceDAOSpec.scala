@@ -90,6 +90,24 @@ class VideoSequenceDAOSpec extends FlatSpec with Matchers {
     vs2 shouldBe defined
     vs2.get.videos.size should be (3)
 
+    Await.result(dao.runTransaction(d => d.delete(vs2.get)), timeout)
+
+  }
+
+  it should "delete using primary key" in {
+    val name = "Brian's awesome AUV - 123456789"
+    val dao = TestDAOFactory.newVideoSequenceDAO()
+    val videoSequence = VideoSequence(name, "awesome", Seq(Video("foo", Instant.now())))
+    Await.result(dao.runTransaction(d => d.create(videoSequence)), timeout)
+
+    val vs = dao.findByName(name)
+    vs shouldBe defined
+
+    Await.result(dao.runTransaction(d => d.deleteByPrimaryKey(vs.get.primaryKey.get)), timeout)
+
+    val vs2 = dao.findByName(name)
+    vs2 shouldBe empty
+
   }
 
 

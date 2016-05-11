@@ -6,12 +6,15 @@
     <persistence-unit name="video-asset-manager" transaction-type="RESOURCE_LOCAL">
         <description>VAM Data Model</description>
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        <shared-cache-mode>NONE</shared-cache-mode>
         <class>org.mbari.vars.vam.dao.jpa.VideoSequence</class>
         <class>org.mbari.vars.vam.dao.jpa.Video</class>
         <class>org.mbari.vars.vam.dao.jpa.VideoView</class>
         <properties>
             <property name="eclipselink.logging.level" value="INFO"/>
-            <shared-cache-mode>NONE</shared-cache-mode>
+            <property name="eclipselink.connection-pool.default.initial" value="2" />
+            <property name="eclipselink.connection-pool.default.max" value="16" />
+            <property name="eclipse.weaving" value="false" />
         </properties>
     </persistence-unit>
 </persistence>

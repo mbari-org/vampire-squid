@@ -36,6 +36,12 @@ abstract class BaseDAO[A, B <: PersistentObject[A]: ClassTag](val entityManager:
     query.getResultList.asScala.toList.map(_.asInstanceOf[B])
   }
 
+  def executeNamedQuery(name: String, namedParameters: Map[String, Any] = Map.empty): Unit = {
+    val query = entityManager.createNamedQuery(name)
+    namedParameters.foreach({ case (a, b) => query.setParameter(a, b) })
+    query.executeUpdate()
+  }
+
   /**
    * Lookup entity by primary key. A DAO will only return entities of their type.
    * Also, note that I had to use a little scala reflection magic here
@@ -44,7 +50,7 @@ abstract class BaseDAO[A, B <: PersistentObject[A]: ClassTag](val entityManager:
    * @return
    */
   def findByPrimaryKey(primaryKey: Any): Option[B] =
-    Option(entityManager.find(classTag[B].runtimeClass, primaryKey).asInstanceOf[B])
+    Option(entityManager.find(classTag[B].runtimeClass, primaryKey.toString.toUpperCase).asInstanceOf[B])
 
   override def runTransaction[R](fn: this.type => R)(implicit ec: ExecutionContext): Future[R] = {
     import org.mbari.vars.vam.dao.jpa.Implicits.RichEntityManager

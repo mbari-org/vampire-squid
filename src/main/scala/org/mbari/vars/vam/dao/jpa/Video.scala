@@ -17,12 +17,35 @@ import scala.util.Try
 @Entity(name = "Video")
 @Table(name = "video")
 @EntityListeners(value = Array(classOf[TransactionLogger]))
+@NamedQueries(Array(
+  new NamedQuery(
+    name = "Video.findAll",
+    query = "SELECT v FROM Video v"
+  ),
+  new NamedQuery(
+    name = "Video.findByName",
+    query = "SELECT v FROM Video v WHERE v.name = :name"
+  ),
+  new NamedQuery(
+    name = "Video.findByUUID",
+    query = "SELECT v FROM Video v WHERE v.uuid = :uuid"
+  ),
+  new NamedQuery(
+    name = "Video.findByVideoViewUUID",
+    query = "SELECT v FROM Video v LEFT JOIN v.javaVideoViews w WHERE w.uuid = :uuid"
+  ),
+  new NamedQuery(
+    name = "Video.findBetweenDates",
+    query = "SELECT v FROM Video v WHERE v.startDate BETWEEN :startDate AND :endDate"
+  )
+))
 class Video extends HasUUID with HasOptimisticLock {
 
   @Column(
     name = "name",
     nullable = false,
-    length = 512
+    length = 512,
+    unique = true
   )
   var name: String = _
 
@@ -39,21 +62,22 @@ class Video extends HasUUID with HasOptimisticLock {
     name = "duration_millis",
     nullable = true
   )
-  private var durationMillis: Long = _
+  protected var durationMillis: Long = _
 
   def duration: Duration = Try(Duration.ofMillis(durationMillis)).getOrElse(Duration.ZERO)
 
   @ManyToOne
-  @JoinColumn(name = "video_sequence_uuid")
+  @JoinColumn(name = "video_sequence_uuid", nullable = false)
   var videoSequence: VideoSequence = _
 
   @OneToMany(
     targetEntity = classOf[VideoView],
     cascade = Array(CascadeType.ALL),
     fetch = FetchType.EAGER,
-    mappedBy = "video"
+    mappedBy = "video",
+    orphanRemoval = true
   )
-  private var javaVideoViews: JList[VideoView] = new JArrayList[VideoView]
+  protected var javaVideoViews: JList[VideoView] = new JArrayList[VideoView]
 
   def addVideoView(videoView: VideoView): Unit = {
     javaVideoViews.add(videoView)

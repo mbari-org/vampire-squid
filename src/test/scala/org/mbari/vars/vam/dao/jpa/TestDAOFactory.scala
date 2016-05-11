@@ -3,6 +3,7 @@ package org.mbari.vars.vam.dao.jpa
 import javax.persistence.EntityManagerFactory
 
 import com.typesafe.config.ConfigFactory
+import org.eclipse.persistence.config.{TargetDatabase, TargetServer}
 import org.mbari.vars.vam.dao.{DAOFactory, VideoDAO, VideoViewDAO}
 
 
@@ -16,6 +17,7 @@ object TestDAOFactory extends DAOFactory[VideoSequence, Video, VideoView] {
 
   private[this] val config = ConfigFactory.load()
   private[this] val testProps = Map("eclipselink.logging.level" -> "FINE",
+    "eclipselink.target-database" -> TargetDatabase.Derby,
     "eclipselink.logging.timestamp" -> "false",
     "eclipselink.logging.session" -> "false",
     "eclipselink.logging.thread" -> "false",

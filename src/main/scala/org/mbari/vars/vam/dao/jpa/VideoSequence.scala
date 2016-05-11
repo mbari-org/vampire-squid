@@ -1,7 +1,10 @@
 package org.mbari.vars.vam.dao.jpa
 
 import javax.persistence._
-import java.util.{ ArrayList => JArrayList, List => JList }
+import java.util.{ArrayList => JArrayList, List => JList}
+
+import org.eclipse.persistence.annotations.CascadeOnDelete
+
 import scala.collection.JavaConverters._
 
 /**
@@ -28,7 +31,7 @@ import scala.collection.JavaConverters._
   ),
   new NamedQuery(
     name = "VideoSequence.findByVideoUUID",
-    query = "SELECT v FROM VideoSequence v WHERE v.uuid = :uuid"
+    query = "SELECT v FROM VideoSequence v LEFT JOIN v.javaVideos w WHERE w.uuid = :uuid"
   ),
   new NamedQuery(
     name = "VideoSequence.findBetweenDates",
@@ -37,10 +40,6 @@ import scala.collection.JavaConverters._
   new NamedQuery(
     name = "VideoSequence.findByNameAndBetweenDates",
     query = "SELECT v FROM VideoSequence v LEFT JOIN v.javaVideos w WHERE v.name = :name AND w.startDate BETWEEN :startDate AND :endDate"
-  ),
-  new NamedQuery(
-    name = "VideoSequence.deleteByUUID",
-    query = "DELETE v FROM VideoSequence WHERE v.uuid = :uuid"
   )
 ))
 class VideoSequence extends HasUUID with HasOptimisticLock {
@@ -64,7 +63,8 @@ class VideoSequence extends HasUUID with HasOptimisticLock {
     targetEntity = classOf[Video],
     cascade = Array(CascadeType.ALL),
     fetch = FetchType.EAGER,
-    mappedBy = "videoSequence"
+    mappedBy = "videoSequence",
+    orphanRemoval = true
   )
   private var javaVideos: JList[Video] = new JArrayList[Video]
 
@@ -92,6 +92,8 @@ class VideoSequence extends HasUUID with HasOptimisticLock {
     val state = Seq(name)
     state.map(_.hashCode()).foldLeft(0)((a, b) => 31 * a + b)
   }
+
+
 }
 
 object VideoSequence {
