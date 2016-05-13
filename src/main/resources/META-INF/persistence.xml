@@ -7,6 +7,13 @@
         <description>VAM Data Model</description>
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
         <shared-cache-mode>NONE</shared-cache-mode>
+        <!-- Converters -->
+        <class>org.mbari.vars.vam.dao.jpa.DurationConverter</class>
+        <class>org.mbari.vars.vam.dao.jpa.InstantConverter</class>
+        <class>org.mbari.vars.vam.dao.jpa.URIConverter</class>
+        <class>org.mbari.vars.vam.dao.jpa.UUIDConverter</class>
+
+        <!-- Entities -->
         <class>org.mbari.vars.vam.dao.jpa.VideoSequence</class>
         <class>org.mbari.vars.vam.dao.jpa.Video</class>
         <class>org.mbari.vars.vam.dao.jpa.VideoView</class>

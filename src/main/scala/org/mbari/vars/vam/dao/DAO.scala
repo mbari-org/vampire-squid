@@ -2,7 +2,7 @@ package org.mbari.vars.vam.dao
 
 import java.util.UUID
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 /**
  *

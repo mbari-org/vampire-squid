@@ -1,7 +1,7 @@
 package org.mbari.vars.vam.dao.jpa
 
 import java.util.UUID
-import javax.persistence.{ Column, GeneratedValue, Id, Transient }
+import javax.persistence._
 
 import org.mbari.vars.vam.dao.PersistentObject
 
@@ -22,8 +22,9 @@ trait HasUUID extends PersistentObject[UUID] {
     nullable = false,
     updatable = false
   )
-  protected var uuid: String = _
+  @Convert(converter = classOf[UUIDConverter])
+  var uuid: UUID = _
 
-  def primaryKey: Option[UUID] = Try(UUID.fromString(uuid)).toOption
+  def primaryKey: Option[UUID] = Option(uuid)
 
 }

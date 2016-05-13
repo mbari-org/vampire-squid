@@ -1,7 +1,7 @@
 package org.mbari.vars.vam.dao.jpa
 
 import javax.persistence._
-import java.util.{ArrayList => JArrayList, List => JList}
+import java.util.{ ArrayList => JArrayList, List => JList }
 
 import org.eclipse.persistence.annotations.CascadeOnDelete
 
@@ -35,15 +35,16 @@ import scala.collection.JavaConverters._
   ),
   new NamedQuery(
     name = "VideoSequence.findBetweenDates",
-    query = "SELECT v FROM VideoSequence v LEFT JOIN v.javaVideos w WHERE w.startDate BETWEEN :startDate AND :endDate"
+    query = "SELECT v FROM VideoSequence v LEFT JOIN v.javaVideos w WHERE w.start BETWEEN :startDate AND :endDate"
   ),
   new NamedQuery(
     name = "VideoSequence.findByNameAndBetweenDates",
-    query = "SELECT v FROM VideoSequence v LEFT JOIN v.javaVideos w WHERE v.name = :name AND w.startDate BETWEEN :startDate AND :endDate"
+    query = "SELECT v FROM VideoSequence v LEFT JOIN v.javaVideos w WHERE v.name = :name AND w.start BETWEEN :startDate AND :endDate"
   )
 ))
 class VideoSequence extends HasUUID with HasOptimisticLock {
 
+  @Index(name = "idx_video_sequence_name", columnList = "name")
   @Column(
     name = "name",
     nullable = false,
@@ -52,6 +53,7 @@ class VideoSequence extends HasUUID with HasOptimisticLock {
   )
   var name: String = _
 
+  @Index(name = "idx_video_sequence_camera_id", columnList = "camera_id")
   @Column(
     name = "camera_id",
     nullable = false,
@@ -78,13 +80,12 @@ class VideoSequence extends HasUUID with HasOptimisticLock {
   }
   def videos: Seq[Video] = javaVideos.asScala
 
-
   def canEqual(other: Any): Boolean = other.isInstanceOf[VideoSequence]
 
   override def equals(other: Any): Boolean = other match {
     case that: VideoSequence =>
       (that canEqual this) &&
-          name == that.name
+        name == that.name
     case _ => false
   }
 
@@ -93,7 +94,7 @@ class VideoSequence extends HasUUID with HasOptimisticLock {
     state.map(_.hashCode()).foldLeft(0)((a, b) => 31 * a + b)
   }
 
-
+  override def toString = s"VideoSequence($name, $cameraID)"
 }
 
 object VideoSequence {

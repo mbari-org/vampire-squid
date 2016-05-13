@@ -1,13 +1,13 @@
 package org.mbari.vars.vam.dao.jdbc
 
 import java.sql.Connection
-import java.time.{Duration, Instant}
+import java.time.{ Duration, Instant }
 import java.util.UUID
 
 import org.mbari.vars.vam.dao.VideoSequenceDAO
 import org.mbari.vars.vam.model.v1.VideoSequence
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 /**
  *

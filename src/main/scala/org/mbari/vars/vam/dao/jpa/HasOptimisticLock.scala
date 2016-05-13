@@ -2,7 +2,7 @@ package org.mbari.vars.vam.dao.jpa
 
 import java.sql.Timestamp
 import java.time.Instant
-import javax.persistence.{ Column, Transient, Version }
+import javax.persistence.{ Column, Convert, Transient, Version }
 
 import scala.util.Try
 
@@ -17,7 +17,8 @@ trait HasOptimisticLock {
   /** Optimistic lock to prevent concurrent overwrites */
   @Version
   @Column(name = "last_updated_time")
-  private var lastUpdatedTime: Timestamp = _
+  protected var lastUpdatedTime: Timestamp = _
 
-  def lastUpdate: Instant = Try(lastUpdatedTime.toInstant).getOrElse(Instant.now)
+  def lastUpdated: Option[Instant] = Option(lastUpdatedTime).map(_.toInstant)
+
 }

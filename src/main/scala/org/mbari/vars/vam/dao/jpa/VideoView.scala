@@ -1,7 +1,7 @@
 package org.mbari.vars.vam.dao.jpa
 
 import java.net.URI
-import javax.persistence.{EntityListeners, Table, _}
+import javax.persistence.{ EntityListeners, Table, _ }
 
 import scala.util.Try
 
@@ -16,15 +16,15 @@ import scala.util.Try
 @EntityListeners(value = Array(classOf[TransactionLogger]))
 class VideoView extends HasUUID with HasOptimisticLock {
 
+  @Index(name = "idx_video_view_uri", columnList = "uri")
   @Column(
     name = "uri",
     unique = true,
     length = 1024,
     nullable = false
   )
-  var uriString: String = _
-
-  def uri: URI = Try(new URI(uriString)).getOrElse(new URI("urn:unknown"))
+  @Convert(converter = classOf[URIConverter])
+  var uri: URI = _
 
   @Column(
     name = "container",
@@ -50,7 +50,7 @@ class VideoView extends HasUUID with HasOptimisticLock {
   @Column(name = "height")
   var height: Int = _
 
-  @ManyToOne
+  @ManyToOne(cascade = Array(CascadeType.PERSIST, CascadeType.DETACH))
   @JoinColumn(name = "video_uuid")
   var video: Video = _
 

@@ -1,12 +1,10 @@
 package org.mbari.vars.vam.dao.jpa
 
-import java.sql.Timestamp
-import java.time.{Duration, Instant}
-import java.util.{Date, ArrayList => JArrayList, List => JList}
-import javax.persistence.{CascadeType, _}
+import java.time.{ Duration, Instant }
+import java.util.{ ArrayList => JArrayList, List => JList }
+import javax.persistence.{ CascadeType, _ }
 
 import scala.collection.JavaConverters._
-import scala.util.Try
 
 /**
  *
@@ -35,12 +33,17 @@ import scala.util.Try
     query = "SELECT v FROM Video v LEFT JOIN v.javaVideoViews w WHERE w.uuid = :uuid"
   ),
   new NamedQuery(
+    name = "Video.findByVideoSequenceUUID",
+    query = "SELECT v FROM Video v JOIN v.videoSequence w WHERE w.uuid = :uuid"
+  ),
+  new NamedQuery(
     name = "Video.findBetweenDates",
-    query = "SELECT v FROM Video v WHERE v.startDate BETWEEN :startDate AND :endDate"
+    query = "SELECT v FROM Video v WHERE v.start BETWEEN :startDate AND :endDate"
   )
 ))
 class Video extends HasUUID with HasOptimisticLock {
 
+  @Index(name = "idx_video_name", columnList = "name")
   @Column(
     name = "name",
     nullable = false,
@@ -49,24 +52,22 @@ class Video extends HasUUID with HasOptimisticLock {
   )
   var name: String = _
 
+  @Index(name = "idx_video_start_time", columnList = "start_time")
   @Column(
     name = "start_time",
     nullable = false
   )
   @Temporal(value = TemporalType.TIMESTAMP)
-  protected var startDate: Date = _
-
-  def start: Instant = Try(startDate.toInstant).getOrElse(Instant.ofEpochSecond(0))
+  @Convert(converter = classOf[InstantConverter])
+  var start: Instant = _
 
   @Column(
     name = "duration_millis",
     nullable = true
   )
-  protected var durationMillis: Long = _
+  var duration: Duration = _
 
-  def duration: Duration = Try(Duration.ofMillis(durationMillis)).getOrElse(Duration.ZERO)
-
-  @ManyToOne
+  @ManyToOne(cascade = Array(CascadeType.PERSIST, CascadeType.DETACH))
   @JoinColumn(name = "video_sequence_uuid", nullable = false)
   var videoSequence: VideoSequence = _
 
@@ -90,6 +91,7 @@ class Video extends HasUUID with HasOptimisticLock {
 
   def videoViews: Seq[VideoView] = javaVideoViews.asScala
 
+  override def toString = s"Video($name, $start)"
 }
 
 object Video {
@@ -97,22 +99,22 @@ object Video {
   def apply(name: String, start: Instant): Video = {
     val v = new Video
     v.name = name
-    v.startDate = Date.from(start)
+    v.start = start
     v
   }
 
   def apply(name: String, start: Instant, duration: Duration): Video = {
     val v = new Video
     v.name = name
-    v.startDate = Date.from(start)
-    v.durationMillis = duration.toMillis
+    v.start = start
+    v.duration = duration
     v
   }
 
   def apply(name: String, start: Instant, videoViews: Iterable[VideoView]): Video = {
     val v = new Video
     v.name = name
-    v.startDate = Date.from(start)
+    v.start = start
     videoViews.foreach(v.addVideoView)
     v
   }
@@ -120,11 +122,10 @@ object Video {
   def apply(name: String, start: Instant, duration: Duration, videoViews: Iterable[VideoView]): Video = {
     val v = new Video
     v.name = name
-    v.startDate = Date.from(start)
-    v.durationMillis = duration.toMillis
+    v.start = start
+    v.duration = duration
     videoViews.foreach(v.addVideoView)
     v
   }
-
 
 }

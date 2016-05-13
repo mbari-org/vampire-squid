@@ -3,26 +3,28 @@ package org.mbari.vars.vam.dao.jpa
 import javax.persistence.EntityManagerFactory
 
 import com.typesafe.config.ConfigFactory
-import org.eclipse.persistence.config.{TargetDatabase, TargetServer}
-import org.mbari.vars.vam.dao.{DAOFactory, VideoDAO, VideoViewDAO}
-
+import org.eclipse.persistence.config.{ TargetDatabase, TargetServer }
+import org.mbari.vars.vam.dao.{ DAOFactory, VideoDAO, VideoViewDAO }
 
 /**
-  *
-  *
-  * @author Brian Schlining
-  * @since 2016-05-06T11:04:00
-  */
+ *
+ *
+ * @author Brian Schlining
+ * @since 2016-05-06T11:04:00
+ */
 object TestDAOFactory extends DAOFactory[VideoSequence, Video, VideoView] {
 
   private[this] val config = ConfigFactory.load()
-  private[this] val testProps = Map("eclipselink.logging.level" -> "FINE",
+  private[this] val testProps = Map(
+    "eclipselink.logging.level" -> "FINE",
+    "javax.persistence.database-product-name" -> TargetDatabase.Derby,
     "eclipselink.target-database" -> TargetDatabase.Derby,
     "eclipselink.logging.timestamp" -> "false",
     "eclipselink.logging.session" -> "false",
     "eclipselink.logging.thread" -> "false",
     "eclipselink.ddl-generation" -> "create-tables",
-    "eclipselink.ddl-generation.output-mode" -> "database")
+    "eclipselink.ddl-generation.output-mode" -> "database"
+  )
 
   lazy val entityManagerFactory: EntityManagerFactory = {
     val driver = config.getString("org.mbari.vars.vam.database.development.driver")
@@ -35,7 +37,7 @@ object TestDAOFactory extends DAOFactory[VideoSequence, Video, VideoView] {
   def newVideoSequenceDAO(): VideoSequenceDAOImpl =
     new VideoSequenceDAOImpl(entityManagerFactory.createEntityManager())
 
-  override def newVideoDAO(): VideoDAO[Video] = ???
+  override def newVideoDAO(): VideoDAOImpl = new VideoDAOImpl(entityManagerFactory.createEntityManager())
 
   override def newVideoViewDAO(): VideoViewDAO[VideoView] = ???
 }
