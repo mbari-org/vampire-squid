@@ -15,6 +15,7 @@ import org.mbari.vars.vam.dao.VideoDAO
 class VideoDAOImpl(entityManager: EntityManager)
     extends BaseDAO[UUID, Video](entityManager)
     with VideoDAO[Video] {
+
   override def findByName(name: String): Option[Video] =
     findByNamedQuery("Video.findByName", Map("name" -> name)).headOption
 
@@ -25,7 +26,7 @@ class VideoDAOImpl(entityManager: EntityManager)
     findByNamedQuery("Video.findByVideoReferenceUUID", Map("uuid" -> uuid))
       .headOption
 
-  override def findByTimestamp(timestamp: Instant, window: Duration = Duration.ofMinutes(120)): Iterable[Video] = {
+  override def findByTimestamp(timestamp: Instant, window: Duration = Constants.DEFAULT_DURATION_WINDOW): Iterable[Video] = {
     val halfRange = window.dividedBy(2)
     val startDate = timestamp.minus(halfRange)
     val endDate = timestamp.plus(halfRange)

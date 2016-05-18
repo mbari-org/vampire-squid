@@ -43,5 +43,5 @@ object TestDAOFactory extends DAOFactory[VideoSequence, Video, VideoReference] {
 
   override def newVideoDAO(): VideoDAOImpl = new VideoDAOImpl(entityManagerFactory.createEntityManager())
 
-  override def newVideoViewDAO(): VideoReferenceDAO[VideoReference] = ???
+  override def newVideoReferenceDAO(): VideoReferenceDAO[VideoReference] = new VideoReferenceDAOImpl(entityManagerFactory.createEntityManager())
 }

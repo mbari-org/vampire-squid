@@ -46,6 +46,7 @@ import scala.collection.JavaConverters._
 class VideoSequence extends HasUUID with HasOptimisticLock {
 
   @Expose(serialize = true)
+  @Basic(optional = false)
   @Index(name = "idx_video_sequence_name", columnList = "name")
   @Column(
     name = "name",
@@ -57,6 +58,7 @@ class VideoSequence extends HasUUID with HasOptimisticLock {
 
   @Expose(serialize = true)
   @SerializedName(value = "camera_id")
+  @Basic(optional = false)
   @Index(name = "idx_video_sequence_camera_id", columnList = "camera_id")
   @Column(
     name = "camera_id",
@@ -109,7 +111,7 @@ object VideoSequence {
     val vs = new VideoSequence
     vs.name = name
     vs.cameraID = cameraID
-    videos.foreach(v => vs.addVideo(v))
+    videos.foreach(vs.addVideo)
     vs
   }
 

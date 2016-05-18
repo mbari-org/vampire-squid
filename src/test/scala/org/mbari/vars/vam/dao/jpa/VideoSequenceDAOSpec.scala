@@ -23,7 +23,7 @@ class VideoSequenceDAOSpec extends FlatSpec with Matchers {
   private[this] val dao = TestDAOFactory.newVideoSequenceDAO()
 
   "VideoSequenceDAOImpl" should "create a record in the datastore" in {
-    val name = "T01234"
+    val name = "T01234_"
 
     val videoSequence = VideoSequence(name, "Tiburon")
     Await.result(dao.runTransaction(d => d.create(videoSequence)), timeout)
@@ -104,7 +104,7 @@ class VideoSequenceDAOSpec extends FlatSpec with Matchers {
   }
 
   val name = "Foo"
-  val cameraID = "Bar"
+  val cameraID = "BarBarBar"
   val timestamp = Instant.now()
   val duration = Duration.ofMinutes(15)
   val videoSequence = VideoSequence(name, cameraID,

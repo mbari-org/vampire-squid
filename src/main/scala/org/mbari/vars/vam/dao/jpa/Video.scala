@@ -46,6 +46,7 @@ import scala.collection.JavaConverters._
 class Video extends HasUUID with HasOptimisticLock {
 
   @Expose(serialize = true)
+  @Basic(optional = false)
   @Index(name = "idx_video_name", columnList = "name")
   @Column(
     name = "name",
@@ -56,6 +57,7 @@ class Video extends HasUUID with HasOptimisticLock {
   var name: String = _
 
   @Expose(serialize = true)
+  @Basic(optional = false)
   @Index(name = "idx_video_start_time", columnList = "start_time")
   @Column(
     name = "start_time",
@@ -74,7 +76,7 @@ class Video extends HasUUID with HasOptimisticLock {
   var duration: Duration = _
 
   @Expose(serialize = false)
-  @ManyToOne(cascade = Array(CascadeType.PERSIST, CascadeType.DETACH))
+  @ManyToOne(cascade = Array(CascadeType.PERSIST, CascadeType.DETACH), optional = false)
   @JoinColumn(name = "video_sequence_uuid", nullable = false)
   var videoSequence: VideoSequence = _
 
@@ -99,7 +101,7 @@ class Video extends HasUUID with HasOptimisticLock {
     videoView.video = null
   }
 
-  def videoViews: Seq[VideoReference] = javaVideoReferences.asScala
+  def videoReferences: Seq[VideoReference] = javaVideoReferences.asScala
 
   override def toString = s"Video($name, $start)"
 }
@@ -121,11 +123,11 @@ object Video {
     v
   }
 
-  def apply(name: String, start: Instant, videoViews: Iterable[VideoReference]): Video = {
+  def apply(name: String, start: Instant, videoReferences: Iterable[VideoReference]): Video = {
     val v = new Video
     v.name = name
     v.start = start
-    videoViews.foreach(v.addVideoReference)
+    videoReferences.foreach(v.addVideoReference)
     v
   }
 

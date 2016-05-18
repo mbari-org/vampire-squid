@@ -16,9 +16,24 @@ import scala.util.Try
 @Entity(name = "VideoReference")
 @Table(name = "video_reference")
 @EntityListeners(value = Array(classOf[TransactionLogger]))
+@NamedQueries(Array(
+  new NamedQuery(
+    name = "VideoReference.findAll",
+    query = "SELECT v FROM VideoReference v"
+  ),
+  new NamedQuery(
+    name = "VideoReference.findByVideoUUID",
+    query = "SELECT v FROM VideoReference v JOIN v.video w WHERE w.uuid = :uuid"
+  ),
+  new NamedQuery(
+    name = "VideoReference.findByURI",
+    query = "SELECT v FROM VideoReference v WHERE v.uri = :uri"
+  )
+))
 class VideoReference extends HasUUID with HasOptimisticLock {
 
   @Expose(serialize = true)
+  @Basic(optional = false)
   @Index(name = "idx_video_reference_uri", columnList = "uri")
   @Column(
     name = "uri",
@@ -59,8 +74,36 @@ class VideoReference extends HasUUID with HasOptimisticLock {
   var height: Int = _
 
   @Expose(serialize = false)
-  @ManyToOne(cascade = Array(CascadeType.PERSIST, CascadeType.DETACH))
-  @JoinColumn(name = "video_uuid")
+  @ManyToOne(cascade = Array(CascadeType.PERSIST, CascadeType.DETACH), optional = false)
+  @JoinColumn(name = "video_uuid", nullable = false)
   var video: Video = _
+
+}
+
+object VideoReference {
+
+  def apply(uri: URI): VideoReference = {
+    val videoReference = new VideoReference
+    videoReference.uri = uri
+    videoReference
+  }
+
+  def apply(
+    uri: URI,
+    container: String,
+    videoCodec: String,
+    audioCodec: String,
+    width: Int,
+    height: Int
+  ): VideoReference = {
+    val videoReference = new VideoReference
+    videoReference.uri = uri
+    videoReference.container = container
+    videoReference.videoCodec = videoCodec
+    videoReference.audioCodec = audioCodec
+    videoReference.width = width
+    videoReference.height = height
+    videoReference
+  }
 
 }

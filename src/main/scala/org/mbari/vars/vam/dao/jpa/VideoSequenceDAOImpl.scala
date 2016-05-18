@@ -40,7 +40,7 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
    * @param window A search window that so that the actual search is timestamp +/- (range / 2)
    * @return
    */
-  override def findByTimestamp(timestamp: Instant, window: Duration = Duration.ofMinutes(120)): Iterable[VideoSequence] = {
+  override def findByTimestamp(timestamp: Instant, window: Duration = Constants.DEFAULT_DURATION_WINDOW): Iterable[VideoSequence] = {
     val halfRange = window.dividedBy(2)
     val startDate = timestamp.minus(halfRange)
     val endDate = timestamp.plus(halfRange)
@@ -68,7 +68,7 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
 
   }
 
-  override def findByNameAndTimestamp(name: String, timestamp: Instant, window: Duration = Duration.ofMinutes(120)): Iterable[VideoSequence] = {
+  override def findByNameAndTimestamp(name: String, timestamp: Instant, window: Duration = Constants.DEFAULT_DURATION_WINDOW): Iterable[VideoSequence] = {
     val halfRange = window.dividedBy(2)
     val startDate = timestamp.minus(halfRange)
     val endDate = timestamp.plus(halfRange)

@@ -1,7 +1,7 @@
 package org.mbari.vars.vam.dao
 
 import java.net.URI
-import java.time.Instant
+import java.time.{ Duration, Instant }
 import java.util.UUID
 
 import org.mbari.vars.vam.model.v1.VideoView
@@ -14,10 +14,7 @@ import org.mbari.vars.vam.model.v1.VideoView
  */
 trait VideoReferenceDAO[T <: PersistentObject[UUID]] extends DAO[UUID, T] {
 
-  def findByVideoSequenceUUID(uuid: UUID): Iterable[T]
   def findByVideoUUID(uuid: UUID): Iterable[T]
-  def findByTimestamp(timestamp: Instant): Iterable[T]
-  def findByVideoSequenceUUIDAndTimestamp(uuid: UUID, timestamp: Instant): Iterable[T]
   def findByURI(uri: URI): Option[T]
 
 }
