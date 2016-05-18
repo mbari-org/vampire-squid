@@ -1,13 +1,8 @@
 # video-asset-manager
 
+Currently, this a project for testing ideas and models for managing video and image assets.
 
-This project is built using [SBT](http://www.scala-sbt.org/). To create the distribution, run `sbt pack`
+This project is built using [SBT](http://www.scala-sbt.org/). See SBT.md for help.
 
-## To run main class using SBT to launch it
-`sbt 'run-main org.mbari.foo.Main'`
 
-## To run a single test
-`sbt 'test-only org.mbari.foo.ExampleSpec'`
 
-## References
-[SBT Pack](https://github.com/xerial/sbt-pack) - Files added in `src/pack` are included in product
