@@ -1,9 +1,9 @@
 package org.mbari.vars.vam.dao.jpa
 
 import javax.persistence._
-import java.util.{ArrayList => JArrayList, List => JList}
+import java.util.{ ArrayList => JArrayList, List => JList }
 
-import com.google.gson.annotations.{Expose, SerializedName}
+import com.google.gson.annotations.{ Expose, SerializedName }
 import org.eclipse.persistence.annotations.CascadeOnDelete
 
 import scala.collection.JavaConverters._

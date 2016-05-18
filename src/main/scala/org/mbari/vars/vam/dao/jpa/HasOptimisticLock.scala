@@ -2,7 +2,7 @@ package org.mbari.vars.vam.dao.jpa
 
 import java.sql.Timestamp
 import java.time.Instant
-import javax.persistence.{Column, Convert, Transient, Version}
+import javax.persistence.{ Column, Convert, Transient, Version }
 
 import com.google.gson.annotations.Expose
 

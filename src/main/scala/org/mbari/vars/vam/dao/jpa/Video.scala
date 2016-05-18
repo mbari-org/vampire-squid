@@ -1,10 +1,10 @@
 package org.mbari.vars.vam.dao.jpa
 
-import java.time.{Duration, Instant}
-import java.util.{ArrayList => JArrayList, List => JList}
-import javax.persistence.{CascadeType, _}
+import java.time.{ Duration, Instant }
+import java.util.{ ArrayList => JArrayList, List => JList }
+import javax.persistence.{ CascadeType, _ }
 
-import com.google.gson.annotations.{Expose, SerializedName}
+import com.google.gson.annotations.{ Expose, SerializedName }
 
 import scala.collection.JavaConverters._
 

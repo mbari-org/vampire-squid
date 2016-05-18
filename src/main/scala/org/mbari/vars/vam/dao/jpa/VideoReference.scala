@@ -1,7 +1,7 @@
 package org.mbari.vars.vam.dao.jpa
 
 import java.net.URI
-import javax.persistence.{EntityListeners, Table, _}
+import javax.persistence.{ EntityListeners, Table, _ }
 
 import com.google.gson.annotations.Expose
 
