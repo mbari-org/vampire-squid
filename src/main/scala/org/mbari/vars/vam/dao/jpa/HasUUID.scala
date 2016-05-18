@@ -3,6 +3,7 @@ package org.mbari.vars.vam.dao.jpa
 import java.util.UUID
 import javax.persistence._
 
+import com.google.gson.annotations.Expose
 import org.mbari.vars.vam.dao.PersistentObject
 
 import scala.util.Try
@@ -15,6 +16,7 @@ import scala.util.Try
  */
 trait HasUUID extends PersistentObject[UUID] {
 
+  @Expose(serialize = true)
   @Id
   @GeneratedValue(generator = "system-uuid")
   @Column(

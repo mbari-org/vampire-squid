@@ -4,7 +4,7 @@ import javax.persistence.EntityManagerFactory
 
 import com.typesafe.config.ConfigFactory
 import org.eclipse.persistence.config.{ TargetDatabase, TargetServer }
-import org.mbari.vars.vam.dao.{ DAOFactory, VideoDAO, VideoViewDAO }
+import org.mbari.vars.vam.dao.{ DAOFactory, VideoDAO, VideoReferenceDAO }
 
 /**
  *
@@ -12,7 +12,7 @@ import org.mbari.vars.vam.dao.{ DAOFactory, VideoDAO, VideoViewDAO }
  * @author Brian Schlining
  * @since 2016-05-06T11:04:00
  */
-object TestDAOFactory extends DAOFactory[VideoSequence, Video, VideoView] {
+object TestDAOFactory extends DAOFactory[VideoSequence, Video, VideoReference] {
 
   private[this] val config = ConfigFactory.load()
   private[this] val testProps = Map(
@@ -22,8 +22,12 @@ object TestDAOFactory extends DAOFactory[VideoSequence, Video, VideoView] {
     "eclipselink.logging.timestamp" -> "false",
     "eclipselink.logging.session" -> "false",
     "eclipselink.logging.thread" -> "false",
-    "eclipselink.ddl-generation" -> "create-tables",
-    "eclipselink.ddl-generation.output-mode" -> "database"
+    "javax.persistence.schema-generation.database.action" -> "create",
+    "javax.persistence.schema-generation.scripts.action" -> "drop-and-create",
+    "javax.persistence.schema-generation.scripts.create-target" -> "target/test-database-create.ddl",
+    "javax.persistence.schema-generation.scripts.drop-target" -> "target/test-database-drop.ddl"
+  //"eclipselink.ddl-generation" -> "create-tables",
+  //"eclipselink.ddl-generation.output-mode" -> "database"
   )
 
   lazy val entityManagerFactory: EntityManagerFactory = {
@@ -39,5 +43,5 @@ object TestDAOFactory extends DAOFactory[VideoSequence, Video, VideoView] {
 
   override def newVideoDAO(): VideoDAOImpl = new VideoDAOImpl(entityManagerFactory.createEntityManager())
 
-  override def newVideoViewDAO(): VideoViewDAO[VideoView] = ???
+  override def newVideoViewDAO(): VideoReferenceDAO[VideoReference] = ???
 }

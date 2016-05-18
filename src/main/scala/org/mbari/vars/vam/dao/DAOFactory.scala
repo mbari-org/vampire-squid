@@ -14,6 +14,6 @@ trait DAOFactory[A <: PersistentObject[UUID], B <: PersistentObject[UUID], C <: 
 
   def newVideoDAO(): VideoDAO[B]
 
-  def newVideoViewDAO(): VideoViewDAO[C]
+  def newVideoViewDAO(): VideoReferenceDAO[C]
 
 }

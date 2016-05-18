@@ -16,7 +16,7 @@
         <!-- Entities -->
         <class>org.mbari.vars.vam.dao.jpa.VideoSequence</class>
         <class>org.mbari.vars.vam.dao.jpa.Video</class>
-        <class>org.mbari.vars.vam.dao.jpa.VideoView</class>
+        <class>org.mbari.vars.vam.dao.jpa.VideoReference</class>
         <properties>
             <property name="eclipselink.logging.level" value="INFO"/>
             <property name="eclipselink.connection-pool.default.initial" value="2" />

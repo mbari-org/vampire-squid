@@ -12,7 +12,7 @@ import org.mbari.vars.vam.model.v1.VideoView
  * @author Brian Schlining
  * @since 2016-05-05T14:51:00
  */
-trait VideoViewDAO[T <: PersistentObject[UUID]] extends DAO[UUID, T] {
+trait VideoReferenceDAO[T <: PersistentObject[UUID]] extends DAO[UUID, T] {
 
   def findByVideoSequenceUUID(uuid: UUID): Iterable[T]
   def findByVideoUUID(uuid: UUID): Iterable[T]

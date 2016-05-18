@@ -52,7 +52,7 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
 
     if (log.isDebugEnabled) {
       val info = videoSequences.flatMap(_.videos)
-        .map(v => s"\tVideo start: ${v.start} for ${v.duration}")
+        .map(v => s"\t${v.name} at ${v.start} for ${v.duration}")
         .mkString("\n")
       val s =
         s"""

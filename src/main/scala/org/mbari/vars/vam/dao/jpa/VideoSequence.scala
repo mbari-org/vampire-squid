@@ -1,8 +1,9 @@
 package org.mbari.vars.vam.dao.jpa
 
 import javax.persistence._
-import java.util.{ ArrayList => JArrayList, List => JList }
+import java.util.{ArrayList => JArrayList, List => JList}
 
+import com.google.gson.annotations.{Expose, SerializedName}
 import org.eclipse.persistence.annotations.CascadeOnDelete
 
 import scala.collection.JavaConverters._
@@ -44,6 +45,7 @@ import scala.collection.JavaConverters._
 ))
 class VideoSequence extends HasUUID with HasOptimisticLock {
 
+  @Expose(serialize = true)
   @Index(name = "idx_video_sequence_name", columnList = "name")
   @Column(
     name = "name",
@@ -53,6 +55,8 @@ class VideoSequence extends HasUUID with HasOptimisticLock {
   )
   var name: String = _
 
+  @Expose(serialize = true)
+  @SerializedName(value = "camera_id")
   @Index(name = "idx_video_sequence_camera_id", columnList = "camera_id")
   @Column(
     name = "camera_id",
@@ -61,6 +65,8 @@ class VideoSequence extends HasUUID with HasOptimisticLock {
   )
   var cameraID: String = _
 
+  @Expose(serialize = true)
+  @SerializedName(value = "videos")
   @OneToMany(
     targetEntity = classOf[Video],
     cascade = Array(CascadeType.ALL),

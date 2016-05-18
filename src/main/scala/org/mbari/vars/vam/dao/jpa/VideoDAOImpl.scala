@@ -21,8 +21,8 @@ class VideoDAOImpl(entityManager: EntityManager)
   override def findByVideoSequenceUUID(uuid: UUID): Iterable[Video] =
     findByNamedQuery("Video.findByVideoSequenceUUID", Map("uuid" -> uuid))
 
-  override def findByVideoViewUUID(uuid: UUID): Option[Video] =
-    findByNamedQuery("Video.findByVideoViewUUID", Map("uuid" -> uuid))
+  override def findByVideoReferenceUUID(uuid: UUID): Option[Video] =
+    findByNamedQuery("Video.findByVideoReferenceUUID", Map("uuid" -> uuid))
       .headOption
 
   override def findByTimestamp(timestamp: Instant, window: Duration = Duration.ofMinutes(120)): Iterable[Video] = {

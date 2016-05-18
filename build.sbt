@@ -40,6 +40,8 @@ libraryDependencies ++= {
   Seq(
     "ch.qos.logback" % "logback-classic" % logbackVersion,
     "ch.qos.logback" % "logback-core" % logbackVersion,
+    "com.fatboyindustrial.gson-javatime-serialisers" % "gson-javatime-serialisers" % "1.1.1",
+    "com.google.code.gson" % "gson" % "2.6.2",
     "com.typesafe" % "config" % "1.3.0",
     "javax.transaction" % "jta" % "1.1",
     "junit" % "junit" % "4.12" % "test",

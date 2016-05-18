@@ -2,7 +2,9 @@ package org.mbari.vars.vam.dao.jpa
 
 import java.sql.Timestamp
 import java.time.Instant
-import javax.persistence.{ Column, Convert, Transient, Version }
+import javax.persistence.{Column, Convert, Transient, Version}
+
+import com.google.gson.annotations.Expose
 
 import scala.util.Try
 
@@ -15,6 +17,7 @@ import scala.util.Try
 trait HasOptimisticLock {
 
   /** Optimistic lock to prevent concurrent overwrites */
+  @Expose(serialize = true)
   @Version
   @Column(name = "last_updated_time")
   protected var lastUpdatedTime: Timestamp = _
