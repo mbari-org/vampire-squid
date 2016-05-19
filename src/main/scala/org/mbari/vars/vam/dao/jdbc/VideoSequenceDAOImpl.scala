@@ -40,4 +40,6 @@ class VideoSequenceDAOImpl(val connection: Connection) extends VideoSequenceDAO[
   override def runTransaction[R](fn: (VideoSequenceDAOImpl.this.type) => R)(implicit ec: ExecutionContext): Future[R] = ???
 
   override def findByNameAndTimestamp(name: String, timestamp: Instant, window: Duration): Iterable[VideoSequence] = ???
+
+  override def findByCameraIDAndTimestamp(cameraID: String, timestamp: Instant, window: Duration): Iterable[VideoSequence] = ???
 }

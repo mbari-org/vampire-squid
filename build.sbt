@@ -125,15 +125,16 @@ packAutoSettings ++ Seq(packExtraClasspath := apps.map(_ -> Seq("${PROG_HOME}/co
 
 // -- SCALARIFORM
 // Format code on save with scalariform
-import scalariform.formatter.preferences._
-import com.typesafe.sbt.SbtScalariform
+ import scalariform.formatter.preferences._
+ import com.typesafe.sbt.SbtScalariform
 
-SbtScalariform.scalariformSettings
+ SbtScalariform.scalariformSettings
 
-SbtScalariform.ScalariformKeys.preferences := SbtScalariform.ScalariformKeys.preferences.value
-  .setPreference(IndentSpaces, 2)
-  .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, false)
-  .setPreference(DoubleIndentClassDeclaration, true)
+ SbtScalariform.ScalariformKeys.preferences := SbtScalariform.ScalariformKeys.preferences.value
+   .setPreference(IndentSpaces, 2)
+   .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, false)
+   .setPreference(DoubleIndentClassDeclaration, true)
+   .setPreference(DanglingCloseParenthesis, Prevent)
 
 // Fail if style is bad
 scalastyleFailOnError := true

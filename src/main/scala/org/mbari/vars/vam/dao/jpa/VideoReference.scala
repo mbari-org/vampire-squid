@@ -1,6 +1,7 @@
 package org.mbari.vars.vam.dao.jpa
 
 import java.net.URI
+import javax.activation.MimeType
 import javax.persistence.{ EntityListeners, Table, _ }
 
 import com.google.gson.annotations.Expose
@@ -44,6 +45,11 @@ class VideoReference extends HasUUID with HasOptimisticLock {
   @Convert(converter = classOf[URIConverter])
   var uri: URI = _
 
+  /**
+   * Defines the video files container. We are using mimetypes to provide
+   * container definitions. Note that the mimetype does not always indicate
+   * the video/audio encoding
+   */
   @Expose(serialize = true)
   @Column(
     name = "container",
@@ -73,10 +79,24 @@ class VideoReference extends HasUUID with HasOptimisticLock {
   @Column(name = "height")
   var height: Int = _
 
+  @Expose(serialize = true)
+  @Column(
+    name = "frame_rate"
+  )
+  var frameRate: Double = _
+
+  @Expose(serialize = true)
+  @Column(
+    name = "size_bytes"
+  )
+  var size: Long = _
+
   @Expose(serialize = false)
   @ManyToOne(cascade = Array(CascadeType.PERSIST, CascadeType.DETACH), optional = false)
   @JoinColumn(name = "video_uuid", nullable = false)
   var video: Video = _
+
+  def mimetype: Option[MimeType] = Try(new MimeType(container)).toOption
 
 }
 
@@ -103,6 +123,28 @@ object VideoReference {
     videoReference.audioCodec = audioCodec
     videoReference.width = width
     videoReference.height = height
+    videoReference
+  }
+
+  def apply(
+    uri: URI,
+    container: String,
+    videoCodec: String,
+    audioCodec: String,
+    width: Int,
+    height: Int,
+    frameRate: Double,
+    size: Long
+  ): VideoReference = {
+    val videoReference = new VideoReference
+    videoReference.uri = uri
+    videoReference.container = container
+    videoReference.videoCodec = videoCodec
+    videoReference.audioCodec = audioCodec
+    videoReference.width = width
+    videoReference.height = height
+    videoReference.frameRate = frameRate
+    videoReference.size = size
     videoReference
   }
 

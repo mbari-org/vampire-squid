@@ -82,6 +82,21 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
     videoSequences.filter(hasTimestamp)
   }
 
+  override def findByCameraIDAndTimestamp(cameraID: String, timestamp: Instant, window: Duration): Iterable[VideoSequence] = {
+    val halfRange = window.dividedBy(2)
+    val startDate = timestamp.minus(halfRange)
+    val endDate = timestamp.plus(halfRange)
+
+    val videoSequences = findByNamedQuery(
+      "VideoSequence.findByNameAndBetweenDates",
+      Map("startDate" -> startDate, "endDate" -> endDate, "cameraID" -> cameraID)
+    )
+
+    val hasTimestamp = containsTimestamp(_: VideoSequence, timestamp) // Partially apply the function to timestamp
+
+    videoSequences.filter(hasTimestamp)
+  }
+
   override def deleteByPrimaryKey(primaryKey: UUID): Unit = {
     val videoSequence = findByPrimaryKey(primaryKey)
     videoSequence.foreach(vs => delete(vs))
@@ -96,5 +111,5 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
           (a.isBefore(timestamp) && b.isAfter(timestamp))
     })
 
-  override def findAll(): Iterable[VideoSequence] = ???
+  override def findAll(): Iterable[VideoSequence] = findByNamedQuery("VideoSequence.findAll")
 }

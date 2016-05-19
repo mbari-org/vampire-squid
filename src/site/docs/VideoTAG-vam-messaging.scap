@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ScappleDocument Version="1.1" ID="FE22DD24-7CD8-4ED4-80E7-B42839139941">
+    <Notes>
+        <Note ID="0" FontSize="12.0" Position="583.152344,873.691406" Width="125.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+                <Border Weight="1">0.756763 0.785592 0.373258</Border>
+                <Fill>0.906773 0.910625 0.634363</Fill>
+            </Appearance>
+            <String>Media Asset Manager</String>
+            <ConnectedNoteIDs>7, 20, 29</ConnectedNoteIDs>
+        </Note>
+        <Note ID="1" FontSize="12.0" Position="61.914062,256.527344" Width="134.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+                <Border Weight="1">0.290055 0.1523 0.182215</Border>
+                <Fill>0.940019 0.892907 0.779716</Fill>
+            </Appearance>
+            <String>Create VideoSequence
+- name: String
+- cameraID: String</String>
+        </Note>
+        <Note ID="2" FontSize="12.0" Position="63.042969,315.308594" Width="180.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+                <Border Weight="1">0.290055 0.1523 0.182215</Border>
+                <Fill>0.940019 0.892907 0.779716</Fill>
+            </Appearance>
+            <String>Delete VideoSequence by name
+- name: String</String>
+        </Note>
+        <Note ID="3" FontSize="12.0" Position="65.394531,475.964844" Width="169.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+                <Border Weight="1">0.290055 0.1523 0.182215</Border>
+                <Fill>0.940019 0.892907 0.779716</Fill>
+            </Appearance>
+            <String>Find VideoSequence by name
+- name: String</String>
+        </Note>
+        <Note ID="4" FontSize="12.0" Position="64.171875,529.714844" Width="251.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+                <Border Weight="1">0.290055 0.1523 0.182215</Border>
+                <Fill>0.940019 0.892907 0.779716</Fill>
+            </Appearance>
+            <String>Find VideoSequence by name and timestamp
+- name: String
+- timestamp: Instant
+- window: Duration?</String>
+        </Note>
+        <Note ID="5" FontSize="12.0" Position="63.90625,614.054688" Width="273.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+                <Border Weight="1">0.290055 0.1523 0.182215</Border>
+                <Fill>0.940019 0.892907 0.779716</Fill>
+            </Appearance>
+            <String>Find VideoSequence by cameraID and timestamp
+- cameraID: String
+- timestamp: Instant
+- window: Duration?</String>
+        </Note>
+        <Note ID="6" FontSize="12.0" Position="65.734375,378.113281" Width="173.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+                <Border Weight="1">0.290055 0.1523 0.182215</Border>
+                <Fill>0.940019 0.892907 0.779716</Fill>
+            </Appearance>
+            <String>Delete VideoSequence by uuid
+- uuid: UUID</String>
+        </Note>
+        <Note ID="8" FontSize="28.0" Position="31.433594,182.621094" Width="358.0">
+            <Appearance></Appearance>
+            <String>VideoSequence Messages</String>
+            <Formatting>
+                <FormatRange Bold="Yes">0,22</FormatRange>
+            </Formatting>
+        </Note>
+        <Note ID="9" FontSize="12.0" Position="502.550781,131.046875" Width="157.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+                <Border Weight="1">0.290055 0.1523 0.182215</Border>
+                <Fill>0.940019 0.892907 0.779716</Fill>
+            </Appearance>
+            <String>Create Video
+- name: String
+- start: Instant
+- duration: Duration?
+- videoSequenceUUID: uuid</String>
+        </Note>
+        <Note ID="10" FontSize="12.0" Position="502.203125,224.878906" Width="126.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+                <Border Weight="1">0.290055 0.1523 0.182215</Border>
+                <Fill>0.940019 0.892907 0.779716</Fill>
+            </Appearance>
+            <String>Delete Video by name
+- name: String</String>
+        </Note>
+        <Note ID="11" FontSize="12.0" Position="70.390625,710.640625" Width="194.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+                <Border Weight="1">0.290055 0.1523 0.182215</Border>
+                <Fill>0.940019 0.892907 0.779716</Fill>
+            </Appearance>
+            <String>Update VideoSequence by uuid
+- uuid: UUID
+- name: String
+- cameraID: string</String>
+        </Note>
+        <Note ID="12" FontSize="12.0" Position="67.972656,795.753906" Width="184.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+                <Border Weight="1">0.290055 0.1523 0.182215</Border>
+                <Fill>0.940019 0.892907 0.779716</Fill>
+            </Appearance>
+            <String>Update VideoSequence by name
+- name: String
+- cameraID: String</String>
+            <ConnectedNoteIDs>13</ConnectedNoteIDs>
+        </Note>
+        <Note ID="13" FontSize="12.0" Position="80.644531,903.660156" Width="200.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+            </Appearance>
+            <String>Here the name is the search key, it is not being mutated in datastore</String>
+            <ConnectedNoteIDs>12</ConnectedNoteIDs>
+        </Note>
+        <Note ID="14" FontSize="12.0" Position="503.898438,274.835938" Width="119.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+                <Border Weight="1">0.290055 0.1523 0.182215</Border>
+                <Fill>0.940019 0.892907 0.779716</Fill>
+            </Appearance>
+            <String>Delete Video by uuid
+- uuid: UUID</String>
+        </Note>
+        <Note ID="15" FontSize="12.0" Position="506.328125,322.402344" Width="115.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+                <Border Weight="1">0.290055 0.1523 0.182215</Border>
+                <Fill>0.940019 0.892907 0.779716</Fill>
+            </Appearance>
+            <String>Find Video by name
+- name: String</String>
+        </Note>
+        <Note ID="16" FontSize="12.0" Position="505.589844,373.457031" Width="108.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+                <Border Weight="1">0.290055 0.1523 0.182215</Border>
+                <Fill>0.940019 0.892907 0.779716</Fill>
+            </Appearance>
+            <String>Find Video by uuid
+- uuid: UUID</String>
+        </Note>
+        <Note ID="17" FontSize="12.0" Position="504.371094,428.257812" Width="219.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+                <Border Weight="1">0.290055 0.1523 0.182215</Border>
+                <Fill>0.940019 0.892907 0.779716</Fill>
+            </Appearance>
+            <String>Find Video by cameraID and timestamp
+- cameraID: String
+- timestamp: Instant</String>
+        </Note>
+        <Note ID="18" FontSize="12.0" Position="505.0,496.0" Width="171.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+                <Border Weight="1">0.290055 0.1523 0.182215</Border>
+                <Fill>0.940019 0.892907 0.779716</Fill>
+            </Appearance>
+            <String>Update Video by uuid
+- uuid: UUID
+- name: String?
+- start: Instant?
+- duration: Duration?
+- videoSequenceUUID: UUID?</String>
+        </Note>
+        <Note ID="19" FontSize="12.0" Position="504.0,606.0" Width="171.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+                <Border Weight="1">0.290055 0.1523 0.182215</Border>
+                <Fill>0.940019 0.892907 0.779716</Fill>
+            </Appearance>
+            <String>Update Video by name
+- name: String
+- start: Instant?
+- duration: Duration?
+- videoSequenceUUID: UUID?</String>
+        </Note>
+        <Note ID="21" FontSize="28.0" Position="499.210938,31.183594" Width="226.0">
+            <Appearance></Appearance>
+            <String>Video Messages</String>
+            <Formatting>
+                <FormatRange Bold="Yes">0,14</FormatRange>
+            </Formatting>
+        </Note>
+        <Note ID="22" FontSize="12.0" Position="840.285156,223.484375" Width="134.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+                <Border Weight="1">0.290055 0.1523 0.182215</Border>
+                <Fill>0.940019 0.892907 0.779716</Fill>
+            </Appearance>
+            <String>Create VideoReference
+- uri: URI
+- container: Mimetype?
+- videoCodec: String?
+- audioCodec: String?
+- width: Int?
+- height: Int?
+- videoUUID: UUID</String>
+        </Note>
+        <Note ID="23" FontSize="12.0" Position="842.015625,365.179688" Width="165.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+                <Border Weight="1">0.290055 0.1523 0.182215</Border>
+                <Fill>0.940019 0.892907 0.779716</Fill>
+            </Appearance>
+            <String>Delete VideoReference by uri
+- uri: URI</String>
+        </Note>
+        <Note ID="24" FontSize="12.0" Position="842.832031,422.503906" Width="174.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+                <Border Weight="1">0.290055 0.1523 0.182215</Border>
+                <Fill>0.940019 0.892907 0.779716</Fill>
+            </Appearance>
+            <String>Delete VideoReference by uuid
+- uuid: UUID</String>
+        </Note>
+        <Note ID="25" FontSize="12.0" Position="845.980469,476.082031" Width="154.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+                <Border Weight="1">0.290055 0.1523 0.182215</Border>
+                <Fill>0.940019 0.892907 0.779716</Fill>
+            </Appearance>
+            <String>Find VideoReference by uri
+- uri: URI</String>
+        </Note>
+        <Note ID="26" FontSize="12.0" Position="845.664062,533.957031" Width="163.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+                <Border Weight="1">0.290055 0.1523 0.182215</Border>
+                <Fill>0.940019 0.892907 0.779716</Fill>
+            </Appearance>
+            <String>Find VideoReference by uuid
+- uuid: UUID</String>
+        </Note>
+        <Note ID="27" FontSize="12.0" Position="846.054688,589.734375" Width="178.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+                <Border Weight="1">0.290055 0.1523 0.182215</Border>
+                <Fill>0.940019 0.892907 0.779716</Fill>
+            </Appearance>
+            <String>Update VideoReference by uuid
+- uuid: UUID
+- uri: URI?
+- container: Mimetype?
+- videoCodec: String?
+- audioCodec: String?
+- width: Int?
+- height: Height?
+- videoUUID: UUID?</String>
+        </Note>
+        <Note ID="28" FontSize="12.0" Position="848.0625,741.175781" Width="169.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+                <Border Weight="1">0.290055 0.1523 0.182215</Border>
+                <Fill>0.940019 0.892907 0.779716</Fill>
+            </Appearance>
+            <String>Update VideoReference by uri
+- uri: URI
+- container: Mimetype?
+- videoCodec: String?
+- audioCodec: String?
+- width: Int?
+- height: Height?
+- videoUUID: UUID?</String>
+        </Note>
+        <Note ID="30" FontSize="28.0" Position="817.738281,129.957031" Width="361.0">
+            <Appearance></Appearance>
+            <String>VideoReference Messages</String>
+            <Formatting>
+                <FormatRange Bold="Yes">0,23</FormatRange>
+            </Formatting>
+        </Note>
+    </Notes>
+    <BackgroundShapes>
+        <Shape ID="29" Sticky="Yes" Position="811.054688,120.734375" Width="380.0" Height="782.0">
+            <Appearance>
+                <Border Weight="1"></Border>
+                <Fill>0.996925 0.857557 0.625522</Fill>
+            </Appearance>
+            <ConnectedNoteIDs>0</ConnectedNoteIDs>
+            <PointsToNoteIDs>0</PointsToNoteIDs>
+        </Shape>
+        <Shape ID="7" Sticky="Yes" Position="21.171875,169.0" Width="381.0" Height="711.640625">
+            <Appearance>
+                <Border Weight="1"></Border>
+                <Fill>0.567433 0.726981 0.94518</Fill>
+            </Appearance>
+            <ConnectedNoteIDs>0</ConnectedNoteIDs>
+            <PointsToNoteIDs>0</PointsToNoteIDs>
+        </Shape>
+        <Shape ID="20" Sticky="Yes" Position="437.328125,22.214844" Width="346.0" Height="684.0">
+            <Appearance>
+                <Border Weight="1"></Border>
+                <Fill>0.76816 0.875933 0.687323</Fill>
+            </Appearance>
+            <ConnectedNoteIDs>0</ConnectedNoteIDs>
+            <PointsToNoteIDs>0</PointsToNoteIDs>
+        </Shape>
+    </BackgroundShapes>
+    <AutoFit>0, 2-6, 8-10, 12, 14-19, 21-28, 30</AutoFit>
+    <NoteStyles>
+        <Style Name="Title Text" ID="8735A63A-471B-4DA4-A8A2-B9FAE14CB9D3" AffectFontStyle="Yes" AffectAlignment="Yes" AffectTextColor="No" AffectNoteBody="No" AffectFade="No">
+            <FontSize>28.0</FontSize>
+            <IsBold>Yes</IsBold>
+        </Style>
+        <Style Name="Red Text" ID="05CA8E22-D339-43E4-A7C6-F67254F968B4" AffectFontStyle="No" AffectAlignment="No" AffectTextColor="Yes" AffectNoteBody="No" AffectFade="No">
+            <TextColor>1.0 0.0 0.0</TextColor>
+        </Style>
+        <Style Name="Brown Bubble" ID="EA3015EB-FD3A-47A9-B0DA-2F7C5AF0393E" AffectFontStyle="No" AffectAlignment="No" AffectTextColor="No" AffectNoteBody="Yes" AffectFade="No">
+            <BorderThickness>1</BorderThickness>
+            <BorderColor>0.290055 0.1523 0.182215</BorderColor>
+            <FillColor>0.940019 0.892907 0.779716</FillColor>
+        </Style>
+        <Style Name="Yellow Bubble" ID="48D58843-57D4-4379-9C24-C86262F75D6D" AffectFontStyle="No" AffectAlignment="No" AffectTextColor="No" AffectNoteBody="Yes" AffectFade="No">
+            <BorderThickness>1</BorderThickness>
+            <BorderColor>0.756763 0.785592 0.373258</BorderColor>
+            <FillColor>0.906773 0.910625 0.634363</FillColor>
+        </Style>
+        <Style Name="Green Bubble" ID="D4053CE0-7925-44DC-98DC-578DECFF72A0" AffectFontStyle="No" AffectAlignment="No" AffectTextColor="No" AffectNoteBody="Yes" AffectFade="No">
+            <BorderThickness>1</BorderThickness>
+            <BorderColor>0.331867 0.609932 0.356197</BorderColor>
+            <FillColor>0.790123 0.882328 0.80198</FillColor>
+        </Style>
+        <Style Name="Blue Bubble" ID="30639E0C-5E24-4C8F-B88C-ABA4190E801A" AffectFontStyle="No" AffectAlignment="No" AffectTextColor="No" AffectNoteBody="Yes" AffectFade="No">
+            <BorderThickness>1</BorderThickness>
+            <BorderColor>0.477193 0.557066 0.76433</BorderColor>
+            <FillColor>0.840969 0.866828 0.925903</FillColor>
+        </Style>
+        <Style Name="Pink Bubble" ID="A87D99F8-C81C-4858-95A7-2D4E71C0D043" AffectFontStyle="No" AffectAlignment="No" AffectTextColor="No" AffectNoteBody="Yes" AffectFade="No">
+            <BorderThickness>1</BorderThickness>
+            <BorderColor>0.747881 0.366532 0.542813</BorderColor>
+            <FillColor>0.918452 0.807302 0.863467</FillColor>
+        </Style>
+    </NoteStyles>
+    <UISettings>
+        <BackgroundColor>0.999737 0.986332 0.931298</BackgroundColor>
+        <DefaultFont>Helvetica</DefaultFont>
+        <DefaultTextColor>0.0 0.0 0.0</DefaultTextColor>
+    </UISettings>
+    <PrintSettings PaperSize="612.0,792.0" LeftMargin="72.0" RightMargin="72.0" TopMargin="90.0" BottomMargin="90.0" PaperType="na-letter" Orientation="Portrait" HorizontalPagination="Clip" VerticalPagination="Auto" ScaleFactor="1.0" HorizontallyCentered="Yes" VerticallyCentered="Yes" Collates="Yes" PagesAcross="1" PagesDown="1"></PrintSettings>
+</ScappleDocument>

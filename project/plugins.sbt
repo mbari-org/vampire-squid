@@ -13,6 +13,8 @@ addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.1.10")
 // https://github.com/sbt/sbt-scalariform
 addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.6.0")
 
+//addSbtPlugin("com.geirsson" % "sbt-scalafmt" % "0.2.5")
+
 // http://www.scalastyle.org/sbt.html
 addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "0.8.0")
 
