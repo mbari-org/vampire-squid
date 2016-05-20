@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="1.0"
+             xmlns="http://java.sun.com/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
+    <persistence-unit name="video-asset-manager" transaction-type="RESOURCE_LOCAL">
+        <description>VAM Data Model</description>
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        <shared-cache-mode>NONE</shared-cache-mode>
+        <!-- Converters -->
+        <class>org.mbari.vars.vam.dao.jpa.DurationConverter</class>
+        <class>org.mbari.vars.vam.dao.jpa.InstantConverter</class>
+        <class>org.mbari.vars.vam.dao.jpa.URIConverter</class>
+        <class>org.mbari.vars.vam.dao.jpa.UUIDConverter</class>
+
+        <!-- Entities -->
+        <class>org.mbari.vars.vam.dao.jpa.VideoSequence</class>
+        <class>org.mbari.vars.vam.dao.jpa.Video</class>
+        <class>org.mbari.vars.vam.dao.jpa.VideoReference</class>
+        <properties>
+            <property name="eclipselink.logging.level" value="INFO"/>
+            <property name="eclipselink.connection-pool.default.initial" value="2" />
+            <property name="eclipselink.connection-pool.default.max" value="16" />
+            <property name="eclipse.weaving" value="false" />
+        </properties>
+    </persistence-unit>
+</persistence>
