@@ -12,7 +12,7 @@ import org.mbari.vars.vam.dao.{ DAOFactory, VideoDAO, VideoReferenceDAO }
  * @author Brian Schlining
  * @since 2016-05-06T11:04:00
  */
-object TestDAOFactory extends DAOFactory[VideoSequence, Video, VideoReference] {
+object DerbyTestDAOFactory extends DAOFactory[VideoSequence, Video, VideoReference] {
 
   private[this] val config = ConfigFactory.load()
   private[this] val testProps = Map(
@@ -31,10 +31,10 @@ object TestDAOFactory extends DAOFactory[VideoSequence, Video, VideoReference] {
   )
 
   lazy val entityManagerFactory: EntityManagerFactory = {
-    val driver = config.getString("org.mbari.vars.vam.database.development.driver")
-    val url = config.getString("org.mbari.vars.vam.database.development.url")
-    val user = config.getString("org.mbari.vars.vam.database.development.user")
-    val password = config.getString("org.mbari.vars.vam.database.development.password")
+    val driver = config.getString("org.mbari.vars.vam.database.derby.driver")
+    val url = config.getString("org.mbari.vars.vam.database.derby.url")
+    val user = config.getString("org.mbari.vars.vam.database.derby.user")
+    val password = config.getString("org.mbari.vars.vam.database.derby.password")
     EntityManagerFactories(url, user, password, driver, testProps)
   }
 

@@ -20,17 +20,13 @@ import scala.util.Try
 @NamedQueries(Array(
   new NamedQuery(
     name = "VideoReference.findAll",
-    query = "SELECT v FROM VideoReference v"
-  ),
+    query = "SELECT v FROM VideoReference v"),
   new NamedQuery(
     name = "VideoReference.findByVideoUUID",
-    query = "SELECT v FROM VideoReference v JOIN v.video w WHERE w.uuid = :uuid"
-  ),
+    query = "SELECT v FROM VideoReference v JOIN v.video w WHERE w.uuid = :uuid"),
   new NamedQuery(
     name = "VideoReference.findByURI",
-    query = "SELECT v FROM VideoReference v WHERE v.uri = :uri"
-  )
-))
+    query = "SELECT v FROM VideoReference v WHERE v.uri = :uri")))
 class VideoReference extends HasUUID with HasOptimisticLock {
 
   @Expose(serialize = true)
@@ -40,8 +36,7 @@ class VideoReference extends HasUUID with HasOptimisticLock {
     name = "uri",
     unique = true,
     length = 1024,
-    nullable = false
-  )
+    nullable = false)
   @Convert(converter = classOf[URIConverter])
   var uri: URI = _
 
@@ -53,22 +48,19 @@ class VideoReference extends HasUUID with HasOptimisticLock {
   @Expose(serialize = true)
   @Column(
     name = "container",
-    length = 128
-  )
+    length = 128)
   var container: String = _
 
   @Expose(serialize = true)
   @Column(
     name = "video_codec",
-    length = 128
-  )
+    length = 128)
   var videoCodec: String = _
 
   @Expose(serialize = true)
   @Column(
     name = "audio_codec",
-    length = 128
-  )
+    length = 128)
   var audioCodec: String = _
 
   @Expose(serialize = true)
@@ -81,14 +73,12 @@ class VideoReference extends HasUUID with HasOptimisticLock {
 
   @Expose(serialize = true)
   @Column(
-    name = "frame_rate"
-  )
+    name = "frame_rate")
   var frameRate: Double = _
 
   @Expose(serialize = true)
   @Column(
-    name = "size_bytes"
-  )
+    name = "size_bytes")
   var size: Long = _
 
   @Expose(serialize = false)
@@ -114,8 +104,7 @@ object VideoReference {
     videoCodec: String,
     audioCodec: String,
     width: Int,
-    height: Int
-  ): VideoReference = {
+    height: Int): VideoReference = {
     val videoReference = new VideoReference
     videoReference.uri = uri
     videoReference.container = container
@@ -134,8 +123,7 @@ object VideoReference {
     width: Int,
     height: Int,
     frameRate: Double,
-    size: Long
-  ): VideoReference = {
+    size: Long): VideoReference = {
     val videoReference = new VideoReference
     videoReference.uri = uri
     videoReference.container = container

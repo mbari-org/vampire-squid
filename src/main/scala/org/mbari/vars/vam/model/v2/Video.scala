@@ -17,5 +17,4 @@ case class Video(
   start: Instant,
   durationSeconds: Double,
   videoSequence: VideoSequence,
-  videoViews: Seq[VideoView]
-) extends PersistentEntity
+  videoViews: Seq[VideoView]) extends PersistentEntity

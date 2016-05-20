@@ -20,49 +20,50 @@ class VideoSequenceDAOSpec extends FlatSpec with Matchers {
 
   private[this] val timeout = SDuration(2, TimeUnit.SECONDS)
 
-  private[this] val dao = TestDAOFactory.newVideoSequenceDAO()
+  private[this] val dao = H2TestDAOFactory.newVideoSequenceDAO()
 
-  "VideoSequenceDAOImpl" should "create a record in the datastore" in {
-    val name = "T01234_"
+  val name0 = "T012345"
+  val videoSequence0 = VideoSequence(name0, "Tiburon")
 
-    val videoSequence = VideoSequence(name, "Tiburon")
-    Await.result(dao.runTransaction(d => d.create(videoSequence)), timeout)
+  "VideoSequenceDAOImpl" should "create" in {
 
-    val videoSequence2 = dao.findByName(name)
+    Await.result(dao.runTransaction(d => d.create(videoSequence0)), timeout)
+
+    val videoSequence2 = dao.findByName(name0)
     videoSequence2 shouldBe defined
   }
 
-  it should "create, update and delete a record in the datastore" in {
-    val name = "T012345"
-
-    val videoSequence = VideoSequence(name, "Tiburon")
-    Await.result(dao.runTransaction(d => d.create(videoSequence)), timeout)
-
+  it should "update" in {
+    val newCameraID = "Ventana"
     val updatedSequence = Await.result(dao.runTransaction(d => {
-      val vs2 = d.findByName(name)
+      val vs2 = d.findByName(name0)
       vs2 shouldBe defined
-      vs2.get.cameraID = "Ventana"
+      vs2.get.cameraID = newCameraID
       vs2
     }), timeout) // Changes made in transactions should be propagated
 
     updatedSequence shouldBe defined
-    updatedSequence.get.name === "Ventana"
+    updatedSequence.get.name should be(videoSequence0.name)
+    updatedSequence.get.cameraID should be(newCameraID)
 
-    val vs3 = Await.result(dao.runTransaction(d => d.findByName(name)), timeout)
+    val vs3 = Await.result(dao.runTransaction(d => d.findByName(name0)), timeout)
     vs3 shouldBe defined
     dao.entityManager.detach(vs3.get)
-    vs3.get.cameraID should be("Ventana")
+    vs3.get.cameraID should be(newCameraID)
 
     vs3.get.cameraID = "Should not be persisted"
 
-    val vs4 = dao.findByName(name)
+    val vs4 = dao.findByName(name0)
     vs4 shouldBe defined
-    vs4.get.cameraID should be("Ventana")
+    vs4.get.cameraID should be(newCameraID)
+  }
 
-    Await.result(dao.runTransaction(d => d.delete(vs4.get)), timeout)
-    val vs5 = Await.result(dao.runTransaction(d => d.findByName(name)), timeout)
-    vs5 shouldBe empty
-
+  it should "delete" in {
+    val vs = dao.findByName(name0)
+    vs shouldBe defined
+    Await.result(dao.runTransaction(d => d.delete(vs.get)), timeout)
+    val vs1 = Await.result(dao.runTransaction(d => d.findByName(name0)), timeout)
+    vs1 shouldBe empty
   }
 
   it should "insert child videos in the datastore" in {
@@ -110,8 +111,7 @@ class VideoSequenceDAOSpec extends FlatSpec with Matchers {
   val videoSequence = VideoSequence(name, cameraID,
     Seq(
       Video("foo1", timestamp.minus(Duration.ofHours(10)), duration),
-      Video("foo2", timestamp, duration)
-    ))
+      Video("foo2", timestamp, duration)))
   Await.result(dao.runTransaction(d => d.create(videoSequence)), timeout)
   var uuid: UUID = _
   var videoUUID: UUID = _
@@ -146,7 +146,7 @@ class VideoSequenceDAOSpec extends FlatSpec with Matchers {
 
   it should "findByTimestamp" in {
     val vs = Await.result(dao.runTransaction(d => d.findByTimestamp(timestamp.plusSeconds(600))), timeout)
-    vs should have size (2)
+    vs should have size (1)
   }
 
   it should "findByNameAndTimestamp" in {
@@ -158,6 +158,15 @@ class VideoSequenceDAOSpec extends FlatSpec with Matchers {
     Await.result(dao.runTransaction(d => d.deleteByPrimaryKey(uuid)), timeout)
     val vs = Await.result(dao.runTransaction(d => d.findByName(name)), timeout)
     vs shouldBe empty
+  }
+
+  it should "delete all" in {
+    val all = Await.result(dao.runTransaction(d => d.findAll()), timeout)
+    Await.result(dao.runTransaction(d => {
+      all.foreach(d.delete)
+    }), timeout)
+    val allGone = Await.result(dao.runTransaction(d => d.findAll()), timeout)
+    allGone.size should be(0)
   }
 
 }

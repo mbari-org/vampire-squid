@@ -1,18 +1,18 @@
 package org.mbari.vars.vam.messages
 
 import java.net.URI
-import java.time.{Duration, Instant}
+import java.time.{ Duration, Instant }
 import java.util.UUID
 
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.{ FlatSpec, Matchers }
 import org.slf4j.LoggerFactory
 
 /**
-  *
-  *
-  * @author Brian Schlining
-  * @since 2016-05-19T13:47:00
-  */
+ *
+ *
+ * @author Brian Schlining
+ * @since 2016-05-19T13:47:00
+ */
 class MessageToJSONSpec extends FlatSpec with Matchers {
 
   private[this] val log = LoggerFactory.getLogger(getClass)
@@ -26,7 +26,7 @@ class MessageToJSONSpec extends FlatSpec with Matchers {
     log.debug(json)
     val createVideo = gson.fromJson(json, classOf[CreateVideo])
     createVideo should not be (null)
-    createVideo.videoSequence should be (msg.videoSequence)
+    createVideo.videoSequence should be(msg.videoSequence)
   }
 
   it should "convert a CreateVideo message with null duration to JSON" in {
@@ -37,8 +37,8 @@ class MessageToJSONSpec extends FlatSpec with Matchers {
     log.debug(json)
     val createVideo = gson.fromJson(json, classOf[CreateVideo])
     createVideo should not be (null)
-    createVideo.videoSequence should be (msg.videoSequence)
-    createVideo.duration should be (null)
+    createVideo.videoSequence should be(msg.videoSequence)
+    createVideo.duration should be(null)
   }
 
   it should "convert a CreateVideoReference message to JSON" in {
@@ -49,8 +49,8 @@ class MessageToJSONSpec extends FlatSpec with Matchers {
     log.debug(json)
     val createVideoReference = gson.fromJson(json, classOf[CreateVideoReference])
     createVideoReference should not be (null)
-    createVideoReference.video should be (msg.video)
-    createVideoReference.uri should be (msg.uri)
+    createVideoReference.video should be(msg.video)
+    createVideoReference.uri should be(msg.uri)
   }
 
   it should "convert a CreateVideoReference message with null fields to JSON" in {
@@ -61,8 +61,8 @@ class MessageToJSONSpec extends FlatSpec with Matchers {
     log.debug(json)
     val createVideoReference = gson.fromJson(json, classOf[CreateVideoReference])
     createVideoReference should not be (null)
-    createVideoReference.video should be (msg.video)
-    createVideoReference.uri should be (msg.uri)
+    createVideoReference.video should be(msg.video)
+    createVideoReference.uri should be(msg.uri)
   }
 
 }

@@ -23,12 +23,11 @@ class VideoDAOSpec extends FlatSpec with Matchers {
     Seq(
       Video("A", now.minus(duration), duration),
       Video("B", now, duration),
-      Video("C", now.plus(duration), duration)
-    ))
+      Video("C", now.plus(duration), duration)))
 
   private var videoSequenceUUID: UUID = _
 
-  private[this] val dao = TestDAOFactory.newVideoDAO()
+  private[this] val dao = H2TestDAOFactory.newVideoDAO()
 
   "VideoDAOImpl" should "create" in {
     // Executing create assigns the uuid and lastUpdated fields values in our mutable object

@@ -11,8 +11,7 @@ case class Video(
   start: Instant,
   durationSeconds: Double,
   videoSequence: UUID,
-  lastUpdated: Instant = Instant.now()
-) extends PersistentEntity
+  lastUpdated: Instant = Instant.now()) extends PersistentEntity
 
 object Video {
 

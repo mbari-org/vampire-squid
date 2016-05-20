@@ -20,33 +20,25 @@ import scala.collection.JavaConverters._
 @NamedQueries(Array(
   new NamedQuery(
     name = "VideoSequence.findAll",
-    query = "SELECT v FROM VideoSequence v"
-  ),
+    query = "SELECT v FROM VideoSequence v"),
   new NamedQuery(
     name = "VideoSequence.findByCameraID",
-    query = "SELECT v FROM VideoSequence v WHERE v.cameraID = :cameraID"
-  ),
+    query = "SELECT v FROM VideoSequence v WHERE v.cameraID = :cameraID"),
   new NamedQuery(
     name = "VideoSequence.findByName",
-    query = "SELECT v FROM VideoSequence v WHERE v.name = :name"
-  ),
+    query = "SELECT v FROM VideoSequence v WHERE v.name = :name"),
   new NamedQuery(
     name = "VideoSequence.findByVideoUUID",
-    query = "SELECT v FROM VideoSequence v LEFT JOIN v.javaVideos w WHERE w.uuid = :uuid"
-  ),
+    query = "SELECT v FROM VideoSequence v LEFT JOIN v.javaVideos w WHERE w.uuid = :uuid"),
   new NamedQuery(
     name = "VideoSequence.findBetweenDates",
-    query = "SELECT v FROM VideoSequence v LEFT JOIN v.javaVideos w WHERE w.start BETWEEN :startDate AND :endDate"
-  ),
+    query = "SELECT v FROM VideoSequence v LEFT JOIN v.javaVideos w WHERE w.start BETWEEN :startDate AND :endDate"),
   new NamedQuery(
     name = "VideoSequence.findByNameAndBetweenDates",
-    query = "SELECT v FROM VideoSequence v LEFT JOIN v.javaVideos w WHERE v.name = :name AND w.start BETWEEN :startDate AND :endDate"
-  ),
+    query = "SELECT v FROM VideoSequence v LEFT JOIN v.javaVideos w WHERE v.name = :name AND w.start BETWEEN :startDate AND :endDate"),
   new NamedQuery(
     name = "VideoSequence.findByCameraIDAndBetweenDates",
-    query = "SELECT v FROM VideoSequence v LEFT JOIN v.javaVideos w WHERE v.cameraID = :cameraID AND w.start BETWEEN :startDate AND :endDate"
-  )
-))
+    query = "SELECT v FROM VideoSequence v LEFT JOIN v.javaVideos w WHERE v.cameraID = :cameraID AND w.start BETWEEN :startDate AND :endDate")))
 class VideoSequence extends HasUUID with HasOptimisticLock {
 
   @Expose(serialize = true)
@@ -56,8 +48,7 @@ class VideoSequence extends HasUUID with HasOptimisticLock {
     name = "name",
     nullable = false,
     length = 512,
-    unique = true
-  )
+    unique = true)
   var name: String = _
 
   @Expose(serialize = true)
@@ -67,8 +58,7 @@ class VideoSequence extends HasUUID with HasOptimisticLock {
   @Column(
     name = "camera_id",
     nullable = false,
-    length = 256
-  )
+    length = 256)
   var cameraID: String = _
 
   @Expose(serialize = true)
@@ -78,8 +68,7 @@ class VideoSequence extends HasUUID with HasOptimisticLock {
     cascade = Array(CascadeType.ALL),
     fetch = FetchType.EAGER,
     mappedBy = "videoSequence",
-    orphanRemoval = true
-  )
+    orphanRemoval = true)
   private var javaVideos: JList[Video] = new JArrayList[Video]
 
   def addVideo(video: Video): Unit = {

@@ -20,5 +20,4 @@ case class VideoView(
   audioCodec: String,
   width: Int,
   height: Int,
-  video: Video
-) extends PersistentEntity
+  video: Video) extends PersistentEntity

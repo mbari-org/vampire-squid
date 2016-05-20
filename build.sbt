@@ -34,23 +34,33 @@ updateOptions := updateOptions.value.withCachedResolution(true)
 
 // Add SLF4J, Logback and testing libs
 libraryDependencies ++= {
-  val slf4jVersion = "1.7.21"
-  val logbackVersion = "1.1.7"
+  val configVersion = "1.3.0"
   val derbyVersion = "10.12.1.1"
+  val eclipselinkVersion = "2.6.2"
+  val gsonJavatimeVersion = "1.1.1"
+  val gsonVersion = "2.6.2"
+  val h2Version = "1.4.191"
+  val jtaVersion = "1.1"
+  val jtdsVersion = "1.3.1"
+  val junitVersion = "4.12"
+  val logbackVersion = "1.1.7"
+  val scalaTestVersion = "2.2.6"
+  val slf4jVersion = "1.7.21"
   Seq(
     "ch.qos.logback" % "logback-classic" % logbackVersion,
     "ch.qos.logback" % "logback-core" % logbackVersion,
-    "com.fatboyindustrial.gson-javatime-serialisers" % "gson-javatime-serialisers" % "1.1.1",
-    "com.google.code.gson" % "gson" % "2.6.2",
-    "com.typesafe" % "config" % "1.3.0",
-    "javax.transaction" % "jta" % "1.1",
-    "junit" % "junit" % "4.12" % "test",
-    "net.sourceforge.jtds" % "jtds" % "1.3.1",
+    "com.fatboyindustrial.gson-javatime-serialisers" % "gson-javatime-serialisers" % gsonJavatimeVersion,
+    "com.google.code.gson" % "gson" % gsonVersion,
+    "com.h2database" % "h2" % h2Version % "test",
+    "com.typesafe" % "config" % configVersion,
+    "javax.transaction" % "jta" % jtaVersion,
+    "junit" % "junit" % junitVersion % "test",
+    "net.sourceforge.jtds" % "jtds" % jtdsVersion,
     "org.apache.derby" % "derby" % derbyVersion % "test",
     "org.apache.derby" % "derbyclient" % derbyVersion % "test",
     "org.apache.derby" % "derbynet" % derbyVersion % "test",
-    "org.eclipse.persistence" % "eclipselink" % "2.6.2",
-    "org.scalatest" %% "scalatest" % "2.2.6" % "test",
+    "org.eclipse.persistence" % "eclipselink" % eclipselinkVersion,
+    "org.scalatest" %% "scalatest" % scalaTestVersion % "test",
     "org.slf4j" % "log4j-over-slf4j" % slf4jVersion,
     "org.slf4j" % "slf4j-api" % slf4jVersion)
 }

@@ -23,29 +23,22 @@ import scala.util.Try
 @NamedQueries(Array(
   new NamedQuery(
     name = "Video.findAll",
-    query = "SELECT v FROM Video v"
-  ),
+    query = "SELECT v FROM Video v"),
   new NamedQuery(
     name = "Video.findByName",
-    query = "SELECT v FROM Video v WHERE v.name = :name"
-  ),
+    query = "SELECT v FROM Video v WHERE v.name = :name"),
   new NamedQuery(
     name = "Video.findByUUID",
-    query = "SELECT v FROM Video v WHERE v.uuid = :uuid"
-  ),
+    query = "SELECT v FROM Video v WHERE v.uuid = :uuid"),
   new NamedQuery(
     name = "Video.findByVideoReferenceUUID",
-    query = "SELECT v FROM Video v LEFT JOIN v.javaVideoReferences w WHERE w.uuid = :uuid"
-  ),
+    query = "SELECT v FROM Video v LEFT JOIN v.javaVideoReferences w WHERE w.uuid = :uuid"),
   new NamedQuery(
     name = "Video.findByVideoSequenceUUID",
-    query = "SELECT v FROM Video v JOIN v.videoSequence w WHERE w.uuid = :uuid"
-  ),
+    query = "SELECT v FROM Video v JOIN v.videoSequence w WHERE w.uuid = :uuid"),
   new NamedQuery(
     name = "Video.findBetweenDates",
-    query = "SELECT v FROM Video v WHERE v.start BETWEEN :startDate AND :endDate"
-  )
-))
+    query = "SELECT v FROM Video v WHERE v.start BETWEEN :startDate AND :endDate")))
 class Video extends HasUUID with HasOptimisticLock {
 
   @Expose(serialize = true)
@@ -55,8 +48,7 @@ class Video extends HasUUID with HasOptimisticLock {
     name = "name",
     nullable = false,
     length = 512,
-    unique = true
-  )
+    unique = true)
   var name: String = _
 
   @Expose(serialize = true)
@@ -64,8 +56,7 @@ class Video extends HasUUID with HasOptimisticLock {
   @Index(name = "idx_video_start_time", columnList = "start_time")
   @Column(
     name = "start_time",
-    nullable = false
-  )
+    nullable = false)
   @Temporal(value = TemporalType.TIMESTAMP)
   @Convert(converter = classOf[InstantConverter])
   var start: Instant = _
@@ -74,8 +65,7 @@ class Video extends HasUUID with HasOptimisticLock {
   @SerializedName(value = "duration_millis")
   @Column(
     name = "duration_millis",
-    nullable = true
-  )
+    nullable = true)
   var duration: Duration = _
 
   @Expose(serialize = false)
@@ -90,8 +80,7 @@ class Video extends HasUUID with HasOptimisticLock {
     cascade = Array(CascadeType.ALL),
     fetch = FetchType.EAGER,
     mappedBy = "video",
-    orphanRemoval = true
-  )
+    orphanRemoval = true)
   protected var javaVideoReferences: JList[VideoReference] = new JArrayList[VideoReference]
 
   def addVideoReference(videoView: VideoReference): Unit = {

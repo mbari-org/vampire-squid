@@ -10,8 +10,7 @@ case class VideoSequence(
     uuid: UUID,
     name: String,
     cameraID: String,
-    lastUpdated: Instant = Instant.now()
-) extends PersistentObject[UUID] {
+    lastUpdated: Instant = Instant.now()) extends PersistentObject[UUID] {
   override def primaryKey: Option[UUID] = Option(uuid)
 }
 

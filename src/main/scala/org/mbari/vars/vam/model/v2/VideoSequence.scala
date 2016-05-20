@@ -14,5 +14,4 @@ case class VideoSequence(
   uuid: UUID,
   name: String,
   cameraID: String,
-  videos: Seq[Video]
-) extends PersistentEntity
+  videos: Seq[Video]) extends PersistentEntity

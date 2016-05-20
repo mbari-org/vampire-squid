@@ -47,8 +47,7 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
 
     val videoSequences = findByNamedQuery(
       "VideoSequence.findBetweenDates",
-      Map("startDate" -> startDate, "endDate" -> endDate)
-    )
+      Map("startDate" -> startDate, "endDate" -> endDate))
 
     if (log.isDebugEnabled) {
       val info = videoSequences.flatMap(_.videos)
@@ -74,8 +73,7 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
     val endDate = timestamp.plus(halfRange)
     val videoSequences = findByNamedQuery(
       "VideoSequence.findByNameAndBetweenDates",
-      Map("startDate" -> startDate, "endDate" -> endDate, "name" -> name)
-    )
+      Map("startDate" -> startDate, "endDate" -> endDate, "name" -> name))
 
     val hasTimestamp = containsTimestamp(_: VideoSequence, timestamp) // Partially apply the function to timestamp
 
@@ -89,8 +87,7 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
 
     val videoSequences = findByNamedQuery(
       "VideoSequence.findByNameAndBetweenDates",
-      Map("startDate" -> startDate, "endDate" -> endDate, "cameraID" -> cameraID)
-    )
+      Map("startDate" -> startDate, "endDate" -> endDate, "cameraID" -> cameraID))
 
     val hasTimestamp = containsTimestamp(_: VideoSequence, timestamp) // Partially apply the function to timestamp
 

@@ -19,8 +19,7 @@ case class CreateVideo(
     videoSequence: UUID,
     name: String,
     start: Instant,
-    duration: Duration
-) extends OptionalVideoProperties with Msg {
+    duration: Duration) extends OptionalVideoProperties with Msg {
   require(name != null, "Name property can not be null")
   require(videoSequence != null, "VideoSequence (UUID) can not be null")
 }
@@ -40,13 +39,11 @@ case class UpdateVideoByUUID(
   name: String,
   start: Instant,
   duration: Duration,
-  videoSequence: UUID = null
-) extends OptionalVideoProperties with Msg
+  videoSequence: UUID = null) extends OptionalVideoProperties with Msg
 
 case class UpdateVideoByName(
   name: String,
   start: Instant,
   duration: Duration,
-  videoSequence: UUID = null
-) extends OptionalVideoProperties with Msg
+  videoSequence: UUID = null) extends OptionalVideoProperties with Msg
 

@@ -15,8 +15,7 @@ case class VideoView(
   width: Int,
   height: Int,
   video: UUID,
-  lastUpdated: Instant = Instant.now()
-) extends PersistentEntity
+  lastUpdated: Instant = Instant.now()) extends PersistentEntity
 
 object VideoView {
 
@@ -29,7 +28,6 @@ object VideoView {
     audioCodec: String,
     width: Int,
     height: Int,
-    video: UUID
-  ): VideoView = VideoView(UUID.randomUUID(), uri, container, videoCodec, audioCodec, width, height, video)
+    video: UUID): VideoView = VideoView(UUID.randomUUID(), uri, container, videoCodec, audioCodec, width, height, video)
 
 }

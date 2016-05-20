@@ -27,8 +27,7 @@ class GsonSpec extends FlatSpec with Matchers {
   it should "serialize a VideoSequence with Videos" in {
     val videoSequence = VideoSequence("Foo", "Bar", Seq(
       Video("bar1", Instant.now),
-      Video("bar1", Instant.now, Duration.ofSeconds(23))
-    ))
+      Video("bar1", Instant.now, Duration.ofSeconds(23))))
 
     val json = Constants.GSON.toJson(videoSequence)
     log.info(json)
@@ -40,11 +39,8 @@ class GsonSpec extends FlatSpec with Matchers {
         VideoReference(new URI("uri:mbari:tape:T0123-04HD")),
         VideoReference(
           new URI("http://foo.bar/somevideo.mp4"),
-          "video/mp4", "hevc", "pcm_s24le", 1920, 1080
-        )
-      )),
-      Video("bar2", Instant.now, Duration.ofSeconds(23))
-    ))
+          "video/mp4", "hevc", "pcm_s24le", 1920, 1080))),
+      Video("bar2", Instant.now, Duration.ofSeconds(23))))
 
     val json = Constants.GSON.toJson(videoSequence)
     log.info(json)
