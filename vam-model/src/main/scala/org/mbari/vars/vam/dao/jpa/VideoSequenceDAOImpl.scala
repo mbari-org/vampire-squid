@@ -80,6 +80,7 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
     videoSequences.filter(hasTimestamp)
   }
 
+<<<<<<< HEAD:vam-model/src/main/scala/org/mbari/vars/vam/dao/jpa/VideoSequenceDAOImpl.scala
   override def findByCameraIDAndTimestamp(cameraID: String, timestamp: Instant, window: Duration): Iterable[VideoSequence] = {
     val halfRange = window.dividedBy(2)
     val startDate = timestamp.minus(halfRange)
@@ -94,6 +95,8 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
     videoSequences.filter(hasTimestamp)
   }
 
+=======
+>>>>>>> parent of 79579f3... Implementing messaging:src/main/scala/org/mbari/vars/vam/dao/jpa/VideoSequenceDAOImpl.scala
   override def deleteByPrimaryKey(primaryKey: UUID): Unit = {
     val videoSequence = findByPrimaryKey(primaryKey)
     videoSequence.foreach(vs => delete(vs))
@@ -108,5 +111,5 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
           (a.isBefore(timestamp) && b.isAfter(timestamp))
     })
 
-  override def findAll(): Iterable[VideoSequence] = findByNamedQuery("VideoSequence.findAll")
+  override def findAll(): Iterable[VideoSequence] = ???
 }

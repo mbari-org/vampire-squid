@@ -93,14 +93,7 @@ class VideoReferenceDAOSpec extends FlatSpec with Matchers {
     vs.size should be >= video1.videoReferences.size
   }
 
-  it should "findByVideoUUID" in {
-    val vs = Await.result(dao.runTransaction(d => d.findByVideoUUID(video1.uuid)), timeout)
-    vs.size should be >= video1.videoReferences.size
-  }
+  // TODO findByVideoUUID
 
-  it should "deleteByPrimaryKey" in {
-    Await.result(dao.runTransaction(d => d.deleteByPrimaryKey(videoReference1.uuid)), timeout)
-    val vr = Await.result(dao.runTransaction(d => d.findByUUID(videoReference1.uuid)), timeout)
-    vr shouldBe empty
-  }
+  // TODO deleteByPrimaryKey
 }

@@ -138,11 +138,25 @@ import com.typesafe.sbt.SbtScalariform
 
 SbtScalariform.scalariformSettings
 
+<<<<<<< HEAD
 SbtScalariform.ScalariformKeys.preferences in ThisBuild := SbtScalariform.ScalariformKeys.preferences.value
    .setPreference(IndentSpaces, 2)
    .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, false)
    .setPreference(DoubleIndentClassDeclaration, true)
    .setPreference(DanglingCloseParenthesis, Prevent)
+=======
+// -- SCALARIFORM
+// Format code on save with scalariform
+import scalariform.formatter.preferences._
+import com.typesafe.sbt.SbtScalariform
+
+SbtScalariform.scalariformSettings
+
+SbtScalariform.ScalariformKeys.preferences := SbtScalariform.ScalariformKeys.preferences.value
+  .setPreference(IndentSpaces, 2)
+  .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, false)
+  .setPreference(DoubleIndentClassDeclaration, true)
+>>>>>>> parent of 79579f3... Implementing messaging
 
 
 

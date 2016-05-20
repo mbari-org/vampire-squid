@@ -35,10 +35,16 @@ import scala.collection.JavaConverters._
     query = "SELECT v FROM VideoSequence v LEFT JOIN v.javaVideos w WHERE w.start BETWEEN :startDate AND :endDate"),
   new NamedQuery(
     name = "VideoSequence.findByNameAndBetweenDates",
+<<<<<<< HEAD:vam-model/src/main/scala/org/mbari/vars/vam/dao/jpa/VideoSequence.scala
     query = "SELECT v FROM VideoSequence v LEFT JOIN v.javaVideos w WHERE v.name = :name AND w.start BETWEEN :startDate AND :endDate"),
   new NamedQuery(
     name = "VideoSequence.findByCameraIDAndBetweenDates",
     query = "SELECT v FROM VideoSequence v LEFT JOIN v.javaVideos w WHERE v.cameraID = :cameraID AND w.start BETWEEN :startDate AND :endDate")))
+=======
+    query = "SELECT v FROM VideoSequence v LEFT JOIN v.javaVideos w WHERE v.name = :name AND w.start BETWEEN :startDate AND :endDate"
+  )
+))
+>>>>>>> parent of 79579f3... Implementing messaging:src/main/scala/org/mbari/vars/vam/dao/jpa/VideoSequence.scala
 class VideoSequence extends HasUUID with HasOptimisticLock {
 
   @Expose(serialize = true)
