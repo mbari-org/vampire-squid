@@ -1,10 +1,7 @@
 package org.mbari.vars.vam.dao
 
 import java.net.URI
-import java.time.{ Duration, Instant }
 import java.util.UUID
-
-import org.mbari.vars.vam.model.v1.VideoView
 
 /**
  *

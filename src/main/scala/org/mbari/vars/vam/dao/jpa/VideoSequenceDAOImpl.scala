@@ -1,9 +1,8 @@
 package org.mbari.vars.vam.dao.jpa
 
 import java.time.{ Duration, Instant }
-import java.util.{ Date, UUID }
+import java.util.UUID
 import javax.persistence.{ EntityManager, Transient }
-import javax.persistence.criteria.CriteriaBuilder
 
 import org.mbari.vars.vam.dao.VideoSequenceDAO
 import org.slf4j.LoggerFactory

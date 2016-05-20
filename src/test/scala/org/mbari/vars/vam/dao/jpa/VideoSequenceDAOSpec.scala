@@ -145,12 +145,14 @@ class VideoSequenceDAOSpec extends FlatSpec with Matchers {
   }
 
   it should "findByTimestamp" in {
-    val vs = Await.result(dao.runTransaction(d => d.findByTimestamp(timestamp.plusSeconds(600))), timeout)
+    val vs = Await.result(dao.runTransaction(d =>
+      d.findByTimestamp(timestamp.plusMillis(duration.dividedBy(2).toMillis), duration)), timeout)
     vs should have size (1)
   }
 
   it should "findByNameAndTimestamp" in {
-    val vs = Await.result(dao.runTransaction(d => d.findByNameAndTimestamp(name, timestamp.plusSeconds(600))), timeout)
+    val vs = Await.result(dao.runTransaction(d =>
+      d.findByNameAndTimestamp(name, timestamp.plusMillis(duration.dividedBy(2).toMillis), duration)), timeout)
     vs should have size (1)
   }
 
