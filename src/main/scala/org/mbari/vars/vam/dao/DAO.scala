@@ -19,5 +19,6 @@ trait DAO[A, B <: PersistentObject[A]] {
   def findByUUID(uuid: UUID): Option[B]
   def findAll(): Iterable[B]
   def runTransaction[R](fn: this.type => R)(implicit ec: ExecutionContext): Future[R]
+  def close(): Unit
 
 }

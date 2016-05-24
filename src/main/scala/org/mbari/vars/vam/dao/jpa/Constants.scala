@@ -6,6 +6,7 @@ import com.fatboyindustrial.gsonjavatime.Converters
 import com.google.gson.reflect.TypeToken
 import com.google.gson.{ FieldNamingPolicy, GsonBuilder }
 import java.lang.reflect.Type
+import java.text.DateFormat
 
 import com.typesafe.config.ConfigFactory
 import org.mbari.vars.vam.json.{ DurationConverter => GSONDurationConverter }
@@ -30,6 +31,7 @@ object Constants {
       .setPrettyPrinting()
       .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
       .excludeFieldsWithoutExposeAnnotation()
+      .setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
 
     Converters.registerInstant(gsonBuilder)
     val durationType: Type = new TypeToken[Duration]() {}.getType

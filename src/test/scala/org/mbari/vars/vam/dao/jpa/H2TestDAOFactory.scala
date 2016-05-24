@@ -4,7 +4,7 @@ import javax.persistence.EntityManagerFactory
 
 import com.typesafe.config.ConfigFactory
 import org.eclipse.persistence.config.TargetDatabase
-import org.mbari.vars.vam.dao.{ DAOFactory, VideoReferenceDAO }
+import org.mbari.vars.vam.dao.{ VideoReferenceDAO }
 
 /**
  *
@@ -12,7 +12,7 @@ import org.mbari.vars.vam.dao.{ DAOFactory, VideoReferenceDAO }
  * @author Brian Schlining
  * @since 2016-05-19T16:31:00
  */
-object H2TestDAOFactory extends DAOFactory[VideoSequence, Video, VideoReference] {
+object H2TestDAOFactory extends JPADAOFactory {
 
   private[this] val config = ConfigFactory.load()
   private[this] val testProps = Map(

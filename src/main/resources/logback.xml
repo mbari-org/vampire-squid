@@ -14,8 +14,9 @@
 
     <logger name="org.fusesource.scalate" level="WARN" />
     <logger name="httpclient.wire.header" level="WARN" />
+    <logger name="org.eclipse.jetty" level="WARN" />
 
-    <root level="WARN">
+    <root level="DEBUG">
         <appender-ref ref="CONSOLE"/>
     </root>
 

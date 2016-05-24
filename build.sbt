@@ -64,14 +64,14 @@ libraryDependencies ++= {
     "junit"                    % "junit"                          % junitVersion          % "test",
     "net.databinder.dispatch" %% "dispatch-core"                  % "0.11.3",
     "net.sourceforge.jtds"     % "jtds"                           % jtdsVersion,
-    "org.apache.derby"         % "derby"                          % derbyVersion          % "test",
-    "org.apache.derby"         % "derbyclient"                    % derbyVersion          % "test",
-    "org.apache.derby"         % "derbynet"                       % derbyVersion          % "test",
+    "org.apache.derby"         % "derby"                          % derbyVersion, //          % "test",
+    "org.apache.derby"         % "derbyclient"                    % derbyVersion, //          % "test",
+    "org.apache.derby"         % "derbynet"                       % derbyVersion, //          % "test",
     "org.eclipse.jetty"        % "jetty-server"                   % jettyVersion          % "container;compile;test",
     "org.eclipse.jetty"        % "jetty-servlets"                 % jettyVersion          % "container;compile;test",
     "org.eclipse.jetty"        % "jetty-webapp"                   % jettyVersion          % "container;compile;test",
     "org.eclipse.persistence"  % "eclipselink"                    % eclipselinkVersion,
-    "org.json4s"              %% "json4s-native"                  % "3.3.0",
+    "org.json4s"              %% "json4s-jackson"                  % "3.3.0",
     "org.scalatest"           %% "scalatest"                      % scalaTestVersion      % "test",
     "org.scalatra"            %% "scalatra"                       % scalatraVersion,
     "org.scalatra"            %% "scalatra-json"                  % scalatraVersion,
@@ -86,6 +86,7 @@ libraryDependencies ++= {
 }
 
 resolvers in ThisBuild ++= Seq(Resolver.mavenLocal,
+    Classpaths.typesafeReleases,
     "Sonatype OSS Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/",
     "Sonatype OSS Releases" at "http://oss.sonatype.org/content/repositories/releases/",
     "hohonuuli-bintray" at "http://dl.bintray.com/hohonuuli/maven")

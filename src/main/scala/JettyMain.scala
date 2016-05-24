@@ -24,6 +24,7 @@ object JettyMain {
   }
 
   def main(args: Array[String]) = {
+    System.setProperty("user.timezone", "UTC")
     val server: Server = new Server
     println("starting jetty")
 
