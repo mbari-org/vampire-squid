@@ -4,11 +4,11 @@ import java.util.UUID
 
 import org.mbari.vars.vam.controllers.VideoSequenceController
 import org.mbari.vars.vam.dao.jpa.VideoSequence
-import org.scalatra.swagger.{ Swagger }
+import org.scalatra.swagger.{DataType, ParamType, Parameter, Swagger}
 import org.slf4j.LoggerFactory
 import org.scalatra._
 
-import scala.concurrent.{ ExecutionContext }
+import scala.concurrent.ExecutionContext
 import scala.collection.JavaConverters._
 
 /**
@@ -21,7 +21,7 @@ class VideoSequenceV1Api(controller: VideoSequenceController)(implicit val swagg
     extends APIStack {
 
   private[this] val log = LoggerFactory.getLogger(getClass)
-  private[this] val textHeader = Map("Content-Type" -> "text/plain")
+  //private[this] val textHeader = Map("Content-Type" -> "text/plain")
 
   override protected def applicationDescription: String = "Video Sequence API (v1)"
 
@@ -48,7 +48,7 @@ class VideoSequenceV1Api(controller: VideoSequenceController)(implicit val swagg
     val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest("Please provide a valid UUID")))
     controller.findByUUID(uuid).map({
       case None => halt(NotFound(
-        headers = textHeader,
+        body = "{}",
         reason = s"A video-sequence with a UUID of $uuid was not found in the database"))
       case Some(vs) => controller.toJson(vs)
     })
@@ -63,35 +63,51 @@ class VideoSequenceV1Api(controller: VideoSequenceController)(implicit val swagg
     val name = params("name")
     controller.findByName(name).map({
       case None => {
-        halt(NotFound(s"A video-sequence with a name of '$name' was not found in the database", headers = textHeader))
+        halt(NotFound(body = "{}", reason = s"A video-sequence with a name of '$name' was not found in the database"))
       }
       case Some(vs) => controller.toJson(vs)
     })
   }
 
   val vsPOST = (apiOperation[Unit]("createPOST")
-    summary "Create a video sequence"
-    parameters ())
+    summary "Create a video-sequence"
+    parameters (
+      Parameter("name", DataType.String, Some("The unique name of the video-sequence"), None, ParamType.Body, required = true),
+      Parameter("camera_id", DataType.String, Some("The name of the camera (e.g. Tiburon)"), None, ParamType.Body, required = true)
+      ))
 
   // TODO post should require authentication
-  post("/") {
-    val name = params.get("name").getOrElse(halt(BadRequest("A 'name' parameter is required", headers = textHeader)))
+  post("/", operation(vsPOST)) {
+    val name = params.get("name").getOrElse(halt(BadRequest(
+      body = "{}",
+      reason = "A 'name' parameter is required")))
     val cameraID = params.get("camera_id").getOrElse(halt(BadRequest("A 'camera_id' parameter is required")))
     controller.create(name, cameraID)
       .map(controller.toJson)
   }
 
   // TODO delete should require authentication
-  delete("/:uuid") {
-    val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest("A UUID parameter is required", headers = textHeader)))
+  val vsDELETE = (apiOperation[Unit]("videoSequenceDELETE")
+      summary "Delete a video-sequence"
+      parameters(
+        pathParam[UUID]("uuid").description("The UUID of the video-sequence to be deleteds")
+      ))
+
+  delete("/:uuid", operation(vsDELETE)) {
+    val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest(
+      body = "{}",
+      reason = "A UUID parameter is required")))
     controller.delete(uuid).map({
-      case true => halt(NoContent(reason = s"Success! Deleted video-sequence with UUID of $uuid", headers = textHeader))
-      case false => halt(NotFound(s"Failed. No video-sequence with UUID of $uuid was found.", headers = textHeader))
+      case true => halt(NoContent(reason = s"Success! Deleted video-sequence with UUID of $uuid"))
+      case false => halt(NotFound(reason = s"Failed. No video-sequence with UUID of $uuid was found."))
     })
   }
 
-  // TODO put should update values
+  // TODO put should update values. Should require authentication
   put("/:uuid") {
+    val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest(
+      body = "{}",
+      reason = "A UUID parameter is required")))
 
   }
 
