@@ -20,6 +20,13 @@ import scala.util.Try
 @Entity(name = "Video")
 @Table(name = "video")
 @EntityListeners(value = Array(classOf[TransactionLogger]))
+@NamedNativeQueries(Array(
+  new NamedNativeQuery(
+    name = "Video.findAllNames",
+    query = "SELECT name FROM video ORDER BY name"),
+  new NamedNativeQuery(
+    name = "Video.findAllNamesAndStartDates",
+    query = "SELECT name, start_time FROM video ORDER BY start_time")))
 @NamedQueries(Array(
   new NamedQuery(
     name = "Video.findAll",

@@ -1,10 +1,13 @@
 package org.mbari.vars.vam.dao.jpa
 
+import java.sql.Timestamp
 import java.time.{ Duration, Instant }
 import java.util.{ Date, UUID }
 import javax.persistence.EntityManager
 
 import org.mbari.vars.vam.dao.VideoDAO
+
+import scala.collection.JavaConverters._
 
 /**
  *
@@ -35,6 +38,9 @@ class VideoDAOImpl(entityManager: EntityManager)
     videos.filter(hasTimestamp)
   }
 
+  override def findBetweenTimestamps(t0: Instant, t1: Instant): Iterable[Video] =
+    findByNamedQuery("Video.findBetweenDates", Map("startDate" -> t0, "endDate" -> t1))
+
   override def findAll(): Iterable[Video] = findByNamedQuery("Video.findAll")
 
   override def deleteByPrimaryKey(primaryKey: UUID): Unit = {
@@ -49,4 +55,17 @@ class VideoDAOImpl(entityManager: EntityManager)
       endDate.equals(timestamp) ||
       startDate.isBefore(timestamp) && endDate.isAfter(timestamp)
   }
+
+  override def findAllNames(): Iterable[String] =
+    entityManager.createNamedQuery("Video.findAllNames")
+      .getResultList
+      .asScala
+      .map(_.toString)
+
+  override def findAllNamesAndTimestamps(): Iterable[(String, Instant)] =
+    entityManager.createNamedQuery("Video.findAllNamesAndStartDates")
+      .getResultList
+      .asScala
+      .map(r => r.asInstanceOf[Array[Any]])
+      .map(r => r(0).toString -> r(1).asInstanceOf[Timestamp].toInstant)
 }

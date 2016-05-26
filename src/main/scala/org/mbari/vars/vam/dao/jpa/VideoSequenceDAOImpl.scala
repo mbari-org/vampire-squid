@@ -8,6 +8,7 @@ import org.mbari.vars.vam.dao.VideoSequenceDAO
 import org.slf4j.LoggerFactory
 
 import scala.util.Try
+import scala.collection.JavaConverters._
 
 /**
  *
@@ -108,4 +109,16 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
     })
 
   override def findAll(): Iterable[VideoSequence] = findByNamedQuery("VideoSequence.findAll")
+
+  override def findAllNames(): Iterable[String] =
+    entityManager.createNamedQuery("VideoSequence.findAllNames")
+      .getResultList
+      .asScala
+      .map(_.toString)
+
+  override def findAllCameraIDs(): Iterable[String] =
+    entityManager.createNamedQuery("VideoSequence.findAllCameraIDs")
+      .getResultList
+      .asScala
+      .map(_.toString)
 }

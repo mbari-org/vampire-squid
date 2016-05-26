@@ -1,10 +1,11 @@
 package org.mbari.vars.vam.dao.jpa
 
+import java.util.UUID
 import javax.persistence.EntityManagerFactory
 
 import com.typesafe.config.ConfigFactory
 import org.eclipse.persistence.config.TargetDatabase
-import org.mbari.vars.vam.dao.{ VideoReferenceDAO }
+import org.mbari.vars.vam.dao.{ DAO, VideoDAO, VideoReferenceDAO, VideoSequenceDAO }
 
 /**
  *
@@ -44,4 +45,31 @@ object H2TestDAOFactory extends JPADAOFactory {
   override def newVideoDAO(): VideoDAOImpl = new VideoDAOImpl(entityManagerFactory.createEntityManager())
 
   override def newVideoReferenceDAO(): VideoReferenceDAO[VideoReference] = new VideoReferenceDAOImpl(entityManagerFactory.createEntityManager())
+
+  /**
+   * Create a new DAO that share the underlying connection (e.g. EntityManager)
+   *
+   * @param dao
+   * @return
+   */
+  override def newVideoDAO(dao: DAO[UUID, _]): VideoDAO[Video] =
+    new VideoDAOImpl(dao.asInstanceOf[BaseDAO[UUID, _]].entityManager)
+
+  /**
+   * Create a new DAO that share the underlying connection (e.g. EntityManager)
+   *
+   * @param dao
+   * @return
+   */
+  override def newVideoSequenceDAO(dao: DAO[UUID, _]): VideoSequenceDAO[VideoSequence] =
+    new VideoSequenceDAOImpl(dao.asInstanceOf[BaseDAO[UUID, _]].entityManager)
+
+  /**
+   * Create a new DAO that share the underlying connection (e.g. EntityManager)
+   *
+   * @param dao
+   * @return
+   */
+  override def newVideoReferenceDAO(dao: DAO[UUID, _]): VideoReferenceDAO[VideoReference] =
+    new VideoReferenceDAOImpl(dao.asInstanceOf[BaseDAO[UUID, _]].entityManager)
 }

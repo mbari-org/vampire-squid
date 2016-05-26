@@ -17,6 +17,13 @@ import scala.collection.JavaConverters._
 @Entity(name = "VideoSequence")
 @Table(name = "video_sequence")
 @EntityListeners(value = Array(classOf[TransactionLogger]))
+@NamedNativeQueries(Array(
+  new NamedNativeQuery(
+    name = "VideoSequence.findAllNames",
+    query = "SELECT name FROM video_sequence"),
+  new NamedNativeQuery(
+    name = "VideoSequence.findAllCameraIDs",
+    query = "SELECT DISTINCT camera_id FROM video_sequence")))
 @NamedQueries(Array(
   new NamedQuery(
     name = "VideoSequence.findAll",

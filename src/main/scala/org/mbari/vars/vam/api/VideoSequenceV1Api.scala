@@ -1,10 +1,12 @@
 package org.mbari.vars.vam.api
 
+import java.time.{ Duration, Instant }
 import java.util.UUID
+import java.util.{ HashMap => JHashMap }
 
 import org.mbari.vars.vam.controllers.VideoSequenceController
 import org.mbari.vars.vam.dao.jpa.VideoSequence
-import org.scalatra.swagger.{DataType, ParamType, Parameter, Swagger}
+import org.scalatra.swagger.{ DataType, ParamType, Parameter, Swagger }
 import org.slf4j.LoggerFactory
 import org.scalatra._
 
@@ -69,12 +71,34 @@ class VideoSequenceV1Api(controller: VideoSequenceController)(implicit val swagg
     })
   }
 
+  get("/names") {
+    controller.findAllNames
+      .map(ns => Map("names" -> ns.asJava).asJava) // Transform to Java map for GSON
+      .map(controller.toJson)
+  }
+
+  get("/cameras") {
+    controller.findAllCameraIDs
+      .map(cids => Map("camera_ids" -> cids.asJava).asJava) // Transform to Java map for GSON
+      .map(controller.toJson)
+  }
+
+  get("/camera/:camera_id/:timestamp") {
+    val cameraID = params.get("camera_id").getOrElse(halt(BadRequest(
+      body = "{}",
+      reason = " A 'camera_id' parameter is required")))
+    val timestamp = params.getAs[Instant]("timestamp").getOrElse(halt(BadRequest(
+      body = "{}",
+      reason = "A 'timestamp' parameter is required")))
+    // TODO add optional window parameter
+    controller.findByCameraIDAndTimestamp(cameraID, timestamp, Duration.ofMinutes(30))
+  }
+
   val vsPOST = (apiOperation[Unit]("createPOST")
     summary "Create a video-sequence"
     parameters (
       Parameter("name", DataType.String, Some("The unique name of the video-sequence"), None, ParamType.Body, required = true),
-      Parameter("camera_id", DataType.String, Some("The name of the camera (e.g. Tiburon)"), None, ParamType.Body, required = true)
-      ))
+      Parameter("camera_id", DataType.String, Some("The name of the camera (e.g. Tiburon)"), None, ParamType.Body, required = true)))
 
   // TODO post should require authentication
   post("/", operation(vsPOST)) {
@@ -88,10 +112,9 @@ class VideoSequenceV1Api(controller: VideoSequenceController)(implicit val swagg
 
   // TODO delete should require authentication
   val vsDELETE = (apiOperation[Unit]("videoSequenceDELETE")
-      summary "Delete a video-sequence"
-      parameters(
-        pathParam[UUID]("uuid").description("The UUID of the video-sequence to be deleteds")
-      ))
+    summary "Delete a video-sequence"
+    parameters (
+      pathParam[UUID]("uuid").description("The UUID of the video-sequence to be deleteds")))
 
   delete("/:uuid", operation(vsDELETE)) {
     val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest(

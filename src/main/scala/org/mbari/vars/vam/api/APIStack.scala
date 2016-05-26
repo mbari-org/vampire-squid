@@ -1,5 +1,6 @@
 package org.mbari.vars.vam.api
 
+import java.time.Instant
 import java.util.UUID
 
 import org.scalatra.{ ContentEncodingSupport, FutureSupport, ScalatraServlet }
@@ -21,6 +22,10 @@ abstract class APIStack extends ScalatraServlet
 
   implicit val stringToUUID = new TypeConverter[String, UUID] {
     override def apply(s: String): Option[UUID] = Try(UUID.fromString(s)).toOption
+  }
+
+  implicit val stringToInstant = new TypeConverter[String, Instant] {
+    override def apply(s: String): Option[Instant] = Try(Instant.parse(s)).toOption
   }
 
 }

@@ -15,5 +15,8 @@ trait VideoDAO[T <: PersistentObject[UUID]] extends DAO[UUID, T] {
   def findByName(name: String): Option[T]
   def findByVideoSequenceUUID(uuid: UUID): Iterable[T]
   def findByVideoReferenceUUID(uuid: UUID): Option[T]
+  def findAllNames(): Iterable[String]
+  def findAllNamesAndTimestamps(): Iterable[(String, Instant)]
+  def findBetweenTimestamps(t0: Instant, t1: Instant): Iterable[T]
 
 }
