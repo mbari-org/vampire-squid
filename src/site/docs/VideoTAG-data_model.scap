@@ -11,14 +11,14 @@
 - uuid: UUID
 - videoSequence: UUID
 - start: Instant
-- duration: Double
+- duration: Double?
 - name: String
-- description: String
+- description: String?
 - lastUpdated: Instant</String>
-            <ConnectedNoteIDs>1-2, 6</ConnectedNoteIDs>
+            <ConnectedNoteIDs>1-2, 6, 34</ConnectedNoteIDs>
             <PointsToNoteIDs>6</PointsToNoteIDs>
         </Note>
-        <Note ID="1" FontSize="12.0" Position="448.476562,364.613281" Width="167.0">
+        <Note ID="1" FontSize="12.0" Position="448.0,365.0" Width="167.0">
             <Appearance>
                 <Alignment>Left</Alignment>
                 <Border Weight="1">0.477193 0.557066 0.76433</Border>
@@ -28,15 +28,17 @@
 - uuid: UUID
 - video: UUID
 - uri: URI
-- container: Mimetype
-- videoCodec: String
-- audioCodec: String
-- width: Integer
-- height: Integer
-- frameRate: Rational
-- size: Long
+- md5: MD5?
+- description: String?
+- container: Mimetype?
+- videoCodec: String?
+- audioCodec: String?
+- width: Integer?
+- height: Integer?
+- frameRate: Rational?
+- size: Long?
 - lastUpdated: Instant</String>
-            <ConnectedNoteIDs>0, 10-12, 33</ConnectedNoteIDs>
+            <ConnectedNoteIDs>0, 10-12, 33, 35</ConnectedNoteIDs>
             <PointsToNoteIDs>0</PointsToNoteIDs>
         </Note>
         <Note ID="2" FontSize="12.0" Position="760.0,163.0" Width="298.0">
@@ -66,7 +68,7 @@ What type to use for duration? What do we do if we don’t have a start date for
 - uuid: UUID
 - cameraID: String
 - name: String
-- description: String
+- description: String?
 - lastUpdated: Instant</String>
             <ConnectedNoteIDs>0, 8</ConnectedNoteIDs>
         </Note>
@@ -126,7 +128,7 @@ Will need to import existing tape numbers from VARS into MAM.</String>
 - x: Integer 
 - y: Integer
 - lastUpdated: Instant</String>
-            <ConnectedNoteIDs>1, 13, 24, 28</ConnectedNoteIDs>
+            <ConnectedNoteIDs>1, 13, 24, 28, 36</ConnectedNoteIDs>
             <PointsToNoteIDs>1</PointsToNoteIDs>
         </Note>
         <Note ID="13" FontSize="12.0" Position="517.0,968.0" Width="167.0">
@@ -203,7 +205,7 @@ Will need to import existing tape numbers from VARS into MAM.</String>
 - chiefScientist: String
 - notes: String</String>
         </Note>
-        <Note ID="23" FontSize="12.0" Position="29.0,574.0" Width="437.0">
+        <Note ID="23" FontSize="12.0" Position="35.640625,680.070312" Width="437.0">
             <Appearance>
                 <Alignment>Left</Alignment>
             </Appearance>
@@ -216,7 +218,7 @@ Things no longer stored in VARS:
 - Position and physical data, those should be fetched as needed from the appropriate service. (no more merges)</String>
             <ConnectedNoteIDs>16</ConnectedNoteIDs>
         </Note>
-        <Note ID="24" FontSize="12.0" Position="9.0,776.0" Width="401.0">
+        <Note ID="24" FontSize="12.0" Position="33.527344,831.558594" Width="401.0">
             <Appearance>
                 <Alignment>Left</Alignment>
             </Appearance>
@@ -234,7 +236,7 @@ Although an observation is tied to a particular videoView, it can related to oth
 Note that there may be more than one VideoFrame registred to an index. For example, an uncompressed PNG, a JPG with overlay and a watermarked JPG with overlay</String>
             <ConnectedNoteIDs>11</ConnectedNoteIDs>
         </Note>
-        <Note ID="26" FontSize="12.0" Position="1164.0,579.0" Width="261.0">
+        <Note ID="26" FontSize="12.0" Position="1264.585938,571.707031" Width="261.0">
             <Appearance>
                 <Alignment>Left</Alignment>
                 <Border Weight="1">0.331867 0.609932 0.356197</Border>
@@ -327,18 +329,50 @@ This MIGHT not be performant enough though.</String>
             <ConnectedNoteIDs>30</ConnectedNoteIDs>
             <PointsToNoteIDs>30</PointsToNoteIDs>
         </Note>
-        <Note ID="33" FontSize="12.0" Position="755.0,459.042969" Width="200.0">
+        <Note ID="33" FontSize="12.0" Position="755.0,459.0" Width="200.0">
             <Appearance>
                 <Alignment>Left</Alignment>
             </Appearance>
             <String>It’s a pain to store a rational number. So just store an estimate (double)
 
-size is in bytes</String>
+size is in bytes
+
+MD5 is useful to find metadata to a file in hand (e.g. reverse lookup)</String>
             <ConnectedNoteIDs>1</ConnectedNoteIDs>
+        </Note>
+        <Note ID="34" FontSize="12.0" Position="999.355469,478.039062" Width="200.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+            </Appearance>
+            <String>What do we do with adhoc videos/edited videos that do not have a start time or are non-sequential? I assume we would still want to manage them, but maybe not in this asset server</String>
+            <ConnectedNoteIDs>0</ConnectedNoteIDs>
+        </Note>
+        <Note ID="35" FontSize="12.0" Position="117.878906,604.574219" Width="200.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+            </Appearance>
+            <String>Do we need to explicitly track which videoReference is the Master/Mezzanine?</String>
+            <ConnectedNoteIDs>1</ConnectedNoteIDs>
+        </Note>
+        <Note ID="36" FontSize="12.0" Position="255.386719,1007.960938" Width="200.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+            </Appearance>
+            <String>Should annotation position be stored as an association?</String>
+            <ConnectedNoteIDs>12</ConnectedNoteIDs>
+        </Note>
+        <Note ID="37" FontSize="12.0" Position="1242.007812,998.765625" Width="420.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+                <TextColor>1.0 0.0 0.0</TextColor>
+                <Border Weight="1">0.477193 0.557066 0.76433</Border>
+                <Fill>0.840969 0.866828 0.925903</Fill>
+            </Appearance>
+            <String>Should we generate a Close caption stream to display annotations when the video is played back</String>
         </Note>
     </Notes>
     <BackgroundShapes>
-        <Shape ID="3" Sticky="Yes" Position="117.0,40.0" Width="626.0" Height="516.0">
+        <Shape ID="3" Sticky="Yes" Position="117.0,40.0" Width="626.0" Height="545.0">
             <Appearance>
                 <Border Weight="1"></Border>
                 <Fill>0.99454 0.964232 0.652697</Fill>

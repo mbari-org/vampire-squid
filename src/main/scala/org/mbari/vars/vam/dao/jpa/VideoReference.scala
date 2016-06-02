@@ -27,7 +27,7 @@ import scala.util.Try
   new NamedQuery(
     name = "VideoReference.findByURI",
     query = "SELECT v FROM VideoReference v WHERE v.uri = :uri")))
-class VideoReference extends HasUUID with HasOptimisticLock {
+class VideoReference extends HasUUID with HasOptimisticLock with HasDescription {
 
   @Expose(serialize = true)
   @Basic(optional = false)
@@ -87,6 +87,9 @@ class VideoReference extends HasUUID with HasOptimisticLock {
   var video: Video = _
 
   def mimetype: Option[MimeType] = Try(new MimeType(container)).toOption
+
+  // TODO implement storage of MD5 hash of video files bytes so that we can do reverse lookups using
+  // a video file to find it's metadata.
 
 }
 

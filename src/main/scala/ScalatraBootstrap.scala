@@ -1,6 +1,6 @@
 import javax.servlet.ServletContext
 
-import org.mbari.vars.vam.api.{ VAMSwagger, VideoSequenceV1Api }
+import org.mbari.vars.vam.api.{ VAMSwagger, VideoSequenceV1Api, VideoV1Api }
 import org.mbari.vars.vam.controllers.VideoSequenceController
 import org.mbari.vars.vam.dao.jpa.DerbyDAOFactory
 import org.scalatra.LifeCycle
@@ -38,8 +38,10 @@ class ScalatraBootstrap extends LifeCycle {
     val daoFactory = DerbyDAOFactory
     val videoSequenceController = new VideoSequenceController(daoFactory)
     val videoSequenceV1Api = new VideoSequenceV1Api(videoSequenceController)
+    val videoV1Api = new VideoV1Api()
 
     context.mount(videoSequenceV1Api, "/v1/videosequence")
+    context.mount(videoV1Api, "/v1/video")
     context.mount(new VAMSwagger, "/api-docs")
 
   }

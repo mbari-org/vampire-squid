@@ -46,7 +46,7 @@ import scala.collection.JavaConverters._
   new NamedQuery(
     name = "VideoSequence.findByCameraIDAndBetweenDates",
     query = "SELECT v FROM VideoSequence v LEFT JOIN v.javaVideos w WHERE v.cameraID = :cameraID AND w.start BETWEEN :startDate AND :endDate")))
-class VideoSequence extends HasUUID with HasOptimisticLock {
+class VideoSequence extends HasUUID with HasOptimisticLock with HasDescription {
 
   @Expose(serialize = true)
   @Basic(optional = false)

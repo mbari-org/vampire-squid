@@ -44,7 +44,6 @@ class VideoSequenceController(val daoFactory: JPADAOFactory) extends BaseControl
           val vs = VideoSequence(name, cameraID)
           dao.create(vs)
           vs
-        //dao.findByName(vs.name).get
       }
     }
     exec(fn)

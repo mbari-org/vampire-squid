@@ -106,6 +106,7 @@ class VideoSequenceV1Api(controller: VideoSequenceController)(implicit val swagg
       body = "{}",
       reason = "A 'name' parameter is required")))
     val cameraID = params.get("camera_id").getOrElse(halt(BadRequest("A 'camera_id' parameter is required")))
+    val description = params.get("description")
     controller.create(name, cameraID)
       .map(controller.toJson)
   }

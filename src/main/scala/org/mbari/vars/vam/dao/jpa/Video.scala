@@ -46,7 +46,7 @@ import scala.util.Try
   new NamedQuery(
     name = "Video.findBetweenDates",
     query = "SELECT v FROM Video v WHERE v.start BETWEEN :startDate AND :endDate")))
-class Video extends HasUUID with HasOptimisticLock {
+class Video extends HasUUID with HasOptimisticLock with HasDescription {
 
   @Expose(serialize = true)
   @Basic(optional = false)
