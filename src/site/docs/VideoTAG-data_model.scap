@@ -218,7 +218,7 @@ Things no longer stored in VARS:
 - Position and physical data, those should be fetched as needed from the appropriate service. (no more merges)</String>
             <ConnectedNoteIDs>16</ConnectedNoteIDs>
         </Note>
-        <Note ID="24" FontSize="12.0" Position="34.0,832.0" Width="401.0">
+        <Note ID="24" FontSize="12.0" Position="35.0,831.304688" Width="401.0">
             <Appearance>
                 <Alignment>Left</Alignment>
             </Appearance>
@@ -372,7 +372,7 @@ MD5 is useful to find metadata to a file in hand (e.g. reverse lookup)</String>
         </Note>
     </Notes>
     <BackgroundShapes>
-        <Shape ID="3" Sticky="Yes" Position="117.0,40.0" Width="626.0" Height="545.0">
+        <Shape ID="3" Sticky="Yes" Position="117.0,44.0" Width="626.0" Height="541.0">
             <Appearance>
                 <Border Weight="1"></Border>
                 <Fill>0.99454 0.964232 0.652697</Fill>

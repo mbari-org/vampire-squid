@@ -23,57 +23,57 @@ vs_url = base_url + "videosequence"
 v_url = base_url + "video"
 vr_url = base_url + "videoreference"
 
-vs1 = read(vs_url, 
-        data = {"name": "T0097", 
+vs1 = read(vs_url,
+        data = {"name": "T0097",
                 "camera_id": "Tiburon"})
 v1_1 = read(v_url,
-        data = {"name": "T0097-01", 
+        data = {"name": "T0097-01",
                 "start": "2016-04-05T00:01:00Z",
-                "duration_millis": 15 * 60 * 1000, 
+                "duration_millis": 15 * 60 * 1000,
                 "video_sequence_uuid": vs1["uuid"]})
 vr1_1_1 = read(vr_url,
         data = {"uri": "http://www.mbari.org/foo/bar/T0097_20160405T000100Z.mov",
                 "video_uuid": v1_1["uuid"],
-                "container": "video/quicktime", 
+                "container": "video/quicktime",
                 "videocodec": "ProRes HQ",
                 "audioCodec": "AAC",
-                "width": 1920, 
+                "width": 1920,
                 "height": 1080,
-                "frame_rate": 59.97})                
+                "frame_rate": 59.97})
 vr1_1_2 = read(vr_url,
         data = {"uri": "http://www.mbari.org/foo/bar/T0097_20160405T000100Z.mp4",
                 "video_uuid": v1_1["uuid"],
                 "container": "video/mp4",
-                "videocodec": "H.264", 
+                "videocodec": "H.264",
                 "audioCodec": "AAC",
-                "width": 1920, 
+                "width": 1920,
                 "height": 1080,
-                "frame_rate": 59.97}) 
-        
+                "frame_rate": 59.97})
+
 v1_2 = read(v_url,
-        data = {"name": "T0097-02", 
+        data = {"name": "T0097-02",
                 "start": "2016-04-05T00:01:15Z",
-                "duration_millis": 15 * 60 * 1000, 
+                "duration_millis": 15 * 60 * 1000,
                 "video_sequence_uuid": vs1["uuid"],
                 "description": "This video is cool"})
 vr1_2_1 = read(vr_url,
         data = {"uri": "http://www.mbari.org/foo/bar/T0097_20160405T000115Z.mov",
                 "video_uuid": v1_2["uuid"],
-                "container": "video/quicktime", 
+                "container": "video/quicktime",
                 "videocodec": "ProRes HQ",
                 "audioCodec": "AAC",
-                "width": 1920, 
-                "height": 1080,
-                "frame_rate": 59.97})                
-vr1_2_2 = read(vr_url,
-        data = {"uri": "http://www.mbari.org/foo/bar/T0097_20160405T000115Z.mp4",
-                "video_uuid": v1_2["uuid"],
-                "container": "video/mp4",
-                "videocodec": "H.264", 
-                "audioCodec": "AAC",
-                "width": 1920, 
+                "width": 1920,
                 "height": 1080,
                 "frame_rate": 59.97})
+vr1_2_2 = read(vr_url,
+        data = {"uri": "http://www.mbari.org/foo/bar/T0097_20160405T000115Z.mp4",
+                "video_uuid":v1_2["uuid"],
+                "container":"video/mp4",
+                "videocodec":"H.264",
+                "audioCodec":"AAC",
+                "width":1920,
+                "height":1080,
+                "frame_rate":19})
 
 v1_3 = read(v_url,
             data = {"name": "T0097-01HD",
@@ -88,13 +88,66 @@ vr1_3_1 = read(vr_url,
                  "height": 1080,
                  "frame_rate": 29.97,
                  "description": "D5 Tape"})
-        
-         
-        
-vs2 = read(vs_url, 
+
+
+
+vs2 = read(vs_url,
         data = {"name": "V1234", "camera_id": "Ventana"})
-vs3 = read(vs_url, 
+v2_1 = read(v_url,
+            data = {"name": "V1234-01",
+                    "start": "2016-06-12T00:18:31Z",
+                    "duration_millis": 15 * 60 * 1000,
+                    "video_sequence_uuid": vs2["uuid"]})
+vr2_1_1 = read(vr_url,
+               data = {"uri": "http://www.mbari.org/foo/bar/V1234_20160612T001831.mov",
+                       "video_uuid": v2_1["uuid"],
+                       "container": "video/quicktime",
+                       "videocodec": "ProRes HQ",
+                       "audioCodec": "AAC",
+                       "width": 1920,
+                       "height": 1080,
+                       "frame_rate": 59.97})
+vr2_1_2 = read(vr_url,
+               data = {"uri": "http://www.mbari.org/foo/bar/V1234_20160612T001831.mp4",
+                       "video_uuid": v2_1["uuid"],
+                       "container": "video/mp4",
+                       "videocodec": "H.264",
+                       "audioCodec": "AAC",
+                       "width": 1920,
+                       "height": 1080,
+                       "frame_rate": 19})
+
+vs3 = read(vs_url,
         data = {"name": "V9931", "camera_id": "Ventana"})
-        
-
-
+v3_1 = read(v_url,
+            data = {"name": "V9931-01",
+                    "start": "2011-012-12T00:00:10Z",
+                    "duration_millis": 45 * 60 * 1000,
+                    "video_sequence_uuid": vs2["uuid"]})
+vr3_1_1 = read(vr_url,
+               data = {"uri": "http://www.mbari.org/foo/bar/V9931_201101212T000010Z.mov",
+                       "video_uuid": v3_1["uuid"],
+                       "container": "video/quicktime",
+                       "videocodec": "ProRes HQ",
+                       "audioCodec": "AAC",
+                       "width": 1920,
+                       "height": 1080,
+                       "frame_rate": 59.97})
+vr3_1_2 = read(vr_url,
+               data = {"uri": "http://www.mbari.org/foo/bar/V9931_201101212T000010Z.mp4",
+                       "video_uuid": v3_1["uuid"],
+                       "container": "video/mp4",
+                       "videocodec": "H.264",
+                       "audioCodec": "AAC",
+                       "width": 1920,
+                       "height": 1080,
+                       "frame_rate": 30})
+vr3_1_3 = read(vr_url,
+               data = {"uri": "http://www.mbari.org/foo/bar/V9931_201101212T000010Z_midres.mp4",
+                       "video_uuid": v3_1["uuid"],
+                       "container": "video/mp4",
+                       "videocodec": "H.264",
+                       "audioCodec": "AAC",
+                       "width": 720,
+                       "height": 640,
+                       "frame_rate": 19})
