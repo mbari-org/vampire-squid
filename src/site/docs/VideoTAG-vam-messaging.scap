@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <ScappleDocument Version="1.1" ID="FE22DD24-7CD8-4ED4-80E7-B42839139941">
     <Notes>
-        <Note ID="0" FontSize="12.0" Position="552.136719,903.519531" Width="125.0">
+        <Note ID="0" FontSize="12.0" Position="552.0,904.0" Width="125.0">
             <Appearance>
                 <Alignment>Left</Alignment>
                 <Border Weight="1">0.756763 0.785592 0.373258</Border>
@@ -37,7 +37,7 @@
                 <Fill>0.940019 0.892907 0.779716</Fill>
             </Appearance>
             <String>Find VideoSequence by name
-- name: String</String>
+- uuid: UUID</String>
         </Note>
         <Note ID="4" FontSize="12.0" Position="64.0,530.0" Width="251.0">
             <Appearance>
@@ -99,7 +99,7 @@
             <String>Delete Video by name
 - name: String</String>
         </Note>
-        <Note ID="11" FontSize="12.0" Position="63.136719,697.582031" Width="177.0">
+        <Note ID="11" FontSize="12.0" Position="63.0,698.0" Width="177.0">
             <Appearance>
                 <Alignment>Left</Alignment>
                 <Border Weight="1">0.290055 0.1523 0.182215</Border>
@@ -111,24 +111,11 @@
 - cameraID: string?
 - description: String?</String>
         </Note>
-        <Note ID="12" FontSize="12.0" Position="68.0,796.0" Width="184.0">
-            <Appearance>
-                <Alignment>Left</Alignment>
-                <Border Weight="1">0.290055 0.1523 0.182215</Border>
-                <Fill>0.940019 0.892907 0.779716</Fill>
-            </Appearance>
-            <String>Update VideoSequence by name
-- name: String
-- cameraID: String?
-- description: String?</String>
-            <ConnectedNoteIDs>13</ConnectedNoteIDs>
-        </Note>
         <Note ID="13" FontSize="12.0" Position="81.0,904.0" Width="200.0">
             <Appearance>
                 <Alignment>Left</Alignment>
             </Appearance>
             <String>Here the name is the search key, it is not being mutated in datastore</String>
-            <ConnectedNoteIDs>12</ConnectedNoteIDs>
         </Note>
         <Note ID="14" FontSize="12.0" Position="504.0,275.0" Width="119.0">
             <Appearance>
@@ -178,19 +165,6 @@
 - name: String?
 - description: String?
 - start: Instant?
-- duration: Duration?
-- videoSequenceUUID: UUID?</String>
-        </Note>
-        <Note ID="19" FontSize="12.0" Position="504.0,606.0" Width="171.0">
-            <Appearance>
-                <Alignment>Left</Alignment>
-                <Border Weight="1">0.290055 0.1523 0.182215</Border>
-                <Fill>0.940019 0.892907 0.779716</Fill>
-            </Appearance>
-            <String>Update Video by name
-- name: String
-- start: Instant?
-- description: String?
 - duration: Duration?
 - videoSequenceUUID: UUID?</String>
         </Note>
@@ -270,22 +244,6 @@
 - description: String?
 - videoUUID: UUID?</String>
         </Note>
-        <Note ID="28" FontSize="12.0" Position="848.0,759.710938" Width="169.0">
-            <Appearance>
-                <Alignment>Left</Alignment>
-                <Border Weight="1">0.290055 0.1523 0.182215</Border>
-                <Fill>0.940019 0.892907 0.779716</Fill>
-            </Appearance>
-            <String>Update VideoReference by uri
-- uri: URI
-- container: Mimetype?
-- videoCodec: String?
-- audioCodec: String?
-- width: Int?
-- height: Height?
-- description: String?
-- videoUUID: UUID?</String>
-        </Note>
         <Note ID="30" FontSize="28.0" Position="818.0,130.0" Width="361.0">
             <Appearance></Appearance>
             <String>VideoReference Messages</String>
@@ -301,6 +259,15 @@
             </Appearance>
             <String>Find by MD5 Hash
 - MD5 Hash</String>
+        </Note>
+        <Note ID="32" FontSize="12.0" Position="66.0,431.0" Width="168.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+                <Border Weight="1">0.290055 0.1523 0.182215</Border>
+                <Fill>0.940019 0.892907 0.779716</Fill>
+            </Appearance>
+            <String>Find VideoSequence by UUID
+- name: String</String>
         </Note>
     </Notes>
     <BackgroundShapes>
@@ -329,7 +296,7 @@
             <PointsToNoteIDs>0</PointsToNoteIDs>
         </Shape>
     </BackgroundShapes>
-    <AutoFit>0-6, 8-12, 14-19, 21-28, 30-31</AutoFit>
+    <AutoFit>0-6, 8-11, 14-18, 21-27, 30-32</AutoFit>
     <NoteStyles>
         <Style Name="Blue Bubble" ID="30639E0C-5E24-4C8F-B88C-ABA4190E801A" AffectFontStyle="No" AffectAlignment="No" AffectTextColor="No" AffectNoteBody="Yes" AffectFade="No">
             <BorderThickness>1</BorderThickness>

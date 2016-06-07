@@ -1,6 +1,7 @@
 package org.mbari.vars.vam.api
 
-import java.time.Instant
+import java.net.URI
+import java.time.{ Duration, Instant }
 import java.util.UUID
 
 import org.scalatra.{ ContentEncodingSupport, FutureSupport, ScalatraServlet }
@@ -26,6 +27,14 @@ abstract class APIStack extends ScalatraServlet
 
   implicit val stringToInstant = new TypeConverter[String, Instant] {
     override def apply(s: String): Option[Instant] = Try(Instant.parse(s)).toOption
+  }
+
+  implicit val stringToDuration = new TypeConverter[String, Duration] {
+    override def apply(s: String): Option[Duration] = Try(Duration.ofMillis(s.toLong)).toOption
+  }
+
+  implicit val stringToURI = new TypeConverter[String, URI] {
+    override def apply(s: String): Option[URI] = Try(URI.create(s)).toOption
   }
 
 }

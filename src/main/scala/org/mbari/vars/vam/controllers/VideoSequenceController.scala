@@ -36,7 +36,7 @@ class VideoSequenceController(val daoFactory: JPADAOFactory) extends BaseControl
   def findByCameraIDAndTimestamp(cameraID: String, timestamp: Instant, window: Duration)(implicit ec: ExecutionContext): Future[Seq[VideoSequence]] =
     exec(d => d.findByCameraIDAndTimestamp(cameraID, timestamp, window).toSeq)
 
-  def create(name: String, cameraID: String)(implicit ec: ExecutionContext): Future[VideoSequence] = {
+  def create(name: String, cameraID: String, description: Option[String] = None)(implicit ec: ExecutionContext): Future[VideoSequence] = {
     def fn(dao: VSDAO): VideoSequence = {
       dao.findByName(name) match {
         case Some(vs) => vs
@@ -62,14 +62,19 @@ class VideoSequenceController(val daoFactory: JPADAOFactory) extends BaseControl
     exec(fn)
   }
 
-  def update(uuid: UUID, name: String, cameraID: String)(implicit ec: ExecutionContext): Future[VideoSequence] = {
+  def update(
+    uuid: UUID,
+    name: Option[String] = None,
+    cameraID: Option[String] = None,
+    description: Option[String] = None)(implicit ec: ExecutionContext): Future[VideoSequence] = {
     def fn(dao: VSDAO): VideoSequence = {
       dao.findByUUID(uuid) match {
         case None =>
           throw new NotFoundInDatastoreException(s"No VideoSequence with UUID of $uuid was found in the database")
         case Some(vs) =>
-          vs.name = name
-          vs.cameraID = cameraID
+          name.foreach(n => vs.name = n)
+          cameraID.foreach(c => vs.cameraID = c)
+          description.foreach(d => vs.description = d)
           vs
       }
     }
@@ -77,11 +82,10 @@ class VideoSequenceController(val daoFactory: JPADAOFactory) extends BaseControl
   }
 
   private def exec[T](fn: VSDAO => T)(implicit ec: ExecutionContext): Future[T] = {
-    daoFactory.newVideoSequenceDAO().runTransaction(d => {
-      val t = fn(d)
-      d.close()
-      t
-    })
+    val dao = daoFactory.newVideoSequenceDAO()
+    val f = dao.runTransaction(fn)
+    f.onComplete(t => dao.close())
+    f
   }
 
 }

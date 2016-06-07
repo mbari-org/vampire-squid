@@ -96,7 +96,7 @@ Will need to import existing tape numbers from VARS into MAM.</String>
             </Appearance>
             <String>VideoFrame
 - uuid: UUID
-- videoView: UUID
+- videoReference: UUID
 - timecode: String
 - recordedDate: Instant
 - elapsedTime: Double
@@ -117,7 +117,7 @@ Will need to import existing tape numbers from VARS into MAM.</String>
             </Appearance>
             <String>Observation
 - uuid: UUID
-- videoView: UUID
+- videoReference: UUID
 - concept: String
 - timecode: String
 - recordedDate: Instant
@@ -205,7 +205,7 @@ Will need to import existing tape numbers from VARS into MAM.</String>
 - chiefScientist: String
 - notes: String</String>
         </Note>
-        <Note ID="23" FontSize="12.0" Position="35.640625,680.070312" Width="437.0">
+        <Note ID="23" FontSize="12.0" Position="36.0,680.0" Width="437.0">
             <Appearance>
                 <Alignment>Left</Alignment>
             </Appearance>
@@ -218,13 +218,13 @@ Things no longer stored in VARS:
 - Position and physical data, those should be fetched as needed from the appropriate service. (no more merges)</String>
             <ConnectedNoteIDs>16</ConnectedNoteIDs>
         </Note>
-        <Note ID="24" FontSize="12.0" Position="33.527344,831.558594" Width="401.0">
+        <Note ID="24" FontSize="12.0" Position="34.0,832.0" Width="401.0">
             <Appearance>
                 <Alignment>Left</Alignment>
             </Appearance>
             <String>An observation/videoFrame has 3 possible indices: timecode, recordedDate and elapsedTime. Another change is possibly to add a duration to an observation to track an object in the field of view.
 
-Although an observation is tied to a particular videoView, it can related to other videoViews of the same video through the MAM.</String>
+Although an observation is tied to a particular VideoReference, it can related to other VideoReferences of the same video through the MAM.</String>
             <ConnectedNoteIDs>12</ConnectedNoteIDs>
         </Note>
         <Note ID="25" FontSize="12.0" Position="1153.0,816.0" Width="338.0">
@@ -236,7 +236,7 @@ Although an observation is tied to a particular videoView, it can related to oth
 Note that there may be more than one VideoFrame registred to an index. For example, an uncompressed PNG, a JPG with overlay and a watermarked JPG with overlay</String>
             <ConnectedNoteIDs>11</ConnectedNoteIDs>
         </Note>
-        <Note ID="26" FontSize="12.0" Position="1264.585938,571.707031" Width="261.0">
+        <Note ID="26" FontSize="12.0" Position="1265.0,572.0" Width="261.0">
             <Appearance>
                 <Alignment>Left</Alignment>
                 <Border Weight="1">0.331867 0.609932 0.356197</Border>
@@ -281,7 +281,7 @@ This MIGHT not be performant enough though.</String>
             <Appearance>
                 <Alignment>Left</Alignment>
             </Appearance>
-            <String>If the lookup services performance is not up to par, we could cache results in the VARS database</String>
+            <String>If the lookup services performance is not up to par, we could cache results in the VARS database. This schema shows the minimum fields that MBARI would use.</String>
             <ConnectedNoteIDs>28</ConnectedNoteIDs>
         </Note>
         <Note ID="30" FontSize="12.0" Position="168.0,241.0" Width="181.0">
@@ -333,35 +333,35 @@ This MIGHT not be performant enough though.</String>
             <Appearance>
                 <Alignment>Left</Alignment>
             </Appearance>
-            <String>It’s a pain to store a rational number. So just store an estimate (double)
+            <String>It’s a pain to store a rational number. So just store an estimate of framerate (double)
 
 size is in bytes
 
 MD5 is useful to find metadata to a file in hand (e.g. reverse lookup)</String>
             <ConnectedNoteIDs>1</ConnectedNoteIDs>
         </Note>
-        <Note ID="34" FontSize="12.0" Position="999.355469,478.039062" Width="200.0">
+        <Note ID="34" FontSize="12.0" Position="999.0,478.0" Width="200.0">
             <Appearance>
                 <Alignment>Left</Alignment>
             </Appearance>
             <String>What do we do with adhoc videos/edited videos that do not have a start time or are non-sequential? I assume we would still want to manage them, but maybe not in this asset server</String>
             <ConnectedNoteIDs>0</ConnectedNoteIDs>
         </Note>
-        <Note ID="35" FontSize="12.0" Position="117.878906,604.574219" Width="200.0">
+        <Note ID="35" FontSize="12.0" Position="118.0,605.0" Width="200.0">
             <Appearance>
                 <Alignment>Left</Alignment>
             </Appearance>
             <String>Do we need to explicitly track which videoReference is the Master/Mezzanine?</String>
             <ConnectedNoteIDs>1</ConnectedNoteIDs>
         </Note>
-        <Note ID="36" FontSize="12.0" Position="255.386719,1007.960938" Width="200.0">
+        <Note ID="36" FontSize="12.0" Position="255.0,1008.0" Width="200.0">
             <Appearance>
                 <Alignment>Left</Alignment>
             </Appearance>
             <String>Should annotation position be stored as an association?</String>
             <ConnectedNoteIDs>12</ConnectedNoteIDs>
         </Note>
-        <Note ID="37" FontSize="12.0" Position="1242.007812,998.765625" Width="420.0">
+        <Note ID="37" FontSize="12.0" Position="1242.0,999.0" Width="420.0">
             <Appearance>
                 <Alignment>Left</Alignment>
                 <TextColor>1.0 0.0 0.0</TextColor>

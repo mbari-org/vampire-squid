@@ -107,11 +107,12 @@ class VideoSequence extends HasUUID with HasOptimisticLock with HasDescription {
 
 object VideoSequence {
 
-  def apply(name: String, cameraID: String, videos: Seq[Video] = Nil): VideoSequence = {
+  def apply(name: String, cameraID: String, videos: Seq[Video] = Nil, description: Option[String] = None): VideoSequence = {
     val vs = new VideoSequence
     vs.name = name
     vs.cameraID = cameraID
     videos.foreach(vs.addVideo)
+    description.foreach(d => vs.description = d)
     vs
   }
 

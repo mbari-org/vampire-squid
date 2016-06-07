@@ -11,6 +11,7 @@ import java.util.UUID
  */
 trait VideoReferenceDAO[T <: PersistentObject[UUID]] extends DAO[UUID, T] {
 
+  def findAll(): Iterable[T]
   def findByVideoUUID(uuid: UUID): Iterable[T]
   def findByURI(uri: URI): Option[T]
 

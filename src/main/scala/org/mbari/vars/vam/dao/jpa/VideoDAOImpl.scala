@@ -53,7 +53,7 @@ class VideoDAOImpl(entityManager: EntityManager)
     val endDate = video.start.plus(video.duration)
     startDate.equals(timestamp) ||
       endDate.equals(timestamp) ||
-      startDate.isBefore(timestamp) && endDate.isAfter(timestamp)
+      (startDate.isBefore(timestamp) && endDate.isAfter(timestamp))
   }
 
   override def findAllNames(): Iterable[String] =

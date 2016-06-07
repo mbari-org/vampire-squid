@@ -30,7 +30,7 @@ import scala.util.Try
 @NamedQueries(Array(
   new NamedQuery(
     name = "Video.findAll",
-    query = "SELECT v FROM Video v"),
+    query = "SELECT v FROM Video v ORDER BY v.start"),
   new NamedQuery(
     name = "Video.findByName",
     query = "SELECT v FROM Video v WHERE v.name = :name"),
@@ -136,6 +136,15 @@ object Video {
     v.start = start
     v.duration = duration
     videoReferences.foreach(v.addVideoReference)
+    v
+  }
+
+  def apply(name: String, start: Instant, duration: Option[Duration], description: Option[String]) = {
+    val v = new Video
+    v.name = name
+    v.start = start
+    duration.foreach(d => v.duration = d)
+    description.foreach(d => v.description = d)
     v
   }
 

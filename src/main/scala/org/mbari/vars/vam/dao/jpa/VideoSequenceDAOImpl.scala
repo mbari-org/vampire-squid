@@ -86,7 +86,7 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
     val endDate = timestamp.plus(halfRange)
 
     val videoSequences = findByNamedQuery(
-      "VideoSequence.findByNameAndBetweenDates",
+      "VideoSequence.findByCameraIDAndBetweenDates",
       Map("startDate" -> startDate, "endDate" -> endDate, "cameraID" -> cameraID))
 
     val hasTimestamp = containsTimestamp(_: VideoSequence, timestamp) // Partially apply the function to timestamp

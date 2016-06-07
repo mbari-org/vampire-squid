@@ -6,9 +6,9 @@ import java.util.{ HashMap => JHashMap }
 
 import org.mbari.vars.vam.controllers.VideoSequenceController
 import org.mbari.vars.vam.dao.jpa.VideoSequence
-import org.scalatra.swagger.{ DataType, ParamType, Parameter, Swagger }
+import org.scalatra.swagger._
 import org.slf4j.LoggerFactory
-import org.scalatra._
+import org.scalatra.{ swagger, _ }
 
 import scala.concurrent.ExecutionContext
 import scala.collection.JavaConverters._
@@ -34,14 +34,14 @@ class VideoSequenceV1Api(controller: VideoSequenceController)(implicit val swagg
     response.headers += ("Access-Control-Allow-Origin" -> "*")
   }
 
-  val vsGET = (apiOperation[Iterable[VideoSequence]]("videoSequenceGET")
+  val vsGET = (apiOperation[Iterable[VideoSequence]]("findAll")
     summary "List all video sequences")
 
   get("/?", operation(vsGET)) {
     controller.findAll.map(vs => controller.toJson(vs.asJava))
   }
 
-  val uuidGET = (apiOperation[VideoSequence]("videoSequenceByUUIDGET")
+  val uuidGET = (apiOperation[VideoSequence]("findByUUID")
     summary "Find a video sequence by uuid"
     parameters (
       pathParam[UUID]("uuid").description("The UUID of the video sequence")))
@@ -56,7 +56,7 @@ class VideoSequenceV1Api(controller: VideoSequenceController)(implicit val swagg
     })
   }
 
-  val nameGET = (apiOperation[VideoSequence]("videoSequenceByNameGET")
+  val nameGET = (apiOperation[VideoSequence]("findByName")
     summary "Find a video sequence by name"
     parameters (
       pathParam[String]("name").description("The name of the video sequence")))
@@ -71,30 +71,44 @@ class VideoSequenceV1Api(controller: VideoSequenceController)(implicit val swagg
     })
   }
 
-  get("/names") {
+  val namesGET = (apiOperation[String]("listNames")
+    summary "List all names used by the video-sequences")
+
+  get("/names", operation(namesGET)) {
     controller.findAllNames
       .map(ns => Map("names" -> ns.asJava).asJava) // Transform to Java map for GSON
       .map(controller.toJson)
   }
 
-  get("/cameras") {
+  val camerasGET = (apiOperation[String]("listCameras")
+    summary "List all camera-ids used by the video-sequences")
+
+  get("/cameras", operation(camerasGET)) {
     controller.findAllCameraIDs
       .map(cids => Map("camera_ids" -> cids.asJava).asJava) // Transform to Java map for GSON
       .map(controller.toJson)
   }
 
-  get("/camera/:camera_id/:timestamp") {
+  val findGET = (apiOperation[Seq[VideoSequence]]("findByCameraIDAndTimestamp")
+    summary "Find VideoSequences by camera-id and timestamp"
+    parameters (
+      pathParam[String]("camera_id").description("The camera-id of interest").required,
+      pathParam[Instant]("timestamp").description("The timestamp of interest").required,
+      Parameter("window_millis", DataType.Long, Some("The search window in milliseconds"), required = false, defaultValue = Some("60"))))
+
+  get("/camera/:camera_id/:timestamp", operation(findGET)) {
     val cameraID = params.get("camera_id").getOrElse(halt(BadRequest(
       body = "{}",
       reason = " A 'camera_id' parameter is required")))
     val timestamp = params.getAs[Instant]("timestamp").getOrElse(halt(BadRequest(
       body = "{}",
       reason = "A 'timestamp' parameter is required")))
-    // TODO add optional window parameter
-    controller.findByCameraIDAndTimestamp(cameraID, timestamp, Duration.ofMinutes(30))
+    val window = params.getAs[Duration]("window_millis").getOrElse(Duration.ofMinutes(60L))
+    controller.findByCameraIDAndTimestamp(cameraID, timestamp, window)
+      .map(controller.toJson)
   }
 
-  val vsPOST = (apiOperation[Unit]("createPOST")
+  val vsPOST = (apiOperation[String]("create")
     summary "Create a video-sequence"
     parameters (
       Parameter("name", DataType.String, Some("The unique name of the video-sequence"), None, ParamType.Body, required = true),
@@ -112,10 +126,10 @@ class VideoSequenceV1Api(controller: VideoSequenceController)(implicit val swagg
   }
 
   // TODO delete should require authentication
-  val vsDELETE = (apiOperation[Unit]("videoSequenceDELETE")
+  val vsDELETE = (apiOperation[Unit]("delete")
     summary "Delete a video-sequence"
     parameters (
-      pathParam[UUID]("uuid").description("The UUID of the video-sequence to be deleteds")))
+      pathParam[UUID]("uuid").description("The UUID of the video-sequence to be deleted")))
 
   delete("/:uuid", operation(vsDELETE)) {
     val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest(
@@ -127,12 +141,24 @@ class VideoSequenceV1Api(controller: VideoSequenceController)(implicit val swagg
     })
   }
 
-  // TODO put should update values. Should require authentication
-  put("/:uuid") {
+  val vsPUT = (apiOperation[VideoSequence]("update")
+    summary "Update a video-sequence"
+    parameters (
+      Parameter("uuid", DataType.String, Some("The UUID of the video-sequence"), required = true, paramType = ParamType.Body),
+      Parameter("name", DataType.String, Some("The new name of the video-sequence"), required = false, paramType = ParamType.Body),
+      Parameter("camera_id", DataType.String, Some("The new cameraID of the video-sequence"), required = false, paramType = ParamType.Body),
+      Parameter("description", DataType.String, Some("The new description of the video-sequence"), required = false, paramType = ParamType.Body)))
+
+  // TODO Should require authentication
+  put("/:uuid", operation(vsPUT)) {
     val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest(
       body = "{}",
       reason = "A UUID parameter is required")))
-
+    val cameraID = params.get("camera_id")
+    val name = params.get("name")
+    val description = params.get("description")
+    controller.update(uuid, name, cameraID, description)
+      .map(controller.toJson)
   }
 
 }
