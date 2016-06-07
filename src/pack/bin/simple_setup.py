@@ -1,5 +1,16 @@
 #!/usr/bin/env python
 
+# This is a script for loading some test data into the video-asset-manager using
+# REST calls. Each insert is being done as a separate call, which is the only type of
+# insert that the API supports at this point.
+#
+# Note that for production loads, we would not do this in this manner. Instead, we might
+# use a script that takes a few parameters (e.g. file URL, camera_id) then
+# - auto-generates some parameters, such as video-sequence name and video name.
+# - parses the other metadata from the video file as json, using something like ffprobe
+# - maps the json from ffprobe to the asset managers metadata.
+# - generates the video-sequence and video objects via API's calls as needed.
+
 import requests
 import json
 
