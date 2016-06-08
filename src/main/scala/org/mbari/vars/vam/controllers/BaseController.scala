@@ -1,6 +1,7 @@
 package org.mbari.vars.vam.controllers
 
-import org.mbari.vars.vam.dao.jpa.{ Constants, JPADAOFactory }
+import org.mbari.vars.vam.Constants
+import org.mbari.vars.vam.dao.jpa.JPADAOFactory
 
 /**
  *

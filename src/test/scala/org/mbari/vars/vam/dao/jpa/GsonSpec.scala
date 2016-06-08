@@ -3,6 +3,7 @@ package org.mbari.vars.vam.dao.jpa
 import java.net.URI
 import java.time.{ Duration, Instant }
 
+import org.mbari.vars.vam.Constants
 import org.scalatest.{ FlatSpec, Matchers }
 import org.slf4j.LoggerFactory
 

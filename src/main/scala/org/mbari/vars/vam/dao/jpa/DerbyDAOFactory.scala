@@ -16,7 +16,7 @@ import org.mbari.vars.vam.dao.{ DAO, VideoDAO, VideoReferenceDAO, VideoSequenceD
 object DerbyDAOFactory extends JPADAOFactory {
 
   private[this] val config = ConfigFactory.load()
-  private[this] val testProps = Map(
+  private[this] val developmentProps = Map(
     "eclipselink.logging.level" -> "FINE",
     "javax.persistence.database-product-name" -> TargetDatabase.Derby,
     "eclipselink.target-database" -> TargetDatabase.Derby,
@@ -33,40 +33,7 @@ object DerbyDAOFactory extends JPADAOFactory {
     val url = config.getString("org.mbari.vars.vam.database.development.url")
     val user = config.getString("org.mbari.vars.vam.database.development.user")
     val password = config.getString("org.mbari.vars.vam.database.development.password")
-    EntityManagerFactories(url, user, password, driver, testProps)
+    EntityManagerFactories(url, user, password, driver, developmentProps)
   }
 
-  override def newVideoSequenceDAO(): VideoSequenceDAOImpl =
-    new VideoSequenceDAOImpl(entityManagerFactory.createEntityManager())
-
-  override def newVideoDAO(): VideoDAOImpl = new VideoDAOImpl(entityManagerFactory.createEntityManager())
-
-  override def newVideoReferenceDAO(): VideoReferenceDAO[VideoReference] = new VideoReferenceDAOImpl(entityManagerFactory.createEntityManager())
-
-  /**
-   * Create a new DAO that share the underlying connection (e.g. EntityManager)
-   *
-   * @param dao
-   * @return
-   */
-  override def newVideoDAO(dao: DAO[UUID, _]): VideoDAO[Video] =
-    new VideoDAOImpl(dao.asInstanceOf[BaseDAO[UUID, _]].entityManager)
-
-  /**
-   * Create a new DAO that share the underlying connection (e.g. EntityManager)
-   *
-   * @param dao
-   * @return
-   */
-  override def newVideoSequenceDAO(dao: DAO[UUID, _]): VideoSequenceDAO[VideoSequence] =
-    new VideoSequenceDAOImpl(dao.asInstanceOf[BaseDAO[UUID, _]].entityManager)
-
-  /**
-   * Create a new DAO that share the underlying connection (e.g. EntityManager)
-   *
-   * @param dao
-   * @return
-   */
-  override def newVideoReferenceDAO(dao: DAO[UUID, _]): VideoReferenceDAO[VideoReference] =
-    new VideoReferenceDAOImpl(dao.asInstanceOf[BaseDAO[UUID, _]].entityManager)
 }

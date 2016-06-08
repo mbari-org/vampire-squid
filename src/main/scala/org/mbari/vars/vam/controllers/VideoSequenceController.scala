@@ -3,6 +3,7 @@ package org.mbari.vars.vam.controllers
 import java.time.{ Duration, Instant }
 import java.util.UUID
 
+import org.mbari.vars.vam.Constants
 import org.mbari.vars.vam.dao.VideoSequenceDAO
 import org.mbari.vars.vam.dao.jpa.{ JPADAOFactory, NotFoundInDatastoreException, VideoSequence }
 
@@ -33,7 +34,10 @@ class VideoSequenceController(val daoFactory: JPADAOFactory) extends BaseControl
   def findByName(name: String)(implicit ec: ExecutionContext): Future[Option[VideoSequence]] =
     exec(d => d.findByName(name))
 
-  def findByCameraIDAndTimestamp(cameraID: String, timestamp: Instant, window: Duration)(implicit ec: ExecutionContext): Future[Seq[VideoSequence]] =
+  def findByCameraIDAndTimestamp(
+    cameraID: String,
+    timestamp: Instant,
+    window: Duration = Constants.DEFAULT_DURATION_WINDOW)(implicit ec: ExecutionContext): Future[Seq[VideoSequence]] =
     exec(d => d.findByCameraIDAndTimestamp(cameraID, timestamp, window).toSeq)
 
   def create(name: String, cameraID: String, description: Option[String] = None)(implicit ec: ExecutionContext): Future[VideoSequence] = {

@@ -3,7 +3,8 @@ package org.mbari.vars.vam.controllers
 import java.time.{ Duration, Instant }
 import java.util.UUID
 
-import org.mbari.vars.vam.dao.{ VideoDAO }
+import org.mbari.vars.vam.Constants
+import org.mbari.vars.vam.dao.VideoDAO
 import org.mbari.vars.vam.dao.jpa._
 
 import scala.concurrent.{ ExecutionContext, Future }
@@ -33,7 +34,7 @@ class VideoController(val daoFactory: JPADAOFactory) extends BaseController {
   def findBetweenTimestamps(t0: Instant, t1: Instant)(implicit ec: ExecutionContext): Future[Seq[Video]] =
     exec(d => d.findBetweenTimestamps(t0, t1).toSeq)
 
-  def findByTimestamp(t0: Instant, window: Duration = Duration.ofMinutes(15))(implicit ec: ExecutionContext): Future[Seq[Video]] =
+  def findByTimestamp(t0: Instant, window: Duration = Constants.DEFAULT_DURATION_WINDOW)(implicit ec: ExecutionContext): Future[Seq[Video]] =
     exec(d => d.findByTimestamp(t0, window).toSeq)
 
   def findByVideoSequenceUUID(uuid: UUID)(implicit ec: ExecutionContext): Future[Seq[Video]] =

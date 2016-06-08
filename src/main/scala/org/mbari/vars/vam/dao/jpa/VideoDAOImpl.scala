@@ -5,6 +5,7 @@ import java.time.{ Duration, Instant }
 import java.util.{ Date, UUID }
 import javax.persistence.EntityManager
 
+import org.mbari.vars.vam.Constants
 import org.mbari.vars.vam.dao.VideoDAO
 
 import scala.collection.JavaConverters._

@@ -1,13 +1,11 @@
-package org.mbari.vars.vam.dao.jpa
+package org.mbari.vars.vam
 
+import java.lang.reflect.Type
 import java.time.Duration
 
 import com.fatboyindustrial.gsonjavatime.Converters
 import com.google.gson.reflect.TypeToken
 import com.google.gson.{ FieldNamingPolicy, GsonBuilder }
-import java.lang.reflect.Type
-import java.text.DateFormat
-
 import com.typesafe.config.ConfigFactory
 import org.mbari.vars.vam.json.{ DurationConverter => GSONDurationConverter }
 import org.slf4j.LoggerFactory

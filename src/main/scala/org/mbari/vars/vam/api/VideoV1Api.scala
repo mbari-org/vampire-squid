@@ -3,12 +3,14 @@ package org.mbari.vars.vam.api
 import java.time.{ Duration, Instant }
 import java.util.UUID
 
+import org.mbari.vars.vam.Constants
 import org.mbari.vars.vam.controllers.VideoController
 import org.scalatra.{ BadRequest, NoContent, NotFound }
 import org.scalatra.swagger.Swagger
 
 import scala.concurrent.ExecutionContext
 import scala.collection.JavaConverters._
+import scala.util.Try
 
 /**
  *
@@ -56,7 +58,8 @@ class VideoV1Api(controller: VideoController)(implicit val swagger: Swagger, val
     val timestamp = params.getAs[Instant]("timestamp").getOrElse(halt(BadRequest(
       body = "{}",
       reason = "A 'timestamp' parameter is required")))
-    val window = Duration.ofMinutes(params.getAs[Long]("window_minutes").getOrElse(60L))
+    val window = Try(Duration.ofMinutes(params.getAs[Long]("window_minutes").get))
+      .getOrElse(Constants.DEFAULT_DURATION_WINDOW)
     controller.findByTimestamp(timestamp, window)
       .map(controller.toJson)
   }
