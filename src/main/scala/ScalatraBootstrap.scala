@@ -2,7 +2,7 @@ import javax.servlet.ServletContext
 
 import org.mbari.vars.vam.api.{ VAMSwagger, VideoReferenceV1Api, VideoSequenceV1Api, VideoV1Api }
 import org.mbari.vars.vam.controllers.{ VideoController, VideoReferenceController, VideoSequenceController }
-import org.mbari.vars.vam.dao.jpa.DerbyDAOFactory
+import org.mbari.vars.vam.dao.jpa.DevelopmentDAOFactory
 import org.scalatra.LifeCycle
 import org.scalatra.swagger.{ ApiInfo, Swagger }
 import org.slf4j.LoggerFactory
@@ -35,7 +35,7 @@ class ScalatraBootstrap extends LifeCycle {
 
     implicit val executionContext = ExecutionContext.global
 
-    val daoFactory = DerbyDAOFactory
+    val daoFactory = DevelopmentDAOFactory
     val videoSequenceController = new VideoSequenceController(daoFactory)
     val videoController = new VideoController(daoFactory)
     val videoReferenceController = new VideoReferenceController(daoFactory)

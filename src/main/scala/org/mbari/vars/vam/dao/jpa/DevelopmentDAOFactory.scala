@@ -5,7 +5,9 @@ import javax.persistence.EntityManagerFactory
 
 import com.typesafe.config.ConfigFactory
 import org.eclipse.persistence.config.TargetDatabase
-import org.mbari.vars.vam.dao.{ DAO, VideoDAO, VideoReferenceDAO, VideoSequenceDAO }
+import org.mbari.vars.vam.dao.{DAO, VideoDAO, VideoReferenceDAO, VideoSequenceDAO}
+
+import scala.util.Try
 
 /**
  *
@@ -13,13 +15,14 @@ import org.mbari.vars.vam.dao.{ DAO, VideoDAO, VideoReferenceDAO, VideoSequenceD
  * @author Brian Schlining
  * @since 2016-05-23T15:57:00
  */
-object DerbyDAOFactory extends JPADAOFactory {
+object DevelopmentDAOFactory extends JPADAOFactory {
 
   private[this] val config = ConfigFactory.load()
+  private[this] val productName = Try(config.getString("org.mbari.vars.vam.database.development.name")).getOrElse("Auto")
   private[this] val developmentProps = Map(
     "eclipselink.logging.level" -> "FINE",
-    "javax.persistence.database-product-name" -> TargetDatabase.Derby,
-    "eclipselink.target-database" -> TargetDatabase.Derby,
+    "javax.persistence.database-product-name" -> productName,
+    "eclipselink.target-database" -> productName,
     "eclipselink.logging.timestamp" -> "false",
     "eclipselink.logging.session" -> "false",
     "eclipselink.logging.thread" -> "false",
