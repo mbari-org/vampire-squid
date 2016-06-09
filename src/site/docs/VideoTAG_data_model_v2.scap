@@ -46,7 +46,7 @@
                 <FormatRange Bold="Yes">0,19</FormatRange>
             </Formatting>
         </Note>
-        <Note ID="4" FontSize="12.0" Position="125.222656,87.0" Width="167.0">
+        <Note ID="4" FontSize="12.0" Position="125.0,87.0" Width="167.0">
             <Appearance>
                 <Alignment>Left</Alignment>
                 <Border Weight="1">0.477193 0.557066 0.76433</Border>
@@ -60,7 +60,7 @@
 - lastUpdated: Instant</String>
             <ConnectedNoteIDs>1, 21, 23</ConnectedNoteIDs>
         </Note>
-        <Note ID="9" FontSize="12.0" Position="679.390625,604.851562" Width="140.0">
+        <Note ID="9" FontSize="12.0" Position="679.0,605.0" Width="140.0">
             <Appearance>
                 <Alignment>Left</Alignment>
                 <Border Weight="1">0.477193 0.557066 0.76433</Border>
@@ -77,7 +77,7 @@
 - lastUpdated: Instant</String>
             <ConnectedNoteIDs>14, 29</ConnectedNoteIDs>
         </Note>
-        <Note ID="10" FontSize="12.0" Position="495.707031,731.011719" Width="146.0">
+        <Note ID="10" FontSize="12.0" Position="496.0,731.0" Width="146.0">
             <Appearance>
                 <Alignment>Left</Alignment>
                 <Border Weight="1">0.477193 0.557066 0.76433</Border>
@@ -115,7 +115,7 @@
                 <FormatRange Bold="Yes">0,4</FormatRange>
             </Formatting>
         </Note>
-        <Note ID="13" FontSize="12.0" Position="803.515625,429.261719" Width="166.0">
+        <Note ID="13" FontSize="12.0" Position="804.0,429.0" Width="166.0">
             <Appearance>
                 <Alignment>Left</Alignment>
                 <Border Weight="1">0.477193 0.557066 0.76433</Border>
@@ -156,7 +156,7 @@
                 <FormatRange Bold="Yes">0,13</FormatRange>
             </Formatting>
         </Note>
-        <Note ID="18" FontSize="12.0" Position="1470.925781,309.75" Width="127.0">
+        <Note ID="18" FontSize="12.0" Position="1471.0,310.0" Width="127.0">
             <Appearance>
                 <Alignment>Left</Alignment>
                 <Border Weight="1">0.477193 0.557066 0.76433</Border>
@@ -188,7 +188,7 @@
 - transmissivity: Double
 - etc …</String>
         </Note>
-        <Note ID="20" FontSize="12.0" Position="1666.636719,336.011719" Width="155.0">
+        <Note ID="20" FontSize="12.0" Position="1667.0,336.0" Width="155.0">
             <Appearance>
                 <Alignment>Left</Alignment>
                 <Border Weight="1">0.477193 0.557066 0.76433</Border>
@@ -238,24 +238,26 @@ size is in bytes
 
 MD5 is useful to find metadata to a file in hand (e.g. reverse lookup)
 
-I’m using URI as the reference as we need to be able to reference URL (file, http) as well as tape numbers. </String>
+I’m using URI as the reference as we need to be able to reference URL (file, http) as well as tape numbers. 
+
+For real-time observations, should we just create special video-reference w/ no URI that spans the entire duration of the dive?</String>
             <ConnectedNoteIDs>2</ConnectedNoteIDs>
         </Note>
-        <Note ID="25" FontSize="12.0" Position="34.0,819.0" Width="401.0">
+        <Note ID="25" FontSize="12.0" Position="29.484375,1003.457031" Width="401.0">
             <Appearance>
                 <Alignment>Left</Alignment>
             </Appearance>
             <String>Although an ImagedMoment is tied to a particular VideoReference, it can related to other VideoReferences of the same video through the MAM.</String>
             <ConnectedNoteIDs>14</ConnectedNoteIDs>
         </Note>
-        <Note ID="26" FontSize="12.0" Position="422.367188,1003.148438" Width="385.0">
+        <Note ID="26" FontSize="12.0" Position="498.074219,1001.957031" Width="385.0">
             <Appearance>
                 <Alignment>Left</Alignment>
             </Appearance>
             <String>Store annotation position as an association: x, y, imageWidth, imageHeight</String>
             <ConnectedNoteIDs>11</ConnectedNoteIDs>
         </Note>
-        <Note ID="27" FontSize="12.0" Position="1005.496094,111.742188" Width="313.0">
+        <Note ID="27" FontSize="12.0" Position="1005.0,112.0" Width="313.0">
             <Appearance>
                 <Alignment>Left</Alignment>
             </Appearance>
@@ -264,21 +266,21 @@ I’m using URI as the reference as we need to be able to reference URL (file, h
 This MIGHT not be performant enough though.</String>
             <ConnectedNoteIDs>21</ConnectedNoteIDs>
         </Note>
-        <Note ID="28" FontSize="12.0" Position="1086.039062,483.335938" Width="200.0">
+        <Note ID="28" FontSize="12.0" Position="1086.0,483.0" Width="200.0">
             <Appearance>
                 <Alignment>Left</Alignment>
             </Appearance>
             <String>If the lookup services performance is not up to par, we could cache results in the VARS database. This schema shows the minimum fields that MBARI would use.</String>
             <ConnectedNoteIDs>13</ConnectedNoteIDs>
         </Note>
-        <Note ID="29" FontSize="12.0" Position="1079.105469,577.757812" Width="338.0">
+        <Note ID="29" FontSize="12.0" Position="1079.0,578.0" Width="338.0">
             <Appearance>
                 <Alignment>Left</Alignment>
             </Appearance>
             <String>Note that there may be more than one ImageReference registered to an index. For example, an uncompressed PNG, a JPG with overlay and a watermarked JPG with overlay</String>
             <ConnectedNoteIDs>9</ConnectedNoteIDs>
         </Note>
-        <Note ID="32" FontSize="28.0" Position="1250.488281,675.308594" Width="305.0">
+        <Note ID="32" FontSize="28.0" Position="1250.0,675.0" Width="305.0">
             <Appearance></Appearance>
             <String>VARS Knowledgebase</String>
             <ConnectedNoteIDs>37</ConnectedNoteIDs>
@@ -286,7 +288,7 @@ This MIGHT not be performant enough though.</String>
                 <FormatRange Bold="Yes">0,18</FormatRange>
             </Formatting>
         </Note>
-        <Note ID="33" FontSize="12.0" Position="1195.070312,766.902344" Width="109.0">
+        <Note ID="33" FontSize="12.0" Position="1195.0,767.0" Width="109.0">
             <Appearance>
                 <Alignment>Left</Alignment>
                 <Border Weight="1">0.477193 0.557066 0.76433</Border>
@@ -297,7 +299,7 @@ This MIGHT not be performant enough though.</String>
 - parentID: Long</String>
             <ConnectedNoteIDs>10, 34-35</ConnectedNoteIDs>
         </Note>
-        <Note ID="34" FontSize="12.0" Position="1375.941406,756.535156" Width="119.0">
+        <Note ID="34" FontSize="12.0" Position="1376.0,757.0" Width="119.0">
             <Appearance>
                 <Alignment>Left</Alignment>
                 <Border Weight="1">0.477193 0.557066 0.76433</Border>
@@ -309,7 +311,7 @@ This MIGHT not be performant enough though.</String>
 - name: String</String>
             <ConnectedNoteIDs>33</ConnectedNoteIDs>
         </Note>
-        <Note ID="35" FontSize="12.0" Position="1202.152344,876.207031" Width="103.0">
+        <Note ID="35" FontSize="12.0" Position="1202.0,876.0" Width="103.0">
             <Appearance>
                 <Alignment>Left</Alignment>
                 <Border Weight="1">0.477193 0.557066 0.76433</Border>
@@ -318,7 +320,7 @@ This MIGHT not be performant enough though.</String>
             <String>ConceptMetadata</String>
             <ConnectedNoteIDs>33, 36</ConnectedNoteIDs>
         </Note>
-        <Note ID="36" FontSize="12.0" Position="1376.078125,842.417969" Width="153.0">
+        <Note ID="36" FontSize="12.0" Position="1376.0,842.0" Width="153.0">
             <Appearance>
                 <Alignment>Left</Alignment>
                 <Border Weight="1">0.477193 0.557066 0.76433</Border>
@@ -332,7 +334,7 @@ This MIGHT not be performant enough though.</String>
 - mediaType: MimeType</String>
             <ConnectedNoteIDs>35</ConnectedNoteIDs>
         </Note>
-        <Note ID="37" FontSize="12.0" Position="1609.199219,692.679688" Width="200.0">
+        <Note ID="37" FontSize="12.0" Position="1609.0,693.0" Width="200.0">
             <Appearance>
                 <Alignment>Left</Alignment>
             </Appearance>
@@ -340,6 +342,14 @@ This MIGHT not be performant enough though.</String>
 
 The new VARS would access the KB through REST API calls instead of using SQL</String>
             <ConnectedNoteIDs>32</ConnectedNoteIDs>
+        </Note>
+        <Note ID="38" FontSize="12.0" Position="669.292969,302.402344" Width="196.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+            </Appearance>
+            <String>VARS apps would need to know:
+- End point of video-asset-manager
+- End point of VARS API server</String>
         </Note>
     </Notes>
     <BackgroundShapes>
@@ -361,14 +371,14 @@ The new VARS would access the KB through REST API calls instead of using SQL</St
                 <Fill>0.841092 0.495964 0.979041</Fill>
             </Appearance>
         </Shape>
-        <Shape ID="31" Sticky="Yes" Position="1140.765625,664.902344" Width="450.046875" Height="305.0">
+        <Shape ID="31" Sticky="Yes" Position="1141.0,665.0" Width="450.046875" Height="305.0">
             <Appearance>
                 <Border Weight="1"></Border>
                 <Fill>0.298039 0.686275 0.313725</Fill>
             </Appearance>
         </Shape>
     </BackgroundShapes>
-    <AutoFit>3, 10-11, 14, 18-20, 32, 35-36</AutoFit>
+    <AutoFit>3, 10-11, 14, 18-20, 32, 35-36, 38</AutoFit>
     <NoteStyles>
         <Style Name="Blue Bubble" ID="47BB667A-39AA-4CE4-8647-27638A38D4E6" AffectFontStyle="No" AffectAlignment="No" AffectTextColor="No" AffectNoteBody="Yes" AffectFade="No">
             <BorderThickness>1</BorderThickness>

@@ -121,9 +121,9 @@ vs3 = read(vs_url,
         data = {"name": "V9931", "camera_id": "Ventana"})
 v3_1 = read(v_url,
             data = {"name": "V9931-01",
-                    "start": "2011-012-12T00:00:10Z",
+                    "start": "2011-12-12T00:00:10Z",
                     "duration_millis": 45 * 60 * 1000,
-                    "video_sequence_uuid": vs2["uuid"]})
+                    "video_sequence_uuid": vs3["uuid"]})
 vr3_1_1 = read(vr_url,
                data = {"uri": "http://www.mbari.org/foo/bar/V9931_201101212T000010Z.mov",
                        "video_uuid": v3_1["uuid"],
