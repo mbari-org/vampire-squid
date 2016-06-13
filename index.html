@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Video-asset-manager by underwatervideo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Video-asset-manager</h1>
+      <h2 class="project-tagline">A service for managing and tracking videos from camera deployments</h2>
+      <a href="https://github.com/underwatervideo/video-asset-manager" class="btn">View on GitHub</a>
+      <a href="https://github.com/underwatervideo/video-asset-manager/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/underwatervideo/video-asset-manager/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <p><img src="https://raw.githubusercontent.com/underwatervideo/video-asset-manager/master/src/site/images/logo-mbari-3b.png" alt="MBARI logo"></p>
+
+<h1>
+<a id="video-asset-manager" class="anchor" href="#video-asset-manager" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>video-asset-manager</h1>
+
+<p>Currently, this a project for testing ideas and models for managing video and image assets. The basic data models is:</p>
+
+<pre><code>VideoSequence [1]---&gt;[0..*] Video [1]---&gt;[0..*] VideoReference 
+</code></pre>
+
+<p>The yellow block in this diagram illustrates the design:</p>
+
+<p><img src="https://raw.githubusercontent.com/underwatervideo/video-asset-manager/master/src/site/docs/VideoTAG_data_model.png" alt="Diagram"></p>
+
+<p>Where:</p>
+
+<ul>
+<li>
+<code>VideoSequence</code> is essentially a single deployment/session from a single camera. Analagous to a <em>dive</em>. Typically, a deployment is broken into segments, e.g. 5 minutes, in order to make the files sizes manageable. This seems to be the current practice among all the groups at the underwater video workshop in RI. </li>
+<li>
+<code>Video</code> is an abstraction that refers to a single segment in the <em>VideoSequence</em>. It tracks the start date and duration of a segment of video. It's an abstraction as it does not point directly to a video via a URL or path as there will likely be multiple representations of the same video segement (such as digital master, mezzanine, and various proxies)</li>
+<li>
+<code>VideoReference</code> is a concrete reference to a representation of a <em>Video</em>. It stores the particulars of a file needed to locate a video. It encapsulates the codecs, containers, size and location of a video file.</li>
+</ul>
+
+<h2>
+<a id="data-store" class="anchor" href="#data-store" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Data store</h2>
+
+<p>The current data storage targets are SQL Databases. Pretty much all database servers are supported. You can configure the database info in the <a href="https://github.com/underwatervideo/video-asset-manager/blob/master/src/pack/conf/application.conf">application.conf</a> file. The database schema will be auto-generated the first time you run the application. </p>
+
+<p>Note that you will need to include you database's JDBC driver. There's a variety of ways to do it but the simplest for non-developers is to drop the driver's jar file in the build's <code>lib</code> directory. </p>
+
+<p>The default setup is to use an in-memory derby database. This is useful for testing and development, but as configured, you lose your data when you stop the application.</p>
+
+<h2>
+<a id="build-and-run" class="anchor" href="#build-and-run" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Build and Run</h2>
+
+<p>To build: <code>sbt pack</code></p>
+
+<p>To run:</p>
+
+<pre><code>cd target/pack/bin
+jetty-main
+</code></pre>
+
+<p>You can do a quick test by pointing to the server through a web browser at:</p>
+
+<pre><code>http://localhost:8080/v1/videosequence
+</code></pre>
+
+<p>That will dump your entire database out as JSON. </p>
+
+<h2>
+<a id="design" class="anchor" href="#design" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Design</h2>
+
+<p>The design of the <em>video-asset-manager</em> follows the ideas of microservices:</p>
+
+<ul>
+<li>
+<strong>It's small and does one thing.</strong> Here, we are managing the location of segments of video that comprise a camera deployment and providing search services to facilitate finding the file we want.</li>
+<li>
+<strong>It owns its own data.</strong> The current design is to use an SQL database. You can use any database you want. If you decide to use something else later on (MongoDB, Cassandra, whatever) that's OK too (but you have to code it).</li>
+<li>
+<strong>Access is through standard API.</strong> Users interact through HTTP/JSON. If we rip out and replace the backend with some other storage, the change will be invisible to all applications that use this service.</li>
+<li>
+<strong>Independently isolated and scalable</strong>. If needed, multiple instances could be deployed behind a load balancer.</li>
+</ul>
+
+<h2>
+<a id="api" class="anchor" href="#api" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>API</h2>
+
+<p><strong>Coming soon</strong>. Right now there's an example python script that demo's adding data: <a href="https://github.com/underwatervideo/video-asset-manager/blob/master/src/pack/bin/simple_setup.py">simple_setup.py</a></p>
+
+<h2>
+<a id="todo" class="anchor" href="#todo" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>TODO</h2>
+
+<ul>
+<li>[ ] finish swagger documentation</li>
+<li>[ ] dockerize the project</li>
+<li>[ ] document using your own database</li>
+<li>[ ] Add authentication for <code>post</code>, <code>put</code>, <code>delete</code> methods</li>
+<li>[ ] Add JPA indices</li>
+</ul>
+
+<p>This project is built using <a href="http://www.scala-sbt.org/">SBT</a>. See SBT.md for help.</p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/underwatervideo/video-asset-manager">Video-asset-manager</a> is maintained by <a href="https://github.com/underwatervideo">underwatervideo</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
