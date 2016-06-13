@@ -103,4 +103,5 @@ class VideoReferenceDAOSpec extends FlatSpec with Matchers {
     val vr = Await.result(dao.runTransaction(d => d.findByUUID(videoReference1.uuid)), timeout)
     vr shouldBe empty
   }
+
 }

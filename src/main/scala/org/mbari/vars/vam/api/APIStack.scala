@@ -12,7 +12,7 @@ import scala.util.Try
 
 /**
  * All Api classes should mixin this trait. It defines the common traits used by all implementations
-  * as well implicits need for type conversions.
+ * as well implicits need for type conversions.
  *
  * @author Brian Schlining
  * @since 2016-05-23T13:32:00
