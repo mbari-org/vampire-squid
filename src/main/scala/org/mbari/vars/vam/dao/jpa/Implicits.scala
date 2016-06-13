@@ -8,7 +8,7 @@ import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.control.NonFatal
 
 /**
- *
+ * Implicits used in this package
  *
  * @author Brian Schlining
  * @since 2016-05-06T13:34:00

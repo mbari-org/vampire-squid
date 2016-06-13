@@ -12,7 +12,7 @@ import scala.collection.JavaConverters._
 import scala.util.Try
 
 /**
- *
+ * A Video is an abstract representation of a discrete segment of video.
  *
  * @author Brian Schlining
  * @since 2016-05-05T17:54:00

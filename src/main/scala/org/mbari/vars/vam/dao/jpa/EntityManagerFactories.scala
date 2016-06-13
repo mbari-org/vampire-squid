@@ -10,6 +10,10 @@ import scala.collection.JavaConverters._
 /**
  * https://stackoverflow.com/questions/4106078/dynamic-jpa-connection
  *
+ * THis factory allows us to instantiate an javax.persistence.EntityManager from the
+ * basic parameters (url, driver, password, username). You can pass in a map of additional properties
+ * to customize the EntityManager.
+ *
  * @author Brian Schlining
  * @since 2016-05-05T17:29:00
  */

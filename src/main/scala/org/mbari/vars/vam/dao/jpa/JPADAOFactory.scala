@@ -6,7 +6,7 @@ import javax.persistence.EntityManagerFactory
 import org.mbari.vars.vam.dao._
 
 /**
- *
+ * Self-explanatory. THis class creates DAOs for the JPA implementation.
  *
  * @author Brian Schlining
  * @since 2016-06-08T15:28:00

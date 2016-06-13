@@ -23,6 +23,9 @@ object Constants {
   private[this] val keyWindow = "org.mbari.vars.vam.time.window"
   private[this] val log = LoggerFactory.getLogger(getClass)
 
+  /**
+   * Gson parser configured for the VAM's use cases.
+   */
   val GSON = {
 
     val gsonBuilder = new GsonBuilder()
@@ -38,6 +41,12 @@ object Constants {
 
   }
 
+  /**
+   * Defines the width of a search window used for searching by date.
+   *
+   * Reads the 'org.mbari.vars.vam.time.window' property from the config files to configure
+   * the window.
+   */
   val DEFAULT_DURATION_WINDOW = Try(config.getDuration(keyWindow)) match {
     case Success(window) => window
     case Failure(e) =>

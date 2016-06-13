@@ -10,7 +10,7 @@ import org.mbari.vars.vam.dao.{ DAO, VideoDAO, VideoReferenceDAO, VideoSequenceD
 import scala.util.Try
 
 /**
- *
+ * DAOFactory for creating development database DAOs
  *
  * @author Brian Schlining
  * @since 2016-05-23T15:57:00

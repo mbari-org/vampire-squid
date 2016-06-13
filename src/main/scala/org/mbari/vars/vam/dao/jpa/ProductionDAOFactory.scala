@@ -8,7 +8,7 @@ import org.eclipse.persistence.config.TargetDatabase
 import scala.util.Try
 
 /**
- *
+ * DAOFactory for creating production database DAOs
  *
  * @author Brian Schlining
  * @since 2016-06-08T15:27:00

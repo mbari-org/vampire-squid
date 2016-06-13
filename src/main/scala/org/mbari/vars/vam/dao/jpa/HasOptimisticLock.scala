@@ -9,7 +9,7 @@ import com.google.gson.annotations.Expose
 import scala.util.Try
 
 /**
- *
+ * OUr Entities should use optimixtic locks. This trait allows you to mixin the lock.
  *
  * @author Brian Schlining
  * @since 2016-05-05T16:22:00

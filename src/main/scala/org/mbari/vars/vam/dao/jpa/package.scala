@@ -14,6 +14,4 @@ import scala.util.control.NonFatal
  */
 package object jpa {
 
-  //type JPADAOFactory = DAOFactory[VideoSequence, Video, VideoReference]
-
 }

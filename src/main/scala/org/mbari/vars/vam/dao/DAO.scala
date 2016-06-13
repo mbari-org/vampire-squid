@@ -5,7 +5,7 @@ import java.util.UUID
 import scala.concurrent.{ ExecutionContext, Future }
 
 /**
- *
+ * All DAOs should implement this trait as it defines the minimum CRUD methods needed.
  *
  * @author Brian Schlining
  * @since 2016-05-05T12:44:00

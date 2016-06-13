@@ -4,7 +4,7 @@ import java.time.{ Duration, Instant }
 import java.util.UUID
 
 /**
- *
+ * Defines the API methods used for accessing VideoSequence objects
  *
  * @author Brian Schlining
  * @since 2016-05-05T12:54:00
