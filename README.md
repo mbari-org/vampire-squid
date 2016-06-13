@@ -1,3 +1,5 @@
+![MBARI logo](
+
 # video-asset-manager
 
 Currently, this a project for testing ideas and models for managing video and image assets. The basic data models is:
@@ -50,6 +52,7 @@ __Coming soon__. Right now there's an example python script that demo's adding d
 - [ ] dockerize the project
 - [ ] document using your own database
 - [ ] Add authentication for `post`, `put`, `delete` methods
+- [ ] Add JPA indices
 
 
 
