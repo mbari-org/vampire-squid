@@ -20,7 +20,11 @@ Where:
 
 ## Data store
 
-The current data storage targets are SQL Databases. Pretty much all database servers are supported. You can configure the database info in the application.conf file. The database schema will be auto-generated the first time you run the application.
+The current data storage targets are SQL Databases. Pretty much all database servers are supported. You can configure the database info in the [application.conf](https://github.com/underwatervideo/video-asset-manager/blob/master/src/pack/conf/application.conf) file. The database schema will be auto-generated the first time you run the application. 
+
+Note that you will need to include you database's JDBC driver. There's a variety of ways to do it but the simplest for non-developers is to drop the driver's jar file in the build's `lib` directory. 
+
+The default setup is to use an in-memory derby database. This is useful for testing and development, but as configured, you lose your data when you stop the application.
 
 ## Build and Run
 
@@ -32,6 +36,12 @@ To run:
 cd target/pack/bin
 jetty-main
 ```
+
+You can do a quick test by pointing to the server through a web browser at:
+    
+    http://localhost:8080/v1/videosequence
+    
+That will dump your entire database out as JSON. 
 
 ## Design
 
