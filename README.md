@@ -6,6 +6,10 @@ Currently, this a project for testing ideas and models for managing video and im
 VideoSequence [1]--->[0..*] Video [1]--->[0..*] VideoReference 
 ```
 
+The yellow block in this diagram illustrates the design:
+
+![Diagram](https://github.com/underwatervideo/video-asset-manager/blob/master/src/site/docs/VideoTAG_data_model.png)
+
 Where:
 
 - `VideoSequence` is essentially a single deployment/session from a single camera. Analagous to a _dive_. Typically, a deployment is broken into segments, e.g. 5 minutes, in order to make the files sizes manageable. This seems to be the current practice among all the groups at the underwater video workshop in RI. 
@@ -38,11 +42,14 @@ The design of the _video-asset_manager_ follows the ideas of microservices:
 
 ## API
 
+__Coming soon__. Right now there's an example python script that demo's adding data: [simple_setup.py](https://github.com/underwatervideo/video-asset-manager/blob/master/src/pack/bin/simple_setup.py)
+
 ## TODO
 
 - [ ] finish swagger documentation
-- [ ] add docker container
+- [ ] dockerize the project
 - [ ] document using your own database
+- [ ] Add authentication for `post`, `put`, `delete` methods
 
 
 
