@@ -8,7 +8,7 @@ VideoSequence [1]--->[0..*] Video [1]--->[0..*] VideoReference
 
 The yellow block in this diagram illustrates the design:
 
-![Diagram](https://github.com/underwatervideo/video-asset-manager/blob/master/src/site/docs/VideoTAG_data_model.png)
+![Diagram](https://raw.githubusercontent.com/underwatervideo/video-asset-manager/master/src/site/docs/VideoTAG_data_model.png)
 
 Where:
 
