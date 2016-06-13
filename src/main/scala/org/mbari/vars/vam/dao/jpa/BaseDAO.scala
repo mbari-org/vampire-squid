@@ -17,7 +17,7 @@ import scala.reflect.classTag
  * @author Brian Schlining
  * @since 2016-05-06T11:18:00
  */
-abstract class BaseDAO[A, B <: PersistentObject[A]: ClassTag](val entityManager: EntityManager) extends DAO[A, B] {
+abstract class BaseDAO[B <: PersistentObject: ClassTag](val entityManager: EntityManager) extends DAO[B] {
   private[this] val log = LoggerFactory.getLogger(getClass)
 
   if (log.isInfoEnabled) {
@@ -49,7 +49,7 @@ abstract class BaseDAO[A, B <: PersistentObject[A]: ClassTag](val entityManager:
    * @param primaryKey
    * @return
    */
-  def findByPrimaryKey(primaryKey: Any): Option[B] =
+  override def findByUUID(primaryKey: UUID): Option[B] =
     Option(entityManager.find(classTag[B].runtimeClass, primaryKey).asInstanceOf[B])
 
   override def runTransaction[R](fn: this.type => R)(implicit ec: ExecutionContext): Future[R] = {
@@ -60,7 +60,7 @@ abstract class BaseDAO[A, B <: PersistentObject[A]: ClassTag](val entityManager:
 
   override def create(entity: B): Unit = entityManager.persist(entity)
 
-  override def findByUUID(uuid: UUID): Option[B] = findByPrimaryKey(uuid)
+  //override def findByUUID(uuid: UUID): Option[B] = findByPrimaryKey(uuid)
 
   override def update(entity: B): B = entityManager.merge(entity)
 

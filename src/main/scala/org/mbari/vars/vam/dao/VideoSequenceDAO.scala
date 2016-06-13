@@ -9,7 +9,7 @@ import java.util.UUID
  * @author Brian Schlining
  * @since 2016-05-05T12:54:00
  */
-trait VideoSequenceDAO[T <: PersistentObject[UUID]] extends DAO[UUID, T] {
+trait VideoSequenceDAO[T <: PersistentObject] extends DAO[T] {
 
   def findByName(name: String): Option[T]
   def findByCameraID(cameraID: String): Iterable[T]

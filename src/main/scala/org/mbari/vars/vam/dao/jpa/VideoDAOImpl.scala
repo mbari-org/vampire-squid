@@ -17,7 +17,7 @@ import scala.collection.JavaConverters._
  * @since 2016-05-11T14:35:00
  */
 class VideoDAOImpl(entityManager: EntityManager)
-    extends BaseDAO[UUID, Video](entityManager)
+    extends BaseDAO[Video](entityManager)
     with VideoDAO[Video] {
 
   override def findByName(name: String): Option[Video] =
@@ -44,8 +44,8 @@ class VideoDAOImpl(entityManager: EntityManager)
 
   override def findAll(): Iterable[Video] = findByNamedQuery("Video.findAll")
 
-  override def deleteByPrimaryKey(primaryKey: UUID): Unit = {
-    val video = findByPrimaryKey(primaryKey)
+  override def deleteByUUID(primaryKey: UUID): Unit = {
+    val video = findByUUID(primaryKey)
     video.foreach(v => delete(v))
   }
 

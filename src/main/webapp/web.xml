@@ -16,6 +16,7 @@
         <url-pattern>/ui/*</url-pattern>
     </servlet-mapping>
 
+    <!--
     <filter>
         <filter-name>GzipFilter</filter-name>
         <filter-class>org.eclipse.jetty.servlets.GzipFilter</filter-class>
@@ -28,7 +29,9 @@
         <filter-name>GzipFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+    -->
 
+    <!--
     <filter>
         <filter-name>cross-origin</filter-name>
         <filter-class>org.eclipse.jetty.servlets.CrossOriginFilter</filter-class>
@@ -49,5 +52,6 @@
         <filter-name>cross-origin</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+    -->
 
 </web-app>

@@ -45,12 +45,12 @@ That will dump your entire database out as JSON.
 
 ## Design
 
-The design of the _video-asset_manager_ follows the ideas of microservices:
+The design of the _video-asset-manager_ follows the ideas of microservices:
 
 - __It's small and does one thing.__ Here, we are managing the location of segments of video that comprise a camera deployment and providing search services to facilitate finding the file we want.
-- __It owns it's own data.__ The current design is to use an SQL database. You can use any database you want. If you decide to use something else later on (MongoDB, Cassandra, whatever) that's OK too (but you have to code it).
+- __It owns its own data.__ The current design is to use an SQL database. You can use any database you want. If you decide to use something else later on (MongoDB, Cassandra, whatever) that's OK too (but you have to code it).
 - __Access is through standard API.__ Users interact through HTTP/JSON. If we rip out and replace the backend with some other storage, the change will be invisible to all applications that use this service.
-- __Independantly isolated and scalable__. If needed, multiple instances could be deployed behind a load balancer.
+- __Independently isolated and scalable__. If needed, multiple instances could be deployed behind a load balancer.
 
 ## API
 

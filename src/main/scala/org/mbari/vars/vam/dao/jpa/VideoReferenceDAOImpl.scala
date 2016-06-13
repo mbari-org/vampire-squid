@@ -14,7 +14,7 @@ import org.mbari.vars.vam.dao.VideoReferenceDAO
  * @since 2016-05-18T13:11:00
  */
 class VideoReferenceDAOImpl(entityManager: EntityManager)
-    extends BaseDAO[UUID, VideoReference](entityManager)
+    extends BaseDAO[VideoReference](entityManager)
     with VideoReferenceDAO[VideoReference] {
 
   override def findByVideoUUID(uuid: UUID): Iterable[VideoReference] =
@@ -27,8 +27,8 @@ class VideoReferenceDAOImpl(entityManager: EntityManager)
   override def findAll(): Iterable[VideoReference] =
     findByNamedQuery("VideoReference.findAll")
 
-  override def deleteByPrimaryKey(primaryKey: UUID): Unit = {
-    val videoReference = findByPrimaryKey(primaryKey)
+  override def deleteByUUID(primaryKey: UUID): Unit = {
+    val videoReference = findByUUID(primaryKey)
     videoReference.foreach(vr => delete(vr))
   }
 }

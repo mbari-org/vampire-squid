@@ -5,7 +5,7 @@ import javax.persistence.EntityManagerFactory
 
 import com.typesafe.config.ConfigFactory
 import org.eclipse.persistence.config.TargetDatabase
-import org.mbari.vars.vam.dao.{DAO, VideoDAO, VideoReferenceDAO, VideoSequenceDAO}
+import org.mbari.vars.vam.dao.{ DAO, VideoDAO, VideoReferenceDAO, VideoSequenceDAO }
 
 import scala.util.Try
 

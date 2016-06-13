@@ -75,10 +75,10 @@ class VideoDAOSpec extends FlatSpec with Matchers {
 
   it should "deleteByPrimaryKey" in {
     val primaryKey = videoSequence.videos.head.uuid
-    val v = Await.result(dao.runTransaction(d => d.findByPrimaryKey(primaryKey)), timeout)
+    val v = Await.result(dao.runTransaction(d => d.findByUUID(primaryKey)), timeout)
     v shouldBe defined
-    Await.result(dao.runTransaction(d => d.deleteByPrimaryKey(primaryKey)), timeout)
-    val v2 = Await.result(dao.runTransaction(d => d.findByPrimaryKey(primaryKey)), timeout)
+    Await.result(dao.runTransaction(d => d.deleteByUUID(primaryKey)), timeout)
+    val v2 = Await.result(dao.runTransaction(d => d.findByUUID(primaryKey)), timeout)
     v2 shouldBe empty
   }
 

@@ -8,7 +8,7 @@ import java.util.UUID
  * @author Brian Schlining
  * @since 2016-05-06T15:39:00
  */
-trait DAOFactory[A <: PersistentObject[UUID], B <: PersistentObject[UUID], C <: PersistentObject[UUID]] {
+trait DAOFactory[A <: PersistentObject, B <: PersistentObject, C <: PersistentObject] {
 
   def newVideoSequenceDAO(): VideoSequenceDAO[A]
 
@@ -17,7 +17,7 @@ trait DAOFactory[A <: PersistentObject[UUID], B <: PersistentObject[UUID], C <: 
    * @param dao
    * @return
    */
-  def newVideoSequenceDAO(dao: DAO[UUID, _]): VideoSequenceDAO[A]
+  def newVideoSequenceDAO(dao: DAO[_]): VideoSequenceDAO[A]
 
   def newVideoDAO(): VideoDAO[B]
 
@@ -26,7 +26,7 @@ trait DAOFactory[A <: PersistentObject[UUID], B <: PersistentObject[UUID], C <: 
    * @param dao
    * @return
    */
-  def newVideoDAO(dao: DAO[UUID, _]): VideoDAO[B]
+  def newVideoDAO(dao: DAO[_]): VideoDAO[B]
 
   def newVideoReferenceDAO(): VideoReferenceDAO[C]
 
@@ -35,6 +35,6 @@ trait DAOFactory[A <: PersistentObject[UUID], B <: PersistentObject[UUID], C <: 
    * @param dao
    * @return
    */
-  def newVideoReferenceDAO(dao: DAO[UUID, _]): VideoReferenceDAO[C]
+  def newVideoReferenceDAO(dao: DAO[_]): VideoReferenceDAO[C]
 
 }

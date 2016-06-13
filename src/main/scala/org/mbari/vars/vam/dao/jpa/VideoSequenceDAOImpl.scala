@@ -19,7 +19,7 @@ import scala.collection.JavaConverters._
  */
 
 class VideoSequenceDAOImpl(entityManager: EntityManager)
-    extends BaseDAO[UUID, VideoSequence](entityManager)
+    extends BaseDAO[VideoSequence](entityManager)
     with VideoSequenceDAO[VideoSequence] {
 
   @Transient
@@ -95,8 +95,8 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
     videoSequences.filter(hasTimestamp)
   }
 
-  override def deleteByPrimaryKey(primaryKey: UUID): Unit = {
-    val videoSequence = findByPrimaryKey(primaryKey)
+  override def deleteByUUID(primaryKey: UUID): Unit = {
+    val videoSequence = findByUUID(primaryKey)
     videoSequence.foreach(vs => delete(vs))
   }
 
