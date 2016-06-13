@@ -1,4 +1,4 @@
-![MBARI logo](
+![MBARI logo](https://raw.githubusercontent.com/underwatervideo/video-asset-manager/master/src/site/images/logo-mbari-3b.png)
 
 # video-asset-manager
 
