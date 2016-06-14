@@ -82,6 +82,7 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swa
     })
   }
 
+  // TODO Create should require authentication
   val vPOST = (apiOperation[String]("create")
     summary "Create a video-reference"
     parameters (
@@ -115,6 +116,7 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swa
       sizeBytes, description).map(controller.toJson)
   }
 
+  // TODO update should require authentication
   val vPUT = (apiOperation[String]("update")
     summary "Update a video-reference"
     parameters (

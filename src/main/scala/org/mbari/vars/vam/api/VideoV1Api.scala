@@ -119,6 +119,7 @@ class VideoV1Api(controller: VideoController)(implicit val swagger: Swagger, val
     })
   }
 
+  // TODO create should require authentication
   val vPOST = (apiOperation[String]("create")
     summary "Create a video"
     parameters (
@@ -144,6 +145,7 @@ class VideoV1Api(controller: VideoController)(implicit val swagger: Swagger, val
       .map(controller.toJson)
   }
 
+  // TODO update should require authentication
   val vPUT = (apiOperation[Video]("update")
     summary "Update a video"
     parameters (
