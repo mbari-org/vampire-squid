@@ -127,7 +127,7 @@ class VideoSequenceV1Api(controller: VideoSequenceController)(implicit val swagg
 
   // TODO delete should require authentication
   val vsDELETE = (apiOperation[Unit]("delete")
-    summary "Delete a video-sequence"
+    summary "Delete a video-sequence. Also deletes associated videos and video-references"
     parameters (
       pathParam[UUID]("uuid").description("The UUID of the video-sequence to be deleted")))
 
@@ -162,3 +162,4 @@ class VideoSequenceV1Api(controller: VideoSequenceController)(implicit val swagg
   }
 
 }
+

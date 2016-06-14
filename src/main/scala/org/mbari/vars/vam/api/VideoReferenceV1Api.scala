@@ -4,9 +4,9 @@ import java.net.URI
 import java.util.UUID
 
 import org.mbari.vars.vam.controllers.VideoReferenceController
-import org.mbari.vars.vam.dao.jpa.VideoSequence
+import org.mbari.vars.vam.dao.jpa.{ Video, VideoReference, VideoSequence }
 import org.scalatra.{ BadRequest, NoContent, NotFound }
-import org.scalatra.swagger.Swagger
+import org.scalatra.swagger.{ DataType, ParamType, Parameter, Swagger }
 
 import scala.concurrent.ExecutionContext
 import scala.collection.JavaConverters._
@@ -29,14 +29,19 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swa
     response.headers += ("Access-Control-Allow-Origin" -> "*")
   }
 
-  val vsGET = (apiOperation[Iterable[VideoSequence]]("findAll")
-    summary "List all video sequences")
+  val vsGET = (apiOperation[Iterable[VideoReference]]("findAll")
+    summary "List all video-references")
 
   get("/?", operation(vsGET)) {
     controller.findAll.map(vs => controller.toJson(vs.asJava))
   }
 
-  get("/:uuid") {
+  val uuidGET = (apiOperation[VideoReference]("findByUUID")
+    summary "Find a video-reference by uuid"
+    parameters (
+      pathParam[UUID]("uuid").description("The UUID of the video-reference")))
+
+  get("/:uuid", operation(uuidGET)) {
     val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest("Please provide a UUID")))
     controller.findByUUID(uuid).map({
       case None => halt(NotFound(
@@ -46,7 +51,12 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swa
     })
   }
 
-  get("/uri/:uri") {
+  val uriGET = (apiOperation[VideoReference]("findByURI")
+    summary "Find a video-reference by its URI"
+    parameters (
+      pathParam[URI]("uuid").description("The URI of the video-reference")))
+
+  get("/uri/:uri", operation(uriGET)) {
     val uri = params.getAs[URI]("uri").getOrElse(halt(BadRequest("Please provide a URI")))
     controller.findByURI(uri).map({
       case None => halt(NotFound(
@@ -56,7 +66,13 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swa
     })
   }
 
-  delete("/:uuid") {
+  // TODO delete should require authentication
+  val vrDELETE = (apiOperation[Unit]("delete")
+    summary "Delete a video-reference."
+    parameters (
+      pathParam[UUID]("uuid").description("The UUID of the video-reference to be deleted")))
+
+  delete("/:uuid", operation(vrDELETE)) {
     val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest(
       body = "{}",
       reason = "A UUID parameter is required")))
@@ -66,7 +82,21 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swa
     })
   }
 
-  post("/") {
+  val vPOST = (apiOperation[String]("create")
+    summary "Create a video-reference"
+    parameters (
+      Parameter("video_uuid", DataType.String, Some("The uuid of the owning video"), None, ParamType.Body, required = true),
+      Parameter("uri", DataType.String, Some("The unique URI of the video"), None, ParamType.Body, required = true),
+      Parameter("container", DataType.String, Some("The container mimetype"), None, ParamType.Body, required = false),
+      Parameter("video_codec", DataType.String, Some("An identifier for the video codec"), None, ParamType.Body, required = false),
+      Parameter("audio_codec", DataType.String, Some("An identifier for the audio codec"), None, ParamType.Body, required = false),
+      Parameter("width", DataType.Int, Some("The video's width in pixels"), None, ParamType.Body, required = false),
+      Parameter("height", DataType.Int, Some("The video's height in pixels"), None, ParamType.Body, required = false),
+      Parameter("frame_rate", DataType.Double, Some("The frame-rate of the video in frames per second"), None, ParamType.Body, required = false),
+      Parameter("size_bytes", DataType.Long, Some("The size of the video in bytes"), None, ParamType.Body, required = false),
+      Parameter("description", DataType.String, Some("A description of the video"), None, ParamType.Body, required = false)))
+
+  post("/", operation(vPOST)) {
     val videoUUID = params.getAs[UUID]("video_uuid").getOrElse(halt(BadRequest(
       body = "{}",
       reason = "A 'video_uuid' parameter is required.")))
@@ -85,7 +115,22 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swa
       sizeBytes, description).map(controller.toJson)
   }
 
-  put("/:uuid") {
+  val vPUT = (apiOperation[String]("update")
+    summary "Update a video-reference"
+    parameters (
+      pathParam[UUID]("uuid").description("The UUID of the video-reference to be updated"),
+      Parameter("video_uuid", DataType.String, Some("The uuid of the owning video"), None, ParamType.Body, required = false),
+      Parameter("uri", DataType.String, Some("The unique URI of the video"), None, ParamType.Body, required = false),
+      Parameter("container", DataType.String, Some("The container mimetype"), None, ParamType.Body, required = false),
+      Parameter("video_codec", DataType.String, Some("An identifier for the video codec"), None, ParamType.Body, required = false),
+      Parameter("audio_codec", DataType.String, Some("An identifier for the audio codec"), None, ParamType.Body, required = false),
+      Parameter("width", DataType.Int, Some("The video's width in pixels"), None, ParamType.Body, required = false),
+      Parameter("height", DataType.Int, Some("The video's height in pixels"), None, ParamType.Body, required = false),
+      Parameter("frame_rate", DataType.Double, Some("The frame-rate of the video in frames per second"), None, ParamType.Body, required = false),
+      Parameter("size_bytes", DataType.Long, Some("The size of the video in bytes"), None, ParamType.Body, required = false),
+      Parameter("description", DataType.String, Some("A description of the video"), None, ParamType.Body, required = false)))
+
+  put("/:uuid", operation(vPUT)) {
     val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest(
       body = "{}",
       reason = "A UUID parameter is required")))
