@@ -65,7 +65,7 @@ __Coming soon__. Right now there's an example python script that demo's adding d
 
 - [X] finish swagger documentation
 - [ ] dockerize the project
-- [ ] document using your own database
+- [X] document using your own database
 - [ ] Add authentication for `post`, `put`, `delete` methods
 - [ ] Add JPA indices
 
