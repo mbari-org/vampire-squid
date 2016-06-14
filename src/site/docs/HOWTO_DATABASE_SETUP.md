@@ -38,5 +38,7 @@ The built code will bin in `video-asset-manager/target/pack`.
 ## Configure for your database
 
 1. You will need to find the JDBC driver for your database. These are normally distributed as `jar` files. Download the driver jar file and copy it into `video-asset-manager/target/pack/lib`. 
-2. 
+2. Modify `video-asset-manager/target/pack/conf/application.conf` to include you database parameters. Consult your JDBC drivers info for the correct params.
+3. Start the video-asset-manager using `video-asset-manager/target/pack/bin/jetty-main`. The manager will create the necessary schema in your database if it does not already exist.
+4. That's it. You can now access your database using web api's (Docs for that will be forth-coming)
 

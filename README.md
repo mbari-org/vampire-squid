@@ -18,6 +18,10 @@ Where:
 - `Video` is an abstraction that refers to a single segment in the _VideoSequence_. It tracks the start date and duration of a segment of video. It's an abstraction as it does not point directly to a video via a URL or path as there will likely be multiple representations of the same video segement (such as digital master, mezzanine, and various proxies)
 - `VideoReference` is a concrete reference to a representation of a _Video_. It stores the particulars of a file needed to locate a video. It encapsulates the codecs, containers, size and location of a video file.
 
+## How-to
+
+- [Setup your own database](https://github.com/underwatervideo/video-asset-manager/blob/master/src/site/docs/HOWTO_DATABASE_SETUP.md)
+
 ## Data store
 
 The current data storage targets are SQL Databases. Pretty much all database servers are supported. You can configure the database info in the [application.conf](https://github.com/underwatervideo/video-asset-manager/blob/master/src/pack/conf/application.conf) file. The database schema will be auto-generated the first time you run the application. 
@@ -42,6 +46,7 @@ You can do a quick test by pointing to the server through a web browser at:
     http://localhost:8080/v1/videosequence
     
 That will dump your entire database out as JSON. 
+
 
 ## Design
 
