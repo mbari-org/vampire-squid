@@ -3,7 +3,6 @@ package org.mbari.vars.vam.dao.jpa
 import javax.persistence.EntityManagerFactory
 
 import com.typesafe.config.ConfigFactory
-import org.eclipse.persistence.config.TargetDatabase
 
 import scala.util.Try
 
@@ -18,12 +17,15 @@ object ProductionDAOFactory extends JPADAOFactory {
   private[this] val config = ConfigFactory.load()
   private[this] val productName = Try(config.getString("org.mbari.vars.vam.database.production.name")).getOrElse("Auto")
   private[this] val productionProps = Map(
+    "eclipselink.connection-pool.default.initial" -> "2",
+    "eclipselink.connection-pool.default.max" -> "16",
+    "eclipselink.connection-pool.default.min" -> "2",
     "eclipselink.logging.level" -> "INFO",
-    "javax.persistence.database-product-name" -> productName,
-    "eclipselink.target-database" -> productName,
-    "eclipselink.logging.timestamp" -> "false",
     "eclipselink.logging.session" -> "false",
     "eclipselink.logging.thread" -> "false",
+    "eclipselink.logging.timestamp" -> "false",
+    "eclipselink.target-database" -> productName,
+    "javax.persistence.database-product-name" -> productName,
     "javax.persistence.schema-generation.database.action" -> "create")
 
   lazy val entityManagerFactory: EntityManagerFactory = {

@@ -61,9 +61,11 @@ The design of the _video-asset-manager_ follows the ideas of microservices:
 
 __Coming soon__. Right now there's an example python script that demo's adding data: [simple_setup.py](https://github.com/underwatervideo/video-asset-manager/blob/master/src/pack/bin/simple_setup.py)
 
+![Swagger UI](https://github.com/underwatervideo/video-asset-manager/blob/master/src/site/images/Swagger_UI.png)
 ## TODO
 
 - [X] finish swagger documentation
+    - [ ] Swagger docs aren't quite correct. Type conversion between scala/json is off.
 - [ ] dockerize the project
 - [X] document using your own database
 - [ ] Add authentication for `post`, `put`, `delete` methods

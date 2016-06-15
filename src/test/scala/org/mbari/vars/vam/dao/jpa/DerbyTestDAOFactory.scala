@@ -17,12 +17,15 @@ object DerbyTestDAOFactory extends JPADAOFactory {
 
   private[this] val config = ConfigFactory.load()
   private[this] val testProps = Map(
+    "eclipselink.connection-pool.default.initial" -> "2",
+    "eclipselink.connection-pool.default.max" -> "16",
+    "eclipselink.connection-pool.default.min" -> "2",
     "eclipselink.logging.level" -> "FINE",
-    "javax.persistence.database-product-name" -> TargetDatabase.Derby,
-    "eclipselink.target-database" -> TargetDatabase.Derby,
-    "eclipselink.logging.timestamp" -> "false",
     "eclipselink.logging.session" -> "false",
     "eclipselink.logging.thread" -> "false",
+    "eclipselink.logging.timestamp" -> "false",
+    "eclipselink.target-database" -> TargetDatabase.Derby,
+    "javax.persistence.database-product-name" -> TargetDatabase.Derby,
     "javax.persistence.schema-generation.database.action" -> "create",
     "javax.persistence.schema-generation.scripts.action" -> "drop-and-create",
     "javax.persistence.schema-generation.scripts.create-target" -> "target/test-database-create.ddl",

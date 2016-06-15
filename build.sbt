@@ -35,20 +35,20 @@ updateOptions := updateOptions.value.withCachedResolution(true)
 
 // Add SLF4J, Logback and testing libs
 libraryDependencies ++= {
-  val akkaVersion = "2.4.2"
+  val akkaVersion = "2.4.7"
   val configVersion = "1.3.0"
   val derbyVersion = "10.12.1.1"
-  val eclipselinkVersion = "2.6.2"
+  val eclipselinkVersion = "2.6.3"
   val gsonJavatimeVersion = "1.1.1"
-  val gsonVersion = "2.6.2"
-  val h2Version = "1.4.191"
+  val gsonVersion = "2.7"
+  val h2Version = "1.4.192"
   val jettyVersion = "9.3.8.v20160314"
   val jtaVersion = "1.1"
   val jtdsVersion = "1.3.1"
   val junitVersion = "4.12"
   val logbackVersion = "1.1.7"
   val scalaTestVersion = "2.2.6"
-  val scalatraVersion = "2.4.0"
+  val scalatraVersion = "2.4.1"
   val slf4jVersion = "1.7.21"
   Seq(
     "ch.qos.logback"           % "logback-classic"                % logbackVersion,
