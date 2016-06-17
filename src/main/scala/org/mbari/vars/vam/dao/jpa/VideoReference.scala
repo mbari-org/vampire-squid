@@ -15,7 +15,7 @@ import scala.util.Try
  * @since 2016-05-05T18:19:00
  */
 @Entity(name = "VideoReference")
-@Table(name = "video_reference")
+@Table(name = "video_references")
 @EntityListeners(value = Array(classOf[TransactionLogger]))
 @NamedQueries(Array(
   new NamedQuery(

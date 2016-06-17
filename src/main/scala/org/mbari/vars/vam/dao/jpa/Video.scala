@@ -2,14 +2,11 @@ package org.mbari.vars.vam.dao.jpa
 
 import java.time.{ Duration, Instant }
 import java.util.{ ArrayList => JArrayList, List => JList }
-import javax.activation
-import javax.activation.MimeType
 import javax.persistence.{ CascadeType, _ }
 
 import com.google.gson.annotations.{ Expose, SerializedName }
 
 import scala.collection.JavaConverters._
-import scala.util.Try
 
 /**
  * A Video is an abstract representation of a discrete segment of video.
@@ -18,7 +15,7 @@ import scala.util.Try
  * @since 2016-05-05T17:54:00
  */
 @Entity(name = "Video")
-@Table(name = "video")
+@Table(name = "videos")
 @EntityListeners(value = Array(classOf[TransactionLogger]))
 @NamedNativeQueries(Array(
   new NamedNativeQuery(

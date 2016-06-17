@@ -2,11 +2,17 @@
 
 # video-asset-manager
 
+If your video capture looks like the image below, then this video asset manager may be useful for you:
+
+![Video File Workflow](https://raw.githubusercontent.com/underwatervideo/video-asset-manager/master/src/site/docs/digital_videos.png)
+
 Currently, this a project for testing ideas and models for managing video and image assets. The basic data models is:
 
 ```
 VideoSequence [1]--->[0..*] Video [1]--->[0..*] VideoReference 
 ```
+
+
 
 The yellow block in this diagram illustrates the design:
 

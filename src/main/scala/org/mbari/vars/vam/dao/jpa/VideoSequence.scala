@@ -15,7 +15,7 @@ import scala.collection.JavaConverters._
  * @since 2016-05-05T12:09:00
  */
 @Entity(name = "VideoSequence")
-@Table(name = "video_sequence")
+@Table(name = "video_sequences")
 @EntityListeners(value = Array(classOf[TransactionLogger]))
 @NamedNativeQueries(Array(
   new NamedNativeQuery(
