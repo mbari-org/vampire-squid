@@ -4,7 +4,7 @@
 
 If your video capture looks like the image below, then this video asset manager may be useful for you:
 
-![Video File Workflow](https://raw.githubusercontent.com/underwatervideo/video-asset-manager/master/src/site/docs/digital_videos.png)
+![Video File Workflow](https://raw.githubusercontent.com/underwatervideo/video-asset-manager/master/src/site/images/digital_videos.png)
 
 Currently, this a project for testing ideas and models for managing video and image assets. The basic data models is:
 
