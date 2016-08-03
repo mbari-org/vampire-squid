@@ -1,7 +1,7 @@
 // PROJECT PROPERTIES ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 organization in ThisBuild := "org.mbari.vars"
 
-name := "video-asset-manager"
+name := "vampire-squid"
 
 version in ThisBuild := "1.0-SNAPSHOT"
 
