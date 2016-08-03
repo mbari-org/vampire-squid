@@ -1,5 +1,7 @@
 ![MBARI logo](https://raw.githubusercontent.com/underwatervideo/vampire-squid/master/src/site/images/logo-mbari-3b.png)
 
+![Vampire Squid](http://www.mbari.org/wp-content/uploads/2015/11/vamp-T1152-500.jpg)
+
 # vampire-squid
 
 Vampire-squid is a video asset manager.
