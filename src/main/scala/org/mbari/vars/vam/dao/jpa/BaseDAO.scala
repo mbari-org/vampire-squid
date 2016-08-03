@@ -60,8 +60,6 @@ abstract class BaseDAO[B <: PersistentObject: ClassTag](val entityManager: Entit
 
   override def create(entity: B): Unit = entityManager.persist(entity)
 
-  //override def findByUUID(uuid: UUID): Option[B] = findByPrimaryKey(uuid)
-
   override def update(entity: B): B = entityManager.merge(entity)
 
   override def delete(entity: B): Unit = entityManager.remove(entity)

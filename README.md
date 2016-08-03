@@ -1,10 +1,12 @@
-![MBARI logo](https://raw.githubusercontent.com/underwatervideo/video-asset-manager/master/src/site/images/logo-mbari-3b.png)
+![MBARI logo](https://raw.githubusercontent.com/underwatervideo/vampire-squid/master/src/site/images/logo-mbari-3b.png)
 
-# video-asset-manager
+# vampire-squid
+
+Vampire-squid is a video asset manager.
 
 If your video capture looks like the image below, then this video asset manager may be useful for you:
 
-![Video File Workflow](https://raw.githubusercontent.com/underwatervideo/video-asset-manager/master/src/site/images/digital_videos.png)
+![Video File Workflow](https://raw.githubusercontent.com/underwatervideo/vampire-squid/master/src/site/images/digital_videos.png)
 
 Currently, this a project for testing ideas and models for managing video and image assets. The basic data models is:
 
@@ -16,7 +18,7 @@ VideoSequence [1]--->[0..*] Video [1]--->[0..*] VideoReference
 
 The yellow block in this diagram illustrates the design:
 
-![Diagram](https://raw.githubusercontent.com/underwatervideo/video-asset-manager/master/src/site/docs/VideoTAG_data_model.png)
+![Diagram](https://raw.githubusercontent.com/underwatervideo/vampire-squid/master/src/site/docs/VideoTAG_data_model.png)
 
 Where:
 
@@ -26,11 +28,11 @@ Where:
 
 ## How-to
 
-- [Setup your own database](https://github.com/underwatervideo/video-asset-manager/blob/master/src/site/docs/HOWTO_DATABASE_SETUP.md)
+- [Setup your own database](https://github.com/underwatervideo/vampire-squid/blob/master/src/site/docs/HOWTO_DATABASE_SETUP.md)
 
 ## Data store
 
-The current data storage targets are SQL Databases. Pretty much all database servers are supported. You can configure the database info in the [application.conf](https://github.com/underwatervideo/video-asset-manager/blob/master/src/pack/conf/application.conf) file. The database schema will be auto-generated the first time you run the application. 
+The current data storage targets are SQL Databases. Pretty much all database servers are supported. You can configure the database info in the [application.conf](https://github.com/underwatervideo/vampire-squid/blob/master/src/pack/conf/application.conf) file. The database schema will be auto-generated the first time you run the application. 
 
 Note that you will need to include you database's JDBC driver. There's a variety of ways to do it but the simplest for non-developers is to drop the driver's jar file in the build's `lib` directory. 
 
@@ -56,7 +58,7 @@ That will dump your entire database out as JSON.
 
 ## Design
 
-The design of the _video-asset-manager_ follows the ideas of microservices:
+The design of the _vampire-squid_ follows the ideas of microservices:
 
 - __It's small and does one thing.__ Here, we are managing the location of segments of video that comprise a camera deployment and providing search services to facilitate finding the file we want.
 - __It owns its own data.__ The current design is to use an SQL database. You can use any database you want. If you decide to use something else later on (MongoDB, Cassandra, whatever) that's OK too (but you have to code it).
@@ -65,9 +67,9 @@ The design of the _video-asset-manager_ follows the ideas of microservices:
 
 ## API
 
-__Coming soon__. Right now there's an example python script that demo's adding data: [simple_setup.py](https://github.com/underwatervideo/video-asset-manager/blob/master/src/pack/bin/simple_setup.py)
+__Coming soon__. Right now there's an example python script that demo's adding data: [simple_setup.py](https://github.com/underwatervideo/vampire-squid/blob/master/src/pack/bin/simple_setup.py)
 
-![Swagger UI](https://github.com/underwatervideo/video-asset-manager/blob/master/src/site/images/Swagger_UI.png)
+![Swagger UI](https://github.com/underwatervideo/vampire-squid/blob/master/src/site/images/Swagger_UI.png)
 ## TODO
 
 - [X] finish swagger documentation

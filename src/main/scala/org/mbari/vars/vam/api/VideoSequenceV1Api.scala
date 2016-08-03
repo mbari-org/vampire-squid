@@ -134,7 +134,7 @@ class VideoSequenceV1Api(controller: VideoSequenceController)(implicit val swagg
   delete("/:uuid", operation(vsDELETE)) {
     val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest(
       body = "{}",
-      reason = "A UUID parameter is required")))
+      reason = "A 'uuid' parameter is required")))
     controller.delete(uuid).map({
       case true => halt(NoContent(reason = s"Success! Deleted video-sequence with UUID of $uuid"))
       case false => halt(NotFound(reason = s"Failed. No video-sequence with UUID of $uuid was found."))

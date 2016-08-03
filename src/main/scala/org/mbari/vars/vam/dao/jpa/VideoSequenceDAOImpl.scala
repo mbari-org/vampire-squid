@@ -95,10 +95,9 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
     videoSequences.filter(hasTimestamp)
   }
 
-  override def deleteByUUID(primaryKey: UUID): Unit = {
-    val videoSequence = findByUUID(primaryKey)
-    videoSequence.foreach(vs => delete(vs))
-  }
+  override def deleteByUUID(primaryKey: UUID): Unit =
+    findByUUID(primaryKey).foreach(delete)
+
 
   private def containsTimestamp(vs: VideoSequence, timestamp: Instant): Boolean = vs.videos
     .map(v => (v.start, Try(v.start.plus(v.duration)).getOrElse(v.start)))

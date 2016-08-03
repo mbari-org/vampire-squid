@@ -24,7 +24,6 @@ object DevelopmentDAOFactory extends JPADAOFactory {
     "eclipselink.connection-pool.default.max" -> "16",
     "eclipselink.connection-pool.default.min" -> "2",
     "eclipselink.logging.level" -> "FINE",
-    "eclipselink.logging.level" -> "INFO",
     "eclipselink.logging.session" -> "false",
     "eclipselink.logging.thread" -> "false",
     "eclipselink.logging.timestamp" -> "false",
