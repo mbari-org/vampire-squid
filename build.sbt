@@ -79,6 +79,7 @@ libraryDependencies ++= {
     "org.scalatra"            %% "scalatra-slf4j"                 % scalatraVersion,
     "org.scalatra"            %% "scalatra-swagger"               % scalatraVersion,
     "org.scalatra"            %% "scalatra-swagger-ext"           % scalatraVersion,
+    "org.scalatra"            %% "scalatra-scalatest"            % scalatraVersion,
     "org.slf4j"                % "log4j-over-slf4j"               % slf4jVersion,
     "org.slf4j"                % "slf4j-api"                      % slf4jVersion)
       .map(_.excludeAll(ExclusionRule("org.slf4j", "slf4j-jdk14"),

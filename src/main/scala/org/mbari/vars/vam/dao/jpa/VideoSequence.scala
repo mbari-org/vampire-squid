@@ -105,7 +105,7 @@ class VideoSequence extends HasUUID with HasOptimisticLock with HasDescription {
   override def toString = s"VideoSequence($name, $cameraID)"
 }
 
-object camVideoSequence {
+object VideoSequence {
 
   def apply(name: String, cameraID: String, videos: Seq[Video] = Nil, description: Option[String] = None): VideoSequence = {
     val vs = new VideoSequence
