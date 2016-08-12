@@ -47,7 +47,8 @@ libraryDependencies ++= {
   val jtdsVersion = "1.3.1"
   val junitVersion = "4.12"
   val logbackVersion = "1.1.7"
-  val scalaTestVersion = "2.2.6"
+  //val scalaTestVersion = "2.2.6"
+  val scalaTestVersion = "3.0.0"
   val scalatraVersion = "2.4.1"
   val slf4jVersion = "1.7.21"
   Seq(
