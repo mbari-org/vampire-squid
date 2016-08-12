@@ -17,6 +17,13 @@ trait VideoDAO[T <: PersistentObject] extends DAO[T] {
   def findByVideoReferenceUUID(uuid: UUID): Option[T]
   def findAllNames(): Iterable[String]
   def findAllNamesAndTimestamps(): Iterable[(String, Instant)]
+
+  /**
+   * Finds videos with a start date between the 2 timestamps
+   * @param t0
+   * @param t1
+   * @return
+   */
   def findBetweenTimestamps(t0: Instant, t1: Instant): Iterable[T]
 
 }

@@ -53,6 +53,21 @@ class VideoV1Api(controller: VideoController)(implicit val swagger: Swagger, val
     })
   }
 
+  val videoSequenceUUIDGet = (apiOperation[VideoSequence]("findVideoSequenceByVideoUUID")
+    summary "Find a videosequence by video's uuid"
+    parameters (
+      pathParam[UUID]("uuid").description("The UUID of the video")))
+
+  get("/videosequence/:uuid", operation(videoSequenceUUIDGet)) {
+    val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest("Please provide a UUID")))
+    controller.findByUUID(uuid).map({
+      case None => halt(NotFound(
+        body = "{}",
+        reason = s"A video with a UUID of $uuid was not found in the database"))
+      case Some(v) => controller.toJson(v.videoSequence)
+    })
+  }
+
   val nameGET = (apiOperation[Video]("findByName")
     summary "Find a video by name"
     parameters (
@@ -82,6 +97,7 @@ class VideoV1Api(controller: VideoController)(implicit val swagger: Swagger, val
     val window = Try(Duration.ofMinutes(params.getAs[Long]("window_minutes").get))
       .getOrElse(Constants.DEFAULT_DURATION_WINDOW)
     controller.findByTimestamp(timestamp, window)
+      .map(_.asJava)
       .map(controller.toJson)
   }
 

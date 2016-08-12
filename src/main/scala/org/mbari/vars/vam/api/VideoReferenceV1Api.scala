@@ -56,6 +56,7 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swa
     parameters (
       pathParam[URI]("uuid").description("The URI of the video-reference")))
 
+  // TODO encode/decode URL
   get("/uri/:uri", operation(uriGET)) {
     val uri = params.getAs[URI]("uri").getOrElse(halt(BadRequest("Please provide a URI")))
     controller.findByURI(uri).map({

@@ -1,7 +1,7 @@
 package org.mbari.vars.vam.api
 
 import org.mbari.vars.vam.Constants
-import org.mbari.vars.vam.dao.jpa.DevelopmentDAOFactory
+import org.mbari.vars.vam.dao.jpa.{ DevelopmentDAOFactory, H2TestDAOFactory }
 import org.scalatest.BeforeAndAfterAll
 import org.scalatra.swagger.{ ApiInfo, Swagger }
 import org.scalatra.test.scalatest.ScalatraFlatSpec
@@ -17,7 +17,7 @@ import scala.concurrent.ExecutionContext
 trait WebApiStack extends ScalatraFlatSpec with BeforeAndAfterAll {
 
   protected[this] val gson = Constants.GSON
-  protected[this] val daoFactory = DevelopmentDAOFactory
+  protected[this] val daoFactory = H2TestDAOFactory
   protected[this] implicit val executionContext = ExecutionContext.global
 
   protected[this] val apiInfo = ApiInfo(

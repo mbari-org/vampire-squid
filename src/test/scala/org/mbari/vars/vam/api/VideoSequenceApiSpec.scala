@@ -1,13 +1,7 @@
 package org.mbari.vars.vam.api
 
-import java.util.UUID
-
-import org.mbari.vars.vam.Constants
 import org.mbari.vars.vam.controllers.{ VideoSequenceController }
-import org.mbari.vars.vam.dao.jpa.{ DevelopmentDAOFactory, VideoSequence }
-import org.scalatest.{ BeforeAndAfterAll }
-import org.scalatra.swagger.{ ApiInfo, Swagger }
-import org.scalatra.test.scalatest.{ ScalatraFlatSpec }
+import org.mbari.vars.vam.dao.jpa.{ VideoSequence }
 
 import scala.concurrent.ExecutionContext
 
