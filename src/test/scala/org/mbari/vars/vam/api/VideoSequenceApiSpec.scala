@@ -57,9 +57,15 @@ class VideoSequenceApiSpec extends WebApiStack {
       videoSequence.uuid should not be (null)
       aVideoSequence = videoSequence
     }
-    post("/v1/videosequence", "name" -> "T2345", "camera_id" -> "Tiburon") {}
-    post("/v1/videosequence", "name" -> "T3456", "camera_id" -> "Tiburon") {}
-    post("/v1/videosequence", "name" -> "V0001", "camera_id" -> "Ventana") {}
+    post("/v1/videosequence", "name" -> "T2345", "camera_id" -> "Tiburon") {
+      status should be(200)
+    }
+    post("/v1/videosequence", "name" -> "T3456", "camera_id" -> "Tiburon") {
+      status should be(200)
+    }
+    post("/v1/videosequence", "name" -> "V0001", "camera_id" -> "Ventana") {
+      status should be(200)
+    }
   }
 
   it should "get by uuid" in {

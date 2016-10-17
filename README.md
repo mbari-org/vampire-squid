@@ -86,5 +86,10 @@ __Coming soon__. Right now there's an example python script that demo's adding d
 
 This project is built using [SBT](http://www.scala-sbt.org/). See SBT.md for help.
 
+## Acknowledgements
+
+We'd like to thank the following companies for kindly donating software for the development of this project:
+
+[![JWT Auth for open source projects](http://cdn.auth0.com/oss/badges/a0-badge-dark.png)](https://auth0.com/?utm_source=oss&utm_medium=gp&utm_campaign=oss)
 
 
