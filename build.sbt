@@ -5,7 +5,7 @@ name := "vampire-squid"
 
 version in ThisBuild := "1.0-SNAPSHOT"
 
-scalaVersion in ThisBuild := "2.11.8"
+scalaVersion in ThisBuild := "2.12.1"
 
 mainClass in Compile := Some("JettyMain")
 
@@ -35,25 +35,26 @@ updateOptions := updateOptions.value.withCachedResolution(true)
 
 // Add SLF4J, Logback and testing libs
 libraryDependencies ++= {
-  val akkaVersion = "2.4.7"
-  val configVersion = "1.3.0"
+  val akkaVersion = "2.4.16"
+  val configVersion = "1.3.1"
   val derbyVersion = "10.12.1.1"
   val eclipselinkVersion = "2.6.3"
   val gsonJavatimeVersion = "1.1.1"
   val gsonVersion = "2.7"
   val h2Version = "1.4.192"
-  val jettyVersion = "9.3.8.v20160314"
+  val jettyVersion = "9.3.14.v20161028"
   val jtaVersion = "1.1"
   val jtdsVersion = "1.3.1"
   val junitVersion = "4.12"
   val logbackVersion = "1.1.7"
   //val scalaTestVersion = "2.2.6"
-  val scalaTestVersion = "3.0.0"
-  val scalatraVersion = "2.4.1"
+  val scalaTestVersion = "3.0.1"
+  val scalatraVersion = "2.5.0"
   val slf4jVersion = "1.7.21"
   Seq(
     "ch.qos.logback"           % "logback-classic"                % logbackVersion,
     "ch.qos.logback"           % "logback-core"                   % logbackVersion,
+    "com.auth0"                % "java-jwt"                       % "2.2.1",
     "com.fatboyindustrial.gson-javatime-serialisers" % "gson-javatime-serialisers" % gsonJavatimeVersion,
     "com.google.code.gson"     % "gson"                           % gsonVersion,
     "com.h2database"           % "h2"                             % h2Version             % "test",
@@ -63,7 +64,7 @@ libraryDependencies ++= {
     "javax.servlet"            % "javax.servlet-api"              % "3.1.0",
     "javax.transaction"        % "jta"                            % jtaVersion,
     "junit"                    % "junit"                          % junitVersion          % "test",
-    "net.databinder.dispatch" %% "dispatch-core"                  % "0.11.3",
+    //"net.databinder.dispatch" %% "dispatch-core"                  % "0.11.3",
     "net.sourceforge.jtds"     % "jtds"                           % jtdsVersion,
     "org.apache.derby"         % "derby"                          % derbyVersion, //          % "test",
     "org.apache.derby"         % "derbyclient"                    % derbyVersion, //          % "test",
@@ -72,7 +73,7 @@ libraryDependencies ++= {
     "org.eclipse.jetty"        % "jetty-servlets"                 % jettyVersion          % "container;compile;test",
     "org.eclipse.jetty"        % "jetty-webapp"                   % jettyVersion          % "container;compile;test",
     "org.eclipse.persistence"  % "eclipselink"                    % eclipselinkVersion,
-    "org.json4s"              %% "json4s-jackson"                  % "3.3.0",
+    "org.json4s"              %% "json4s-jackson"                  % "3.5.0",
     "org.scalatest"           %% "scalatest"                      % scalaTestVersion      % "test",
     "org.scalatra"            %% "scalatra"                       % scalatraVersion,
     "org.scalatra"            %% "scalatra-json"                  % scalatraVersion,

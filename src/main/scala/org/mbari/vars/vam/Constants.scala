@@ -5,12 +5,13 @@ import java.time.Duration
 
 import com.fatboyindustrial.gsonjavatime.Converters
 import com.google.gson.reflect.TypeToken
-import com.google.gson.{ FieldNamingPolicy, GsonBuilder }
+import com.google.gson.{FieldNamingPolicy, GsonBuilder}
 import com.typesafe.config.ConfigFactory
-import org.mbari.vars.vam.json.{ DurationConverter => GSONDurationConverter }
+import org.mbari.vars.vam.auth.AuthorizationService
+import org.mbari.vars.vam.json.{DurationConverter => GSONDurationConverter}
 import org.slf4j.LoggerFactory
 
-import scala.util.{ Failure, Success, Try }
+import scala.util.{Failure, Success, Try}
 /**
  *
  *
@@ -19,7 +20,7 @@ import scala.util.{ Failure, Success, Try }
  */
 object Constants {
 
-  private[this] val config = ConfigFactory.load()
+  val CONFIG = ConfigFactory.load()
   private[this] val keyWindow = "org.mbari.vars.vam.time.window"
   private[this] val log = LoggerFactory.getLogger(getClass)
 
@@ -47,12 +48,18 @@ object Constants {
    * Reads the 'org.mbari.vars.vam.time.window' property from the config files to configure
    * the window.
    */
-  val DEFAULT_DURATION_WINDOW = Try(config.getDuration(keyWindow)) match {
+  val DEFAULT_DURATION_WINDOW = Try(CONFIG.getDuration(keyWindow)) match {
     case Success(window) => window
     case Failure(e) =>
       log.info(s"Failed to find '$keyWindow' in the configuration files (reference.conf or " +
         s"application.conf). Using default window of 120 minutes")
       Duration.ofMinutes(120)
+  }
+
+  val AUTH_SERVICE: AuthorizationService = {
+    val serviceName = CONFIG.getString("authentication.service")
+    val clazz = Class.forName(serviceName)
+    clazz.newInstance().asInstanceOf[AuthorizationService]
   }
 
 }
