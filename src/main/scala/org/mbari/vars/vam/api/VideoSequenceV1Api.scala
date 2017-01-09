@@ -29,11 +29,6 @@ class VideoSequenceV1Api(controller: VideoSequenceController)(implicit val swagg
 
   override protected val applicationName: Option[String] = Some("VideoSequenceAPI")
 
-  before() {
-    contentType = "application/json"
-    response.headers += ("Access-Control-Allow-Origin" -> "*")
-  }
-
   val vsGET = (apiOperation[Iterable[VideoSequence]]("findAll")
     summary "List all video sequences")
 

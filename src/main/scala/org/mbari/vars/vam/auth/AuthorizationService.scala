@@ -6,6 +6,8 @@ package org.mbari.vars.vam.auth
  */
 trait AuthorizationService {
 
+  def authorizationHeader: String
+
   def authorize(token: String): Option[Authorization]
 
   def verify(authorization: Authorization): Boolean

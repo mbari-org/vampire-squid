@@ -7,6 +7,7 @@ import org.mbari.vars.vam.Constants
 import scala.collection.JavaConverters._
 import java.lang.{Long => JLong}
 import java.time.Instant
+import javax.servlet.http.HttpServletRequest
 
 import scala.util.control.NonFatal
 
@@ -19,8 +20,11 @@ class BasicJWTService extends AuthorizationService {
   private[this] val issuer = Constants.CONFIG.getString("basicjwt.issuer")
   private[this] val apiKey = Constants.CONFIG.getString("basicjwt.client.secret")
   private[this] val signingSecret = Constants.CONFIG.getString("basicjwt.signing.secret")
+  val authorizationHeader = "Authorization"
 
   private[this] val verifier = new JWTVerifier(signingSecret)
+
+  def parseAuthorizationHeader(request: HttpServletRequest): Option[Authorization] = ???
 
   override def authorize(token: String): Option[Authorization] =
     if (apiKey.equals(token)) Some(Authorization("BEARER", newAccessToken))

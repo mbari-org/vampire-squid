@@ -24,11 +24,6 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swa
 
   override protected val applicationName: Option[String] = Some("VideoReferenceAPI")
 
-  before() {
-    contentType = "application/json"
-    response.headers += ("Access-Control-Allow-Origin" -> "*")
-  }
-
   val vsGET = (apiOperation[Iterable[VideoReference]]("findAll")
     summary "List all video-references")
 

@@ -1,10 +1,11 @@
 package org.mbari.vars.vam.api
 
 import java.net.URI
-import java.time.{ Duration, Instant }
+import java.time.{Duration, Instant}
 import java.util.UUID
 
-import org.scalatra.{ ContentEncodingSupport, FutureSupport, ScalatraServlet }
+import org.mbari.vars.vam.Constants
+import org.scalatra.{ContentEncodingSupport, FutureSupport, NotFound, ScalatraServlet}
 import org.scalatra.swagger.SwaggerSupport
 import org.scalatra.util.conversion.TypeConverter
 
@@ -21,6 +22,29 @@ abstract class APIStack extends ScalatraServlet
     with ContentEncodingSupport
     with SwaggerSupport
     with FutureSupport {
+
+  before() {
+    contentType = "application/json"
+    response.headers += ("Access-Control-Allow-Origin" -> "*")
+
+    // Security check
+    val servername = request.serverName
+//    Option(request.getHeader(Constants.AUTH_SERVICE.authorizationHeader)) match
+//      case None => halt(NotFound(reason = "no Authorization header was provided"))
+//    val auth = Constants.AUTH_SERVICE.authorize(header)
+  }
+
+  def verify: Unit = {
+    val servername = request.serverName
+    Option(request.getHeader(Constants.AUTH_SERVICE.authorizationHeader)) match {
+      case None => halt(NotFound(reason = "no Authorization header was provided"))
+      case Some(token) =>
+        if (Constants.AUTH_SERVICE.authorize(token)) match {
+          case None => halt(NotFound(reason = "Invalid authenitication"))
+          case Some(authorization) =>
+        }
+    }
+  }
 
   implicit val stringToUUID = new TypeConverter[String, UUID] {
     override def apply(s: String): Option[UUID] = Try(UUID.fromString(s)).toOption

@@ -24,11 +24,6 @@ class VideoV1Api(controller: VideoController)(implicit val swagger: Swagger, val
   override protected def applicationDescription: String = "Video API (v1)"
   override protected val applicationName: Option[String] = Some("VideoAPI")
 
-  before() {
-    contentType = "application/json"
-    response.headers += ("Access-Control-Allow-Origin" -> "*")
-  }
-
   val vGET = (apiOperation[Iterable[Video]]("findAll")
     summary "List all videos")
 
