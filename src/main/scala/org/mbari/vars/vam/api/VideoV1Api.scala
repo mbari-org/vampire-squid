@@ -121,6 +121,7 @@ class VideoV1Api(controller: VideoController)(implicit val swagger: Swagger, val
       pathParam[UUID]("uuid").description("The UUID of the video to be deleted")))
 
   delete("/:uuid", operation(vDELETE)) {
+    validateRequest()
     val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest(
       body = "{}",
       reason = "A UUID parameter is required")))
@@ -141,6 +142,7 @@ class VideoV1Api(controller: VideoController)(implicit val swagger: Swagger, val
       Parameter("description", DataType.String, Some("A description of the video"), None, ParamType.Body, required = false)))
 
   post("/", operation(vPOST)) {
+    validateRequest()
     val name = params.get("name").getOrElse(halt(BadRequest(
       body = "{}",
       reason = "A 'name' parameter is required")))
@@ -168,6 +170,7 @@ class VideoV1Api(controller: VideoController)(implicit val swagger: Swagger, val
       Parameter("description", DataType.String, Some("A description of the video"), None, ParamType.Body, required = false)))
 
   put("/:uuid", operation(vPUT)) {
+    validateRequest()
     val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest(
       body = "{}",
       reason = "A UUID parameter is required")))

@@ -111,6 +111,7 @@ class VideoSequenceV1Api(controller: VideoSequenceController)(implicit val swagg
 
   // TODO post should require authentication
   post("/", operation(vsPOST)) {
+    validateRequest()
     val name = params.get("name").getOrElse(halt(BadRequest(
       body = "{}",
       reason = "A 'name' parameter is required")))
@@ -127,6 +128,7 @@ class VideoSequenceV1Api(controller: VideoSequenceController)(implicit val swagg
       pathParam[UUID]("uuid").description("The UUID of the video-sequence to be deleted")))
 
   delete("/:uuid", operation(vsDELETE)) {
+    validateRequest()
     val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest(
       body = "{}",
       reason = "A 'uuid' parameter is required")))
@@ -146,6 +148,7 @@ class VideoSequenceV1Api(controller: VideoSequenceController)(implicit val swagg
 
   // TODO Should require authentication
   put("/:uuid", operation(vsPUT)) {
+    validateRequest()
     val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest(
       body = "{}",
       reason = "A UUID parameter is required")))

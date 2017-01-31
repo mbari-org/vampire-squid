@@ -69,6 +69,7 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swa
       pathParam[UUID]("uuid").description("The UUID of the video-reference to be deleted")))
 
   delete("/:uuid", operation(vrDELETE)) {
+    validateRequest()
     val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest(
       body = "{}",
       reason = "A UUID parameter is required")))
@@ -94,6 +95,7 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swa
       Parameter("description", DataType.String, Some("A description of the video"), None, ParamType.Body, required = false)))
 
   post("/", operation(vPOST)) {
+    validateRequest()
     val videoUUID = params.getAs[UUID]("video_uuid").getOrElse(halt(BadRequest(
       body = "{}",
       reason = "A 'video_uuid' parameter is required.")))
@@ -129,6 +131,7 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swa
       Parameter("description", DataType.String, Some("A description of the video"), None, ParamType.Body, required = false)))
 
   put("/:uuid", operation(vPUT)) {
+    validateRequest()
     val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest(
       body = "{}",
       reason = "A UUID parameter is required")))
