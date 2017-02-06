@@ -16,6 +16,7 @@
         <url-pattern>/ui/*</url-pattern>
     </servlet-mapping>
 
+
     <!--
     <filter>
         <filter-name>GzipFilter</filter-name>

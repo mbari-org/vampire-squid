@@ -3,6 +3,7 @@ package org.mbari.vars.vam.dao.jpa
 import java.util
 import javax.persistence.{ EntityManagerFactory, Persistence }
 
+import com.typesafe.config.ConfigFactory
 import org.eclipse.persistence.config.PersistenceUnitProperties
 
 import scala.collection.JavaConverters._
@@ -19,9 +20,21 @@ import scala.collection.JavaConverters._
  */
 object EntityManagerFactories {
 
+  private lazy val config = ConfigFactory.load()
+
+  val PRODUCTION_PROPS = Map(
+    "eclipselink.connection-pool.default.initial" -> "2",
+    "eclipselink.connection-pool.default.max" -> "16",
+    "eclipselink.connection-pool.default.min" -> "2",
+    "eclipselink.logging.session" -> "false",
+    "eclipselink.logging.thread" -> "false",
+    "eclipselink.logging.timestamp" -> "false",
+    "javax.persistence.schema-generation.database.action" -> "create",
+    PersistenceUnitProperties.SESSION_CUSTOMIZER -> "org.mbari.vars.annotation.dao.jpa.UUIDSequence")
+
   def apply(properties: Map[String, String]): EntityManagerFactory = {
-    val customProps = properties + (PersistenceUnitProperties.SESSION_CUSTOMIZER -> "org.mbari.vars.vam.dao.jpa.UUIDSequence")
-    Persistence.createEntityManagerFactory("video-asset-manager", customProps.asJava)
+    val props = properties ++ PRODUCTION_PROPS
+    Persistence.createEntityManagerFactory("annosaurus", props.asJava)
   }
 
   def apply(
@@ -39,4 +52,21 @@ object EntityManagerFactories {
     apply(map ++ properties)
   }
 
+  def apply(configNode: String): EntityManagerFactory = {
+    val driver = config.getString(configNode + ".driver")
+    val logLevel = config.getString("database.loglevel")
+    val password = config.getString(configNode + ".password")
+    val productName = config.getString(configNode + ".name")
+    val url = config.getString(configNode + ".url")
+    val user = config.getString(configNode + ".user")
+    val props = Map(
+      "eclipselink.logging.level" -> logLevel,
+      "eclipselink.target-database" -> productName,
+      "javax.persistence.database-product-name" -> productName,
+      "javax.persistence.jdbc.driver" -> driver,
+      "javax.persistence.jdbc.password" -> password,
+      "javax.persistence.jdbc.url" -> url,
+      "javax.persistence.jdbc.user" -> user)
+    apply(props)
+  }
 }

@@ -3,6 +3,7 @@ package org.mbari.vars.vam.dao.jpa
 import java.util.UUID
 import javax.persistence.EntityManagerFactory
 
+import com.typesafe.config.ConfigFactory
 import org.mbari.vars.vam.dao._
 
 /**
@@ -49,4 +50,18 @@ trait JPADAOFactory extends DAOFactory[VideoSequence, Video, VideoReference] {
   override def newVideoReferenceDAO(dao: DAO[_]): VideoReferenceDAO[VideoReference] =
     new VideoReferenceDAOImpl(dao.asInstanceOf[BaseDAO[_]].entityManager)
 
+}
+
+class JPADAOFactoryImpl(val entityManagerFactory: EntityManagerFactory) extends JPADAOFactory
+
+object JPADAOFactory extends JPADAOFactory {
+
+  lazy val entityManagerFactory = {
+    val config = ConfigFactory.load()
+    val environment = config.getString("database.environment")
+    val nodeName = if (environment.equalsIgnoreCase("production")) "org.mbari.vars.vam.database.production"
+    else "org.mbari.vars.annotation.database.development"
+
+    EntityManagerFactories(nodeName)
+  }
 }
