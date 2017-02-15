@@ -1,7 +1,7 @@
 package org.mbari.vars.vam.api
 
 import org.mbari.vars.vam.Constants
-import org.mbari.vars.vam.dao.jpa.{ DevelopmentDAOFactory, H2TestDAOFactory }
+import org.mbari.vars.vam.dao.jpa.H2TestDAOFactory
 import org.scalatest.BeforeAndAfterAll
 import org.scalatra.swagger.{ ApiInfo, Swagger }
 import org.scalatra.test.scalatest.ScalatraFlatSpec

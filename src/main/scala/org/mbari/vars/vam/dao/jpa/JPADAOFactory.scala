@@ -60,7 +60,7 @@ object JPADAOFactory extends JPADAOFactory {
     val config = ConfigFactory.load()
     val environment = config.getString("database.environment")
     val nodeName = if (environment.equalsIgnoreCase("production")) "org.mbari.vars.vam.database.production"
-    else "org.mbari.vars.annotation.database.development"
+    else "org.mbari.vars.vam.database.development"
 
     EntityManagerFactories(nodeName)
   }

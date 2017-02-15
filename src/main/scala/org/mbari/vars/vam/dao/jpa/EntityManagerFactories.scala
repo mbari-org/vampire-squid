@@ -30,11 +30,11 @@ object EntityManagerFactories {
     "eclipselink.logging.thread" -> "false",
     "eclipselink.logging.timestamp" -> "false",
     "javax.persistence.schema-generation.database.action" -> "create",
-    PersistenceUnitProperties.SESSION_CUSTOMIZER -> "org.mbari.vars.annotation.dao.jpa.UUIDSequence")
+    PersistenceUnitProperties.SESSION_CUSTOMIZER -> "org.mbari.vars.vam.dao.jpa.UUIDSequence")
 
   def apply(properties: Map[String, String]): EntityManagerFactory = {
     val props = properties ++ PRODUCTION_PROPS
-    Persistence.createEntityManagerFactory("annosaurus", props.asJava)
+    Persistence.createEntityManagerFactory("video-asset-manager", props.asJava)
   }
 
   def apply(
