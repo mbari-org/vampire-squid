@@ -5,13 +5,13 @@ import java.time.Duration
 
 import com.fatboyindustrial.gsonjavatime.Converters
 import com.google.gson.reflect.TypeToken
-import com.google.gson.{FieldNamingPolicy, GsonBuilder}
+import com.google.gson.{ FieldNamingPolicy, GsonBuilder }
 import com.typesafe.config.ConfigFactory
 import org.mbari.vars.vam.auth.AuthorizationService
-import org.mbari.vars.vam.json.{ByteArrayConverter, DurationConverter => GSONDurationConverter}
+import org.mbari.vars.vam.json.{ ByteArrayConverter, DurationConverter => GSONDurationConverter }
 import org.slf4j.LoggerFactory
 
-import scala.util.{Failure, Success, Try}
+import scala.util.{ Failure, Success, Try }
 /**
  *
  *

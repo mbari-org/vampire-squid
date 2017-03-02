@@ -1,11 +1,11 @@
 package org.mbari.vars.vam.api
 
 import java.net.URI
-import java.time.{Duration, Instant}
-import java.util.{Base64, UUID}
+import java.time.{ Duration, Instant }
+import java.util.{ Base64, UUID }
 
 import org.mbari.vars.vam.Constants
-import org.scalatra.{ContentEncodingSupport, FutureSupport, NotFound, ScalatraServlet}
+import org.scalatra.{ ContentEncodingSupport, FutureSupport, NotFound, ScalatraServlet }
 import org.scalatra.swagger.SwaggerSupport
 import org.scalatra.util.conversion.TypeConverter
 

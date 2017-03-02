@@ -39,7 +39,7 @@ class VideoReferenceDAOSpec extends FlatSpec with Matchers {
     Await.result(dao.runTransaction(d => d.create(videoReference0)), timeout)
     val videoReference2 = dao.findByURI(videoReference0.uri)
     videoReference2 shouldBe defined
-    videoReference2.get.sha512 should be (Array.fill[Byte](64)(10))
+    videoReference2.get.sha512 should be(Array.fill[Byte](64)(10))
   }
 
   it should "update a record in the datastore" in {

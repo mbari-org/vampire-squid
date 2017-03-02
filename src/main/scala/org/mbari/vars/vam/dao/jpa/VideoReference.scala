@@ -134,9 +134,8 @@ object VideoReference {
     audioCodec: String,
     width: Int,
     height: Int): VideoReference =
-      apply(uri, Some(container), Some(videoCodec), Some(audioCodec),
-        Some(width), Some(height))
-
+    apply(uri, Some(container), Some(videoCodec), Some(audioCodec),
+      Some(width), Some(height))
 
   def apply(
     uri: URI,
@@ -146,21 +145,20 @@ object VideoReference {
     width: Int,
     height: Int,
     description: String): VideoReference =
-      apply(uri, Some(container), Some(videoCodec), Some(audioCodec),
-        Some(width), Some(height), description = Some(description))
+    apply(uri, Some(container), Some(videoCodec), Some(audioCodec),
+      Some(width), Some(height), description = Some(description))
 
   def apply(
-             uri: URI,
-             container: String,
-             videoCodec: String,
-             audioCodec: String,
-             width: Int,
-             height: Int,
-             description: String,
-             sha512: Array[Byte]): VideoReference =
+    uri: URI,
+    container: String,
+    videoCodec: String,
+    audioCodec: String,
+    width: Int,
+    height: Int,
+    description: String,
+    sha512: Array[Byte]): VideoReference =
     apply(uri, Some(container), Some(videoCodec), Some(audioCodec),
       Some(width), Some(height), description = Some(description), sha512 = Some(sha512))
-
 
   def apply(
     uri: URI,
@@ -173,7 +171,6 @@ object VideoReference {
     size: Long): VideoReference =
     apply(uri, Some(container), Some(videoCodec), Some(audioCodec),
       Some(width), Some(height), frameRate = Some(frameRate), sizeBytes = Some(size))
-
 
   def apply(
     uri: URI,
@@ -188,6 +185,5 @@ object VideoReference {
     apply(uri, Some(container), Some(videoCodec), Some(audioCodec),
       Some(width), Some(height), frameRate = Some(frameRate), sizeBytes = Some(size),
       description = Some(description))
-
 
 }
