@@ -88,8 +88,13 @@ class VideoReference extends HasUUID with HasOptimisticLock with HasDescription 
 
   def mimetype: Option[MimeType] = Try(new MimeType(container)).toOption
 
-  // TODO implement storage of MD5 hash of video files bytes so that we can do reverse lookups using
+  // TODO implement storage of sha512 hash of video files bytes so that we can do reverse lookups using
   // a video file to find it's metadata.
+  @Expose(serialize = true)
+  @Lob
+  @Column(name = "sha512", length = 128, nullable = true, unique = true)
+  @Convert(converter = classOf[ByteArrayConverter])
+  var sha512: Array[Byte] = _
 
 }
 
@@ -98,13 +103,14 @@ object VideoReference {
   def apply(
     uri: URI,
     container: Option[String] = None,
-    videoCodec: Option[String],
+    videoCodec: Option[String] = None,
     audioCodec: Option[String] = None,
     width: Option[Int] = None,
     height: Option[Int] = None,
     frameRate: Option[Double] = None,
     sizeBytes: Option[Long] = None,
-    description: Option[String] = None): VideoReference = {
+    description: Option[String] = None,
+    sha512: Option[Array[Byte]] = None): VideoReference = {
     val videoReference = new VideoReference
     videoReference.uri = uri
     container.foreach(v => videoReference.container = v)
@@ -115,14 +121,11 @@ object VideoReference {
     frameRate.foreach(v => videoReference.frameRate = v)
     sizeBytes.foreach(v => videoReference.size = v)
     description.foreach(v => videoReference.description = v)
+    sha512.foreach(videoReference.sha512 = _)
     videoReference
   }
 
-  def apply(uri: URI): VideoReference = {
-    val videoReference = new VideoReference
-    videoReference.uri = uri
-    videoReference
-  }
+  def apply(uri: URI): VideoReference = apply(uri, container = None)
 
   def apply(
     uri: URI,
@@ -130,16 +133,10 @@ object VideoReference {
     videoCodec: String,
     audioCodec: String,
     width: Int,
-    height: Int): VideoReference = {
-    val videoReference = new VideoReference
-    videoReference.uri = uri
-    videoReference.container = container
-    videoReference.videoCodec = videoCodec
-    videoReference.audioCodec = audioCodec
-    videoReference.width = width
-    videoReference.height = height
-    videoReference
-  }
+    height: Int): VideoReference =
+      apply(uri, Some(container), Some(videoCodec), Some(audioCodec),
+        Some(width), Some(height))
+
 
   def apply(
     uri: URI,
@@ -148,17 +145,22 @@ object VideoReference {
     audioCodec: String,
     width: Int,
     height: Int,
-    description: String): VideoReference = {
-    val videoReference = new VideoReference
-    videoReference.uri = uri
-    videoReference.container = container
-    videoReference.videoCodec = videoCodec
-    videoReference.audioCodec = audioCodec
-    videoReference.width = width
-    videoReference.height = height
-    videoReference.description = description
-    videoReference
-  }
+    description: String): VideoReference =
+      apply(uri, Some(container), Some(videoCodec), Some(audioCodec),
+        Some(width), Some(height), description = Some(description))
+
+  def apply(
+             uri: URI,
+             container: String,
+             videoCodec: String,
+             audioCodec: String,
+             width: Int,
+             height: Int,
+             description: String,
+             sha512: Array[Byte]): VideoReference =
+    apply(uri, Some(container), Some(videoCodec), Some(audioCodec),
+      Some(width), Some(height), description = Some(description), sha512 = Some(sha512))
+
 
   def apply(
     uri: URI,
@@ -168,18 +170,10 @@ object VideoReference {
     width: Int,
     height: Int,
     frameRate: Double,
-    size: Long): VideoReference = {
-    val videoReference = new VideoReference
-    videoReference.uri = uri
-    videoReference.container = container
-    videoReference.videoCodec = videoCodec
-    videoReference.audioCodec = audioCodec
-    videoReference.width = width
-    videoReference.height = height
-    videoReference.frameRate = frameRate
-    videoReference.size = size
-    videoReference
-  }
+    size: Long): VideoReference =
+    apply(uri, Some(container), Some(videoCodec), Some(audioCodec),
+      Some(width), Some(height), frameRate = Some(frameRate), sizeBytes = Some(size))
+
 
   def apply(
     uri: URI,
@@ -190,18 +184,10 @@ object VideoReference {
     height: Int,
     frameRate: Double,
     size: Long,
-    description: String): VideoReference = {
-    val videoReference = new VideoReference
-    videoReference.uri = uri
-    videoReference.container = container
-    videoReference.videoCodec = videoCodec
-    videoReference.audioCodec = audioCodec
-    videoReference.width = width
-    videoReference.height = height
-    videoReference.frameRate = frameRate
-    videoReference.size = size
-    videoReference.description = description
-    videoReference
-  }
+    description: String): VideoReference =
+    apply(uri, Some(container), Some(videoCodec), Some(audioCodec),
+      Some(width), Some(height), frameRate = Some(frameRate), sizeBytes = Some(size),
+      description = Some(description))
+
 
 }

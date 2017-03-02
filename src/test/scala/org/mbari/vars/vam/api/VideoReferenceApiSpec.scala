@@ -1,9 +1,10 @@
 package org.mbari.vars.vam.api
 
 import java.time.Instant
+import java.util.Base64
 
-import org.mbari.vars.vam.controllers.{ VideoController, VideoReferenceController, VideoSequenceController }
-import org.mbari.vars.vam.dao.jpa.{ Video, VideoReference, VideoSequence }
+import org.mbari.vars.vam.controllers.{VideoController, VideoReferenceController, VideoSequenceController}
+import org.mbari.vars.vam.dao.jpa.{Video, VideoReference, VideoSequence}
 
 /**
  *
@@ -81,7 +82,8 @@ class VideoReferenceApiSpec extends WebApiStack {
       "video_codec" -> "h.264",
       "width" -> "1920",
       "height" -> "1080",
-      "frame_rate" -> "30") {
+      "frame_rate" -> "30",
+      "sha512" -> Base64.getEncoder.encodeToString(Array.fill[Byte](64)(9))) {
         status should be(200)
         aVideoReference = gson.fromJson(body, classOf[VideoReference])
       }

@@ -40,7 +40,8 @@ class VideoReferenceController(val daoFactory: JPADAOFactory) extends BaseContro
     height: Option[Int] = None,
     frameRate: Option[Double] = None,
     sizeBytes: Option[Long] = None,
-    description: Option[String] = None)(implicit ec: ExecutionContext): Future[VideoReference] = {
+    description: Option[String] = None,
+    sha512: Option[Array[Byte]] = None)(implicit ec: ExecutionContext): Future[VideoReference] = {
 
     def fn(dao: VRDAO): VideoReference = {
       dao.findByURI(uri) match {
@@ -54,6 +55,7 @@ class VideoReferenceController(val daoFactory: JPADAOFactory) extends BaseContro
               val videoReference = VideoReference(uri, container, videoCodec, audioCodec, width,
                 height, frameRate, sizeBytes, description)
               video.addVideoReference(videoReference)
+              sha512.foreach(videoReference.sha512 = _)
               dao.create(videoReference)
               videoReference
           }
@@ -73,7 +75,8 @@ class VideoReferenceController(val daoFactory: JPADAOFactory) extends BaseContro
     height: Option[Int] = None,
     frameRate: Option[Double] = None,
     sizeBytes: Option[Long] = None,
-    description: Option[String] = None)(implicit ec: ExecutionContext): Future[VideoReference] = {
+    description: Option[String] = None,
+    sha512: Option[Array[Byte]] = None)(implicit ec: ExecutionContext): Future[VideoReference] = {
 
     def fn(dao: VRDAO): VideoReference = {
       dao.findByUUID(uuid) match {
@@ -88,6 +91,7 @@ class VideoReferenceController(val daoFactory: JPADAOFactory) extends BaseContro
           frameRate.foreach(v => videoReference.frameRate = v)
           sizeBytes.foreach(v => videoReference.size = v)
           description.foreach(v => videoReference.description = v)
+          sha512.foreach(videoReference.sha512 = _)
 
           videoUUID match {
             case None => videoReference

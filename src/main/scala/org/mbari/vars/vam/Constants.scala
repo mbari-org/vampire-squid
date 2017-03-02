@@ -5,13 +5,13 @@ import java.time.Duration
 
 import com.fatboyindustrial.gsonjavatime.Converters
 import com.google.gson.reflect.TypeToken
-import com.google.gson.{ FieldNamingPolicy, GsonBuilder }
+import com.google.gson.{FieldNamingPolicy, GsonBuilder}
 import com.typesafe.config.ConfigFactory
 import org.mbari.vars.vam.auth.AuthorizationService
-import org.mbari.vars.vam.json.{ DurationConverter => GSONDurationConverter }
+import org.mbari.vars.vam.json.{ByteArrayConverter, DurationConverter => GSONDurationConverter}
 import org.slf4j.LoggerFactory
 
-import scala.util.{ Failure, Success, Try }
+import scala.util.{Failure, Success, Try}
 /**
  *
  *
@@ -38,6 +38,8 @@ object Constants {
     Converters.registerInstant(gsonBuilder)
     val durationType: Type = new TypeToken[Duration]() {}.getType
     gsonBuilder.registerTypeAdapter(durationType, new GSONDurationConverter)
+    val byteArrayType: Type = new TypeToken[Array[Byte]]() {}.getType
+    gsonBuilder.registerTypeAdapter(byteArrayType, new ByteArrayConverter)
     gsonBuilder.create()
 
   }

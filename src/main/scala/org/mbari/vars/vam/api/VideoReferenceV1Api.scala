@@ -92,7 +92,8 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swa
       Parameter("height", DataType.Int, Some("The video's height in pixels"), None, ParamType.Body, required = false),
       Parameter("frame_rate", DataType.Double, Some("The frame-rate of the video in frames per second"), None, ParamType.Body, required = false),
       Parameter("size_bytes", DataType.Long, Some("The size of the video in bytes"), None, ParamType.Body, required = false),
-      Parameter("description", DataType.String, Some("A description of the video"), None, ParamType.Body, required = false)))
+      Parameter("description", DataType.String, Some("A description of the video"), None, ParamType.Body, required = false),
+      Parameter("sha512", DataType.String, Some("The SHA512 checksum of the video (base 64 encoded)"), None, ParamType.Body, required = false)))
 
   post("/", operation(vPOST)) {
     validateRequest()
@@ -110,8 +111,9 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swa
     val height = params.getAs[Int]("height")
     val frameRate = params.getAs[Double]("frame_rate")
     val sizeBytes = params.getAs[Long]("size_bytes")
+    val sha512 = params.getAs[Array[Byte]]("sha512")
     controller.create(videoUUID, uri, container, videoCodec, audioCodec, width, height, frameRate,
-      sizeBytes, description).map(controller.toJson)
+      sizeBytes, description, sha512).map(controller.toJson)
   }
 
   // TODO update should require authentication
@@ -128,7 +130,8 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swa
       Parameter("height", DataType.Int, Some("The video's height in pixels"), None, ParamType.Body, required = false),
       Parameter("frame_rate", DataType.Double, Some("The frame-rate of the video in frames per second"), None, ParamType.Body, required = false),
       Parameter("size_bytes", DataType.Long, Some("The size of the video in bytes"), None, ParamType.Body, required = false),
-      Parameter("description", DataType.String, Some("A description of the video"), None, ParamType.Body, required = false)))
+      Parameter("description", DataType.String, Some("A description of the video"), None, ParamType.Body, required = false),
+      Parameter("sha512", DataType.String, Some("The SHA512 checksum of the video (base 64 encoded)"), None, ParamType.Body, required = false)))
 
   put("/:uuid", operation(vPUT)) {
     validateRequest()
@@ -145,9 +148,9 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swa
     val height = params.getAs[Int]("height")
     val frameRate = params.getAs[Double]("frame_rate")
     val sizeBytes = params.getAs[Long]("size_bytes")
-
+    val sha512 = params.getAs[Array[Byte]]("sha512")
     controller.update(uuid, videoUUID, uri, container, videoCodec, audioCodec, width, height,
-      frameRate, sizeBytes, description).map(controller.toJson)
+      frameRate, sizeBytes, description, sha512).map(controller.toJson)
 
   }
 
