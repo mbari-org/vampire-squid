@@ -1,7 +1,7 @@
 package org.mbari.vars.vam.api
 
 import java.net.URI
-import java.util.UUID
+import java.util.{ Base64, UUID }
 
 import org.mbari.vars.vam.controllers.VideoReferenceController
 import org.mbari.vars.vam.dao.jpa.{ Video, VideoReference, VideoSequence }
@@ -51,7 +51,6 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swa
     parameters (
       pathParam[URI]("uuid").description("The URI of the video-reference")))
 
-  // TODO encode/decode URL
   get("/uri/:uri", operation(uriGET)) {
     val uri = params.getAs[URI]("uri").getOrElse(halt(BadRequest("Please provide a URI")))
     controller.findByURI(uri).map({
@@ -62,7 +61,23 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swa
     })
   }
 
-  // TODO delete should require authentication
+  val shaGET = (apiOperation[VideoReference]("findBySha512")
+    summary "Find a video-reference by checksum (SHA512)"
+    parameters (
+      pathParam[String]("sha512").description("The Base64 encoded SHA512 of the video-reference")))
+
+  get("/sha512/:sha512", operation(shaGET)) {
+    val sha = params.get("sha512")
+      .map(s => Base64.getDecoder.decode(s))
+      .getOrElse(halt(BadRequest("Please provide a Base64 encoded sha512 checksum")))
+    controller.findBySha512(sha).map {
+      case None => halt(NotFound(
+        body = "{}",
+        reason = s"A video with a SHA512 checksum of $sha was not found in the database"))
+      case Some(vr) => controller.toJson(vr)
+    }
+  }
+
   val vrDELETE = (apiOperation[Unit]("delete")
     summary "Delete a video-reference."
     parameters (
@@ -79,7 +94,6 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swa
     })
   }
 
-  // TODO Create should require authentication
   val vPOST = (apiOperation[String]("create")
     summary "Create a video-reference"
     parameters (
@@ -116,7 +130,6 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swa
       sizeBytes, description, sha512).map(controller.toJson)
   }
 
-  // TODO update should require authentication
   val vPUT = (apiOperation[String]("update")
     summary "Update a video-reference"
     parameters (

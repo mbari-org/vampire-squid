@@ -15,6 +15,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
  */
 class VideoDAOSpec extends FlatSpec with Matchers {
 
+  private[this] val daoFactory = DevelopmentTestDAOFactory
+
   private[this] val duration = Duration.ofMinutes(15)
   private[this] val timeout = SDuration(2, TimeUnit.SECONDS)
   private[this] val now = Instant.now()
@@ -27,7 +29,7 @@ class VideoDAOSpec extends FlatSpec with Matchers {
 
   private var videoSequenceUUID: UUID = _
 
-  private[this] val dao = H2TestDAOFactory.newVideoDAO()
+  private[this] val dao = daoFactory.newVideoDAO()
 
   "VideoDAOImpl" should "create" in {
     // Executing create assigns the uuid and lastUpdated fields values in our mutable object
@@ -81,5 +83,7 @@ class VideoDAOSpec extends FlatSpec with Matchers {
     val v2 = Await.result(dao.runTransaction(d => d.findByUUID(primaryKey)), timeout)
     v2 shouldBe empty
   }
+
+  daoFactory.cleanup()
 
 }

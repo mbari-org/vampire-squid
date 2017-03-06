@@ -22,6 +22,9 @@ import scala.util.Try
     name = "VideoReference.findAll",
     query = "SELECT v FROM VideoReference v"),
   new NamedQuery(
+    name = "VideoReference.findBySha512",
+    query = "SELECT v FROM VideoReference v WHERE v.sha512 = :sha512"),
+  new NamedQuery(
     name = "VideoReference.findByVideoUUID",
     query = "SELECT v FROM VideoReference v JOIN v.video w WHERE w.uuid = :uuid"),
   new NamedQuery(

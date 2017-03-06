@@ -64,7 +64,7 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
 
     val hasTimestamp = containsTimestamp(_: VideoSequence, timestamp) // Partially apply the function to timestamp
 
-    videoSequences.filter(hasTimestamp)
+    videoSequences.filter(hasTimestamp).toSet
 
   }
 
@@ -78,7 +78,7 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
 
     val hasTimestamp = containsTimestamp(_: VideoSequence, timestamp) // Partially apply the function to timestamp
 
-    videoSequences.filter(hasTimestamp)
+    videoSequences.filter(hasTimestamp).toSet
   }
 
   override def findByCameraIDAndTimestamp(cameraID: String, timestamp: Instant, window: Duration): Iterable[VideoSequence] = {
@@ -92,7 +92,7 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
 
     val hasTimestamp = containsTimestamp(_: VideoSequence, timestamp) // Partially apply the function to timestamp
 
-    videoSequences.filter(hasTimestamp)
+    videoSequences.filter(hasTimestamp).toSet
   }
 
   override def deleteByUUID(primaryKey: UUID): Unit =

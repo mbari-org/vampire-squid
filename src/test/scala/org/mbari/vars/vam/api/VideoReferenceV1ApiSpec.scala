@@ -1,5 +1,6 @@
 package org.mbari.vars.vam.api
 
+import java.net.URLEncoder
 import java.time.Instant
 import java.util.Base64
 
@@ -12,7 +13,7 @@ import org.mbari.vars.vam.dao.jpa.{ Video, VideoReference, VideoSequence }
  * @author Brian Schlining
  * @since 2016-08-12T15:24:00
  */
-class VideoReferenceApiSpec extends WebApiStack {
+class VideoReferenceV1ApiSpec extends WebApiStack {
 
   private[this] val videoSequenceV1Api = {
     val videoSequenceController = new VideoSequenceController(daoFactory)
@@ -33,18 +34,6 @@ class VideoReferenceApiSpec extends WebApiStack {
   addServlet(videoV1Api, "/v1/video")
   addServlet(videoReferenceV1Api, "/v1/videoreference")
 
-  protected override def afterAll(): Unit = {
-    val dao = daoFactory.newVideoSequenceDAO()
-
-    dao.runTransaction(d => {
-      val all = dao.findAll()
-      all.foreach(dao.delete)
-    })
-    dao.close()
-
-    super.afterAll()
-  }
-
   "VideoReferenceV1Api" should "return an empty JSON array when the database is empty" in {
     get("/v1/videoreference") {
       status should be(200)
@@ -61,6 +50,8 @@ class VideoReferenceApiSpec extends WebApiStack {
       status should be(200)
       aVideoSequence = gson.fromJson(body, classOf[VideoSequence])
     }
+    aVideoSequence should not be null
+
     post(
       "/v1/video",
       "name" -> "T1234-01",
@@ -74,6 +65,8 @@ class VideoReferenceApiSpec extends WebApiStack {
         body should include("duration_millis")
         aVideo = gson.fromJson(body, classOf[Video])
       }
+    aVideo should not be null
+
     post(
       "/v1/videoreference",
       "video_uuid" -> aVideo.uuid.toString,
@@ -87,6 +80,7 @@ class VideoReferenceApiSpec extends WebApiStack {
         status should be(200)
         aVideoReference = gson.fromJson(body, classOf[VideoReference])
       }
+    aVideoReference should not be null
   }
 
   it should "get by uuid" in {
@@ -97,11 +91,13 @@ class VideoReferenceApiSpec extends WebApiStack {
     }
   }
 
-  /* it should "get by uri" in {
-    get("/v1/videoreference/uri/" + aVideoReference.uri) {
-      status should be (200)
-    }
-  } */
+  it should "get by uri" in {
+    val uri =
+      get("/v1/videoreference/uri/" +
+        URLEncoder.encode(aVideoReference.uri.toURL.toExternalForm, "UTF-8")) {
+        status should be(200)
+      }
+  }
 
   it should "update" in {
     put(

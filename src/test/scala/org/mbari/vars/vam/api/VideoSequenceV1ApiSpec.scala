@@ -11,7 +11,7 @@ import scala.concurrent.ExecutionContext
  * @author Brian Schlining
  * @since 2016-08-10T15:28:00
  */
-class VideoSequenceApiSpec extends WebApiStack {
+class VideoSequenceV1ApiSpec extends WebApiStack {
 
   private[this] val videoSequenceV1Api = {
 
@@ -26,18 +26,6 @@ class VideoSequenceApiSpec extends WebApiStack {
       status should be(200)
       body should equal("[]")
     }
-  }
-
-  protected override def afterAll(): Unit = {
-    val dao = daoFactory.newVideoSequenceDAO()
-
-    dao.runTransaction(d => {
-      val all = dao.findAll()
-      all.foreach(dao.delete)
-    })
-    dao.close()
-
-    super.afterAll()
   }
 
   var aVideoSequence: VideoSequence = _

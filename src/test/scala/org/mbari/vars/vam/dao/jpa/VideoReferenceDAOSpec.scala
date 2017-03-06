@@ -18,9 +18,11 @@ import scala.concurrent.ExecutionContext.Implicits.global
  */
 class VideoReferenceDAOSpec extends FlatSpec with Matchers {
 
+  private[this] val daoFactory = DevelopmentTestDAOFactory
+
   private[this] val timeout = SDuration(2, TimeUnit.SECONDS)
 
-  private[this] val dao = H2TestDAOFactory.newVideoReferenceDAO()
+  private[this] val dao = daoFactory.newVideoReferenceDAO()
 
   // --- Test setup
   val name0 = "T0123"
@@ -100,10 +102,17 @@ class VideoReferenceDAOSpec extends FlatSpec with Matchers {
     vs.size should be >= video1.videoReferences.size
   }
 
+  it should "findByURI" in {
+    val vr = Await.result(dao.runTransaction(d => d.findByURI(videoReference1.uri)), timeout)
+    vr should not be (empty)
+  }
+
   it should "deleteByPrimaryKey" in {
     Await.result(dao.runTransaction(d => d.deleteByUUID(videoReference1.uuid)), timeout)
     val vr = Await.result(dao.runTransaction(d => d.findByUUID(videoReference1.uuid)), timeout)
     vr shouldBe empty
   }
+
+  daoFactory.cleanup()
 
 }
