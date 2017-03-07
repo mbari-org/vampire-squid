@@ -23,6 +23,7 @@ class MediaV1Api(controller: MediaController)(implicit val swagger: Swagger, val
   override protected val applicationName: Option[String] = Some("MediaAPI")
 
   post("/") {
+    validateRequest()
     val videoSequenceName = params.get("video_sequence_name")
       .getOrElse(halt(BadRequest("{}", reason = "A 'video_sequence_name' param is required")))
     val cameraId = params.get("camera_id")
@@ -63,7 +64,7 @@ class MediaV1Api(controller: MediaController)(implicit val swagger: Swagger, val
 
   get("/sha512/:sha512") {
     val shaString = params.get("sha512")
-      .getOrElse(halt(BadRequest("{}", reason = "A base 64 encoded SHA512 checksum is required")))
+      .getOrElse(halt(BadRequest("{}", reason = "A hex encoded SHA512 checksum is required")))
     val sha = ByteArrayConverter.decode(shaString)
     controller.findBySha512(sha).map({
       case None => halt(NotFound("{}", reason = s"A video with matching checksum was not found"))
@@ -75,7 +76,7 @@ class MediaV1Api(controller: MediaController)(implicit val swagger: Swagger, val
     val name = params.get("name")
       .getOrElse(halt(BadRequest("{}", reason = "A video sequence name parameter is required")))
     controller.findByVideoSequenceName(name)
-        .map(_.asJava)
+      .map(_.asJava)
       .map(controller.toJson)
   }
 

@@ -1,10 +1,10 @@
 import javax.servlet.ServletContext
 
 import org.mbari.vars.vam.api._
-import org.mbari.vars.vam.controllers.{ VideoController, VideoReferenceController, VideoSequenceController }
+import org.mbari.vars.vam.controllers.{MediaController, VideoController, VideoReferenceController, VideoSequenceController}
 import org.mbari.vars.vam.dao.jpa.JPADAOFactory
 import org.scalatra.LifeCycle
-import org.scalatra.swagger.{ ApiInfo, Swagger }
+import org.scalatra.swagger.{ApiInfo, Swagger}
 import org.slf4j.LoggerFactory
 
 import scala.concurrent.ExecutionContext
@@ -36,16 +36,19 @@ class ScalatraBootstrap extends LifeCycle {
     implicit val executionContext = ExecutionContext.global
 
     val daoFactory = JPADAOFactory
+    val mediaController = new MediaController(daoFactory)
     val videoSequenceController = new VideoSequenceController(daoFactory)
     val videoController = new VideoController(daoFactory)
     val videoReferenceController = new VideoReferenceController(daoFactory)
 
     val authorizationV1Api = new AuthorizationV1Api()
+    val mediaV1Api  = new MediaV1Api(mediaController)
     val videoSequenceV1Api = new VideoSequenceV1Api(videoSequenceController)
     val videoV1Api = new VideoV1Api(videoController)
     val videoReferenceV1Api = new VideoReferenceV1Api(videoReferenceController)
 
     context.mount(authorizationV1Api, "/v1/auth")
+    context.mount(mediaV1Api, "/v1/media")
     context.mount(videoSequenceV1Api, "/v1/videosequences")
     context.mount(videoV1Api, "/v1/videos")
     context.mount(videoReferenceV1Api, "/v1/videoreferences")

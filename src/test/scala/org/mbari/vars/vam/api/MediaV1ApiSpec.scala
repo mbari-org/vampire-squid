@@ -1,6 +1,5 @@
 package org.mbari.vars.vam.api
 
-
 import org.mbari.vars.vam.controllers.MediaController
 import org.mbari.vars.vam.dao.jpa.ByteArrayConverter
 import org.mbari.vars.vam.model.Media
@@ -33,7 +32,7 @@ class MediaV1ApiSpec extends WebApiStack {
   it should "create w/ all args" in {
 
     val sha512 = ByteArrayConverter.encode(Array.fill[Byte](64)(11))
-    sha512.size should be (128)
+    sha512.size should be(128)
 
     post("/v1/media", "video_sequence_name" -> s"$name-bob",
       "camera_id" -> "Ventana",
@@ -77,16 +76,16 @@ class MediaV1ApiSpec extends WebApiStack {
     get(s"/v1/media/$name") {
       status should be(200)
       val media = gson.fromJson(body, classOf[Array[Media]])
-      media.size should be (1)
-      media(0).videoSequenceName should be (name)
+      media.size should be(1)
+      media(0).videoSequenceName should be(name)
     }
   }
 
   it should "findByCameraIdandTimestamp" in {
     get(s"/v1/media/camera/Ventana/1968-09-22T03:00:01Z") {
-      status should be (200)
+      status should be(200)
       val media = gson.fromJson(body, classOf[Array[Media]])
-      media.size should be (1)
+      media.size should be(1)
     }
   }
 }
