@@ -1,13 +1,14 @@
 package org.mbari.vars.vam.controllers
 
 import java.net.URI
-import java.time.{ Duration, Instant }
-import java.util.{ Arrays => JArrays }
+import java.time.{Duration, Instant}
+import java.util.{Arrays => JArrays}
 
-import org.mbari.vars.vam.dao.jpa.{ JPADAOFactory, Video, VideoReference, VideoSequence }
+import org.mbari.vars.vam.dao.jpa.{JPADAOFactory, Video, VideoReference, VideoSequence}
 import org.mbari.vars.vam.model.Media
+import org.slf4j.LoggerFactory
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
  * Convenience API for registering a video
@@ -16,6 +17,8 @@ import scala.concurrent.{ ExecutionContext, Future }
  * @since 2017-03-06T09:20:00
  */
 class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
+
+  private[this] val log = LoggerFactory.getLogger(getClass)
 
   def create(
     videoSequenceName: String,
@@ -50,23 +53,28 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
         case None =>
           val vr = VideoReference(uri, container, videoCodec, audioCodec, width, height,
             frameRate, sizeBytes, videoRefDescription, sha512)
+          log.debug("Created {}", vr)
 
           val video = vDao.findByName(videoName) match {
-            case Some(v) => v
+            case Some(v) =>
+              v.addVideoReference(vr)
+              v
             case None =>
+              val v = Video(videoName, start, duration, List(vr))
+              log.debug("Created {}", v)
+
               vsDao.findByName(videoSequenceName) match {
-                case Some(vs) => vs
+                case Some(vs) =>
+                  vs.addVideo(v)
+                  vDao.create(v)
+                  vs
                 case None =>
-                  val vs = new VideoSequence
-                  vs.name = videoSequenceName
-                  vs.cameraID = cameraId
+                  val vs = VideoSequence(videoSequenceName, cameraId, List(v))
+                  log.debug("Created {}", vs)
                   vsDao.create(vs)
               }
 
-              val v0 = Video(videoName, start)
-              duration.foreach(v0.duration = _)
-              vDao.create(v0)
-              v0
+              v
           }
 
           video.addVideoReference(vr)

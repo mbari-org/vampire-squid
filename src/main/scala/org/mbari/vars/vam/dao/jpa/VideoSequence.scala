@@ -88,6 +88,8 @@ class VideoSequence extends HasUUID with HasOptimisticLock with HasDescription {
   }
   def videos: Seq[Video] = javaVideos.asScala
 
+  def videoReferences: Seq[VideoReference] = videos.flatMap(_.videoReferences)
+
   def canEqual(other: Any): Boolean = other.isInstanceOf[VideoSequence]
 
   override def equals(other: Any): Boolean = other match {

@@ -127,11 +127,11 @@ object Video {
     v
   }
 
-  def apply(name: String, start: Instant, duration: Duration, videoReferences: Iterable[VideoReference]): Video = {
+  def apply(name: String, start: Instant, duration: Option[Duration], videoReferences: Iterable[VideoReference]): Video = {
     val v = new Video
     v.name = name
     v.start = start
-    v.duration = duration
+    duration.foreach(v.duration = _)
     videoReferences.foreach(v.addVideoReference)
     v
   }
@@ -140,7 +140,7 @@ object Video {
     val v = new Video
     v.name = name
     v.start = start
-    duration.foreach(d => v.duration = d)
+    duration.foreach(v.duration = _)
     description.foreach(d => v.description = d)
     v
   }

@@ -99,6 +99,8 @@ class VideoReference extends HasUUID with HasOptimisticLock with HasDescription 
   @Convert(converter = classOf[ByteArrayConverter])
   var sha512: Array[Byte] = _
 
+  override def toString: String = s"VideoReference($uri)"
+
 }
 
 object VideoReference {
