@@ -2,6 +2,7 @@ package org.mbari.vars.vam.dao.jpa;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
+import javax.xml.bind.DatatypeConverter;
 import java.util.Base64;
 
 /**
@@ -13,12 +14,20 @@ public class ByteArrayConverter implements AttributeConverter<byte[], String> {
 
     @Override
     public String convertToDatabaseColumn(byte[] bs) {
-        return bs == null ? null : Base64.getEncoder().encodeToString(bs);
+        return bs == null ? null : encode(bs);
     }
 
     @Override
     public byte[] convertToEntityAttribute(String s) {
-        return s == null ? null : Base64.getDecoder().decode(s);
+        return s == null ? null : decode(s);
+    }
+
+    public static String encode(byte[] bs) {
+        return DatatypeConverter.printHexBinary(bs);
+    }
+
+    public static byte[] decode(String s) {
+        return DatatypeConverter.parseHexBinary(s);
     }
 }
 

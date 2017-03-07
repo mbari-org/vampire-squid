@@ -4,6 +4,7 @@ import com.google.gson.*;
 
 import java.lang.reflect.Type;
 import java.util.Base64;
+import static org.mbari.vars.vam.dao.jpa.ByteArrayConverter.*;
 
 /**
  * @author Brian Schlining
@@ -14,11 +15,11 @@ public class ByteArrayConverter
 
     @Override
     public byte[] deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        return Base64.getDecoder().decode(json.getAsString());
+        return decode(json.getAsString());
     }
 
     @Override
     public JsonElement serialize(byte[] src, Type typeOfSrc, JsonSerializationContext context) {
-        return new JsonPrimitive(Base64.getEncoder().encodeToString(src));
+        return new JsonPrimitive(encode(src));
     }
 }

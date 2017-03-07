@@ -1,14 +1,14 @@
 package org.mbari.vars.vam.controllers
 
 import java.net.URI
-import java.time.{Duration, Instant}
-import java.util.{Arrays => JArrays}
+import java.time.{ Duration, Instant }
+import java.util.{ Arrays => JArrays }
 
-import org.mbari.vars.vam.dao.jpa.{JPADAOFactory, Video, VideoReference, VideoSequence}
+import org.mbari.vars.vam.dao.jpa.{ JPADAOFactory, Video, VideoReference, VideoSequence }
 import org.mbari.vars.vam.model.Media
 import org.slf4j.LoggerFactory
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 /**
  * Convenience API for registering a video
@@ -84,6 +84,44 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
       Media(videoReference)
     })
 
+  }
+
+  def findBySha512(sha512: Array[Byte])(implicit ec: ExecutionContext): Future[Option[Media]] = {
+    val dao = daoFactory.newVideoReferenceDAO()
+    val f = dao.runTransaction(d => {
+      d.findBySha512(sha512)
+        .map(Media(_))
+    })
+    f.onComplete(t => dao.close())
+    f
+  }
+
+  def findByVideoSequenceName(name: String)(implicit ec: ExecutionContext): Future[Iterable[Media]] = {
+    val dao = daoFactory.newVideoSequenceDAO()
+    val f = dao.runTransaction(d => {
+      d.findByName(name)
+        .map(v => v.videoReferences)
+        .map(v => v.map(Media(_)))
+        .getOrElse(Nil)
+    })
+    f.onComplete(t => dao.close())
+    f
+  }
+
+  def findByVideoSequenceNameAndTimestamp(name: String, ts: Instant)(implicit ec: ExecutionContext): Future[Iterable[Media]] =
+    findByVideoSequenceName(name)
+      .map(ms => ms.filter(m => m.contains(ts)))
+
+  def findByCameraIdAndTimestamp(cameraId: String, ts: Instant)(implicit ec: ExecutionContext): Future[Iterable[Media]] = {
+    val dao = daoFactory.newVideoSequenceDAO()
+    val f = dao.runTransaction(d => {
+      d.findByCameraIDAndTimestamp(cameraId, ts)
+        .flatMap(vs => vs.videoReferences)
+        .map(Media(_))
+        .filter(m => m.contains(ts))
+    })
+    f.onComplete(t => dao.close())
+    f
   }
 
 }

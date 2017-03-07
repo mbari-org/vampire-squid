@@ -1,15 +1,15 @@
 package org.mbari.vars.vam.controller
 
 import java.net.URI
-import java.time.{Duration, Instant}
+import java.time.{ Duration, Instant }
 import java.util.concurrent.TimeUnit
 
-import org.mbari.vars.vam.controllers.{MediaController, VideoReferenceController, VideoSequenceController}
+import org.mbari.vars.vam.controllers.{ MediaController, VideoReferenceController, VideoSequenceController }
 import org.mbari.vars.vam.dao.jpa.DevelopmentTestDAOFactory
-import org.scalatest.{BeforeAndAfterEach, FlatSpec, Matchers}
+import org.scalatest.{ BeforeAndAfterEach, FlatSpec, Matchers }
 
 import scala.concurrent.Await
-import scala.concurrent.duration.{Duration => SDuration}
+import scala.concurrent.duration.{ Duration => SDuration }
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
@@ -101,6 +101,54 @@ class MediaControllerSpec extends FlatSpec with Matchers with BeforeAndAfterEach
     val v = vs.get
     //println(controller.toJson(v))
     v.videoReferences.size should be(4)
+  }
+
+  it should "findBySha512" in {
+    val sha = Array.fill[Byte](64)(48)
+    val fn0 = controller.create(
+      getClass.getSimpleName,
+      "Ventana",
+      "V20160922T012345",
+      new URI("http://www.mbari.org/movies/V20160922T030405Z.mp4"),
+      Instant.parse("2016-09-22T03:04:05Z"),
+      Some(Duration.ofMinutes(25)),
+      Some("video/mp4"),
+      sha512 = Some(sha))
+    Await.result(fn0, timeout)
+
+    val fn1 = controller.findBySha512(sha)
+    val m = Await.result(fn1, timeout)
+    m shouldBe defined
+    m.get.sha512 should be(sha)
+  }
+
+  it should "findByVideoSequenceName" in {
+    val fn0 = controller.findByVideoSequenceName(getClass.getSimpleName)
+    val ms = Await.result(fn0, timeout)
+    ms.size should be(5) // Finds all previous insertions as we used same videoSequenceName
+  }
+
+  it should "findByVideoSequenceNameAndTimestamp" in {
+    // Exact match of starting date
+    val fn1 = controller.findByVideoSequenceNameAndTimestamp(getClass.getSimpleName, Instant.parse("2016-09-22T03:04:05Z"))
+    val ms1 = Await.result(fn1, timeout)
+    ms1.size should be(1)
+
+    // Date falls within duration
+    val fn0 = controller.findByVideoSequenceNameAndTimestamp(getClass.getSimpleName, Instant.parse("2016-09-22T03:14:05Z"))
+    val ms = Await.result(fn0, timeout)
+    ms.size should be(1)
+
+    // Date is match of end
+    val fn2 = controller.findByVideoSequenceNameAndTimestamp(getClass.getSimpleName, Instant.parse("2016-09-22T03:29:05Z"))
+    val ms2 = Await.result(fn2, timeout)
+    ms2.size should be(1)
+
+    // No match
+    val fn3 = controller.findByVideoSequenceNameAndTimestamp(getClass.getSimpleName, Instant.parse("2016-09-22T04:29:05Z"))
+    val ms3 = Await.result(fn3, timeout)
+    ms3 should be(empty)
+
   }
 
 }

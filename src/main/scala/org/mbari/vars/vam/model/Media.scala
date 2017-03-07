@@ -68,6 +68,16 @@ class Media {
   @Expose(serialize = true)
   var sha512: Array[Byte] = _
 
+  def end: Option[Instant] = if (start != null && duration != null) Some(start.plus(duration))
+  else None
+
+  def contains(ts: Instant): Boolean = {
+    end match {
+      case None => start == ts
+      case Some(e) => start == ts || e == ts || start.isBefore(ts) && e.isAfter(ts)
+    }
+  }
+
 }
 
 object Media {

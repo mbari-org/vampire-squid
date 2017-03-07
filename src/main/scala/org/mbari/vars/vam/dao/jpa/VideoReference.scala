@@ -91,8 +91,7 @@ class VideoReference extends HasUUID with HasOptimisticLock with HasDescription 
 
   def mimetype: Option[MimeType] = Try(new MimeType(container)).toOption
 
-  // TODO implement storage of sha512 hash of video files bytes so that we can do reverse lookups using
-  // a video file to find it's metadata.
+  // Checksum allows reverse lookups. Store checksum as hex
   @Expose(serialize = true)
   @Lob
   @Column(name = "sha512", length = 128, nullable = true, unique = true)

@@ -109,7 +109,6 @@ class VideoSequenceV1Api(controller: VideoSequenceController)(implicit val swagg
       Parameter("name", DataType.String, Some("The unique name of the video-sequence"), None, ParamType.Body, required = true),
       Parameter("camera_id", DataType.String, Some("The name of the camera (e.g. Tiburon)"), None, ParamType.Body, required = true)))
 
-  // TODO post should require authentication
   post("/", operation(vsPOST)) {
     validateRequest()
     val name = params.get("name").getOrElse(halt(BadRequest(
@@ -121,7 +120,6 @@ class VideoSequenceV1Api(controller: VideoSequenceController)(implicit val swagg
       .map(controller.toJson)
   }
 
-  // TODO delete should require authentication
   val vsDELETE = (apiOperation[Unit]("delete")
     summary "Delete a video-sequence. Also deletes associated videos and video-references"
     parameters (
