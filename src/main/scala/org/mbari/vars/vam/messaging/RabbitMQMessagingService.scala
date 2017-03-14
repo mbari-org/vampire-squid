@@ -41,7 +41,7 @@ class RabbitMQMessagingService extends MessagingService {
     val vm = NewVideoMessage(videoReference)
     val msg = Constants.GSON.toJson(vm)
     log.debug("Publishing new video message: {}", msg)
-    channel.basicPublish(exchange, routingKey, null, msg.getBytes)
+    channel.basicPublish(exchange, routingKey, null, msg.getBytes("UTF-8"))
   }
 
   override def finalize(): Unit = {
