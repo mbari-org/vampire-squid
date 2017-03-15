@@ -15,7 +15,7 @@ import org.scalatest.{FlatSpec, Inside, Matchers}
   */
 class NewVideoMessageSpec extends FlatSpec with Matchers with Inside {
 
-  "NewVideoMessage" should "format to JSON" in {
+  "NewVideoMessage" should "round-trip to/from JSON" in {
 
     val uri = new URI("uri:mbari:tape:T0123")
     val container = "video/mp4"
