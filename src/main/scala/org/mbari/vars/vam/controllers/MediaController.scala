@@ -4,6 +4,7 @@ import java.net.URI
 import java.time.{ Duration, Instant }
 import java.util.{ Arrays => JArrays }
 
+import org.mbari.vars.vam.Constants
 import org.mbari.vars.vam.dao.jpa.{ JPADAOFactory, Video, VideoReference, VideoSequence }
 import org.mbari.vars.vam.model.Media
 import org.slf4j.LoggerFactory
@@ -43,6 +44,8 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
       val vDao = daoFactory.newVideoDAO(vsDao)
       val vrDao = daoFactory.newVideoReferenceDAO(vsDao)
 
+      var didCreatedVR = false
+
       val videoReference = vrDao.findByURI(uri) match {
         case Some(vr) =>
           if (sha512.isDefined && !JArrays.equals(vr.sha512, sha512.get)) {
@@ -53,6 +56,7 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
         case None =>
           val vr = VideoReference(uri, container, videoCodec, audioCodec, width, height,
             frameRate, sizeBytes, videoRefDescription, sha512)
+          didCreatedVR = true
           log.debug("Created {}", vr)
 
           val video = vDao.findByName(videoName) match {
@@ -78,6 +82,10 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
           }
 
           video.addVideoReference(vr)
+
+          // Notify messaging service of new video reference
+          if (didCreatedVR) Constants.MESSAGING_SERVICE.newVideoReference(vr)
+
           vr
       }
 

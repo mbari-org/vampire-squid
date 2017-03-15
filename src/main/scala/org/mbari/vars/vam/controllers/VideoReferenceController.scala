@@ -3,6 +3,7 @@ package org.mbari.vars.vam.controllers
 import java.net.URI
 import java.util.UUID
 
+import org.mbari.vars.vam.Constants
 import org.mbari.vars.vam.dao.VideoReferenceDAO
 import org.mbari.vars.vam.dao.jpa._
 
@@ -60,6 +61,8 @@ class VideoReferenceController(val daoFactory: JPADAOFactory) extends BaseContro
               video.addVideoReference(videoReference)
               sha512.foreach(videoReference.sha512 = _)
               dao.create(videoReference)
+              // Notify messaging service of new video reference
+              Constants.MESSAGING_SERVICE.newVideoReference(videoReference)
               videoReference
           }
       }
