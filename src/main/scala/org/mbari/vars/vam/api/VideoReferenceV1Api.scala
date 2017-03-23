@@ -1,10 +1,11 @@
 package org.mbari.vars.vam.api
 
 import java.net.URI
-import java.util.{ Base64, UUID }
+import java.util.UUID
+import javax.xml.bind.DatatypeConverter
 
 import org.mbari.vars.vam.controllers.VideoReferenceController
-import org.mbari.vars.vam.dao.jpa.{ Video, VideoReference, VideoSequence }
+import org.mbari.vars.vam.dao.jpa.{ ByteArrayConverter, Video, VideoReference, VideoSequence }
 import org.scalatra.{ BadRequest, NoContent, NotFound }
 import org.scalatra.swagger.{ DataType, ParamType, Parameter, Swagger }
 
@@ -68,7 +69,7 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swa
 
   get("/sha512/:sha512", operation(shaGET)) {
     val sha = params.get("sha512")
-      .map(s => Base64.getDecoder.decode(s))
+      .map(s => ByteArrayConverter.decode(s))
       .getOrElse(halt(BadRequest("Please provide a Base64 encoded sha512 checksum")))
     controller.findBySha512(sha).map {
       case None => halt(NotFound(

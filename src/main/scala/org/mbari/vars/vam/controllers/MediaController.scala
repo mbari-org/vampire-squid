@@ -4,7 +4,9 @@ import java.net.URI
 import java.time.{ Duration, Instant }
 import java.util.{ Arrays => JArrays }
 
+import org.bouncycastle.util.Arrays
 import org.mbari.vars.vam.Constants
+import org.mbari.vars.vam.dao.DAO
 import org.mbari.vars.vam.dao.jpa.{ JPADAOFactory, Video, VideoReference, VideoSequence }
 import org.mbari.vars.vam.model.Media
 import org.slf4j.LoggerFactory
@@ -93,6 +95,88 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
     })
 
   }
+
+  //  def update(
+  //    sha512: Array[Byte],
+  //    videoSequenceName: Option[String] = None,
+  //    cameraId: Option[String] = None,
+  //    videoName: Option[String] = None,
+  //    uri: Option[URI] = None,
+  //    start: Option[Instant] = None,
+  //    duration: Option[Duration] = None,
+  //    container: Option[String] = None,
+  //    videoCodec: Option[String] = None,
+  //    audioCodec: Option[String] = None,
+  //    width: Option[Int] = None,
+  //    height: Option[Int] = None,
+  //    frameRate: Option[Double] = None,
+  //    sizeBytes: Option[Long] = None,
+  //    videoRefDescription: Option[String] = None)(implicit ec: ExecutionContext): Future[Option[Media]] = {
+  //
+  //    val vrDao = daoFactory.newVideoReferenceDAO()
+  //    val f = vrDao.runTransaction(d => {
+  //      val videoReference = vrDao.findBySha512(sha512)
+  //      videoReference match {
+  //        case None => None
+  //        case Some(vr) =>
+  //          // -- 1. Update VideoReference params
+  //          container.foreach(vr.container = _)
+  //          audioCodec.foreach(vr.audioCodec = _)
+  //          videoCodec.foreach(vr.videoCodec = _)
+  //          width.foreach(vr.width = _)
+  //          height.foreach(vr.height = _)
+  //          frameRate.foreach(vr.frameRate = _)
+  //          sizeBytes.foreach(vr.size = _)
+  //          uri.foreach(vr.uri = _)
+  //
+  //          // -- 2. Find Video Sequence
+  //          val vs = if (videoSequenceName.isDefined) {
+  //            val vsDao = daoFactory.newVideoSequenceDAO(d)
+  //            vsDao.findByName(videoSequenceName.get) match {
+  //              case Some(x) =>
+  //                val vrs = x.videoReferences
+  //                if (cameraId.isDefined &&
+  //                  cameraId.get != x.cameraID &&
+  //                  vrs.exists(y => JArrays.equals(y.sha512, sha512)) &&
+  //                  vrs.size > 1) {
+  //                  log.warn(s"An existing VideoSequence named '${x.name}' exists with other meda. " +
+  //                    s" Unable to rename cameraId from ${x.cameraID} to ${cameraId.get}")
+  //                } else {
+  //                  cameraId.foreach(x.cameraID = _)
+  //                }
+  //                x
+  //              case None =>
+  //                val x = new VideoSequence
+  //                videoSequenceName.foreach(x.name = _)
+  //                cameraId.foreach(x.cameraID = _)
+  //            }
+  //          }
+  //
+  //          // -- 2. Update or Move video
+  //          if (videoName.isDefined && videoName.get != vr.video.name) {
+  //            val vDao = daoFactory.newVideoDAO(d)
+  //          }
+  //
+  //          if (cameraId.isDefined ||
+  //            videoName.isDefined ||
+  //            start.isDefined ||
+  //            duration.isDefined) {
+  //
+  //            val vDao = daoFactory.newVideoDAO(d)
+  //
+  //            val vid = vDao.findByName(videoName.get) match {
+  //              case Some(v) => v
+  //              case None =>
+  //
+  //                val v = new Video
+  //
+  //            }
+  //          }
+  //
+  //      }
+  //    })
+  //
+  //  }
 
   def findBySha512(sha512: Array[Byte])(implicit ec: ExecutionContext): Future[Option[Media]] = {
     val dao = daoFactory.newVideoReferenceDAO()

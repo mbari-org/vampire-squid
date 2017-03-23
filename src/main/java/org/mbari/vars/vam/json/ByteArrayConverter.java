@@ -3,7 +3,6 @@ package org.mbari.vars.vam.json;
 import com.google.gson.*;
 
 import java.lang.reflect.Type;
-import java.util.Base64;
 import static org.mbari.vars.vam.dao.jpa.ByteArrayConverter.*;
 
 /**

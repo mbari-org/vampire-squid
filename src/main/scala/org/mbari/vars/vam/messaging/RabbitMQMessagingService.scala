@@ -1,16 +1,16 @@
 package org.mbari.vars.vam.messaging
 import java.lang.reflect.Type
-import java.time.{Duration, Instant}
+import java.time.{ Duration, Instant }
 import java.util.UUID
 
 import com.fatboyindustrial.gsonjavatime.Converters
 import com.google.gson.annotations.Expose
 import com.google.gson.reflect.TypeToken
-import com.google.gson.{FieldNamingPolicy, GsonBuilder}
-import com.rabbitmq.client.{Channel, Connection, ConnectionFactory}
+import com.google.gson.{ FieldNamingPolicy, GsonBuilder }
+import com.rabbitmq.client.{ Channel, Connection, ConnectionFactory }
 import org.mbari.vars.vam.Constants
 import org.mbari.vars.vam.dao.jpa.VideoReference
-import org.mbari.vars.vam.json.{ByteArrayConverter, DurationConverter => GSONDurationConverter}
+import org.mbari.vars.vam.json.{ ByteArrayConverter, DurationConverter => GSONDurationConverter }
 import org.slf4j.LoggerFactory
 
 import scala.annotation.meta.field
@@ -67,14 +67,14 @@ class RabbitMQMessagingService extends MessagingService {
 
 // http://www.piotrbuda.me/2012/10/scala-case-classes-and-annotations-part-1.html
 case class NewVideoMessage(
-                            @(Expose@field)(serialize = true) videoSequenceUuid: UUID,
-                            @(Expose@field)(serialize = true) videoSequenceName: String,
-                            @(Expose@field)(serialize = true) cameraId: String,
-                            @(Expose@field)(serialize = true) videoUuid: UUID,
-                            @(Expose@field)(serialize = true) videoName: String,
-                            @(Expose@field)(serialize = true) startTimestamp: Instant,
-                            @(Expose@field)(serialize = true) durationMillis: Duration,
-                            @(Expose@field)(serialize = true) videoReference: VideoReference)
+  @(Expose @field)(serialize = true) videoSequenceUuid: UUID,
+  @(Expose @field)(serialize = true) videoSequenceName: String,
+  @(Expose @field)(serialize = true) cameraId: String,
+  @(Expose @field)(serialize = true) videoUuid: UUID,
+  @(Expose @field)(serialize = true) videoName: String,
+  @(Expose @field)(serialize = true) startTimestamp: Instant,
+  @(Expose @field)(serialize = true) durationMillis: Duration,
+  @(Expose @field)(serialize = true) videoReference: VideoReference)
 
 object NewVideoMessage {
   def apply(videoReference: VideoReference): NewVideoMessage = {
