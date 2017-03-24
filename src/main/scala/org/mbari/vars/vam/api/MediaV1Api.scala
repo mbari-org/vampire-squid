@@ -44,6 +44,7 @@ class MediaV1Api(controller: MediaController)(implicit val swagger: Swagger, val
     val sizeBytes = params.getAs[Long]("size_bytes")
     val videoRefDescription = params.get("video_description")
     val sha512 = params.getAs[Array[Byte]]("sha512")
+    validateRequest()
     controller.create(
       videoSequenceName,
       cameraId,
