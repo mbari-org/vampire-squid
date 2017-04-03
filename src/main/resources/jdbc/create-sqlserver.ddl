@@ -1,4 +1,6 @@
-CREATE TABLE video_sequence (
+-- noinspection SqlNoDataSourceInspectionForFile
+
+CREATE TABLE video_sequences (
   uuid                 VARCHAR(72) NOT NULL PRIMARY KEY,
   name                 VARCHAR(512) NOT NULL,
   camera_id            VARCHAR(256) NOT NULL,
@@ -6,18 +8,18 @@ CREATE TABLE video_sequence (
 )
 GO
 
-CREATE TABLE video (
+CREATE TABLE videos (
   uuid                 VARCHAR(72) NOT NULL PRIMARY KEY,
   name                 VARCHAR(512) NOT NULL ,
   start_time           DATETIME NULL,
-  duration_seconds     FLOAT NULL,
+  duration_millis      FLOAT NULL,
   video_sequence_uuid  VARCHAR(72) NOT NULL,
   last_updated_time    DATETIME NULL
 )
 GO
 
 
-CREATE TABLE video_view (
+CREATE TABLE video_references (
   uuid                 VARCHAR(72) NOT NULL PRIMARY KEY,
   uri                  VARCHAR(2048) NOT NULL,
   container            VARCHAR(128) NULL,
@@ -25,57 +27,69 @@ CREATE TABLE video_view (
   audio_codec          VARCHAR(128) NULL,
   width                SMALLINT NULL,
   height               SMALLINT NULL,
+  frame_rate           FLOAT NULL,
+  size_bytes           BIGINT NULL,
+  sha512               VARCHAR(128) null,
   video_uuid           VARCHAR(72) NOT NULL,
   last_updated_time    DATETIME NULL
 )
 GO
 
-ALTER TABLE video_sequence
-    ADD CONSTRAINT uc_video_sequence__name UNIQUE (name)
+ALTER TABLE video_sequences
+    ADD CONSTRAINT uc_videos_sequences__name UNIQUE (name)
 GO
 
-ALTER TABLE video
-  ADD CONSTRAINT uc_video__name UNIQUE (name)
+ALTER TABLE videos
+  ADD CONSTRAINT uc_videos__name UNIQUE (name)
 GO
 
-ALTER TABLE video
-  ADD CONSTRAINT fk_video__video_sequence FOREIGN KEY (uuid)
-  REFERENCES video_sequence(uuid)
+ALTER TABLE videos
+  ADD CONSTRAINT fk_videos__video_sequences FOREIGN KEY (uuid)
+  REFERENCES video_sequences(uuid)
   ON DELETE CASCADE
   ON UPDATE CASCADE
 GO
 
-ALTER TABLE video_view
-  ADD CONSTRAINT uc_video_view__uri UNIQUE (uri)
+ALTER TABLE video_references
+  ADD CONSTRAINT uc_video_references__uri UNIQUE (uri)
 GO
 
-ALTER TABLE video_view
-  ADD CONSTRAINT fk_video_view__video FOREIGN KEY (uuid)
-  REFERENCES video_sequence(uuid)
+ALTER TABLE video_references
+  ADD CONSTRAINT uc_video_references__sha512 UNIQUE (sha512)
+GO
+
+ALTER TABLE video_references
+  ADD CONSTRAINT fk_video_references__videos FOREIGN KEY (uuid)
+  REFERENCES video_sequences(uuid)
   ON DELETE CASCADE
   ON UPDATE CASCADE
 GO
 
-CREATE NONCLUSTERED INDEX idx_video_sequence__name
-  ON video_sequence(name)
+CREATE NONCLUSTERED INDEX idx_video_sequences__name
+  ON video_sequences(name)
 GO
 
-CREATE NONCLUSTERED INDEX idx_video_sequence__camera_id
-  ON video_sequence(camera_id)
+CREATE NONCLUSTERED INDEX idx_video_sequences__camera_id
+  ON video_sequences(camera_id)
 GO
 
-CREATE NONCLUSTERED INDEX idx_video__video_sequence_uuid
-  ON video(video_sequence_uuid)
+CREATE NONCLUSTERED INDEX idx_videos__video_sequence_uuid
+  ON videos(video_sequence_uuid)
 GO
 
-CREATE NONCLUSTERED INDEX idx_video__name
-  ON video(name)
+CREATE NONCLUSTERED INDEX idx_videos__name
+  ON videos(name)
 GO
 
-CREATE NONCLUSTERED INDEX idx_video_view__uri
-  ON video_view(uri)
+CREATE NONCLUSTERED INDEX idx_videos__start_time
+  ON videos(start_time)
 GO
 
-CREATE NONCLUSTERED INDEX idx_video_view__video_uuid
-  ON video_view(video_uuid)
+CREATE NONCLUSTERED INDEX idx_video_references__uri
+  ON video_references(uri)
 GO
+
+CREATE NONCLUSTERED INDEX idx_video_references__video_uuid
+  ON video_references(video_uuid)
+GO
+

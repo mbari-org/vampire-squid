@@ -93,7 +93,6 @@ class VideoReference extends HasUUID with HasOptimisticLock with HasDescription 
 
   // Checksum allows reverse lookups. Store checksum as hex
   @Expose(serialize = true)
-  @Lob
   @Column(name = "sha512", length = 128, nullable = true, unique = true)
   @Convert(converter = classOf[ByteArrayConverter])
   var sha512: Array[Byte] = _

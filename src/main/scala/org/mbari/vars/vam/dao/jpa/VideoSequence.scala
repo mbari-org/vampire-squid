@@ -50,7 +50,7 @@ class VideoSequence extends HasUUID with HasOptimisticLock with HasDescription {
 
   @Expose(serialize = true)
   @Basic(optional = false)
-  @Index(name = "idx_video_sequence_name", columnList = "name")
+  @Index(name = "idx_video_sequences__name", columnList = "name")
   @Column(
     name = "name",
     nullable = false,
@@ -61,7 +61,7 @@ class VideoSequence extends HasUUID with HasOptimisticLock with HasDescription {
   @Expose(serialize = true)
   @SerializedName(value = "camera_id")
   @Basic(optional = false)
-  @Index(name = "idx_video_sequence_camera_id", columnList = "camera_id")
+  @Index(name = "idx_video_sequences__camera_id", columnList = "camera_id")
   @Column(
     name = "camera_id",
     nullable = false,
