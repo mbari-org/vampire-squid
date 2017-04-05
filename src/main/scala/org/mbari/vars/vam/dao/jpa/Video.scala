@@ -56,6 +56,7 @@ class Video extends HasUUID with HasOptimisticLock with HasDescription {
   var name: String = _
 
   @Expose(serialize = true)
+  @SerializedName(value = "start_timestamp")
   @Basic(optional = false)
   @Index(name = "idx_videos__start_time", columnList = "start_time")
   @Column(

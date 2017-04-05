@@ -28,7 +28,7 @@ abstract class BaseDAO[B <: PersistentObject: ClassTag](val entityManager: Entit
   }
 
   def find(obj: B): Option[B] =
-    Option(entityManager.find(obj.getClass, obj.primaryKey))
+    obj.primaryKey.flatMap(pk => Option(entityManager.find(obj.getClass, pk)))
 
   def findByNamedQuery(name: String, namedParameters: Map[String, Any] = Map.empty): List[B] = {
     val query = entityManager.createNamedQuery(name)

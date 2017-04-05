@@ -19,15 +19,13 @@ class MediaV2ApiSpec extends WebApiStack {
 
   addServlet(mediaV2Api, "/v2/media")
 
-
-
   "MediaV2Api" should "create w/ minimal args" in {
     val b = "video_sequence_name=Brian&camera_id=Ventana&video_name=V19680922T030001Z" +
       "&uri=http://www.mbari.org/movies/somemovie.mov&start_timestamp=1968-09-22T03:00:01Z"
     post(
       "v2/media",
       body = b.getBytes(Charset.forName("UTF-8")),
-      headers = Seq("Content-Type" -> "application/x-www-form-urlencoded")) {
+      headers = Seq("Content-Type" -> "application/form")) {
         status should be(200)
         val media = gson.fromJson(body, classOf[Media])
         media.videoSequenceUuid should not be (null)
@@ -61,12 +59,12 @@ class MediaV2ApiSpec extends WebApiStack {
       "v2/media",
       body = b.getBytes(Charset.forName("UTF-8")),
       headers = Seq("Content-Type" -> "application/json")) {
-      status should be(200)
+        status should be(200)
 
-      val media = gson.fromJson(body, classOf[Media])
-      media.videoSequenceUuid should not be (null)
-      media.videoUuid should not be (null)
-      media.videoReferenceUuid should not be (null)
-    }
+        val media = gson.fromJson(body, classOf[Media])
+        media.videoSequenceUuid should not be (null)
+        media.videoUuid should not be (null)
+        media.videoReferenceUuid should not be (null)
+      }
   }
 }

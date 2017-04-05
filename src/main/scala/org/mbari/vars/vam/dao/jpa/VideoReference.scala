@@ -4,7 +4,7 @@ import java.net.URI
 import javax.activation.MimeType
 import javax.persistence.{ EntityListeners, Table, _ }
 
-import com.google.gson.annotations.Expose
+import com.google.gson.annotations.{ Expose, SerializedName }
 
 import scala.util.Try
 
@@ -80,6 +80,7 @@ class VideoReference extends HasUUID with HasOptimisticLock with HasDescription 
   var frameRate: Double = _
 
   @Expose(serialize = true)
+  @SerializedName(value = "size_bytes")
   @Column(
     name = "size_bytes")
   var size: Long = _

@@ -64,10 +64,10 @@ abstract class APIStack extends ScalatraServlet
     .map(a => a(0) -> a(1))
 
   /**
-    * Read
-    * @param request
-    * @return
-    */
+   * Read
+   * @param request
+   * @return
+   */
   def readBody(request: HttpServletRequest): String = {
     try {
       val reader = request.getInputStream

@@ -34,8 +34,8 @@ class MediaV2Api(controller: MediaController)(implicit val swagger: Swagger, val
   post("/") {
     validateRequest()
     val body = readBody(request)
-    println("BODY " + body)
-    println("HEADER " + request.getHeader("Content-Type"))
+    //println("BODY " + body)
+    //println("HEADER " + request.getHeader("Content-Type"))
     val media = request.getHeader("Content-Type").toLowerCase match {
       case "application/json" => Constants.GSON.fromJson(body, classOf[Media])
       case _ => formToMedia(body)
@@ -134,4 +134,8 @@ class MediaV2Api(controller: MediaController)(implicit val swagger: Swagger, val
       .map(_.asJava)
       .map(controller.toJson)
   }
+}
+
+class StartTimestamp {
+
 }
