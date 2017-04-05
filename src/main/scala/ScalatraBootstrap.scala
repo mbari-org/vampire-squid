@@ -43,12 +43,14 @@ class ScalatraBootstrap extends LifeCycle {
 
     val authorizationV1Api = new AuthorizationV1Api()
     val mediaV1Api = new MediaV1Api(mediaController)
+    val mediaV2Api = new MediaV2Api(mediaController)
     val videoSequenceV1Api = new VideoSequenceV1Api(videoSequenceController)
     val videoV1Api = new VideoV1Api(videoController)
     val videoReferenceV1Api = new VideoReferenceV1Api(videoReferenceController)
 
     context.mount(authorizationV1Api, "/v1/auth")
     context.mount(mediaV1Api, "/v1/media")
+    context.mount(mediaV2Api, "/v2/media")
     context.mount(videoSequenceV1Api, "/v1/videosequences")
     context.mount(videoV1Api, "/v1/videos")
     context.mount(videoReferenceV1Api, "/v1/videoreferences")

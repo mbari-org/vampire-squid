@@ -2,15 +2,17 @@ package org.mbari.vars.vam.api
 
 import java.net.URI
 import java.time.{ Duration, Instant }
-import java.util.{ Base64, UUID }
+import java.util.UUID
+import javax.servlet.http.HttpServletRequest
 
-import org.mbari.vars.vam.Constants
 import org.mbari.vars.vam.dao.jpa.ByteArrayConverter
 import org.scalatra.{ ContentEncodingSupport, FutureSupport, NotFound, ScalatraServlet }
 import org.scalatra.swagger.SwaggerSupport
 import org.scalatra.util.conversion.TypeConverter
 
+import scala.io.Source
 import scala.util.Try
+import scala.util.control.NonFatal
 
 /**
  * All Api classes should mixin this trait. It defines the common traits used by all implementations
@@ -48,6 +50,35 @@ abstract class APIStack extends ScalatraServlet
 
   implicit val stringToByteArray = new TypeConverter[String, Array[Byte]] {
     override def apply(s: String): Option[Array[Byte]] = Try(ByteArrayConverter.decode(s)).toOption
+  }
+
+  /**
+   * Parse a form post into key value pairs. e.g.
+   * Transform "parameter=value&also=another" to Map("parameter" -> "value", "also" -> "another")
+   * @param body
+   * @return
+   */
+  def parsePostBody(body: String): Seq[(String, String)] = body.split('&')
+    .map(p => p.split('='))
+    .filter(_.size == 2)
+    .map(a => a(0) -> a(1))
+
+  /**
+    * Read
+    * @param request
+    * @return
+    */
+  def readBody(request: HttpServletRequest): String = {
+    try {
+      val reader = request.getInputStream
+      val body = Source.fromInputStream(reader, "UTF-8")
+        .getLines()
+        .mkString("\n")
+      reader.close()
+      body
+    } catch {
+      case NonFatal(e) => ""
+    }
   }
 
 }
