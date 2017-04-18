@@ -135,7 +135,3 @@ class MediaV2Api(controller: MediaController)(implicit val swagger: Swagger, val
       .map(controller.toJson)
   }
 }
-
-class StartTimestamp {
-
-}

@@ -2,18 +2,13 @@ package org.mbari.vars.vam.api
 
 import java.net.URI
 import java.nio.charset.{ Charset, StandardCharsets }
-import java.security.MessageDigest
-import java.time.{ Duration, Instant }
-import java.util.concurrent.TimeUnit
 
-import org.mbari.vars.vam.Constants
 import org.mbari.vars.vam.controller.TestUtils
-import org.mbari.vars.vam.controllers.{ MediaController, VideoController, VideoReferenceController, VideoSequenceController }
-import org.mbari.vars.vam.dao.jpa.{ ByteArrayConverter, Video, VideoReference, VideoSequence }
+import org.mbari.vars.vam.controllers.VideoReferenceController
+import org.mbari.vars.vam.dao.jpa.{ ByteArrayConverter, VideoReference }
 import org.slf4j.LoggerFactory
 
-import scala.concurrent.{ Await, duration }
-import scala.util.Random
+import scala.concurrent.Await
 
 /**
  * @author Brian Schlining
