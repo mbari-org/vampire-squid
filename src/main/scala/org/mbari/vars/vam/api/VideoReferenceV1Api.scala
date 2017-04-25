@@ -50,7 +50,7 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swa
   val uriGET = (apiOperation[VideoReference]("findByURI")
     summary "Find a video-reference by its URI"
     parameters (
-      pathParam[URI]("uuid").description("The URI of the video-reference")))
+      pathParam[URI]("uri").description("The URI of the video-reference")))
 
   get("/uri/:uri", operation(uriGET)) {
     val uri = params.getAs[URI]("uri").getOrElse(halt(BadRequest("Please provide a URI")))
