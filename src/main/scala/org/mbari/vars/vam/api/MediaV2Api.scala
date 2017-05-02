@@ -49,7 +49,7 @@ class MediaV2Api(controller: MediaController)(implicit val swagger: Swagger, val
       .orElse(halt(BadRequest("{}", reason = "A 'video_name' param is required")))
     Option(media.uri)
       .orElse(halt(BadRequest(body = "{}", reason = "A 'uri' parameters is required.")))
-    Option(media.start)
+    Option(media.startTimestamp)
       .orElse(halt(BadRequest("{}", reason = "A 'start_timestamp' param is required")))
 
     controller.create(
@@ -57,7 +57,7 @@ class MediaV2Api(controller: MediaController)(implicit val swagger: Swagger, val
       media.cameraId,
       media.videoName,
       media.uri,
-      media.start,
+      media.startTimestamp,
       Option(media.duration),
       Option(media.container),
       Option(media.videoCodec),
@@ -79,7 +79,7 @@ class MediaV2Api(controller: MediaController)(implicit val swagger: Swagger, val
     args.get("video_name").foreach(media.videoName = _)
     args.get("start_timestamp")
       .flatMap(stringToInstant(_))
-      .foreach(media.start = _)
+      .foreach(media.startTimestamp = _)
     args.get("uri")
       .flatMap(stringToURI(_))
       .foreach(media.uri = _)

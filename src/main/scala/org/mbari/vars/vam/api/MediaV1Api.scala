@@ -73,10 +73,18 @@ class MediaV1Api(controller: MediaController)(implicit val swagger: Swagger, val
     })
   }
 
-  get("/:name") {
+  get("/videosequence/:name") {
     val name = params.get("name")
       .getOrElse(halt(BadRequest("{}", reason = "A video sequence name parameter is required")))
     controller.findByVideoSequenceName(name)
+      .map(_.asJava)
+      .map(controller.toJson)
+  }
+
+  get("/video/:name") {
+    val name = params.get("name")
+      .getOrElse(halt(BadRequest("{}", reason = "A video name parameter is required")))
+    controller.findByVideoName(name)
       .map(_.asJava)
       .map(controller.toJson)
   }

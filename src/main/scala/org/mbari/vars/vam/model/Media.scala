@@ -35,7 +35,7 @@ class Media {
   var uri: URI = _
 
   @Expose(serialize = true)
-  var start: Instant = _
+  var startTimestamp: Instant = _
 
   @Expose(serialize = true)
   @SerializedName(value = "duration_millis")
@@ -68,13 +68,13 @@ class Media {
   @Expose(serialize = true)
   var sha512: Array[Byte] = _
 
-  def end: Option[Instant] = if (start != null && duration != null) Some(start.plus(duration))
+  def endTimestamp: Option[Instant] = if (startTimestamp != null && duration != null) Some(startTimestamp.plus(duration))
   else None
 
   def contains(ts: Instant): Boolean = {
-    end match {
-      case None => start == ts
-      case Some(e) => start == ts || e == ts || start.isBefore(ts) && e.isAfter(ts)
+    endTimestamp match {
+      case None => startTimestamp == ts
+      case Some(e) => startTimestamp == ts || e == ts || startTimestamp.isBefore(ts) && e.isAfter(ts)
     }
   }
 
@@ -92,7 +92,8 @@ object Media {
     m.cameraId = videoSequence.cameraID
 
     m.videoUuid = video.uuid
-    m.start = video.start
+    m.videoName = video.name
+    m.startTimestamp = video.start
     m.duration = video.duration
 
     m.videoReferenceUuid = videoReference.uuid
