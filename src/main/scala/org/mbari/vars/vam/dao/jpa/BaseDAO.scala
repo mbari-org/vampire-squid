@@ -23,12 +23,12 @@ abstract class BaseDAO[B <: PersistentObject: ClassTag](val entityManager: Entit
   if (log.isInfoEnabled) {
     val props = entityManager.getProperties
     if (props.containsKey(BaseDAO.JDBC_URL_KEY)) {
-      log.info(s"Wrapping EntityManager with DAO for database: ${props.get(BaseDAO.JDBC_URL_KEY)}")
+      log.debug(s"Wrapping EntityManager with DAO for database: ${props.get(BaseDAO.JDBC_URL_KEY)}")
     }
   }
 
   def find(obj: B): Option[B] =
-    Option(entityManager.find(obj.getClass, obj.primaryKey))
+    obj.primaryKey.flatMap(pk => Option(entityManager.find(obj.getClass, pk)))
 
   def findByNamedQuery(name: String, namedParameters: Map[String, Any] = Map.empty): List[B] = {
     val query = entityManager.createNamedQuery(name)

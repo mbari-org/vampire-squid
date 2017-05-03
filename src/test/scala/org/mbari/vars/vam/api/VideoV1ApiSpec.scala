@@ -12,7 +12,7 @@ import org.mbari.vars.vam.dao.jpa.{ Video, VideoSequence }
  * @author Brian Schlining
  * @since 2016-08-11T17:05:00
  */
-class VideoApiSpec extends WebApiStack {
+class VideoV1ApiSpec extends WebApiStack {
 
   private[this] val videoSequenceV1Api = {
     val videoSequenceController = new VideoSequenceController(daoFactory)
@@ -27,33 +27,23 @@ class VideoApiSpec extends WebApiStack {
   addServlet(videoSequenceV1Api, "/v1/videosequence")
   addServlet(videoV1Api, "/v1/video")
 
-  protected override def afterAll(): Unit = {
-    val dao = daoFactory.newVideoSequenceDAO()
-
-    dao.runTransaction(d => {
-      val all = dao.findAll()
-      all.foreach(dao.delete)
-    })
-    dao.close()
-
-    super.afterAll()
-  }
-
-  "VideoV1Api" should "return an empty JSON array when the database is empty" in {
-    get("/v1/video") {
-      status should be(200)
-      body should equal("[]")
-    }
-  }
+  //  "VideoV1Api" should "return an empty JSON array when the database is empty" in {
+  //    get("/v1/video") {
+  //      status should be(200)
+  //      body should equal("[]")
+  //    }
+  //  }
 
   val startDate = Instant.now()
   var aVideoSequence: VideoSequence = _
   var aVideo: Video = _
-  it should "insert" in {
+  "VideoV1Api" should "insert" in {
     post("/v1/videosequence", "name" -> "T1234", "camera_id" -> "Tiburon") {
       status should be(200)
       aVideoSequence = gson.fromJson(body, classOf[VideoSequence])
     }
+    aVideoSequence should not be null
+
     post(
       "/v1/video",
       "name" -> "T1234-01",
@@ -67,6 +57,7 @@ class VideoApiSpec extends WebApiStack {
         body should include("duration_millis")
         aVideo = gson.fromJson(body, classOf[Video])
       }
+    aVideo should not be null
   }
 
   it should "get a videosequence by video UUID" in {

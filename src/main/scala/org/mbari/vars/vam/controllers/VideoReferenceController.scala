@@ -3,6 +3,7 @@ package org.mbari.vars.vam.controllers
 import java.net.URI
 import java.util.UUID
 
+import org.mbari.vars.vam.Constants
 import org.mbari.vars.vam.dao.VideoReferenceDAO
 import org.mbari.vars.vam.dao.jpa._
 
@@ -30,6 +31,9 @@ class VideoReferenceController(val daoFactory: JPADAOFactory) extends BaseContro
   def findByURI(uri: URI)(implicit ec: ExecutionContext): Future[Option[VideoReference]] =
     exec(d => d.findByURI(uri))
 
+  def findBySha512(sha512: Array[Byte])(implicit ec: ExecutionContext): Future[Option[VideoReference]] =
+    exec(d => d.findBySha512(sha512))
+
   def create(
     videoUUID: UUID,
     uri: URI,
@@ -40,7 +44,8 @@ class VideoReferenceController(val daoFactory: JPADAOFactory) extends BaseContro
     height: Option[Int] = None,
     frameRate: Option[Double] = None,
     sizeBytes: Option[Long] = None,
-    description: Option[String] = None)(implicit ec: ExecutionContext): Future[VideoReference] = {
+    description: Option[String] = None,
+    sha512: Option[Array[Byte]] = None)(implicit ec: ExecutionContext): Future[VideoReference] = {
 
     def fn(dao: VRDAO): VideoReference = {
       dao.findByURI(uri) match {
@@ -54,7 +59,10 @@ class VideoReferenceController(val daoFactory: JPADAOFactory) extends BaseContro
               val videoReference = VideoReference(uri, container, videoCodec, audioCodec, width,
                 height, frameRate, sizeBytes, description)
               video.addVideoReference(videoReference)
+              sha512.foreach(videoReference.sha512 = _)
               dao.create(videoReference)
+              // Notify messaging service of new video reference
+              Constants.MESSAGING_SERVICE.newVideoReference(videoReference)
               videoReference
           }
       }
@@ -73,7 +81,8 @@ class VideoReferenceController(val daoFactory: JPADAOFactory) extends BaseContro
     height: Option[Int] = None,
     frameRate: Option[Double] = None,
     sizeBytes: Option[Long] = None,
-    description: Option[String] = None)(implicit ec: ExecutionContext): Future[VideoReference] = {
+    description: Option[String] = None,
+    sha512: Option[Array[Byte]] = None)(implicit ec: ExecutionContext): Future[VideoReference] = {
 
     def fn(dao: VRDAO): VideoReference = {
       dao.findByUUID(uuid) match {
@@ -88,6 +97,7 @@ class VideoReferenceController(val daoFactory: JPADAOFactory) extends BaseContro
           frameRate.foreach(v => videoReference.frameRate = v)
           sizeBytes.foreach(v => videoReference.size = v)
           description.foreach(v => videoReference.description = v)
+          sha512.foreach(videoReference.sha512 = _)
 
           videoUUID match {
             case None => videoReference

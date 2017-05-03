@@ -2,28 +2,29 @@ package org.mbari.vars.vam.api
 
 import java.net.URI
 import java.util.UUID
-import javax.xml.bind.DatatypeConverter
+import javax.persistence.{ Column, Convert }
 
+import com.google.gson.annotations.Expose
+import org.mbari.vars.vam.Constants
 import org.mbari.vars.vam.controllers.VideoReferenceController
-import org.mbari.vars.vam.dao.jpa.{ ByteArrayConverter, Video, VideoReference, VideoSequence }
+import org.mbari.vars.vam.dao.jpa.{ ByteArrayConverter, VideoReference }
 import org.scalatra.{ BadRequest, NoContent, NotFound }
 import org.scalatra.swagger.{ DataType, ParamType, Parameter, Swagger }
 
 import scala.concurrent.ExecutionContext
 import scala.collection.JavaConverters._
+import scala.util.Try
 
 /**
- *
- *
  * @author Brian Schlining
- * @since 2016-06-06T16:27:00
+ * @since 2017-04-05T08:32:00
  */
-class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swagger: Swagger, val executor: ExecutionContext)
+class VideoReferenceV2Api(controller: VideoReferenceController)(implicit val swagger: Swagger, val executor: ExecutionContext)
     extends APIStack {
 
-  override protected def applicationDescription: String = "Video Reference API (v1)"
+  override protected def applicationDescription: String = "Video Reference API (v2)"
 
-  override protected val applicationName: Option[String] = Some("VideoReferenceAPI")
+  override protected val applicationName: Option[String] = Some("VideoReferenceV2API")
 
   val vsGET = (apiOperation[Iterable[VideoReference]]("findAll")
     summary "List all video-references")
@@ -50,7 +51,7 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swa
   val uriGET = (apiOperation[VideoReference]("findByURI")
     summary "Find a video-reference by its URI"
     parameters (
-      pathParam[URI]("uri").description("The URI of the video-reference")))
+      pathParam[URI]("uuid").description("The URI of the video-reference")))
 
   get("/uri/:uri", operation(uriGET)) {
     val uri = params.getAs[URI]("uri").getOrElse(halt(BadRequest("Please provide a URI")))
@@ -112,23 +113,65 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swa
 
   post("/", operation(vPOST)) {
     validateRequest()
-    val videoUUID = params.getAs[UUID]("video_uuid").getOrElse(halt(BadRequest(
+    val body = readBody(request)
+    val (uuid, videoReference) = request.getHeader("Content-Type").toLowerCase match {
+      case "application/json" => {
+        val vrp = Constants.GSON.fromJson(body, classOf[VideoRefParams])
+        (Option(vrp.videoUuid), vrp)
+      }
+      case _ => formToVideoReference(body)
+    }
+
+    val videoUuid = uuid.getOrElse(halt(BadRequest(
       body = "{}",
       reason = "A 'video_uuid' parameter is required.")))
-    val uri = params.getAs[URI]("uri").getOrElse(halt(BadRequest(
-      body = "{}",
-      reason = "A 'uri' parameters is required.")))
-    val description = params.get("description")
-    val container = params.get("container")
-    val videoCodec = params.get("video_codec")
-    val audioCodec = params.get("audio_codec")
-    val width = params.getAs[Int]("width")
-    val height = params.getAs[Int]("height")
-    val frameRate = params.getAs[Double]("frame_rate")
-    val sizeBytes = params.getAs[Long]("size_bytes")
-    val sha512 = params.getAs[Array[Byte]]("sha512")
-    controller.create(videoUUID, uri, container, videoCodec, audioCodec, width, height, frameRate,
-      sizeBytes, description, sha512).map(controller.toJson)
+    val uri = Option(videoReference.uri)
+      .getOrElse(halt(BadRequest(
+        body = "{}",
+        reason = "A 'uri' parameters is required.")))
+
+    controller.create(
+      videoUuid,
+      uri,
+      Option(videoReference.container),
+      Option(videoReference.videoCodec),
+      Option(videoReference.audioCodec),
+      Option(videoReference.width),
+      Option(videoReference.height),
+      Option(videoReference.frameRate),
+      Option(videoReference.size),
+      Option(videoReference.description),
+      Option(videoReference.sha512)).map(controller.toJson)
+  }
+
+  private def formToVideoReference(body: String): (Option[UUID], VideoReference) = {
+    val args = parsePostBody(body).toMap
+    val vr = new VideoReference
+    val uuid = args.get("video_uuid")
+      .flatMap(stringToUUID(_))
+    args.get("uri")
+      .flatMap(stringToURI(_))
+      .foreach(vr.uri = _)
+    args.get("description").foreach(vr.description = _)
+    args.get("container").foreach(vr.container = _)
+    args.get("video_codec").foreach(vr.videoCodec = _)
+    args.get("audio_codec").foreach(vr.audioCodec = _)
+    args.get("width")
+      .map(s => Try(s.toInt).toOption)
+      .foreach(opt => opt.foreach(vr.width = _))
+    args.get("height")
+      .map(s => Try(s.toInt).toOption)
+      .foreach(opt => opt.foreach(vr.height = _))
+    args.get("frame_rate")
+      .map(s => Try(s.toDouble).toOption)
+      .foreach(opt => opt.foreach(vr.frameRate = _))
+    args.get("size_bytes")
+      .map(s => Try(s.toLong).toOption)
+      .foreach(opt => opt.foreach(vr.size = _))
+    args.get("sha512")
+      .flatMap(stringToByteArray(_))
+      .foreach(vr.sha512 = _)
+    (uuid, vr)
   }
 
   val vPUT = (apiOperation[String]("update")
@@ -152,20 +195,37 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swa
     val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest(
       body = "{}",
       reason = "A UUID parameter is required")))
-    val videoUUID = params.getAs[UUID]("video_uuid")
-    val uri = params.getAs[URI]("uri")
-    val description = params.get("description")
-    val container = params.get("container")
-    val videoCodec = params.get("video_codec")
-    val audioCodec = params.get("audio_codec")
-    val width = params.getAs[Int]("width")
-    val height = params.getAs[Int]("height")
-    val frameRate = params.getAs[Double]("frame_rate")
-    val sizeBytes = params.getAs[Long]("size_bytes")
-    val sha512 = params.getAs[Array[Byte]]("sha512")
-    controller.update(uuid, videoUUID, uri, container, videoCodec, audioCodec, width, height,
-      frameRate, sizeBytes, description, sha512).map(controller.toJson)
 
+    val body = readBody(request)
+    val (videoUuid, videoReference) = request.getHeader("Content-Type").toLowerCase match {
+      case "application/json" => {
+        val vrp = Constants.GSON.fromJson(body, classOf[VideoRefParams])
+        (Option(vrp.videoUuid), vrp)
+      }
+      case _ => formToVideoReference(body)
+    }
+
+    controller.update(
+      uuid,
+      videoUuid,
+      Option(videoReference.uri),
+      Option(videoReference.container),
+      Option(videoReference.videoCodec),
+      Option(videoReference.audioCodec),
+      Option(videoReference.width),
+      Option(videoReference.height),
+      Option(videoReference.frameRate),
+      Option(videoReference.size),
+      Option(videoReference.description),
+      Option(videoReference.sha512)).map(controller.toJson)
   }
 
+}
+
+/**
+ * Same fileds as VideoReference plus videoUuid
+ */
+class VideoRefParams extends VideoReference {
+  @Expose(serialize = true)
+  var videoUuid: UUID = _
 }

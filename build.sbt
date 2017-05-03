@@ -1,4 +1,4 @@
-val akkaVersion = "2.4.16"
+val akkaVersion = "2.5.0"
 val auth0Version = "3.1.0"
 val codecVersion = "1.10"
 val configVersion = "1.3.1"
@@ -6,24 +6,25 @@ val derbyVersion = "10.13.1.1"
 val eclipselinkVersion = "2.6.4"
 val gsonJavatimeVersion = "1.1.1"
 val gsonVersion = "2.8.0"
-val h2Version = "1.4.192"
-val jettyVersion = "9.4.1.v20170120"
-val json4sVersion = "3.5.0"
+val h2Version = "1.4.194"
+val jettyVersion = "9.4.4.v20170414"
+val json4sVersion = "3.5.1"
 val jtaVersion = "1.1"
 val jtdsVersion = "1.3.1"
 val junitVersion = "4.12"
-val logbackVersion = "1.1.9"
-val scalaTestVersion = "3.0.1"
+val logbackVersion = "1.2.3"
+val rabbitmqVersion = "4.1.0"
+val scalaTestVersion = "3.0.3"
 val scalatraVersion = "2.5.0"
 val servletVersion = "3.1.0"
-val slf4jVersion = "1.7.22"
+val slf4jVersion = "1.7.25"
 
 
 lazy val buildSettings = Seq(
   organization := "org.mbari.vars",
   version := "0.1.0-SNAPSHOT",
-  scalaVersion := "2.12.1",
-  crossScalaVersions := Seq("2.12.1")
+  scalaVersion := "2.12.2",
+  crossScalaVersions := Seq("2.12.2")
 )
 
 lazy val consoleSettings = Seq(
@@ -56,7 +57,7 @@ lazy val optionSettings = Seq(
     "-language:higherKinds",
     "-language:implicitConversions",
     "-unchecked",
-    "-Xfatal-warnings",
+    //"-Xfatal-warnings",
     "-Xlint",
     "-Yno-adapted-args",
     "-Xfuture"),
@@ -85,6 +86,7 @@ lazy val `vampire-squid` = (project in file("."))
       "ch.qos.logback"           % "logback-core"                   % logbackVersion,
       "com.auth0"                % "java-jwt"                       % auth0Version,
       "com.fatboyindustrial.gson-javatime-serialisers" % "gson-javatime-serialisers" % gsonJavatimeVersion,
+      "com.rabbitmq"             % "amqp-client"                    % rabbitmqVersion,
       "com.google.code.gson"     % "gson"                           % gsonVersion,
       "com.h2database"           % "h2"                             % h2Version             % "test",
       "com.typesafe"             % "config"                         % configVersion,

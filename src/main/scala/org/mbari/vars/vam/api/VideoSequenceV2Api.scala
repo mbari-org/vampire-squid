@@ -2,24 +2,22 @@ package org.mbari.vars.vam.api
 
 import java.time.{ Duration, Instant }
 import java.util.UUID
-import java.util.{ HashMap => JHashMap }
 
+import org.mbari.vars.vam.Constants
 import org.mbari.vars.vam.controllers.VideoSequenceController
 import org.mbari.vars.vam.dao.jpa.VideoSequence
-import org.scalatra.swagger._
+import org.scalatra.{ BadRequest, NoContent, NotFound }
+import org.scalatra.swagger.{ DataType, ParamType, Parameter, Swagger }
 import org.slf4j.LoggerFactory
-import org.scalatra.{ swagger, _ }
 
-import scala.concurrent.ExecutionContext
 import scala.collection.JavaConverters._
+import scala.concurrent.ExecutionContext
 
 /**
- * Note that we're not using Scalatra's JSON support. We're rolling out own with GSON
- *
  * @author Brian Schlining
- * @since 2016-05-20T14:45:00
+ * @since 2017-04-18T12:00:00
  */
-class VideoSequenceV1Api(controller: VideoSequenceController)(implicit val swagger: Swagger, val executor: ExecutionContext)
+class VideoSequenceV2Api(controller: VideoSequenceController)(implicit val swagger: Swagger, val executor: ExecutionContext)
     extends APIStack {
 
   private[this] val log = LoggerFactory.getLogger(getClass)
@@ -111,13 +109,31 @@ class VideoSequenceV1Api(controller: VideoSequenceController)(implicit val swagg
 
   post("/", operation(vsPOST)) {
     validateRequest()
-    val name = params.get("name").getOrElse(halt(BadRequest(
+    val body = readBody(request)
+    val videoSequence = request.getHeader("Content-Type").toLowerCase match {
+      case "application/json" => Constants.GSON.fromJson(body, classOf[VideoSequence])
+      case _ => formToVideoSequence(body)
+    }
+
+    Option(videoSequence.name).getOrElse(halt(BadRequest(
       body = "{}",
       reason = "A 'name' parameter is required")))
-    val cameraID = params.get("camera_id").getOrElse(halt(BadRequest("A 'camera_id' parameter is required")))
-    val description = params.get("description")
-    controller.create(name, cameraID)
+
+    Option(videoSequence.cameraID).getOrElse(halt(BadRequest("A 'camera_id' parameter is required")))
+    controller.create(
+      videoSequence.name,
+      videoSequence.cameraID,
+      Option(videoSequence.description))
       .map(controller.toJson)
+  }
+
+  def formToVideoSequence(body: String): VideoSequence = {
+    val args = parsePostBody(body).toMap
+    val videoSequence = new VideoSequence
+    args.get("name").foreach(videoSequence.name = _)
+    args.get("camera_id").foreach(videoSequence.cameraID = _)
+    args.get("description").foreach(videoSequence.description = _)
+    videoSequence
   }
 
   val vsDELETE = (apiOperation[Unit]("delete")
@@ -150,10 +166,18 @@ class VideoSequenceV1Api(controller: VideoSequenceController)(implicit val swagg
     val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest(
       body = "{}",
       reason = "A UUID parameter is required")))
-    val cameraID = params.get("camera_id")
-    val name = params.get("name")
-    val description = params.get("description")
-    controller.update(uuid, name, cameraID, description)
+
+    val body = readBody(request)
+    val videoSequence = request.getHeader("Content-Type").toLowerCase match {
+      case "application/json" => Constants.GSON.fromJson(body, classOf[VideoSequence])
+      case _ => formToVideoSequence(body)
+    }
+
+    controller.update(
+      uuid,
+      Option(videoSequence.name),
+      Option(videoSequence.cameraID),
+      Option(videoSequence.description))
       .map(controller.toJson)
   }
 

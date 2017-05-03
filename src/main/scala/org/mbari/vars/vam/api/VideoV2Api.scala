@@ -3,9 +3,10 @@ package org.mbari.vars.vam.api
 import java.time.{ Duration, Instant }
 import java.util.UUID
 
+import com.google.gson.annotations.Expose
 import org.mbari.vars.vam.Constants
 import org.mbari.vars.vam.controllers.VideoController
-import org.mbari.vars.vam.dao.jpa.{ Video, VideoSequence }
+import org.mbari.vars.vam.dao.jpa.{ Video, VideoReference, VideoSequence }
 import org.scalatra.{ BadRequest, NoContent, NotFound }
 import org.scalatra.swagger.{ DataType, ParamType, Parameter, Swagger }
 
@@ -14,14 +15,12 @@ import scala.collection.JavaConverters._
 import scala.util.Try
 
 /**
- *
- *
  * @author Brian Schlining
- * @since 2016-05-24T13:41:00
+ * @since 2017-04-05T15:17:00
  */
-class VideoV1Api(controller: VideoController)(implicit val swagger: Swagger, val executor: ExecutionContext)
+class VideoV2Api(controller: VideoController)(implicit val swagger: Swagger, val executor: ExecutionContext)
     extends APIStack {
-  override protected def applicationDescription: String = "Video API (v1)"
+  override protected def applicationDescription: String = "Video API (v2)"
   override protected val applicationName: Option[String] = Some("VideoV2API")
 
   val vGET = (apiOperation[Iterable[Video]]("findAll")
@@ -137,25 +136,52 @@ class VideoV1Api(controller: VideoController)(implicit val swagger: Swagger, val
     parameters (
       Parameter("name", DataType.String, Some("The unique name of the video"), None, ParamType.Body, required = true),
       Parameter("video_sequence_uuid", DataType.String, Some("The uuid of the owning video-sequence"), None, ParamType.Body, required = true),
-      Parameter("start", DataType.String, Some("The start time of the video as 'yyyy-mm-ddThh:mm:ssZ'"), None, ParamType.Body, required = true),
+      Parameter("start_timestamp", DataType.String, Some("The start time of the video as 'yyyy-mm-ddThh:mm:ssZ'"), None, ParamType.Body, required = true),
       Parameter("duration_millis", DataType.Long, Some("The duration of the video in milliseconds"), None, ParamType.Body, required = false),
       Parameter("description", DataType.String, Some("A description of the video"), None, ParamType.Body, required = false)))
 
   post("/", operation(vPOST)) {
     validateRequest()
-    val name = params.get("name").getOrElse(halt(BadRequest(
+    val body = readBody(request)
+    val (uuid, video) = request.getHeader("Content-Type").toLowerCase match {
+      case "application/json" =>
+        val vp = Constants.GSON.fromJson(body, classOf[VideoParams])
+        (Option(vp.videoSequenceUuud), vp)
+      case _ => formToVideo(body)
+    }
+
+    val name = Option(video.name).getOrElse(halt(BadRequest(
       body = "{}",
       reason = "A 'name' parameter is required")))
-    val videoSequenceUUID = params.getAs[UUID]("video_sequence_uuid").getOrElse(halt(BadRequest(
+    val videoSequenceUUID = uuid.getOrElse(halt(BadRequest(
       body = "{}",
       reason = "A 'video_sequence_uuid' parameter is required")))
-    val start = params.getAs[Instant]("start").getOrElse(halt(BadRequest(
+    val start = Option(video.start).getOrElse(halt(BadRequest(
       body = "{}",
       reason = "A 'start' parameter is required")))
-    val duration = params.getAs[Duration]("duration_millis")
-    val description = params.get("description")
-    controller.create(videoSequenceUUID, name, start, duration, description)
+    controller.create(
+      videoSequenceUUID,
+      name,
+      start,
+      Option(video.duration),
+      Option(video.description))
       .map(controller.toJson)
+  }
+
+  private def formToVideo(body: String): (Option[UUID], Video) = {
+    val args = parsePostBody(body).toMap
+    val v = new Video
+    val uuid = args.get("video_sequence_uuid")
+      .flatMap(stringToUUID(_))
+    args.get("name").foreach(v.name = _)
+    args.get("start_timestamp")
+      .flatMap(stringToInstant(_))
+      .foreach(v.start = _)
+    args.get("duration_millis")
+      .flatMap(stringToDuration(_))
+      .foreach(v.duration = _)
+    args.get("description").foreach(v.description = _)
+    (uuid, v)
   }
 
   // TODO update should require authentication
@@ -165,7 +191,7 @@ class VideoV1Api(controller: VideoController)(implicit val swagger: Swagger, val
       pathParam[UUID]("The UUID of the video to be updated"),
       Parameter("name", DataType.String, Some("The unique name of the video"), None, ParamType.Body, required = false),
       Parameter("video_sequence_uuid", DataType.String, Some("The uuid of the owning video-sequence"), None, ParamType.Body, required = false),
-      Parameter("start", DataType.String, Some("The start time of the video as 'yyyy-mm-ddThh:mm:ssZ'"), None, ParamType.Body, required = false),
+      Parameter("start_timestamp", DataType.String, Some("The start time of the video as 'yyyy-mm-ddThh:mm:ssZ'"), None, ParamType.Body, required = false),
       Parameter("duration_millis", DataType.Long, Some("The duration of the video in milliseconds"), None, ParamType.Body, required = false),
       Parameter("description", DataType.String, Some("A description of the video"), None, ParamType.Body, required = false)))
 
@@ -174,13 +200,28 @@ class VideoV1Api(controller: VideoController)(implicit val swagger: Swagger, val
     val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest(
       body = "{}",
       reason = "A UUID parameter is required")))
-    val name = params.get("name")
-    val description = params.get("description")
-    val start = params.getAs[Instant]("start")
-    val duration = params.getAs[Duration]("duration_millis")
-    val videoSequenceUUID = params.getAs[UUID]("video_sequence_uuid")
-    controller.update(uuid, name, start, duration, description, videoSequenceUUID)
+
+    val body = readBody(request)
+
+    val (videoSequenceUuid, video) = request.getHeader("Content-Type").toLowerCase match {
+      case "application/json" =>
+        val vp = Constants.GSON.fromJson(body, classOf[VideoParams])
+        (Option(vp.videoSequenceUuud), vp)
+      case _ => formToVideo(body)
+    }
+    controller.update(
+      uuid,
+      Option(video.name),
+      Option(video.start),
+      Option(video.duration),
+      Option(video.description),
+      videoSequenceUuid)
       .map(controller.toJson)
   }
 
+}
+
+class VideoParams extends Video {
+  @Expose(serialize = true)
+  var videoSequenceUuud: UUID = _
 }

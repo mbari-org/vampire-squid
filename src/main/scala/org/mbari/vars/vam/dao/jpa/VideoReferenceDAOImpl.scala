@@ -2,7 +2,7 @@ package org.mbari.vars.vam.dao.jpa
 
 import java.net.URI
 import java.time.{ Duration, Instant }
-import java.util.UUID
+import java.util.{ Base64, UUID }
 import javax.persistence.EntityManager
 
 import org.mbari.vars.vam.dao.VideoReferenceDAO
@@ -30,5 +30,11 @@ class VideoReferenceDAOImpl(entityManager: EntityManager)
   override def deleteByUUID(primaryKey: UUID): Unit = {
     val videoReference = findByUUID(primaryKey)
     videoReference.foreach(vr => delete(vr))
+  }
+
+  override def findBySha512(sha: Array[Byte]): Option[VideoReference] = {
+    //val shaEncoded = Base64.getEncoder.encodeToString(sha)
+    findByNamedQuery("VideoReference.findBySha512", Map("sha512" -> sha))
+      .headOption
   }
 }

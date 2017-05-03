@@ -42,12 +42,12 @@ import scala.collection.JavaConverters._
     query = "SELECT v FROM Video v JOIN v.videoSequence w WHERE w.uuid = :uuid"),
   new NamedQuery(
     name = "Video.findBetweenDates",
-    query = "SELECT v FROM Video v WHERE v.start BETWEEN :startDate AND :endDate")))
+    query = "SELECT v FROM Video v WHERE v.start >= :startDate AND v.start <= :endDate")))
 class Video extends HasUUID with HasOptimisticLock with HasDescription {
 
   @Expose(serialize = true)
   @Basic(optional = false)
-  @Index(name = "idx_video_name", columnList = "name")
+  @Index(name = "idx_videos__name", columnList = "name")
   @Column(
     name = "name",
     nullable = false,
@@ -56,8 +56,9 @@ class Video extends HasUUID with HasOptimisticLock with HasDescription {
   var name: String = _
 
   @Expose(serialize = true)
+  @SerializedName(value = "start_timestamp")
   @Basic(optional = false)
-  @Index(name = "idx_video_start_time", columnList = "start_time")
+  @Index(name = "idx_videos__start_time", columnList = "start_time")
   @Column(
     name = "start_time",
     nullable = false)
@@ -127,11 +128,11 @@ object Video {
     v
   }
 
-  def apply(name: String, start: Instant, duration: Duration, videoReferences: Iterable[VideoReference]): Video = {
+  def apply(name: String, start: Instant, duration: Option[Duration], videoReferences: Iterable[VideoReference]): Video = {
     val v = new Video
     v.name = name
     v.start = start
-    v.duration = duration
+    duration.foreach(v.duration = _)
     videoReferences.foreach(v.addVideoReference)
     v
   }
@@ -140,7 +141,7 @@ object Video {
     val v = new Video
     v.name = name
     v.start = start
-    duration.foreach(d => v.duration = d)
+    duration.foreach(v.duration = _)
     description.foreach(d => v.description = d)
     v
   }
