@@ -88,7 +88,7 @@ class VideoReference extends HasUUID with HasOptimisticLock with HasDescription 
 
   def mimetype: Option[MimeType] = Try(new MimeType(container)).toOption
 
-  // TODO implement storage of MD5 hash of video files bytes so that we can do reverse lookups using
+  // TODO implement storage of SHA512 hash of video files bytes so that we can do reverse lookups using
   // a video file to find it's metadata.
 
 }
