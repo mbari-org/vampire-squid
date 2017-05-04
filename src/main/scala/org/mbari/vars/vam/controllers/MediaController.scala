@@ -219,10 +219,18 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
   def findByVideoName(name: String)(implicit ec: ExecutionContext): Future[Iterable[Media]] = {
     val dao = daoFactory.newVideoDAO()
     val f = dao.runTransaction(d => {
-      d.findByName(name)
-        .flatMap(_.videoReferences)
-        .map(Media(_))
+      d.findByName(name) match {
+        case None => Nil
+        case Some(v) => v.videoReferences.map(Media(_))
+      }
     })
+    f.onComplete(t => dao.close())
+    f
+  }
+
+  def findByURI(uri: URI)(implicit ec: ExecutionContext): Future[Option[Media]] = {
+    val dao = daoFactory.newVideoReferenceDAO()
+    val f = dao.runTransaction(d => d.findByURI(uri).map(Media(_)))
     f.onComplete(t => dao.close())
     f
   }

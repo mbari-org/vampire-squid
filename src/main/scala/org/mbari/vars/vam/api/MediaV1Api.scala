@@ -99,4 +99,14 @@ class MediaV1Api(controller: MediaController)(implicit val swagger: Swagger, val
       .map(controller.toJson)
   }
 
+  get("/uri/:uri") {
+    val uri = params.getAs[URI]("uri")
+      .getOrElse(halt(BadRequest("{}", reason = "A 'uri' parameters is required")))
+    controller.findByURI(uri).map({
+      case None => halt(NotFound("{}", reason = s"A video with a url matching $uri was not found"))
+      case Some(v) => controller.toJson(v)
+    })
+
+  }
+
 }
