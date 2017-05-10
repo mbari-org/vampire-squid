@@ -1,11 +1,12 @@
 package org.mbari.vars.vam.api
 
 import java.net.URI
-import java.time.{ Duration, Instant }
+import java.time.{Duration, Instant}
+import java.util.UUID
 
 import org.mbari.vars.vam.controllers.MediaController
 import org.mbari.vars.vam.dao.jpa.ByteArrayConverter
-import org.scalatra.{ BadRequest, NotFound }
+import org.scalatra.{BadRequest, NotFound}
 import org.scalatra.swagger.Swagger
 
 import scala.collection.JavaConverters._
@@ -61,6 +62,28 @@ class MediaV1Api(controller: MediaController)(implicit val swagger: Swagger, val
       sizeBytes,
       videoRefDescription,
       sha512).map(controller.toJson)
+  }
+
+  put("/") {
+    validateRequest()
+    val uuid = params.getAs[UUID]("video_reference_uuid").getOrElse(halt(BadRequest(
+      body = "{}",
+      reason = "A UUID parameter is required")))
+    val videoSequenceName = params.get("video_sequence_name")
+    val cameraId = params.get("camera_id")
+    val videoName = params.get("video_name")
+    val uri = params.getAs[URI]("uri")
+    val start = params.getAs[Instant]("start_timestamp")
+    val duration = params.getAs[Duration]("duration_millis")
+    val container = params.get("container")
+    val videoCodec = params.get("video_codec")
+    val audioCodec = params.get("audio_codec")
+    val width = params.getAs[Int]("width")
+    val height = params.getAs[Int]("height")
+    val frameRate = params.getAs[Double]("frame_rate")
+    val sizeBytes = params.getAs[Long]("size_bytes")
+    val videoRefDescription = params.get("video_description")
+    val sha512 = params.getAs[Array[Byte]]("sha512")
   }
 
   get("/sha512/:sha512") {
