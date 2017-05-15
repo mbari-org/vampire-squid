@@ -1,12 +1,11 @@
 package org.mbari.vars.vam.api
 
 import java.net.URI
-import java.time.{Duration, Instant}
-import java.util.UUID
+import java.time.{ Duration, Instant }
 
 import org.mbari.vars.vam.controllers.MediaController
 import org.mbari.vars.vam.dao.jpa.ByteArrayConverter
-import org.scalatra.{BadRequest, NotFound}
+import org.scalatra.{ BadRequest, NotFound }
 import org.scalatra.swagger.Swagger
 
 import scala.collection.JavaConverters._
@@ -66,12 +65,22 @@ class MediaV1Api(controller: MediaController)(implicit val swagger: Swagger, val
 
   put("/") {
     validateRequest()
-    val uuid = params.getAs[UUID]("video_reference_uuid").getOrElse(halt(BadRequest(
-      body = "{}",
-      reason = "A UUID parameter is required")))
+    val sha512 = params.getAs[Array[Byte]]("sha512")
+      .getOrElse(halt(BadRequest(
+        body = "{}",
+        reason = "A 'sha512' parameter is required")))
     val videoSequenceName = params.get("video_sequence_name")
+      .getOrElse(halt(BadRequest(
+        body = "{}",
+        reason = "A 'video_sequence_name' parameter is required")))
     val cameraId = params.get("camera_id")
+      .getOrElse(halt(BadRequest(
+        body = "{}",
+        reason = "A 'camera_id' parameter is required")))
     val videoName = params.get("video_name")
+      .getOrElse(halt(BadRequest(
+        body = "{}",
+        reason = "A 'video_name' parameter is required")))
     val uri = params.getAs[URI]("uri")
     val start = params.getAs[Instant]("start_timestamp")
     val duration = params.getAs[Duration]("duration_millis")
@@ -83,7 +92,24 @@ class MediaV1Api(controller: MediaController)(implicit val swagger: Swagger, val
     val frameRate = params.getAs[Double]("frame_rate")
     val sizeBytes = params.getAs[Long]("size_bytes")
     val videoRefDescription = params.get("video_description")
-    val sha512 = params.getAs[Array[Byte]]("sha512")
+    validateRequest()
+    controller.update(
+      sha512,
+      videoSequenceName,
+      cameraId,
+      videoName,
+      uri,
+      start,
+      duration,
+      container,
+      videoCodec,
+      audioCodec,
+      width,
+      height,
+      frameRate,
+      sizeBytes,
+      videoRefDescription).map(controller.toJson)
+
   }
 
   get("/sha512/:sha512") {

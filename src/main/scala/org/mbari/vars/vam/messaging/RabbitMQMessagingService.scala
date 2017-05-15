@@ -26,10 +26,14 @@ class RabbitMQMessagingService extends MessagingService {
   private[this] val host = Constants.CONFIG.getString("rabbitmq.host")
   private[this] val exchange = Constants.CONFIG.getString("rabbitmq.exchange")
   private[this] val routingKey = Constants.CONFIG.getString("rabbitmq.routing.key")
+  private[this] val username = Constants.CONFIG.getString("rabbitmq.username")
+  private[this] val password = Constants.CONFIG.getString("rabbitmq.password")
 
   private[this] val (connection: Connection, channel: Channel) = {
     val factory = new ConnectionFactory
     factory.setHost(host)
+    factory.setPassword(password)
+    factory.setUsername(username)
     val con = factory.newConnection()
     val chan = con.createChannel()
     chan.exchangeDeclare(exchange, "direct")

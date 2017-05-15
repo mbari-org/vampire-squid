@@ -1,17 +1,15 @@
 package org.mbari.vars.vam.controllers
 
 import java.net.URI
-import java.time.{Duration, Instant}
-import java.util.{Arrays => JArrays}
+import java.time.{ Duration, Instant }
+import java.util.{ Arrays => JArrays }
 
-import org.bouncycastle.util.Arrays
 import org.mbari.vars.vam.Constants
-import org.mbari.vars.vam.dao.{DAO, VideoReferenceDAO}
-import org.mbari.vars.vam.dao.jpa.{JPADAOFactory, Video, VideoReference, VideoSequence}
+import org.mbari.vars.vam.dao.jpa.{ JPADAOFactory, Video, VideoReference, VideoSequence }
 import org.mbari.vars.vam.model.Media
 import org.slf4j.LoggerFactory
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 /**
  * Convenience API for registering a video
@@ -96,6 +94,26 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
 
   }
 
+  /**
+   * Mostly this is to deal with video files that have been moved
+   * @param sha512
+   * @param videoSequenceName
+   * @param cameraId
+   * @param videoName
+   * @param uri
+   * @param start
+   * @param duration
+   * @param container
+   * @param videoCodec
+   * @param audioCodec
+   * @param width
+   * @param height
+   * @param frameRate
+   * @param sizeBytes
+   * @param videoRefDescription
+   * @param ec
+   * @return
+   */
   def update(
     sha512: Array[Byte],
     videoSequenceName: String,
@@ -117,18 +135,18 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
     val vsDao = daoFactory.newVideoSequenceDAO(vrDao)
     val vDao = daoFactory.newVideoDAO(vrDao)
 
-    def updateVideoReference(): Option[VideoReference] = vrDao.findBySha512(sha512).map (vr => {
-        // -- 1. Update VideoReference params
-        container.foreach(vr.container = _)
-        audioCodec.foreach(vr.audioCodec = _)
-        videoCodec.foreach(vr.videoCodec = _)
-        width.foreach(vr.width = _)
-        height.foreach(vr.height = _)
-        frameRate.foreach(vr.frameRate = _)
-        sizeBytes.foreach(vr.size = _)
-        uri.foreach(vr.uri = _)
-        vr
-      })
+    def updateVideoReference(): Option[VideoReference] = vrDao.findBySha512(sha512).map(vr => {
+      // -- 1. Update VideoReference params
+      container.foreach(vr.container = _)
+      audioCodec.foreach(vr.audioCodec = _)
+      videoCodec.foreach(vr.videoCodec = _)
+      width.foreach(vr.width = _)
+      height.foreach(vr.height = _)
+      frameRate.foreach(vr.frameRate = _)
+      sizeBytes.foreach(vr.size = _)
+      uri.foreach(vr.uri = _)
+      vr
+    })
 
     def updateVideoSequence(videoReference: VideoReference): VideoSequence = {
       if (videoReference.video.videoSequence.name != videoSequenceName) {
@@ -145,8 +163,7 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
             vss.cameraID = cameraId
             vss
         }
-      }
-      else {
+      } else {
         videoReference.video.videoSequence.cameraID = cameraId
         videoReference.video.videoSequence
       }
@@ -169,10 +186,9 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
             vv.addVideoReference(videoReference)
             vv
         }
-      }
-      else {
+      } else {
         start.foreach(videoReference.video.start = _)
-        duration.foreach(videoReference.video.start = _)
+        duration.foreach(videoReference.video.duration = _)
         videoReference.video
       }
     }
@@ -187,7 +203,6 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
     })
     f.onComplete(t => vrDao.close())
     f
-
 
   }
 
