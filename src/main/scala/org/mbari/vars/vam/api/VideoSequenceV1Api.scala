@@ -84,6 +84,7 @@ class VideoSequenceV1Api(controller: VideoSequenceController)(implicit val swagg
       .map(controller.toJson)
   }
 
+
   val findGET = (apiOperation[Seq[VideoSequence]]("findByCameraIDAndTimestamp")
     summary "Find VideoSequences by camera-id and timestamp"
     parameters (

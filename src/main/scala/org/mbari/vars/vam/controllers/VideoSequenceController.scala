@@ -34,6 +34,9 @@ class VideoSequenceController(val daoFactory: JPADAOFactory) extends BaseControl
   def findByName(name: String)(implicit ec: ExecutionContext): Future[Option[VideoSequence]] =
     exec(d => d.findByName(name))
 
+  def findByCameraId(id: String)(implicit ec: ExecutionContext): Future[Seq[VideoSequence]] = 
+    exec(d => d.findByCameraID(id)).toSeq
+
   def findByCameraIDAndTimestamp(
     cameraID: String,
     timestamp: Instant,

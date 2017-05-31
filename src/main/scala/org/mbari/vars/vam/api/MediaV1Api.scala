@@ -138,6 +138,8 @@ class MediaV1Api(controller: MediaController)(implicit val swagger: Swagger, val
       .map(controller.toJson)
   }
 
+  // TODO need a method to find by camera id and between datatimes
+
   get("/camera/:camera_id/:datetime") {
     val cameraId = params.get("camera_id")
       .getOrElse(halt(BadRequest("{}", reason = "A 'camera id' parameters is required")))
