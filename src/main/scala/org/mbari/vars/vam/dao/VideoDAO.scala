@@ -26,4 +26,11 @@ trait VideoDAO[T <: PersistentObject] extends DAO[T] {
    */
   def findBetweenTimestamps(t0: Instant, t1: Instant): Iterable[T]
 
+  /**
+   * Get the names of the videos belonging to a particular video sequence
+   * @param videoSequenceName
+   * @return
+   */
+  def findNamesByVideoSequenceName(videoSequenceName: String): Iterable[String]
+
 }

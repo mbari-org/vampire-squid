@@ -19,5 +19,6 @@ trait VideoSequenceDAO[T <: PersistentObject] extends DAO[T] {
   def findByCameraIDAndTimestamp(cameraID: String, timestamp: Instant, window: Duration): Iterable[T]
   def findAllNames(): Iterable[String]
   def findAllCameraIDs(): Iterable[String]
+  def findAllNamesByCameraID(cameraID: String): Iterable[String]
 
 }

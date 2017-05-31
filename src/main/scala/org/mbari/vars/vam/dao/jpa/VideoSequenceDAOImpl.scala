@@ -120,4 +120,12 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
       .getResultList
       .asScala
       .map(_.toString)
+
+  override def findAllNamesByCameraID(cameraID: String): Iterable[String] = {
+    val query = entityManager.createNamedQuery("VideoSequence.findNamesByCameraID")
+    query.setParameter(1, cameraID)
+    query.getResultList
+      .asScala
+      .map(_.toString)
+  }
 }

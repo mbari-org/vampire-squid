@@ -78,6 +78,13 @@ class VideoV1Api(controller: VideoController)(implicit val swagger: Swagger, val
     })
   }
 
+  get("/names/videosequence/:name") {
+    val name = params.get("name").getOrElse(halt(BadRequest("Please provide a name")))
+    controller.findNamesByVideoSequenceName(name)
+      .map(_.asJava)
+      .map(controller.toJson)
+  }
+
   val timestampGET = (apiOperation[Iterable[Video]]("findByTimestamp")
     summary "Find videos by timestamp"
     parameters (

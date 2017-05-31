@@ -85,14 +85,23 @@ class VideoSequenceV1ApiSpec extends WebApiStack {
   it should "find all names used" in {
     get("/v1/videosequence/names") {
       status should be(200)
-      body should include("names")
+      body should include("T1234")
     }
+  }
+
+  it should "find names by camera" in {
+    get("/v1/videosequence/names/camera/Tiburon") {
+      status should be(200)
+      body should include("T1234")
+    }
+
   }
 
   it should "return all cameras used" in {
     get("/v1/videosequence/cameras") {
       status should be(200)
-      body should include("camera_ids")
+      body should include("Tiburon")
+      body should include("Ventana")
     }
   }
 

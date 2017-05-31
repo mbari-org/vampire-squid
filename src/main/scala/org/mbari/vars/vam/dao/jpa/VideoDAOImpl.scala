@@ -70,4 +70,13 @@ class VideoDAOImpl(entityManager: EntityManager)
       .asScala
       .map(r => r.asInstanceOf[Array[Any]])
       .map(r => r(0).toString -> r(1).asInstanceOf[Timestamp].toInstant)
+
+  def findNamesByVideoSequenceName(videoSequenceName: String): Iterable[String] = {
+    val query = entityManager.createNamedQuery("Video.findNamesByVideoSequenceName")
+    query.setParameter(1, videoSequenceName)
+    query.getResultList
+      .asScala
+      .map(_.toString)
+  }
+
 }

@@ -25,6 +25,9 @@ class VideoSequenceController(val daoFactory: JPADAOFactory) extends BaseControl
   def findAllNames(implicit ec: ExecutionContext): Future[Seq[String]] =
     exec(d => d.findAllNames().toSeq.sorted)
 
+  def findAllNamesByCameraID(cameraID: String)(implicit ec: ExecutionContext): Future[Seq[String]] =
+    exec(d => d.findAllNamesByCameraID(cameraID).toSeq)
+
   def findAllCameraIDs(implicit ec: ExecutionContext): Future[Seq[String]] =
     exec(d => d.findAllCameraIDs().toSeq.sorted)
 
@@ -34,8 +37,8 @@ class VideoSequenceController(val daoFactory: JPADAOFactory) extends BaseControl
   def findByName(name: String)(implicit ec: ExecutionContext): Future[Option[VideoSequence]] =
     exec(d => d.findByName(name))
 
-  def findByCameraId(id: String)(implicit ec: ExecutionContext): Future[Seq[VideoSequence]] = 
-    exec(d => d.findByCameraID(id)).toSeq
+  def findByCameraId(id: String)(implicit ec: ExecutionContext): Future[Seq[VideoSequence]] =
+    exec(d => d.findByCameraID(id).toSeq.sortBy(_.name))
 
   def findByCameraIDAndTimestamp(
     cameraID: String,

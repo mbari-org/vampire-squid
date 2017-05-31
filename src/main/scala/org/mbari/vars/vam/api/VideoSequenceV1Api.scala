@@ -71,7 +71,16 @@ class VideoSequenceV1Api(controller: VideoSequenceController)(implicit val swagg
 
   get("/names", operation(namesGET)) {
     controller.findAllNames
-      .map(ns => Map("names" -> ns.asJava).asJava) // Transform to Java map for GSON
+      .map(_.asJava) // Transform to Java map for GSON
+      .map(controller.toJson)
+  }
+
+  get("/names/camera/:camera_id") {
+    val cameraID = params.get("camera_id").getOrElse(halt(BadRequest(
+      body = "{}",
+      reason = " A 'camera_id' parameter is required")))
+    controller.findAllNamesByCameraID(cameraID)
+      .map(_.asJava) // Transform to Java map for GSON
       .map(controller.toJson)
   }
 
@@ -80,10 +89,17 @@ class VideoSequenceV1Api(controller: VideoSequenceController)(implicit val swagg
 
   get("/cameras", operation(camerasGET)) {
     controller.findAllCameraIDs
-      .map(cids => Map("camera_ids" -> cids.asJava).asJava) // Transform to Java map for GSON
+      .map(_.asJava) // Transform to Java map for GSON
       .map(controller.toJson)
   }
 
+  get("/camera/:camera_id") {
+    val cameraID = params.get("camera_id").getOrElse(halt(BadRequest(
+      body = "{}",
+      reason = " A 'camera_id' parameter is required")))
+    controller.findByCameraId(cameraID)
+      .map(controller.toJson)
+  }
 
   val findGET = (apiOperation[Seq[VideoSequence]]("findByCameraIDAndTimestamp")
     summary "Find VideoSequences by camera-id and timestamp"

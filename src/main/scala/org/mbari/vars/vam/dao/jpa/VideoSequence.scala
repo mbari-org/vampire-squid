@@ -20,10 +20,13 @@ import scala.collection.JavaConverters._
 @NamedNativeQueries(Array(
   new NamedNativeQuery(
     name = "VideoSequence.findAllNames",
-    query = "SELECT name FROM video_sequences"),
+    query = "SELECT name FROM video_sequences ORDER BY name ASC"),
+  new NamedNativeQuery(
+    name = "VideoSequence.findNamesByCameraID",
+    query = "SELECT name FROM video_sequences WHERE camera_id = ?1 ORDER BY name ASC"),
   new NamedNativeQuery(
     name = "VideoSequence.findAllCameraIDs",
-    query = "SELECT DISTINCT camera_id FROM video_sequences")))
+    query = "SELECT DISTINCT camera_id FROM video_sequences ORDER BY camera_id ASC")))
 @NamedQueries(Array(
   new NamedQuery(
     name = "VideoSequence.findAll",

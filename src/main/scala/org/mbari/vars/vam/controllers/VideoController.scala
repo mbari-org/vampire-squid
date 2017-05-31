@@ -43,6 +43,9 @@ class VideoController(val daoFactory: JPADAOFactory) extends BaseController {
   def findByName(name: String)(implicit ec: ExecutionContext): Future[Option[Video]] =
     exec(d => d.findByName(name))
 
+  def findNamesByVideoSequenceName(videoSequenceName: String)(implicit ec: ExecutionContext): Future[Iterable[String]] =
+    exec(d => d.findNamesByVideoSequenceName(videoSequenceName))
+
   def create(
     videoSequenceUUID: UUID,
     name: String,
