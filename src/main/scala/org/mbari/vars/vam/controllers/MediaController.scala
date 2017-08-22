@@ -2,7 +2,7 @@ package org.mbari.vars.vam.controllers
 
 import java.net.URI
 import java.time.{ Duration, Instant }
-import java.util.{ Arrays => JArrays }
+import java.util.{ UUID, Arrays => JArrays }
 
 import org.mbari.vars.vam.Constants
 import org.mbari.vars.vam.dao.jpa.{ JPADAOFactory, Video, VideoReference, VideoSequence }
@@ -201,7 +201,7 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
         Media(vr)
       })
     })
-    f.onComplete(t => vrDao.close())
+    f.onComplete(_ => vrDao.close())
     f
 
   }
@@ -224,7 +224,7 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
         .map(v => v.map(Media(_)))
         .getOrElse(Nil)
     })
-    f.onComplete(t => dao.close())
+    f.onComplete(_ => dao.close())
     f
   }
 
@@ -240,7 +240,37 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
         .map(Media(_))
         .filter(m => m.contains(ts))
     })
-    f.onComplete(t => dao.close())
+    f.onComplete(_ => dao.close())
+    f
+  }
+
+  def findByCameraIdAndTimestamps(cameraId: String, startTime: Instant, endTime: Instant)(implicit ec: ExecutionContext): Future[Iterable[Media]] = {
+    val dao = daoFactory.newVideoDAO()
+    val f = dao.runTransaction(d => {
+      d.findBetweenTimestamps(startTime, endTime)
+        .filter(v => v.videoSequence.cameraID == cameraId)
+        .flatMap(v => v.videoReferences)
+        .map(Media(_))
+    })
+    f.onComplete(_ => dao.close())
+    f
+  }
+
+  /**
+    * Finds all videoreferences that overlap in time with the provided one. Be aware
+    * that the returned media will include the one with the matching UUID.
+    * @param videoReferenceUuid The UUID for the videoreference of interest
+    * @param ec The execution context
+    * @return All videoreferences (as media), in the same video-sequence that
+    *         overlap with the videoreference in time. (Returns will include
+    *         the videoreference that matches the UUID)
+    */
+  def findConcurrent(videoReferenceUuid: UUID)(implicit ec: ExecutionContext): Future[Iterable[Media]] = {
+    val dao = daoFactory.newVideoReferenceDAO()
+    val f = dao.runTransaction(d =>
+      d.findConcurrent(videoReferenceUuid)
+        .map(Media(_)))
+    f.onComplete(_ => dao.close())
     f
   }
 
@@ -252,14 +282,14 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
         case Some(v) => v.videoReferences.map(Media(_))
       }
     })
-    f.onComplete(t => dao.close())
+    f.onComplete(_ => dao.close())
     f
   }
 
   def findByURI(uri: URI)(implicit ec: ExecutionContext): Future[Option[Media]] = {
     val dao = daoFactory.newVideoReferenceDAO()
     val f = dao.runTransaction(d => d.findByURI(uri).map(Media(_)))
-    f.onComplete(t => dao.close())
+    f.onComplete(_ => dao.close())
     f
   }
 

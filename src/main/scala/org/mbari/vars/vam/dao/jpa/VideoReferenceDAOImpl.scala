@@ -27,6 +27,25 @@ class VideoReferenceDAOImpl(entityManager: EntityManager)
   override def findAll(): Iterable[VideoReference] =
     findByNamedQuery("VideoReference.findAll")
 
+  def findConcurrent(uuid: UUID): Iterable[VideoReference] = {
+    findByUUID(uuid) match {
+      case None => Nil
+      case Some(videoReference) =>
+        val startDate = videoReference.video.start
+        val endDate = startDate.plus(videoReference.video.duration)
+        val siblings = videoReference.video.videoSequence.videoReferences
+        siblings.filter(vr => {
+          val s = vr.video.start
+          val e = s.plus(vr.video.duration)
+          s.equals(startDate) ||
+            e.equals(endDate) ||
+            (s.isAfter(startDate) && s.isBefore(endDate)) ||
+            (e.isAfter(startDate) && e.isBefore(endDate)) ||
+            (s.isBefore(startDate) && e.isAfter(endDate))
+        })
+    }
+  }
+
   override def deleteByUUID(primaryKey: UUID): Unit = {
     val videoReference = findByUUID(primaryKey)
     videoReference.foreach(vr => delete(vr))

@@ -2,6 +2,7 @@ package org.mbari.vars.vam.api
 
 import java.net.URI
 import java.time.{ Duration, Instant }
+import java.util.UUID
 
 import org.mbari.vars.vam.controllers.MediaController
 import org.mbari.vars.vam.dao.jpa.ByteArrayConverter
@@ -139,6 +140,29 @@ class MediaV1Api(controller: MediaController)(implicit val swagger: Swagger, val
   }
 
   // TODO need a method to find by camera id and between datatimes
+  get("/camera/:camera_id/:start_time/:end_time") {
+    val cameraId = params.get("camera_id")
+      .getOrElse(halt(BadRequest("{}", reason = "A 'camera id' parameters is required")))
+
+    val startTime = params.getAs[Instant]("start_time")
+      .getOrElse(halt(BadRequest("", reason = "A start_time parameter in UTC time formated as 'yyyy-mm-ddThh:MM:ssZ' is required")))
+
+    val endTime = params.getAs[Instant]("end_time")
+      .getOrElse(halt(BadRequest("", reason = "A end_time parameter in UTC time formated as 'yyyy-mm-ddThh:MM:ssZ' is required")))
+
+    controller.findByCameraIdAndTimestamps(cameraId, startTime, endTime)
+      .map(_.asJava)
+      .map(controller.toJson)
+
+  }
+
+  get("/concurrent/:uuid") {
+    val videoReferenceUuid = params.getAs[UUID]("uuid")
+      .getOrElse(halt(BadRequest("{}", reason = "A 'videoreference uuid' parameters is required")))
+    controller.findConcurrent(videoReferenceUuid)
+      .map(_.asJava)
+      .map(controller.toJson)
+  }
 
   get("/camera/:camera_id/:datetime") {
     val cameraId = params.get("camera_id")

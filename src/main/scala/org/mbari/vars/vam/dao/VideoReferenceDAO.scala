@@ -3,6 +3,8 @@ package org.mbari.vars.vam.dao
 import java.net.URI
 import java.util.UUID
 
+import org.mbari.vars.vam.dao.jpa.VideoReference
+
 /**
  * Defines the API methods used for accessing VideoReference objects
  *
@@ -13,6 +15,7 @@ trait VideoReferenceDAO[T <: PersistentObject] extends DAO[T] {
 
   def findAll(): Iterable[T]
   def findByVideoUUID(uuid: UUID): Iterable[T]
+  def findConcurrent(uuid: UUID): Iterable[T]
   def findByURI(uri: URI): Option[T]
   def findBySha512(sha: Array[Byte]): Option[T]
 

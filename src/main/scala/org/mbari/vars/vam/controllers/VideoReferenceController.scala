@@ -34,6 +34,9 @@ class VideoReferenceController(val daoFactory: JPADAOFactory) extends BaseContro
   def findBySha512(sha512: Array[Byte])(implicit ec: ExecutionContext): Future[Option[VideoReference]] =
     exec(d => d.findBySha512(sha512))
 
+  def findConcurrent(uuid: UUID)(implicit ec: ExecutionContext): Future[Iterable[VideoReference]] =
+    exec(d => d.findConcurrent(uuid))
+
   def create(
     videoUUID: UUID,
     uri: URI,
