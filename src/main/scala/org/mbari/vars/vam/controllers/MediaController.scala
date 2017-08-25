@@ -206,6 +206,16 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
 
   }
 
+  def findByVideoReferenceUuid(videoReferenceUuid: UUID)(implicit ec: ExecutionContext): Future[Option[Media]] = {
+    val dao = daoFactory.newVideoReferenceDAO()
+    val f = dao.runTransaction(d => {
+      d.findByUUID(videoReferenceUuid)
+          .map(Media(_))
+    })
+    f.onComplete(_ => dao.close())
+    f
+  }
+
   def findBySha512(sha512: Array[Byte])(implicit ec: ExecutionContext): Future[Option[Media]] = {
     val dao = daoFactory.newVideoReferenceDAO()
     val f = dao.runTransaction(d => {
