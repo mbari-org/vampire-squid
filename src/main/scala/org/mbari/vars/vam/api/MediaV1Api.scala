@@ -124,13 +124,13 @@ class MediaV1Api(controller: MediaController)(implicit val swagger: Swagger, val
   }
 
   get("/videoreference/:uuid") {
-    val uuid = params.getAs[UUID](uuid)
+    val uuid = params.getAs[UUID]("uuid")
       .getOrElse(halt(BadRequest("{}", reason = "A video-reference uuid parameter is required")))
     controller.findByVideoReferenceUuid(uuid)
-        .map({
-          case None => halt(NotFound("{}", reason = s"A media with a video-reference uuid of $uuid was not found"))
-          case Some(v) => controller.toJson(v)
-        })
+      .map({
+        case None => halt(NotFound("{}", reason = s"A media with a video-reference uuid of $uuid was not found"))
+        case Some(v) => controller.toJson(v)
+      })
   }
 
   get("/videosequence/:name") {

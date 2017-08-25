@@ -210,7 +210,7 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
     val dao = daoFactory.newVideoReferenceDAO()
     val f = dao.runTransaction(d => {
       d.findByUUID(videoReferenceUuid)
-          .map(Media(_))
+        .map(Media(_))
     })
     f.onComplete(_ => dao.close())
     f
@@ -267,14 +267,14 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
   }
 
   /**
-    * Finds all videoreferences that overlap in time with the provided one. Be aware
-    * that the returned media will include the one with the matching UUID.
-    * @param videoReferenceUuid The UUID for the videoreference of interest
-    * @param ec The execution context
-    * @return All videoreferences (as media), in the same video-sequence that
-    *         overlap with the videoreference in time. (Returns will include
-    *         the videoreference that matches the UUID)
-    */
+   * Finds all videoreferences that overlap in time with the provided one. Be aware
+   * that the returned media will include the one with the matching UUID.
+   * @param videoReferenceUuid The UUID for the videoreference of interest
+   * @param ec The execution context
+   * @return All videoreferences (as media), in the same video-sequence that
+   *         overlap with the videoreference in time. (Returns will include
+   *         the videoreference that matches the UUID)
+   */
   def findConcurrent(videoReferenceUuid: UUID)(implicit ec: ExecutionContext): Future[Iterable[Media]] = {
     val dao = daoFactory.newVideoReferenceDAO()
     val f = dao.runTransaction(d =>
