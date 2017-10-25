@@ -36,12 +36,15 @@ class VideoReferenceDAOImpl(entityManager: EntityManager)
         val siblings = videoReference.video.videoSequence.videoReferences
         siblings.filter(vr => {
           val s = vr.video.start
-          val e = s.plus(vr.video.duration)
-          s.equals(startDate) ||
-            e.equals(endDate) ||
-            (s.isAfter(startDate) && s.isBefore(endDate)) ||
-            (e.isAfter(startDate) && e.isBefore(endDate)) ||
-            (s.isBefore(startDate) && e.isAfter(endDate))
+          if (s == null) false
+          else {
+            val e = s.plus(vr.video.duration)
+            s.equals(startDate) ||
+              e.equals(endDate) ||
+              (s.isAfter(startDate) && s.isBefore(endDate)) ||
+              (e.isAfter(startDate) && e.isBefore(endDate)) ||
+              (s.isBefore(startDate) && e.isAfter(endDate))
+          }
         })
     }
   }

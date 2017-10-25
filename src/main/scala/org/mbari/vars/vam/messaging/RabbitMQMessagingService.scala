@@ -23,6 +23,7 @@ import scala.util.control.NonFatal
  */
 class RabbitMQMessagingService extends MessagingService {
 
+  private[this] val log = LoggerFactory.getLogger(getClass)
   private[this] val host = Constants.CONFIG.getString("rabbitmq.host")
   private[this] val exchange = Constants.CONFIG.getString("rabbitmq.exchange")
   private[this] val routingKey = Constants.CONFIG.getString("rabbitmq.routing.key")
@@ -30,6 +31,8 @@ class RabbitMQMessagingService extends MessagingService {
   private[this] val password = Constants.CONFIG.getString("rabbitmq.password")
 
   private[this] val (connection: Connection, channel: Channel) = {
+
+    log.info(s"Connecting to $host as $username")
     val factory = new ConnectionFactory
     factory.setHost(host)
     factory.setPassword(password)
@@ -39,8 +42,6 @@ class RabbitMQMessagingService extends MessagingService {
     chan.exchangeDeclare(exchange, "direct")
     (con, chan)
   }
-
-  private[this] val log = LoggerFactory.getLogger(getClass)
 
   /**
    * When a new videoReference is registered it gets passed to this method which will
