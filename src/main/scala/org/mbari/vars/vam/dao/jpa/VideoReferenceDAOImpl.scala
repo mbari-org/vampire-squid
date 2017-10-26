@@ -7,6 +7,8 @@ import javax.persistence.EntityManager
 
 import org.mbari.vars.vam.dao.VideoReferenceDAO
 
+import scala.util.Try
+
 /**
  *
  *
@@ -34,7 +36,8 @@ class VideoReferenceDAOImpl(entityManager: EntityManager)
         val startDate = videoReference.video.start
         val endDate = startDate.plus(videoReference.video.duration)
         val siblings = videoReference.video.videoSequence.videoReferences
-        siblings.filter(vr => {
+
+        Try(siblings.filter(vr => {
           val s = vr.video.start
           if (s == null) false
           else {
@@ -45,7 +48,7 @@ class VideoReferenceDAOImpl(entityManager: EntityManager)
               (e.isAfter(startDate) && e.isBefore(endDate)) ||
               (s.isBefore(startDate) && e.isAfter(endDate))
           }
-        })
+        })).getOrElse(Nil)
     }
   }
 
