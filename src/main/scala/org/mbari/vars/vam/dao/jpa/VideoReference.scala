@@ -17,19 +17,24 @@ import scala.util.Try
 @Entity(name = "VideoReference")
 @Table(name = "video_references")
 @EntityListeners(value = Array(classOf[TransactionLogger]))
-@NamedQueries(Array(
-  new NamedQuery(
-    name = "VideoReference.findAll",
-    query = "SELECT v FROM VideoReference v"),
-  new NamedQuery(
-    name = "VideoReference.findBySha512",
-    query = "SELECT v FROM VideoReference v WHERE v.sha512 = :sha512"),
-  new NamedQuery(
-    name = "VideoReference.findByVideoUUID",
-    query = "SELECT v FROM VideoReference v JOIN v.video w WHERE w.uuid = :uuid"),
-  new NamedQuery(
-    name = "VideoReference.findByURI",
-    query = "SELECT v FROM VideoReference v WHERE v.uri = :uri")))
+@NamedNativeQueries(Array(
+  new NamedNativeQuery(
+    name = "VideoReference.findByFileName",
+    query = "SELECT uuid FROM video_references WHERE uri LIKE ?1")))
+@NamedQueries(
+  Array(
+    new NamedQuery(
+      name = "VideoReference.findAll",
+      query = "SELECT v FROM VideoReference v"),
+    new NamedQuery(
+      name = "VideoReference.findBySha512",
+      query = "SELECT v FROM VideoReference v WHERE v.sha512 = :sha512"),
+    new NamedQuery(
+      name = "VideoReference.findByVideoUUID",
+      query = "SELECT v FROM VideoReference v JOIN v.video w WHERE w.uuid = :uuid"),
+    new NamedQuery(
+      name = "VideoReference.findByURI",
+      query = "SELECT v FROM VideoReference v WHERE v.uri = :uri")))
 class VideoReference extends HasUUID with HasOptimisticLock with HasDescription {
 
   @Expose(serialize = true)

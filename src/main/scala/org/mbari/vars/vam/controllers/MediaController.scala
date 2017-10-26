@@ -303,4 +303,11 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
     f
   }
 
+  def findByFileName(filename: String)(implicit ec: ExecutionContext): Future[Iterable[Media]] = {
+    val dao = daoFactory.newVideoReferenceDAO()
+    val f = dao.runTransaction(d => d.findByFileName(filename).map(Media(_)))
+    f.onComplete(_ => dao.close())
+    f
+  }
+
 }

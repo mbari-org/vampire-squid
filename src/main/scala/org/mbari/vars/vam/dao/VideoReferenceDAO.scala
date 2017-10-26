@@ -17,6 +17,7 @@ trait VideoReferenceDAO[T <: PersistentObject] extends DAO[T] {
   def findByVideoUUID(uuid: UUID): Iterable[T]
   def findConcurrent(uuid: UUID): Iterable[T]
   def findByURI(uri: URI): Option[T]
+  def findByFileName(filename: String): Iterable[T]
   def findBySha512(sha: Array[Byte]): Option[T]
 
 }

@@ -1,9 +1,9 @@
 package org.mbari.vars.vam.dao.jpa
 
 import java.net.URI
-import java.time.{ Duration, Instant }
-import java.util.{ Base64, UUID }
+import java.util.UUID
 import javax.persistence.EntityManager
+import scala.collection.JavaConverters._
 
 import org.mbari.vars.vam.dao.VideoReferenceDAO
 
@@ -25,6 +25,16 @@ class VideoReferenceDAOImpl(entityManager: EntityManager)
   override def findByURI(uri: URI): Option[VideoReference] =
     findByNamedQuery("VideoReference.findByURI", Map("uri" -> uri))
       .headOption
+
+  override def findByFileName(filename: String): Iterable[VideoReference] = {
+    val query = entityManager.createNamedQuery("VideoReference.findByFileName")
+    query.setParameter(1, s"%$filename")
+    query.getResultList
+      .asScala
+      .map(_.toString)
+      .map(UUID.fromString)
+      .flatMap(findByUUID)
+  }
 
   override def findAll(): Iterable[VideoReference] =
     findByNamedQuery("VideoReference.findAll")
