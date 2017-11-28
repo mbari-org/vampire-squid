@@ -9,10 +9,11 @@ import com.google.gson.{ FieldNamingPolicy, GsonBuilder }
 import com.typesafe.config.ConfigFactory
 import org.mbari.vars.vam.auth.AuthorizationService
 import org.mbari.vars.vam.json.{ ByteArrayConverter, DurationConverter => GSONDurationConverter }
-import org.mbari.vars.vam.messaging.MessagingService
+import org.mbari.vars.vam.messaging.{ MessagingService, NoopMessagingService }
 import org.slf4j.LoggerFactory
 
 import scala.util.{ Failure, Success, Try }
+import scala.util.control.NonFatal
 /**
  *
  *
@@ -61,14 +62,22 @@ object Constants {
 
   val AUTH_SERVICE: AuthorizationService = {
     val serviceName = CONFIG.getString("authentication.service")
+    log.debug(s"Starting authentication service: $serviceName")
     val clazz = Class.forName(serviceName)
     clazz.newInstance().asInstanceOf[AuthorizationService]
   }
 
   val MESSAGING_SERVICE: MessagingService = {
     val serviceName = CONFIG.getString("messaging.service")
-    val clazz = Class.forName(serviceName)
-    clazz.newInstance().asInstanceOf[MessagingService]
+    log.debug(s"Starting messaging service: $serviceName")
+    try {
+      val clazz = Class.forName(serviceName)
+      clazz.newInstance().asInstanceOf[MessagingService]
+    } catch {
+      case NonFatal(e) =>
+        log.warn(s"Failed to instantiate messaging service: $serviceName", e)
+        new NoopMessagingService
+    }
   }
 
 }

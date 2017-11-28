@@ -1,11 +1,13 @@
 package org.mbari.vars.vam.dao.jpa
 
 import java.net.URI
-import java.time.{ Duration, Instant }
-import java.util.{ Base64, UUID }
+import java.util.UUID
 import javax.persistence.EntityManager
+import scala.collection.JavaConverters._
 
 import org.mbari.vars.vam.dao.VideoReferenceDAO
+
+import scala.util.Try
 
 /**
  *
@@ -24,6 +26,16 @@ class VideoReferenceDAOImpl(entityManager: EntityManager)
     findByNamedQuery("VideoReference.findByURI", Map("uri" -> uri))
       .headOption
 
+  override def findByFileName(filename: String): Iterable[VideoReference] = {
+    val query = entityManager.createNamedQuery("VideoReference.findByFileName")
+    query.setParameter(1, s"%$filename")
+    query.getResultList
+      .asScala
+      .map(_.toString)
+      .map(UUID.fromString)
+      .flatMap(findByUUID)
+  }
+
   override def findAll(): Iterable[VideoReference] =
     findByNamedQuery("VideoReference.findAll")
 
@@ -34,15 +46,19 @@ class VideoReferenceDAOImpl(entityManager: EntityManager)
         val startDate = videoReference.video.start
         val endDate = startDate.plus(videoReference.video.duration)
         val siblings = videoReference.video.videoSequence.videoReferences
-        siblings.filter(vr => {
+
+        Try(siblings.filter(vr => {
           val s = vr.video.start
-          val e = s.plus(vr.video.duration)
-          s.equals(startDate) ||
-            e.equals(endDate) ||
-            (s.isAfter(startDate) && s.isBefore(endDate)) ||
-            (e.isAfter(startDate) && e.isBefore(endDate)) ||
-            (s.isBefore(startDate) && e.isAfter(endDate))
-        })
+          if (s == null) false
+          else {
+            val e = s.plus(vr.video.duration)
+            s.equals(startDate) ||
+              e.equals(endDate) ||
+              (s.isAfter(startDate) && s.isBefore(endDate)) ||
+              (e.isAfter(startDate) && e.isBefore(endDate)) ||
+              (s.isBefore(startDate) && e.isAfter(endDate))
+          }
+        })).getOrElse(Nil)
     }
   }
 
