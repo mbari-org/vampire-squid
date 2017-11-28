@@ -1,6 +1,7 @@
 package org.mbari.vars.vam.api
 
 import java.net.URI
+import java.time.format.DateTimeFormatter
 import java.time.{ Duration, Instant }
 import java.util.UUID
 import javax.servlet.http.HttpServletRequest
@@ -32,12 +33,15 @@ abstract class APIStack extends ScalatraServlet
     response.headers += ("Access-Control-Allow-Origin" -> "*")
   }
 
+  protected[this] val timeFormatter = DateTimeFormatter.ISO_DATE_TIME
+
   implicit val stringToUUID = new TypeConverter[String, UUID] {
     override def apply(s: String): Option[UUID] = Try(UUID.fromString(s)).toOption
   }
 
   implicit val stringToInstant = new TypeConverter[String, Instant] {
-    override def apply(s: String): Option[Instant] = Try(Instant.parse(s)).toOption
+    //override def apply(s: String): Option[Instant] = Try(Instant.parse(s)).toOption
+    override def apply(s: String): Option[Instant] = Try(Instant.from(timeFormatter.parse(s))).toOption
   }
 
   implicit val stringToDuration = new TypeConverter[String, Duration] {
