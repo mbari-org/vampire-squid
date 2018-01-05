@@ -28,8 +28,9 @@ class RabbitMQMessagingService extends MessagingService {
   private[this] val password = Constants.CONFIG.getString("rabbitmq.password")
   private[this] val virtualhost = Try(Constants.CONFIG.getString("rabbitmq.virtualhost")).toOption
 
-  private[this] val (connection: Connection, channel: Channel) = {
+  private[this] lazy val (connection: Connection, channel: Channel) = {
 
+    //Thread.sleep(30000)
     log.info(s"Connecting to $host:$port (virtual host: $virtualhost) as $username:$password")
     val factory = new ConnectionFactory
     factory.setHost(host)
