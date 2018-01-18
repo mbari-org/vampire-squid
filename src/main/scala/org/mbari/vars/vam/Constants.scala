@@ -67,7 +67,7 @@ object Constants {
     clazz.newInstance().asInstanceOf[AuthorizationService]
   }
 
-  val MESSAGING_SERVICE: MessagingService = {
+  lazy val MESSAGING_SERVICE: MessagingService = {
     val serviceName = CONFIG.getString("messaging.service")
     log.debug(s"Starting messaging service: $serviceName")
     try {
