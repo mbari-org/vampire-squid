@@ -4,6 +4,8 @@
 
 # vampire-squid
 
+[![Build Status](https://travis-ci.org/mbari-media-management/vampire-squid.svg?branch=master)](https://travis-ci.org/mbari-media-management/vampire-squid)
+
 Vampire-squid is a video asset manager.
 
 If your video capture looks like the image below, then this video asset manager may be useful for you:
