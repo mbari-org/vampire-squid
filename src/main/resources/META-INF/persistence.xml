@@ -21,7 +21,7 @@
         <properties>
             <property name="eclipselink.logging.level" value="INFO"/>
             <property name="eclipselink.connection-pool.default.initial" value="2" />
-            <property name="eclipselink.connection-pool.default.max" value="16" />
+            <property name="eclipselink.connection-pool.default.max" value="6" />
             <property name="eclipse.weaving" value="false" />
         </properties>
     </persistence-unit>
