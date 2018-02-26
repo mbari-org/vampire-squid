@@ -1,4 +1,4 @@
-FROM java:openjdk-8-jre-alpine
+FROM openjdk:8-jre
 
 MAINTAINER Brian Schlining <bschlining@gmail.com>
 
