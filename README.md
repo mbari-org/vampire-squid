@@ -1,30 +1,36 @@
 ![MBARI logo](src/site/images/logo-mbari-3b.png)
 
-![Vampire Squid](http://www.mbari.org/wp-content/uploads/2015/11/vamp-T1152-500.jpg)
-
 # vampire-squid
-
-[![Build Status](https://travis-ci.org/mbari-media-management/vampire-squid.svg?branch=master)](https://travis-ci.org/mbari-media-management/vampire-squid)
 
 Vampire-squid is a video asset manager.
 
-If your video capture looks like the image below, then this video asset manager may be useful for you:
+[![Build Status](https://travis-ci.org/mbari-media-management/vampire-squid.svg?branch=master)](https://travis-ci.org/mbari-media-management/vampire-squid)
 
-![Video File Workflow](https://raw.githubusercontent.com/underwatervideo/vampire-squid/master/src/site/images/digital_videos.png)
+## tl;dr
 
-Currently, this a project for testing ideas and models for managing video and image assets. The basic data models is:
+If your video capture looks something remotley like the image below, then this video asset manager may be useful for you:
+
+![Video File Workflow](src/site/images/digital_videos.png)
+
+## Quickstart
 
 ```
-VideoSequence [1]--->[0..*] Video [1]--->[0..*] VideoReference 
+docker -p 8080:8080 --name vampire-squid mbari/vampire-squid
 ```
 
+See also <https://github.com/mbari-media-management/m3-microservices> for a project for spinning up all M3 microservices.
 
+## Overview
 
-The yellow block in this diagram illustrates the design:
+vampire-squid is a video asset manager for tracking videos from camera deployments. Typically, the video from a single deployment is chunked into segments (to be small enough to be manageble). Each chunk may have several representations at different resolutions and codecs. Vampire-squid tracks these videos as a unit. It also stores the single most important bit of data needed for scientific research: The date/time that each frame in a video was recorded.
 
-![Diagram](https://raw.githubusercontent.com/underwatervideo/vampire-squid/master/src/site/docs/VideoTAG_data_model.png)
+## Data Model
 
-Where:
+The data model is:
+
+```
+VideoSequence-[1]---[0..*]->Video-[1]---[0..*]->VideoReference 
+```
 
 - `VideoSequence` is essentially a single deployment/session from a single camera. Analagous to a _dive_. Typically, a deployment is broken into segments, e.g. 5 minutes, in order to make the files sizes manageable. This seems to be the current practice among all the groups at the underwater video workshop in RI. 
 - `Video` is an abstraction that refers to a single segment in the _VideoSequence_. It tracks the start date and duration of a segment of video. It's an abstraction as it does not point directly to a video via a URL or path as there will likely be multiple representations of the same video segement (such as digital master, mezzanine, and various proxies)
@@ -32,11 +38,11 @@ Where:
 
 ## How-to
 
-- [Setup your own database](https://github.com/underwatervideo/vampire-squid/blob/master/src/site/docs/HOWTO_DATABASE_SETUP.md)
+- [Setup your own database](src/site/docs/HOWTO_DATABASE_SETUP.md)
 
 ## Data store
 
-The current data storage targets are SQL Databases. Pretty much all database servers are supported. You can configure the database info in the [application.conf](https://github.com/underwatervideo/vampire-squid/blob/master/src/pack/conf/application.conf) file. The database schema will be auto-generated the first time you run the application. 
+The current data storage targets are SQL Databases. Pretty much all database servers are supported. You can configure the database info in the [application.conf](src/pack/conf/application.conf) file. The database schema will be auto-generated the first time you run the application. 
 
 Note that you will need to include you database's JDBC driver. There's a variety of ways to do it but the simplest for non-developers is to drop the driver's jar file in the build's `lib` directory. 
 
@@ -44,7 +50,11 @@ The default setup is to use an in-memory derby database. This is useful for test
 
 ## Build and Run
 
-To build: `sbt pack`
+To build: 
+
+```
+sbt pack
+```
 
 To run:
 
@@ -53,45 +63,19 @@ cd target/pack/bin
 jetty-main
 ```
 
-You can do a quick test by pointing to the server through a web browser at:
-    
-    http://localhost:8080/v1/videosequence
+You can do a quick test by pointing to the server through a web browser at: <http://localhost:8080/v1/videosequence>
     
 That will dump your entire database out as JSON. 
 
-
-## Design
-
-The design of the _vampire-squid_ follows the ideas of microservices:
-
-- __It's small and does one thing.__ Here, we are managing the location of segments of video that comprise a camera deployment and providing search services to facilitate finding the file we want.
-- __It owns its own data.__ The current design is to use an SQL database. You can use any database you want. If you decide to use something else later on (MongoDB, Cassandra, whatever) that's OK too (but you have to code it).
-- __Access is through standard API.__ Users interact through HTTP/JSON. If we rip out and replace the backend with some other storage, the change will be invisible to all applications that use this service.
-- __Independently isolated and scalable__. If needed, multiple instances could be deployed behind a load balancer.
-
 ## API
 
-__Coming soon__. Right now there's an example python script that demo's adding data: [simple_setup.py](https://github.com/underwatervideo/vampire-squid/blob/master/src/pack/bin/simple_setup.py)
+__Coming soon__. Right now there's an example python script that demo's adding data: [simple_setup.py](src/pack/bin/simple_setup.py)
 
-![Swagger UI](https://github.com/underwatervideo/vampire-squid/blob/master/src/site/images/Swagger_UI.png)
+![Swagger UI](/src/site/images/Swagger_UI.png)
 ## TODO
-
-- [X] finish swagger documentation
-    - [ ] Swagger docs aren't quite correct. Type conversion between scala/json is off.
-- [ ] dockerize the project
-- [X] document using your own database
-- [ ] Add authentication for `post`, `put`, `delete` methods
-- [ ] Add JPA indices
 
 
 
 
 This project is built using [SBT](http://www.scala-sbt.org/). See SBT.md for help.
-
-## Acknowledgements
-
-We'd like to thank the following companies for kindly donating software for the development of this project:
-
-[![JWT Auth for open source projects](http://cdn.auth0.com/oss/badges/a0-badge-dark.png)](https://auth0.com/?utm_source=oss&utm_medium=gp&utm_campaign=oss)
-
 
