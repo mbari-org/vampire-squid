@@ -89,7 +89,7 @@ class MediaV1ApiSpec extends WebApiStack {
   }
 
   it should "find by video sequence name" in {
-    get(s"/v1/media/$name") {
+    get(s"/v1/media/videosequence/$name") {
       status should be(200)
       val media = gson.fromJson(body, classOf[Array[Media]])
       media.size should be(1)
