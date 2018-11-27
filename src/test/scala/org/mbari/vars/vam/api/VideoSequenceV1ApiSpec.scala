@@ -19,8 +19,6 @@ package org.mbari.vars.vam.api
 import org.mbari.vars.vam.controllers.{ VideoSequenceController }
 import org.mbari.vars.vam.dao.jpa.{ VideoSequence }
 
-import scala.concurrent.ExecutionContext
-
 /**
  *
  *

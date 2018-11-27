@@ -16,7 +16,6 @@
 
 package org.mbari.vars.vam.dao.jpa
 
-import java.util.UUID
 import javax.persistence.EntityManagerFactory
 
 import com.typesafe.config.ConfigFactory

@@ -21,7 +21,6 @@ import javax.persistence.EntityManager
 import org.slf4j.LoggerFactory
 
 import scala.concurrent.{ ExecutionContext, Future }
-import scala.util.control.NonFatal
 
 /**
  * Implicits used in this package

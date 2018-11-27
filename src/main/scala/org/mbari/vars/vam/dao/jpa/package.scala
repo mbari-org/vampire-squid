@@ -16,12 +16,6 @@
 
 package org.mbari.vars.vam.dao
 
-import javax.persistence.EntityManager
-
-import org.slf4j.LoggerFactory
-
-import scala.util.control.NonFatal
-
 /**
  *
  *

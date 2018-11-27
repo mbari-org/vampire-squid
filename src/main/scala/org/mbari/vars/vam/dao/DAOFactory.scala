@@ -16,8 +16,6 @@
 
 package org.mbari.vars.vam.dao
 
-import java.util.UUID
-
 /**
  * OUr intent is to eventually support different backends. This factory provides an abstraction
  * to obtaining the appropriate DAO.

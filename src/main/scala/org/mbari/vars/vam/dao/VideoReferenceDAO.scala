@@ -19,8 +19,6 @@ package org.mbari.vars.vam.dao
 import java.net.URI
 import java.util.UUID
 
-import org.mbari.vars.vam.dao.jpa.VideoReference
-
 /**
  * Defines the API methods used for accessing VideoReference objects
  *

@@ -83,7 +83,10 @@ object Constants {
     val serviceName = CONFIG.getString("authentication.service")
     log.debug(s"Starting authentication service: $serviceName")
     val clazz = Class.forName(serviceName)
-    clazz.newInstance().asInstanceOf[AuthorizationService]
+    clazz.getDeclaredConstructor()
+      .newInstance()
+      .asInstanceOf[AuthorizationService]
+    //clazz.newInstance().asInstanceOf[AuthorizationService]
   }
 
   lazy val MESSAGING_SERVICE: MessagingService = {
@@ -91,7 +94,10 @@ object Constants {
     log.debug(s"Starting messaging service: $serviceName")
     try {
       val clazz = Class.forName(serviceName)
-      clazz.newInstance().asInstanceOf[MessagingService]
+      clazz.getDeclaredConstructor()
+        .newInstance()
+        .asInstanceOf[MessagingService]
+      //clazz.newInstance().asInstanceOf[MessagingService]
     } catch {
       case NonFatal(e) =>
         log.warn(s"Failed to instantiate messaging service: $serviceName", e)

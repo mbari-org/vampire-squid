@@ -17,8 +17,7 @@
 package org.mbari.vars.vam.controller
 
 import org.mbari.vars.vam.controllers.VideoSequenceController
-import org.scalactic.source.Position
-import org.scalatest.{ BeforeAndAfter, BeforeAndAfterAll, FlatSpec, Matchers }
+import org.scalatest.{ BeforeAndAfterAll, FlatSpec, Matchers }
 
 import scala.concurrent.Await
 

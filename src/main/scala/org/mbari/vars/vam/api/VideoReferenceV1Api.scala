@@ -18,10 +18,9 @@ package org.mbari.vars.vam.api
 
 import java.net.URI
 import java.util.UUID
-import javax.xml.bind.DatatypeConverter
 
 import org.mbari.vars.vam.controllers.VideoReferenceController
-import org.mbari.vars.vam.dao.jpa.{ ByteArrayConverter, Video, VideoReference, VideoSequence }
+import org.mbari.vars.vam.dao.jpa.{ ByteArrayConverter, VideoReference }
 import org.scalatra.{ BadRequest, NoContent, NotFound }
 import org.scalatra.swagger.{ DataType, ParamType, Parameter, Swagger }
 

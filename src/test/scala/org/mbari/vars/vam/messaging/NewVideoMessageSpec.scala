@@ -20,7 +20,6 @@ import java.net.URI
 import java.time.{ Duration, Instant }
 import java.util.UUID
 
-import com.google.gson.Gson
 import org.mbari.vars.vam.Constants
 import org.mbari.vars.vam.dao.jpa.{ Video, VideoReference, VideoSequence }
 import org.scalatest.{ FlatSpec, Inside, Matchers }

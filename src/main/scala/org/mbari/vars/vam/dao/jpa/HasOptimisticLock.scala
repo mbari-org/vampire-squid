@@ -18,11 +18,9 @@ package org.mbari.vars.vam.dao.jpa
 
 import java.sql.Timestamp
 import java.time.Instant
-import javax.persistence.{ Column, Convert, Transient, Version }
+import javax.persistence.{ Column, Version }
 
 import com.google.gson.annotations.Expose
-
-import scala.util.Try
 
 /**
  * OUr Entities should use optimixtic locks. This trait allows you to mixin the lock.

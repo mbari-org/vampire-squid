@@ -20,7 +20,7 @@ import java.time.{ Duration, Instant }
 import java.util.UUID
 
 import org.mbari.vars.vam.Constants
-import org.mbari.vars.vam.dao.{ DAOFactory, VideoDAO }
+import org.mbari.vars.vam.dao.VideoDAO
 import org.mbari.vars.vam.dao.jpa._
 
 import scala.concurrent.{ ExecutionContext, Future }

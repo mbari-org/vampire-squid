@@ -1,3 +1,4 @@
+val activationVersion = "1.2.0"
 val akkaVersion = "2.5.18"
 val auth0Version = "3.4.1"
 val codecVersion = "1.11"
@@ -18,6 +19,7 @@ val scalaTestVersion = "3.0.5"
 val scalatraVersion = "2.6.4"
 val servletVersion = "3.1.0"
 val slf4jVersion = "1.7.25"
+val xmlBindVersion = "2.3.0"
 
 
 lazy val buildSettings = Seq(
@@ -92,11 +94,15 @@ lazy val `vampire-squid` = (project in file("."))
       "com.rabbitmq"             % "amqp-client"                    % rabbitmqVersion,
       "com.google.code.gson"     % "gson"                           % gsonVersion,
       "com.h2database"           % "h2"                             % h2Version             % "test",
+      "com.sun.activation"       % "javax.activation"               % activationVersion,
+      "com.sun.xml.bind"         % "jaxb-core"                      % xmlBindVersion,
+      "com.sun.xml.bind"         % "jaxb-impl"                      % xmlBindVersion,
       "com.typesafe"             % "config"                         % configVersion,
       "com.typesafe.akka"       %% "akka-actor"                     % akkaVersion,
       "commons-codec"            % "commons-codec"                  % codecVersion,
       "javax.servlet"            % "javax.servlet-api"              % servletVersion,
       "javax.transaction"        % "jta"                            % jtaVersion,
+      "javax.xml.bind"           % "jaxb-api"                       % xmlBindVersion,
       "junit"                    % "junit"                          % junitVersion          % "test",
       "net.sourceforge.jtds"     % "jtds"                           % jtdsVersion,
       "org.apache.derby"         % "derby"                          % derbyVersion, //          % "test",
