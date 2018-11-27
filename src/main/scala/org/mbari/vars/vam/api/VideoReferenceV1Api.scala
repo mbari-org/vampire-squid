@@ -1,3 +1,19 @@
+/*
+ * Copyright 2017 Monterey Bay Aquarium Research Institute
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.mbari.vars.vam.api
 
 import java.net.URI
@@ -19,11 +35,9 @@ import scala.collection.JavaConverters._
  * @since 2016-06-06T16:27:00
  */
 class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swagger: Swagger, val executor: ExecutionContext)
-    extends APIStack {
+  extends APIStack {
 
   override protected def applicationDescription: String = "Video Reference API (v1)"
-
-  override protected val applicationName: Option[String] = Some("VideoReferenceAPI")
 
   val vsGET = (apiOperation[Iterable[VideoReference]]("findAll")
     summary "List all video-references")
@@ -40,9 +54,7 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swa
   get("/:uuid", operation(uuidGET)) {
     val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest("Please provide a UUID")))
     controller.findByUUID(uuid).map({
-      case None => halt(NotFound(
-        body = "{}",
-        reason = s"A video with a UUID of $uuid was not found in the database"))
+      case None => halt(NotFound(s"""{not_found: "A video with a UUID of $uuid was not found in the database"}"""))
       case Some(v) => controller.toJson(v)
     })
   }
@@ -55,9 +67,7 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swa
   get("/uri/:uri", operation(uriGET)) {
     val uri = params.getAs[URI]("uri").getOrElse(halt(BadRequest("Please provide a URI")))
     controller.findByURI(uri).map({
-      case None => halt(NotFound(
-        body = "{}",
-        reason = s"A video with a URI of $uri was not found in the database"))
+      case None => halt(NotFound(s"""{not_found: "A video with a URI of $uri was not found in the database"}"""))
       case Some(v) => controller.toJson(v)
     })
   }
@@ -72,9 +82,7 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swa
       .map(s => ByteArrayConverter.decode(s))
       .getOrElse(halt(BadRequest("Please provide a Base64 encoded sha512 checksum")))
     controller.findBySha512(sha).map {
-      case None => halt(NotFound(
-        body = "{}",
-        reason = s"A video with a SHA512 checksum of $sha was not found in the database"))
+      case None => halt(NotFound(s"""{not_found: "A video with a SHA512 checksum of '$sha' was not found in the database"}"""))
       case Some(vr) => controller.toJson(vr)
     }
   }
@@ -86,12 +94,10 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swa
 
   delete("/:uuid", operation(vrDELETE)) {
     validateRequest()
-    val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest(
-      body = "{}",
-      reason = "A UUID parameter is required")))
+    val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest("""{error: "A 'uuid' parameter is required"}""")))
     controller.delete(uuid).map({
-      case true => halt(NoContent(reason = s"Success! Deleted video with UUID of $uuid"))
-      case false => halt(NotFound(reason = s"Failed. No video with UUID of $uuid was found."))
+      case true => halt(NoContent()) // Success! Deleted video with uuid
+      case false => halt(NotFound(s"""{not_found: "A video with a UUID of $uuid was not found in the database"}"""))
     })
   }
 
@@ -112,12 +118,8 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swa
 
   post("/", operation(vPOST)) {
     validateRequest()
-    val videoUUID = params.getAs[UUID]("video_uuid").getOrElse(halt(BadRequest(
-      body = "{}",
-      reason = "A 'video_uuid' parameter is required.")))
-    val uri = params.getAs[URI]("uri").getOrElse(halt(BadRequest(
-      body = "{}",
-      reason = "A 'uri' parameters is required.")))
+    val videoUUID = params.getAs[UUID]("video_uuid").getOrElse(halt(BadRequest("""{error: "A 'video_uuid' parameter is required"}""")))
+    val uri = params.getAs[URI]("uri").getOrElse(halt(BadRequest("""{error: "A 'uri' parameter is required"}""")))
     val description = params.get("description")
     val container = params.get("container")
     val videoCodec = params.get("video_codec")
@@ -149,9 +151,7 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swa
 
   put("/:uuid", operation(vPUT)) {
     validateRequest()
-    val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest(
-      body = "{}",
-      reason = "A UUID parameter is required")))
+    val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest("""{error: "A 'uri' parameter is required"}""")))
     val videoUUID = params.getAs[UUID]("video_uuid")
     val uri = params.getAs[URI]("uri")
     val description = params.get("description")

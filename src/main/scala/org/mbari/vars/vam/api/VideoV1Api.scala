@@ -1,3 +1,19 @@
+/*
+ * Copyright 2017 Monterey Bay Aquarium Research Institute
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.mbari.vars.vam.api
 
 import java.time.{ Duration, Instant }
@@ -20,9 +36,8 @@ import scala.util.Try
  * @since 2016-05-24T13:41:00
  */
 class VideoV1Api(controller: VideoController)(implicit val swagger: Swagger, val executor: ExecutionContext)
-    extends APIStack {
+  extends APIStack {
   override protected def applicationDescription: String = "Video API (v1)"
-  override protected val applicationName: Option[String] = Some("VideoV2API")
 
   val vGET = (apiOperation[Iterable[Video]]("findAll")
     summary "List all videos")
@@ -41,9 +56,7 @@ class VideoV1Api(controller: VideoController)(implicit val swagger: Swagger, val
   get("/:uuid", operation(uuidGET)) {
     val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest("Please provide a UUID")))
     controller.findByUUID(uuid).map({
-      case None => halt(NotFound(
-        body = "{}",
-        reason = s"A video with a UUID of $uuid was not found in the database"))
+      case None => halt(NotFound(s"""{not_found: "A video with a UUID of $uuid was not found in the database"}"""))
       case Some(v) => controller.toJson(v)
     })
   }
@@ -56,9 +69,7 @@ class VideoV1Api(controller: VideoController)(implicit val swagger: Swagger, val
   get("/videosequence/:uuid", operation(videoSequenceUUIDGet)) {
     val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest("Please provide a UUID")))
     controller.findByUUID(uuid).map({
-      case None => halt(NotFound(
-        body = "{}",
-        reason = s"A video with a UUID of $uuid was not found in the database"))
+      case None => halt(NotFound(s"""{not_found: "A video with a UUID of $uuid was not found in the database"}"""))
       case Some(v) => controller.toJson(v.videoSequence)
     })
   }
@@ -71,9 +82,7 @@ class VideoV1Api(controller: VideoController)(implicit val swagger: Swagger, val
   get("/name/:name", operation(nameGET)) {
     val name = params.get("name").getOrElse(halt(BadRequest("Please provide a name")))
     controller.findByName(name).map({
-      case None => halt(NotFound(
-        body = "{}",
-        reason = s"A video with a name of '$name' was not found in the database"))
+      case None => halt(NotFound(s"""{not_found: "A video with a name of '$name' was not found in the database"}"""))
       case Some(v) => controller.toJson(v)
     })
   }
@@ -93,9 +102,7 @@ class VideoV1Api(controller: VideoController)(implicit val swagger: Swagger, val
         defaultValue = Some(Constants.DEFAULT_DURATION_WINDOW.toMinutes.toString))))
 
   get("/timestamp/:timestamp", operation(timestampGET)) {
-    val timestamp = params.getAs[Instant]("timestamp").getOrElse(halt(BadRequest(
-      body = "{}",
-      reason = "A 'timestamp' parameter is required")))
+    val timestamp = params.getAs[Instant]("timestamp").getOrElse(halt(BadRequest("""{error: "A 'timestamp' parameter is required"}""")))
     val window = Try(Duration.ofMinutes(params.getAs[Long]("window_minutes").get))
       .getOrElse(Constants.DEFAULT_DURATION_WINDOW)
     controller.findByTimestamp(timestamp, window)
@@ -110,12 +117,8 @@ class VideoV1Api(controller: VideoController)(implicit val swagger: Swagger, val
       pathParam[String]("end").description("A UTC timestamp (yyyy-mm-ddThh:mm:ssZ)")))
 
   get("/timestamp/:start/:end", operation(timerangeGET)) {
-    val startTime = params.getAs[Instant]("start").getOrElse(halt(BadRequest(
-      body = "{}",
-      reason = " A 'start' parameter is required")))
-    val endTime = params.getAs[Instant]("end").getOrElse(halt(BadRequest(
-      body = "{}",
-      reason = "An 'end' parameter is required")))
+    val startTime = params.getAs[Instant]("start").getOrElse(halt(BadRequest("""{error: "A 'start' parameter is required"}""")))
+    val endTime = params.getAs[Instant]("end").getOrElse(halt(BadRequest("""{error: "An 'end' parameter is required"}""")))
     controller.findBetweenTimestamps(startTime, endTime)
       .map(_.asJava)
       .map(controller.toJson)
@@ -129,12 +132,10 @@ class VideoV1Api(controller: VideoController)(implicit val swagger: Swagger, val
 
   delete("/:uuid", operation(vDELETE)) {
     validateRequest()
-    val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest(
-      body = "{}",
-      reason = "A UUID parameter is required")))
+    val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest("""{error: "A 'uuid' parameter is required"}""")))
     controller.delete(uuid).map({
-      case true => halt(NoContent(reason = s"Success! Deleted video with UUID of $uuid"))
-      case false => halt(NotFound(reason = s"Failed. No video with UUID of $uuid was found."))
+      case true => halt(NoContent()) // Success! Deleted video with uuid
+      case false => halt(NotFound(s"""{not_found: "A video with a UUID of $uuid was not found in the database"}"""))
     })
   }
 
@@ -150,15 +151,9 @@ class VideoV1Api(controller: VideoController)(implicit val swagger: Swagger, val
 
   post("/", operation(vPOST)) {
     validateRequest()
-    val name = params.get("name").getOrElse(halt(BadRequest(
-      body = "{}",
-      reason = "A 'name' parameter is required")))
-    val videoSequenceUUID = params.getAs[UUID]("video_sequence_uuid").getOrElse(halt(BadRequest(
-      body = "{}",
-      reason = "A 'video_sequence_uuid' parameter is required")))
-    val start = params.getAs[Instant]("start").getOrElse(halt(BadRequest(
-      body = "{}",
-      reason = "A 'start' parameter is required")))
+    val name = params.get("name").getOrElse(halt(BadRequest("""{error: "A 'name' parameter is required"}""")))
+    val videoSequenceUUID = params.getAs[UUID]("video_sequence_uuid").getOrElse(halt(BadRequest("""{error: "A 'video_sequence_uuid' parameter is required"}""")))
+    val start = params.getAs[Instant]("start").getOrElse(halt(BadRequest("""{error: "A 'start' parameter is required"}""")))
     val duration = params.getAs[Duration]("duration_millis")
     val description = params.get("description")
     controller.create(videoSequenceUUID, name, start, duration, description)
@@ -178,9 +173,7 @@ class VideoV1Api(controller: VideoController)(implicit val swagger: Swagger, val
 
   put("/:uuid", operation(vPUT)) {
     validateRequest()
-    val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest(
-      body = "{}",
-      reason = "A UUID parameter is required")))
+    val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest("""{error: "A 'uuid' parameter is required"}""")))
     val name = params.get("name")
     val description = params.get("description")
     val start = params.getAs[Instant]("start")

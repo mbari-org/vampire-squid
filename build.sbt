@@ -1,21 +1,21 @@
-val akkaVersion = "2.5.4"
-val auth0Version = "3.2.0"
-val codecVersion = "1.10"
-val configVersion = "1.3.1"
-val derbyVersion = "10.13.1.1"
-val eclipselinkVersion = "2.7.1"
+val akkaVersion = "2.5.18"
+val auth0Version = "3.4.1"
+val codecVersion = "1.11"
+val configVersion = "1.3.3"
+val derbyVersion = "10.14.2.0"
+val eclipselinkVersion = "2.7.3"
 val gsonJavatimeVersion = "1.1.1"
-val gsonVersion = "2.8.1"
-val h2Version = "1.4.196"
-val jettyVersion = "9.4.4.v20170414"
-val json4sVersion = "3.5.3"
+val gsonVersion = "2.8.5"
+val h2Version = "1.4.197"
+val jettyVersion = "9.4.14.v20181114"
+val json4sVersion = "3.6.2"
 val jtaVersion = "1.1"
 val jtdsVersion = "1.3.1"
 val junitVersion = "4.12"
 val logbackVersion = "1.2.3"
-val rabbitmqVersion = "4.2.0"
-val scalaTestVersion = "3.0.4"
-val scalatraVersion = "2.5.1"
+val rabbitmqVersion = "5.5.0"
+val scalaTestVersion = "3.0.5"
+val scalatraVersion = "2.6.4"
 val servletVersion = "3.1.0"
 val slf4jVersion = "1.7.25"
 
@@ -23,8 +23,11 @@ val slf4jVersion = "1.7.25"
 lazy val buildSettings = Seq(
   organization := "org.mbari.vars",
   version := "0.1.0-SNAPSHOT",
-  scalaVersion := "2.12.6",
-  crossScalaVersions := Seq("2.12.6")
+  scalaVersion := "2.12.7",
+  crossScalaVersions := Seq("2.12.7"),
+  organizationName := "Monterey Bay Aquarium Research Institute",
+  startYear := Some(2017),
+  licenses += ("Apache-2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0.txt"))
 )
 
 lazy val consoleSettings = Seq(
@@ -62,7 +65,6 @@ lazy val optionSettings = Seq(
     "-Yno-adapted-args",
     "-Xfuture"),
   javacOptions ++= Seq("-target", "1.8", "-source", "1.8"),
-  incOptions := incOptions.value.withNameHashing(true),
   updateOptions := updateOptions.value.withCachedResolution(true)
 )
 
@@ -73,10 +75,12 @@ lazy val appSettings = buildSettings ++
   fork := true
 )
 
-lazy val apps = Seq("jetty-main") // for sbt-pack
+lazy val apps = Map("jetty-main" -> "JettyMain")  // for sbt-pack
 
 lazy val `vampire-squid` = (project in file("."))
   .enablePlugins(JettyPlugin)
+  .enablePlugins(AutomateHeaderPlugin)
+  .enablePlugins(PackPlugin)
   .settings(appSettings)
   .settings(
     mainClass in assembly := Some("JettyMain"),
@@ -107,9 +111,7 @@ lazy val `vampire-squid` = (project in file("."))
       "org.scalatra"            %% "scalatra"                       % scalatraVersion,
       "org.scalatra"            %% "scalatra-json"                  % scalatraVersion,
       "org.scalatra"            %% "scalatra-scalate"               % scalatraVersion,
-      "org.scalatra"            %% "scalatra-slf4j"                 % scalatraVersion,
       "org.scalatra"            %% "scalatra-swagger"               % scalatraVersion,
-      "org.scalatra"            %% "scalatra-swagger-ext"           % scalatraVersion,
       "org.scalatra"            %% "scalatra-scalatest"             % scalatraVersion,
       "org.slf4j"                % "log4j-over-slf4j"               % slf4jVersion,
       "org.slf4j"                % "slf4j-api"                      % slf4jVersion)
@@ -117,27 +119,27 @@ lazy val `vampire-squid` = (project in file("."))
           ExclusionRule("javax.servlet", "servlet-api")))
   )
   .settings( // config sbt-pack
-    packAutoSettings ++ Seq(
-      packExtraClasspath := apps.map(_ -> Seq("${PROG_HOME}/conf")).toMap,
-      packJvmOpts := apps.map(_ -> Seq("-Duser.timezone=UTC", "-Xmx4g")).toMap,
-      packDuplicateJarStrategy := "latest",
-      packJarNameConvention := "original"
-    )
+    packMain := apps,
+    packExtraClasspath := apps.keys.map(k => k -> Seq("${PROG_HOME}/conf")).toMap,
+    packJvmOpts := apps.keys.map(k => k -> Seq("-Duser.timezone=UTC", "-Xmx4g")).toMap,
+    packDuplicateJarStrategy := "latest",
+    packJarNameConvention := "original"
   )
 
 // -- SCALARIFORM
 // Format code on save with scalariform
- import scalariform.formatter.preferences._
- import com.typesafe.sbt.SbtScalariform
+import scalariform.formatter.preferences._
+import com.typesafe.sbt.SbtScalariform
 
- SbtScalariform.scalariformSettings
+scalariformAutoformat := true
 
- SbtScalariform.ScalariformKeys.preferences := SbtScalariform.ScalariformKeys.preferences.value
-   .setPreference(IndentSpaces, 2)
-   .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, false)
-   .setPreference(DoubleIndentClassDeclaration, true)
-   .setPreference(DanglingCloseParenthesis, Prevent)
+SbtScalariform.ScalariformKeys.preferences := SbtScalariform.ScalariformKeys.preferences.value
+  .setPreference(IndentSpaces, 2)
+  .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, false)
+  .setPreference(DoubleIndentConstructorArguments, true)
 
 // Aliases
 addCommandAlias("cleanall", ";clean;clean-files")
+
+
 
