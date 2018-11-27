@@ -3,7 +3,7 @@ val auth0Version = "3.2.0"
 val codecVersion = "1.10"
 val configVersion = "1.3.1"
 val derbyVersion = "10.13.1.1"
-val eclipselinkVersion = "2.6.4"
+val eclipselinkVersion = "2.7.1"
 val gsonJavatimeVersion = "1.1.1"
 val gsonVersion = "2.8.1"
 val h2Version = "1.4.196"
@@ -23,8 +23,8 @@ val slf4jVersion = "1.7.25"
 lazy val buildSettings = Seq(
   organization := "org.mbari.vars",
   version := "0.1.0-SNAPSHOT",
-  scalaVersion := "2.12.3",
-  crossScalaVersions := Seq("2.12.3")
+  scalaVersion := "2.12.6",
+  crossScalaVersions := Seq("2.12.6")
 )
 
 lazy val consoleSettings = Seq(
@@ -70,7 +70,6 @@ lazy val appSettings = buildSettings ++
   consoleSettings ++
   dependencySettings ++
   optionSettings ++ Seq(
-  todosTags := Set("TODO", "FIXME", "WTF"),
   fork := true
 )
 
@@ -102,7 +101,7 @@ lazy val `vampire-squid` = (project in file("."))
       "org.eclipse.jetty"        % "jetty-server"                   % jettyVersion          % "container;compile;test",
       "org.eclipse.jetty"        % "jetty-servlets"                 % jettyVersion          % "container;compile;test",
       "org.eclipse.jetty"        % "jetty-webapp"                   % jettyVersion          % "container;compile;test",
-      "org.eclipse.persistence"  % "eclipselink"                    % eclipselinkVersion,
+      "org.eclipse.persistence"  % "org.eclipse.persistence.jpa"    % eclipselinkVersion,
       "org.json4s"              %% "json4s-jackson"                 % json4sVersion,
       "org.scalatest"           %% "scalatest"                      % scalaTestVersion      % "test",
       "org.scalatra"            %% "scalatra"                       % scalatraVersion,

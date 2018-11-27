@@ -15,6 +15,6 @@ trait BaseController {
 
   def daoFactory: JPADAOFactory
   def toJson(obj: Any): String = gson.toJson(obj)
-  def fromJson[T](json: String, classOfT: Class[T]) = gson.fromJson(json, classOfT)
+  def fromJson[T](json: String, classOfT: Class[T]): T = gson.fromJson(json, classOfT)
 
 }

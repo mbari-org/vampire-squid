@@ -8,6 +8,7 @@ import com.google.gson.reflect.TypeToken
 import com.google.gson.{ FieldNamingPolicy, GsonBuilder }
 import com.typesafe.config.ConfigFactory
 import org.mbari.vars.vam.auth.AuthorizationService
+import org.mbari.vars.vam.dao.jpa.DurationConverter
 import org.mbari.vars.vam.json.{ ByteArrayConverter, DurationConverter => GSONDurationConverter }
 import org.mbari.vars.vam.messaging.{ MessagingService, NoopMessagingService }
 import org.slf4j.LoggerFactory
@@ -40,6 +41,8 @@ object Constants {
     Converters.registerInstant(gsonBuilder)
     val durationType: Type = new TypeToken[Duration]() {}.getType
     gsonBuilder.registerTypeAdapter(durationType, new GSONDurationConverter)
+    //    val durationType: Type = new TypeToken[Duration]() {}.getType
+    //    gsonBuilder.registerTypeAdapter(durationType, new DurationConverter)
     val byteArrayType: Type = new TypeToken[Array[Byte]]() {}.getType
     gsonBuilder.registerTypeAdapter(byteArrayType, new ByteArrayConverter)
     gsonBuilder.create()

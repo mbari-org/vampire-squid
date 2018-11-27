@@ -35,6 +35,7 @@ class NewVideoMessageSpec extends FlatSpec with Matchers with Inside {
     val videoSequence = VideoSequence(videoSequenceName, cameraId, Seq(video))
     videoSequence.uuid = videoSequenceUuid
     val msg = NewVideoMessage(videoReference)
+    println(msg)
     val json = Constants.GSON.toJson(msg)
     val obj = Constants.GSON.fromJson(json, classOf[NewVideoMessage])
     obj should not be null
