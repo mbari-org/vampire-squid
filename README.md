@@ -4,7 +4,7 @@
 
 Vampire-squid is a video asset manager.
 
-[![Build Status](https://travis-ci.org/mbari-media-management/vampire-squid.svg?branch=master)](https://travis-ci.org/mbari-media-management/vampire-squid)
+[![Build Status](https://travis-ci.org/mbari-media-management/vampire-squid.svg?branch=master)](https://travis-ci.org/mbari-media-management/vampire-squid)  [![DOI](https://zenodo.org/badge/90171376.svg)](https://zenodo.org/badge/latestdoi/90171376)
 
 ## tl;dr
 
