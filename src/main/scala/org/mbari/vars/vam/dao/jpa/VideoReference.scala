@@ -31,7 +31,9 @@ import scala.util.Try
  * @since 2016-05-05T18:19:00
  */
 @Entity(name = "VideoReference")
-@Table(name = "video_references")
+@Table(name = "video_references", indexes = Array(
+  new Index(name = "idx_video_references__uri", columnList = "uri"),
+  new Index(name = "idx_video_references__video_uuid", columnList = "video_uuid")))
 @EntityListeners(value = Array(classOf[TransactionLogger]))
 @NamedNativeQueries(Array(
   new NamedNativeQuery(
@@ -55,7 +57,6 @@ class VideoReference extends HasUUID with HasOptimisticLock with HasDescription 
 
   @Expose(serialize = true)
   @Basic(optional = false)
-  @Index(name = "idx_video_reference_uri", columnList = "uri")
   @Column(
     name = "uri",
     unique = true,

@@ -31,7 +31,10 @@ import scala.collection.JavaConverters._
  * @since 2016-05-05T17:54:00
  */
 @Entity(name = "Video")
-@Table(name = "videos")
+@Table(name = "videos", indexes = Array(
+  new Index(name = "idx_videos__name", columnList = "name"),
+  new Index(name = "idx_videos__start_time", columnList = "start_time"),
+  new Index(name = "idx_videos__video_sequence_uuid", columnList = "video_sequence_uuid")))
 @EntityListeners(value = Array(classOf[TransactionLogger]))
 @NamedNativeQueries(Array(
   new NamedNativeQuery(
@@ -66,7 +69,6 @@ class Video extends HasUUID with HasOptimisticLock with HasDescription {
 
   @Expose(serialize = true)
   @Basic(optional = false)
-  @Index(name = "idx_videos__name", columnList = "name")
   @Column(
     name = "name",
     nullable = false,
@@ -77,7 +79,6 @@ class Video extends HasUUID with HasOptimisticLock with HasDescription {
   @Expose(serialize = true)
   @SerializedName(value = "start_timestamp")
   @Basic(optional = false)
-  @Index(name = "idx_videos__start_time", columnList = "start_time")
   @Column(
     name = "start_time",
     nullable = false)
