@@ -9,5 +9,5 @@ sbt pack && \
     docker build --build-arg BUILD_DATE=$BUILD_DATE \
                  --build-arg VCS_REF=$VCS_REF \
                   -t mbari/vampire-squid:${VCS_REF} \
-                  -t mbari/vampire-squid:latest . & \
+                  -t mbari/vampire-squid:latest . && \
     docker push mbari/vampire-squid
