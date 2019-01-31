@@ -62,6 +62,26 @@ class VideoSequenceV1Api(controller: VideoSequenceController)(implicit val swagg
     })
   }
 
+  get("/lastupdate/:uuid") {
+    val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest("Please provide a UUID")))
+    controller.findByUUID(uuid).map({
+      case None =>
+        val error = Map("not_found" -> s"A video sequence with a UUID of $uuid was not found in the database").asJava
+        halt(NotFound(controller.toJson(error)))
+      case Some(v) =>
+        v.lastUpdated match {
+          case None =>
+            val error = Map(
+              "missing_value" -> "No last updated timestamp was found",
+              "video_sequence_uuid" -> uuid).asJava
+            halt(NotFound(controller.toJson(error)))
+          case Some(t) =>
+            val data = Map("timestamp" -> t.toString).asJava
+            controller.toJson(data)
+        }
+    })
+  }
+
   val nameGET = (apiOperation[VideoSequence]("findByName")
     summary "Find a video sequence by name"
     parameters (

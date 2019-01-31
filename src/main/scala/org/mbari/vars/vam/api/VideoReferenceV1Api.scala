@@ -58,6 +58,26 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swa
     })
   }
 
+  get("/lastupdate/:uuid") {
+    val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest("Please provide a UUID")))
+    controller.findByUUID(uuid).map({
+      case None =>
+        val error = Map("not_found" -> s"A video reference with a UUID of $uuid was not found in the database").asJava
+        halt(NotFound(controller.toJson(error)))
+      case Some(v) =>
+        v.lastUpdated match {
+          case None =>
+            val error = Map(
+              "missing_value" -> "No last updated timestamp was found",
+              "video_reference_uuid" -> uuid).asJava
+            halt(NotFound(controller.toJson(error)))
+          case Some(t) =>
+            val data = Map("timestamp" -> t.toString).asJava
+            controller.toJson(data)
+        }
+    })
+  }
+
   val uriGET = (apiOperation[VideoReference]("findByURI")
     summary "Find a video-reference by its URI"
     parameters (

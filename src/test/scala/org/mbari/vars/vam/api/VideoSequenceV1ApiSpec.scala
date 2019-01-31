@@ -119,6 +119,13 @@ class VideoSequenceV1ApiSpec extends WebApiStack {
     }
   }
 
+  it should "return a lastupdated time" in {
+    get(s"/v1/videosequence/lastupdate/${aVideoSequence.uuid}") {
+      status should be(200)
+      body should include("timestamp")
+    }
+  }
+
   it should "update" in {
     put("/v1/videosequence/" + aVideoSequence.uuid, "description" -> "updated") {
       status should be(200)

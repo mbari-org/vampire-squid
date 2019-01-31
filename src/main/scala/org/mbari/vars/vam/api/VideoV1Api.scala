@@ -74,6 +74,26 @@ class VideoV1Api(controller: VideoController)(implicit val swagger: Swagger, val
     })
   }
 
+  get("/lastupdate/:uuid") {
+    val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest("Please provide a UUID")))
+    controller.findByUUID(uuid).map({
+      case None =>
+        val error = Map("not_found" -> s"A video with a UUID of $uuid was not found in the database").asJava
+        halt(NotFound(controller.toJson(error)))
+      case Some(v) =>
+        v.lastUpdated match {
+          case None =>
+            val error = Map(
+              "missing_value" -> "No last updated timestamp was found",
+              "video_uuid" -> uuid).asJava
+            halt(NotFound(controller.toJson(error)))
+          case Some(t) =>
+            val data = Map("timestamp" -> t.toString).asJava
+            controller.toJson(data)
+        }
+    })
+  }
+
   val nameGET = (apiOperation[Video]("findByName")
     summary "Find a video by name"
     parameters (
@@ -82,7 +102,9 @@ class VideoV1Api(controller: VideoController)(implicit val swagger: Swagger, val
   get("/name/:name", operation(nameGET)) {
     val name = params.get("name").getOrElse(halt(BadRequest("Please provide a name")))
     controller.findByName(name).map({
-      case None => halt(NotFound(s"""{not_found: "A video with a name of '$name' was not found in the database"}"""))
+      case None =>
+        val error = Map("not_found" -> s"A video with a name of '$name' was not found in the database").asJava
+        halt(NotFound(controller.toJson(error)))
       case Some(v) => controller.toJson(v)
     })
   }

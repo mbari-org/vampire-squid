@@ -115,6 +115,13 @@ class VideoReferenceV1ApiSpec extends WebApiStack {
       }
   }
 
+  it should "return a lastupdated time" in {
+    get(s"/v1/videoreference/lastupdate/${aVideoReference.uuid}") {
+      status should be(200)
+      body should include("timestamp")
+    }
+  }
+
   it should "update" in {
     put(
       "/v1/videoreference/" + aVideoReference.uuid,
