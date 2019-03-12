@@ -8,7 +8,7 @@ addSbtPlugin("com.earldouglas" % "xsbt-web-plugin" % "4.0.2")
 addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.3.14")
 
 // https://github.com/rtimush/sbt-updates
-//addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.1.10")
+addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.4.0")
 
 // https://github.com/jrudolph/sbt-dependency-graph
 addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.9.2")

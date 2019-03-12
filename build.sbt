@@ -1,24 +1,24 @@
 val activationVersion = "1.2.0"
-val akkaVersion = "2.5.20"
+val akkaVersion = "2.5.21"
 val auth0Version = "3.7.0"
-val codecVersion = "1.11"
+val codecVersion = "1.12"
 val configVersion = "1.3.3"
-val derbyVersion = "10.14.2.0"
+val derbyVersion = "10.15.1.3"
 val eclipselinkVersion = "2.7.4"
 val gsonJavatimeVersion = "1.1.1"
 val gsonVersion = "2.8.5"
-val h2Version = "1.4.197"
-val jettyVersion = "9.4.14.v20181114"
-val json4sVersion = "3.6.4"
+val h2Version = "1.4.198"
+val jettyVersion = "9.4.15.v20190215"
+val json4sVersion = "3.6.5"
 val jtaVersion = "1.1"
 val jtdsVersion = "1.3.1"
 val junitVersion = "4.12"
 val logbackVersion = "1.2.3"
 val rabbitmqVersion = "5.6.0"
-val scalaTestVersion = "3.0.5"
-val scalatraVersion = "2.6.4"
+val scalaTestVersion = "3.0.6"
+val scalatraVersion = "2.6.5"
 val servletVersion = "3.1.0"
-val slf4jVersion = "1.7.25"
+val slf4jVersion = "1.7.26"
 val xmlBindVersion = "2.3.0"
 
 
@@ -108,6 +108,8 @@ lazy val `vampire-squid` = (project in file("."))
       "org.apache.derby"         % "derby"                          % derbyVersion, //          % "test",
       "org.apache.derby"         % "derbyclient"                    % derbyVersion, //          % "test",
       "org.apache.derby"         % "derbynet"                       % derbyVersion, //          % "test",
+      "org.apache.derby"         % "derbyshared"                    % derbyVersion,
+      "org.apache.derby"         % "derbytools"                     % derbyVersion,
       "org.eclipse.jetty"        % "jetty-server"                   % jettyVersion          % "container;compile;test",
       "org.eclipse.jetty"        % "jetty-servlets"                 % jettyVersion          % "container;compile;test",
       "org.eclipse.jetty"        % "jetty-webapp"                   % jettyVersion          % "container;compile;test",
