@@ -45,10 +45,6 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swa
     controller.findAll.map(vs => controller.toJson(vs.asJava))
   }
 
-  get("/uris") {
-    controller.findAllURIs.map(uris => controller.toJson(uris.asJava))
-  }
-
   val uuidGET = (apiOperation[VideoReference]("findByUUID")
     summary "Find a video-reference by uuid"
     parameters (
@@ -93,6 +89,10 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(implicit val swa
       case None => halt(NotFound(s"""{not_found: "A video with a URI of $uri was not found in the database"}"""))
       case Some(v) => controller.toJson(v)
     })
+  }
+
+  get("/uris") {
+    controller.findAllURIs.map(uris => controller.toJson(uris.asJava))
   }
 
   val shaGET = (apiOperation[VideoReference]("findBySha512")
