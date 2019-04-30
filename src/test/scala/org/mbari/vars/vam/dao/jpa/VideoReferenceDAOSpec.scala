@@ -113,6 +113,11 @@ class VideoReferenceDAOSpec extends FlatSpec with Matchers {
     vs.size should be >= video1.videoReferences.size
   }
 
+  it should "findAllURIs" in {
+    val uris = Await.result(dao.runTransaction(d => d.findAllURIs()), timeout)
+    uris.size should be >= video1.videoReferences.size
+  }
+
   it should "findByVideoUUID" in {
     val vs = Await.result(dao.runTransaction(d => d.findByVideoUUID(video1.uuid)), timeout)
     vs.size should be >= video1.videoReferences.size
