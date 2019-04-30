@@ -41,8 +41,7 @@ import scala.util.Try
     query = "SELECT uuid FROM video_references WHERE uri LIKE ?1"),
   new NamedNativeQuery(
     name = "VideoReference.findAllURIs",
-    query = "SELECT uri FROM video_references"
-  )))
+    query = "SELECT uri FROM video_references")))
 @NamedQueries(
   Array(
     new NamedQuery(
