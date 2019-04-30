@@ -24,7 +24,7 @@ val xmlBindVersion = "2.3.0"
 
 lazy val buildSettings = Seq(
   organization := "org.mbari.vars",
-  version := "0.1.1",
+  version := "0.1.3",
   scalaVersion := "2.12.8",
   crossScalaVersions := Seq("2.12.8"),
   organizationName := "Monterey Bay Aquarium Research Institute",
@@ -91,9 +91,9 @@ lazy val `vampire-squid` = (project in file("."))
       "ch.qos.logback"           % "logback-core"                   % logbackVersion,
       "com.auth0"                % "java-jwt"                       % auth0Version,
       "com.fatboyindustrial.gson-javatime-serialisers" % "gson-javatime-serialisers" % gsonJavatimeVersion,
-      "com.rabbitmq"             % "amqp-client"                    % rabbitmqVersion,
       "com.google.code.gson"     % "gson"                           % gsonVersion,
       "com.h2database"           % "h2"                             % h2Version             % "test",
+      "com.rabbitmq"             % "amqp-client"                    % rabbitmqVersion,
       "com.sun.activation"       % "javax.activation"               % activationVersion,
       "com.sun.xml.bind"         % "jaxb-core"                      % xmlBindVersion,
       "com.sun.xml.bind"         % "jaxb-impl"                      % xmlBindVersion,
@@ -119,8 +119,8 @@ lazy val `vampire-squid` = (project in file("."))
       "org.scalatra"            %% "scalatra"                       % scalatraVersion,
       "org.scalatra"            %% "scalatra-json"                  % scalatraVersion,
       "org.scalatra"            %% "scalatra-scalate"               % scalatraVersion,
-      "org.scalatra"            %% "scalatra-swagger"               % scalatraVersion,
       "org.scalatra"            %% "scalatra-scalatest"             % scalatraVersion,
+      "org.scalatra"            %% "scalatra-swagger"               % scalatraVersion,
       "org.slf4j"                % "log4j-over-slf4j"               % slf4jVersion,
       "org.slf4j"                % "slf4j-api"                      % slf4jVersion)
         .map(_.excludeAll(ExclusionRule("org.slf4j", "slf4j-jdk14"),
