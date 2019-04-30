@@ -38,6 +38,9 @@ class VideoReferenceController(val daoFactory: JPADAOFactory) extends BaseContro
   def findAll(implicit ec: ExecutionContext): Future[Seq[VideoReference]] =
     exec(d => d.findAll().toSeq)
 
+  def findAllURIs(implicit ec: ExecutionContext): Future[Seq[URI]] =
+    exec(d => d.findAllURIs().toSeq)
+
   def findByUUID(uuid: UUID)(implicit ec: ExecutionContext): Future[Option[VideoReference]] =
     exec(d => d.findByUUID(uuid))
 
