@@ -19,12 +19,13 @@ val scalaTestVersion = "3.0.7"
 val scalatraVersion = "2.6.5"
 val servletVersion = "3.1.0"
 val slf4jVersion = "1.7.26"
+val sqlserverVersion = "7.2.2.jre11"
 val xmlBindVersion = "2.3.0"
 
 
 lazy val buildSettings = Seq(
   organization := "org.mbari.vars",
-  version := "0.1.4",
+  version := "0.1.5",
   scalaVersion := "2.12.8",
   crossScalaVersions := Seq("2.12.8"),
   organizationName := "Monterey Bay Aquarium Research Institute",
@@ -97,6 +98,7 @@ lazy val `vampire-squid` = (project in file("."))
       "com.sun.activation"       % "javax.activation"               % activationVersion,
       "com.sun.xml.bind"         % "jaxb-core"                      % xmlBindVersion,
       "com.sun.xml.bind"         % "jaxb-impl"                      % xmlBindVersion,
+      "com.microsoft.sqlserver"  % "mssql-jdbc"                     % sqlserverVersion,
       "com.typesafe"             % "config"                         % configVersion,
       "com.typesafe.akka"       %% "akka-actor"                     % akkaVersion,
       "commons-codec"            % "commons-codec"                  % codecVersion,

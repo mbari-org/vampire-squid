@@ -18,12 +18,14 @@ package org.mbari.vars.vam.dao.jpa
 
 import java.net.URI
 import java.util.UUID
-import javax.persistence.EntityManager
-import scala.collection.JavaConverters._
 
+import javax.persistence.EntityManager
+
+import scala.collection.JavaConverters._
 import org.mbari.vars.vam.dao.VideoReferenceDAO
 
 import scala.util.Try
+import scala.util.control.NonFatal
 
 /**
  *
@@ -71,18 +73,27 @@ class VideoReferenceDAOImpl(entityManager: EntityManager)
         val endDate = startDate.plus(videoReference.video.duration)
         val siblings = videoReference.video.videoSequence.videoReferences
 
-        Try(siblings.filter(vr => {
-          val s = vr.video.start
-          if (s == null) false
-          else {
-            val e = s.plus(vr.video.duration)
-            s.equals(startDate) ||
-              e.equals(endDate) ||
-              (s.isAfter(startDate) && s.isBefore(endDate)) ||
-              (e.isAfter(startDate) && e.isBefore(endDate)) ||
-              (s.isBefore(startDate) && e.isAfter(endDate))
+        def filterSiblings(vr: VideoReference): Boolean = {
+          try {
+            val s = vr.video.start
+            if (s == null) false
+            else {
+              val e = s.plus(vr.video.duration)
+              s.equals(startDate) ||
+                e.equals(endDate) ||
+                (s.isAfter(startDate) && s.isBefore(endDate)) ||
+                (e.isAfter(startDate) && e.isBefore(endDate)) ||
+                (s.isBefore(startDate) && e.isAfter(endDate))
+            }
           }
-        })).getOrElse(Nil)
+          catch {
+            case NonFatal(e) =>
+              false // Can occur if duration is null
+          }
+        }
+
+        siblings.filter(filterSiblings)
+
     }
   }
 
