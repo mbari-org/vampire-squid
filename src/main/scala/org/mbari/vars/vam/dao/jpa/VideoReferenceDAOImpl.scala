@@ -85,8 +85,7 @@ class VideoReferenceDAOImpl(entityManager: EntityManager)
                 (e.isAfter(startDate) && e.isBefore(endDate)) ||
                 (s.isBefore(startDate) && e.isAfter(endDate))
             }
-          }
-          catch {
+          } catch {
             case NonFatal(e) =>
               false // Can occur if duration is null
           }
