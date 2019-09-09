@@ -14,6 +14,7 @@ val jtaVersion = "1.1"
 val jtdsVersion = "1.3.1"
 val junitVersion = "4.12"
 val logbackVersion = "1.2.3"
+val postgresqlVersion = "42.2.6"
 val rabbitmqVersion = "5.7.3"
 val scalaTestVersion = "3.0.8"
 val scalatraVersion = "2.6.5"
@@ -117,6 +118,7 @@ lazy val `vampire-squid` = (project in file("."))
       "org.eclipse.jetty"        % "jetty-webapp"                   % jettyVersion          % "container;compile;test",
       "org.eclipse.persistence"  % "org.eclipse.persistence.jpa"    % eclipselinkVersion,
       "org.json4s"              %% "json4s-jackson"                 % json4sVersion,
+      "org.postgresql" % "postgresql" % postgresqlVersion,
       "org.scalatest"           %% "scalatest"                      % scalaTestVersion      % "test",
       "org.scalatra"            %% "scalatra"                       % scalatraVersion,
       "org.scalatra"            %% "scalatra-json"                  % scalatraVersion,
