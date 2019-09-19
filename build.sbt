@@ -28,7 +28,7 @@ val xmlBindVersion = "2.3.0"
 
 lazy val buildSettings = Seq(
   organization := "org.mbari.vars",
-  version := "0.2.0",
+  version := "0.2.1",
   scalaVersion := "2.12.10",
   crossScalaVersions := Seq("2.12.10"),
   organizationName := "Monterey Bay Aquarium Research Institute",
