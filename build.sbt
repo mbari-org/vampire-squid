@@ -120,7 +120,7 @@ lazy val `vampire-squid` = (project in file("."))
       "org.eclipse.jetty"        % "jetty-server"                   % jettyVersion          % "container;compile;test",
       "org.eclipse.jetty"        % "jetty-servlets"                 % jettyVersion          % "container;compile;test",
       "org.eclipse.jetty"        % "jetty-webapp"                   % jettyVersion          % "container;compile;test",
-      "org.eclipse.persistence" % "org.eclipse.persistence.extension" % eclipselinkVersion,
+      "org.eclipse.persistence"  % "org.eclipse.persistence.extension" % eclipselinkVersion,
       "org.eclipse.persistence"  % "org.eclipse.persistence.jpa"    % eclipselinkVersion,
       "org.json4s"              %% "json4s-jackson"                 % json4sVersion,
       "org.postgresql"           % "postgresql"                     % postgresqlVersion,
