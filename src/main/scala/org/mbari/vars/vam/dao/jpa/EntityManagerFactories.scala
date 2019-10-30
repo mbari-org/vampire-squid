@@ -41,6 +41,7 @@ object EntityManagerFactories {
     "eclipselink.connection-pool.default.initial" -> "2",
     "eclipselink.connection-pool.default.max" -> "16",
     "eclipselink.connection-pool.default.min" -> "2",
+    "eclipselink.logging.logger" -> "org.eclipse.persistence.logging.slf4j.SLF4JLogger",
     "eclipselink.logging.session" -> "false",
     "eclipselink.logging.thread" -> "false",
     "eclipselink.logging.timestamp" -> "false",

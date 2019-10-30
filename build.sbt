@@ -1,15 +1,15 @@
 val activationVersion = "1.2.0"
-val akkaVersion = "2.5.25"
-val auth0Version = "3.8.2"
+val akkaVersion = "2.5.26"
+val auth0Version = "3.8.3"
 val codecVersion = "1.13"
-val configVersion = "1.3.4"
+val configVersion = "1.4.0"
 val derbyVersion = "10.15.1.3"
-val eclipselinkVersion = "2.7.4"
+val eclipselinkVersion = "2.7.5"
 val gsonJavatimeVersion = "1.1.1"
-val gsonVersion = "2.8.5"
-val h2Version = "1.4.199"
+val gsonVersion = "2.8.6"
+val h2Version = "1.4.200"
 val javamelodyVersion = "1.79.0"
-val jettyVersion = "9.4.20.v20190813"
+val jettyVersion = "9.4.22.v20191022"
 val json4sVersion = "3.6.7"
 val jtaVersion = "1.1"
 val jtdsVersion = "1.3.1"
@@ -120,6 +120,7 @@ lazy val `vampire-squid` = (project in file("."))
       "org.eclipse.jetty"        % "jetty-server"                   % jettyVersion          % "container;compile;test",
       "org.eclipse.jetty"        % "jetty-servlets"                 % jettyVersion          % "container;compile;test",
       "org.eclipse.jetty"        % "jetty-webapp"                   % jettyVersion          % "container;compile;test",
+      "org.eclipse.persistence" % "org.eclipse.persistence.extension" % eclipselinkVersion,
       "org.eclipse.persistence"  % "org.eclipse.persistence.jpa"    % eclipselinkVersion,
       "org.json4s"              %% "json4s-jackson"                 % json4sVersion,
       "org.postgresql"           % "postgresql"                     % postgresqlVersion,
