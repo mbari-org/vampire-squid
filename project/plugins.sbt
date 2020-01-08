@@ -5,10 +5,10 @@ addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.10")
 addSbtPlugin("com.earldouglas" % "xsbt-web-plugin" % "4.0.2")
 
 // https://github.com/sbt/sbt-native-packager
-addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.3.25")
+addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.5.2")
 
 // https://github.com/rtimush/sbt-updates
-addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.4.2")
+addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.5.0")
 
 // https://github.com/jrudolph/sbt-dependency-graph
 addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.9.2")
@@ -23,6 +23,6 @@ addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.8.2")
 addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "1.0.0")
 
 // https://github.com/sbt/sbt-header
-addSbtPlugin("de.heikoseeberger" % "sbt-header" % "5.2.0")
+addSbtPlugin("de.heikoseeberger" % "sbt-header" % "5.4.0")
 
 resolvers += Resolver.sonatypeRepo("releases")

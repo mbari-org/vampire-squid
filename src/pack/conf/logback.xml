@@ -1,8 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!--
     Logging Configuration.
 -->
 <configuration scan="true">
+
+    <variable name="LOGBACK_LEVEL" value="${LOGBACK_LEVEL:-WARN}" />
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
@@ -15,8 +17,8 @@
 
     <logger name="java.util.Date" level="WARN" />
 
-    <root level="INFO">
-        <appender-ref ref="CONSOLE"/>
+    <root level="${LOGBACK_LEVEL}">
+        <appender-ref ref="CONSOLE" />
     </root>
 
 </configuration>
