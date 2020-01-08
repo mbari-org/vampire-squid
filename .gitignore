@@ -2,6 +2,7 @@
 *.class
 .DS_Store
 *.orig
+derby.log
 
 # Package Files #
 *.jar
