@@ -18,12 +18,12 @@ package org.mbari.vars.vam.api
 
 import com.typesafe.config.ConfigFactory
 import org.mbari.vars.vam.auth.AuthorizationService
-import org.scalatra.{ ScalatraBase, Unauthorized }
+import org.scalatra.{ScalatraBase, Unauthorized}
 
 /**
- * @author Brian Schlining
- * @since 2017-01-18T16:27:00
- */
+  * @author Brian Schlining
+  * @since 2017-01-18T16:27:00
+  */
 trait ApiAuthenticationSupport { self: ScalatraBase =>
 
   val authorizationService: AuthorizationService = ApiAuthenticationSupport.authorizationService
@@ -43,7 +43,7 @@ object ApiAuthenticationSupport {
 
   def authorizationService: AuthorizationService = {
     val serviceName = appConfig.getString("authentication.service")
-    val clazz = Class.forName(serviceName)
-    clazz.newInstance().asInstanceOf[AuthorizationService]
+    val clazz       = Class.forName(serviceName)
+    clazz.getConstructor().newInstance().asInstanceOf[AuthorizationService]
   }
 }

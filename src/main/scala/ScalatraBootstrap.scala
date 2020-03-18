@@ -17,31 +17,35 @@
 import javax.servlet.ServletContext
 
 import org.mbari.vars.vam.api._
-import org.mbari.vars.vam.controllers.{ MediaController, VideoController, VideoReferenceController, VideoSequenceController }
+import org.mbari.vars.vam.controllers.{
+  MediaController,
+  VideoController,
+  VideoReferenceController,
+  VideoSequenceController
+}
 import org.mbari.vars.vam.dao.jpa.JPADAOFactory
 import org.scalatra.LifeCycle
-import org.scalatra.swagger.{ ApiInfo, Swagger }
-import org.slf4j.LoggerFactory
+import org.scalatra.swagger.{ApiInfo, Swagger}
 
 import scala.concurrent.ExecutionContext
+import org.scalatra.swagger.ContactInfo
+import org.scalatra.swagger.LicenseInfo
 
 /**
- *
- *
- * @author Brian Schlining
- * @since 2016-05-20T14:41:00
- */
+  *
+  *
+  * @author Brian Schlining
+  * @since 2016-05-20T14:41:00
+  */
 class ScalatraBootstrap extends LifeCycle {
 
-  private[this] val log = LoggerFactory.getLogger(getClass)
-
   val apiInfo = ApiInfo(
-    """video-asset-manager""",
-    """Video Asset Manager - Server""",
-    """http://localhost:8080/api-docs""",
-    """brian@mbari.org""",
-    """MIT""",
-    """http://opensource.org/licenses/MIT""")
+    "vampire-squid",
+    "A Video Asset Managment microservice0",
+    "http://www.mbari.org",
+    ContactInfo("Brian Schlining", "http://www.mbari.org", "brian@mbari.org"),
+    LicenseInfo("Apache 2.0", "https://www.apache.org/licenses/LICENSE-2.0")
+  )
 
   implicit val swagger = new Swagger("1.2", "1.0.0", apiInfo)
 
@@ -51,14 +55,14 @@ class ScalatraBootstrap extends LifeCycle {
 
     implicit val executionContext = ExecutionContext.global
 
-    val daoFactory = JPADAOFactory
-    val mediaController = new MediaController(daoFactory)
-    val videoSequenceController = new VideoSequenceController(daoFactory)
-    val videoController = new VideoController(daoFactory)
+    val daoFactory               = JPADAOFactory
+    val mediaController          = new MediaController(daoFactory)
+    val videoSequenceController  = new VideoSequenceController(daoFactory)
+    val videoController          = new VideoController(daoFactory)
     val videoReferenceController = new VideoReferenceController(daoFactory)
 
     val authorizationV1Api = new AuthorizationV1Api()
-    val mediaV1Api = new MediaV1Api(mediaController)
+    val mediaV1Api         = new MediaV1Api(mediaController)
     //val mediaV2Api = new MediaV2Api(mediaController)
     val videoReferenceV1Api = new VideoReferenceV1Api(videoReferenceController)
     //val videoReferenceV2Api = new VideoReferenceV2Api(videoReferenceController)

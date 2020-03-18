@@ -22,13 +22,15 @@ import java.util.UUID
 
 import org.mbari.vars.vam.Constants
 import org.mbari.vars.vam.dao.jpa.{ Video, VideoReference, VideoSequence }
-import org.scalatest.{ FlatSpec, Inside, Matchers }
+import org.scalatest.Inside
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 /**
  * @author Brian Schlining
  * @since 2017-03-15T09:43:00
  */
-class NewVideoMessageSpec extends FlatSpec with Matchers with Inside {
+class NewVideoMessageSpec extends AnyFlatSpec with Matchers with Inside {
 
   "NewVideoMessage" should "round-trip to/from JSON" in {
 

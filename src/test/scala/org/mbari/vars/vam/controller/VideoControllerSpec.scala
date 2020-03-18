@@ -22,11 +22,13 @@ import java.util.concurrent.TimeUnit
 
 import org.mbari.vars.vam.controllers.{ VideoController, VideoSequenceController }
 import org.mbari.vars.vam.dao.jpa._
-import org.scalatest.{ BeforeAndAfterEach, FlatSpec, Matchers }
+import org.scalatest.BeforeAndAfterEach
 
 import scala.concurrent.Await
 import scala.concurrent.duration.{ Duration => SDuration }
 import scala.concurrent.ExecutionContext.Implicits.global
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 /**
  *
@@ -34,7 +36,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
  * @author Brian Schlining
  * @since 2016-08-12T10:56:00
  */
-class VideoControllerSpec extends FlatSpec with Matchers with BeforeAndAfterEach {
+class VideoControllerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEach {
 
   TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 

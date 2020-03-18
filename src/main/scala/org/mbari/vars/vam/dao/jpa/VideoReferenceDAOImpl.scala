@@ -21,33 +21,32 @@ import java.util.UUID
 
 import javax.persistence.EntityManager
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import org.mbari.vars.vam.dao.VideoReferenceDAO
 
-import scala.util.Try
 import scala.util.control.NonFatal
 
 /**
- *
- *
- * @author Brian Schlining
- * @since 2016-05-18T13:11:00
- */
+  *
+  *
+  * @author Brian Schlining
+  * @since 2016-05-18T13:11:00
+  */
 class VideoReferenceDAOImpl(entityManager: EntityManager)
-  extends BaseDAO[VideoReference](entityManager)
-  with VideoReferenceDAO[VideoReference] {
+    extends BaseDAO[VideoReference](entityManager)
+    with VideoReferenceDAO[VideoReference] {
 
   override def findByVideoUUID(uuid: UUID): Iterable[VideoReference] =
     findByNamedQuery("VideoReference.findByVideoUUID", Map("uuid" -> uuid))
 
   override def findByURI(uri: URI): Option[VideoReference] =
-    findByNamedQuery("VideoReference.findByURI", Map("uri" -> uri))
-      .headOption
+    findByNamedQuery("VideoReference.findByURI", Map("uri" -> uri)).headOption
 
   override def findByFileName(filename: String): Iterable[VideoReference] = {
     val query = entityManager.createNamedQuery("VideoReference.findByFileName")
     query.setParameter(1, s"%$filename")
-    query.getResultList
+    query
+      .getResultList
       .asScala
       .map(_.toString)
       .map(UUID.fromString)
@@ -59,7 +58,8 @@ class VideoReferenceDAOImpl(entityManager: EntityManager)
 
   override def findAllURIs(): Iterable[URI] = {
     val query = entityManager.createNamedQuery("VideoReference.findAllURIs")
-    query.getResultList
+    query
+      .getResultList
       .asScala
       .map(_.toString)
       .map(URI.create)
@@ -70,8 +70,8 @@ class VideoReferenceDAOImpl(entityManager: EntityManager)
       case None => Nil
       case Some(videoReference) =>
         val startDate = videoReference.video.start
-        val endDate = startDate.plus(videoReference.video.duration)
-        val siblings = videoReference.video.videoSequence.videoReferences
+        val endDate   = startDate.plus(videoReference.video.duration)
+        val siblings  = videoReference.video.videoSequence.videoReferences
 
         def filterSiblings(vr: VideoReference): Boolean = {
           try {
@@ -80,12 +80,13 @@ class VideoReferenceDAOImpl(entityManager: EntityManager)
             else {
               val e = s.plus(vr.video.duration)
               s.equals(startDate) ||
-                e.equals(endDate) ||
-                (s.isAfter(startDate) && s.isBefore(endDate)) ||
-                (e.isAfter(startDate) && e.isBefore(endDate)) ||
-                (s.isBefore(startDate) && e.isAfter(endDate))
+              e.equals(endDate) ||
+              (s.isAfter(startDate) && s.isBefore(endDate)) ||
+              (e.isAfter(startDate) && e.isBefore(endDate)) ||
+              (s.isBefore(startDate) && e.isAfter(endDate))
             }
-          } catch {
+          }
+          catch {
             case NonFatal(e) =>
               false // Can occur if duration is null
           }
@@ -103,7 +104,6 @@ class VideoReferenceDAOImpl(entityManager: EntityManager)
 
   override def findBySha512(sha: Array[Byte]): Option[VideoReference] = {
     //val shaEncoded = Base64.getEncoder.encodeToString(sha)
-    findByNamedQuery("VideoReference.findBySha512", Map("sha512" -> sha))
-      .headOption
+    findByNamedQuery("VideoReference.findBySha512", Map("sha512" -> sha)).headOption
   }
 }

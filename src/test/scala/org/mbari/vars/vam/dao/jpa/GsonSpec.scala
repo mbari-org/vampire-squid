@@ -20,8 +20,9 @@ import java.net.URI
 import java.time.{ Duration, Instant }
 
 import org.mbari.vars.vam.Constants
-import org.scalatest.{ FlatSpec, Matchers }
 import org.slf4j.LoggerFactory
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 /**
  *
@@ -29,7 +30,7 @@ import org.slf4j.LoggerFactory
  * @author Brian Schlining
  * @since 2016-05-17T16:00:00
  */
-class GsonSpec extends FlatSpec with Matchers {
+class GsonSpec extends AnyFlatSpec with Matchers {
 
   private[this] val log = LoggerFactory.getLogger(getClass)
 

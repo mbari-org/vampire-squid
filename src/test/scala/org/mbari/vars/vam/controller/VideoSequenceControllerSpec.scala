@@ -17,15 +17,17 @@
 package org.mbari.vars.vam.controller
 
 import org.mbari.vars.vam.controllers.VideoSequenceController
-import org.scalatest.{ BeforeAndAfterAll, FlatSpec, Matchers }
+import org.scalatest.BeforeAndAfterAll
 
 import scala.concurrent.Await
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 /**
  * @author Brian Schlining
  * @since 2017-04-05T14:28:00
  */
-class VideoSequenceControllerSpec extends FlatSpec with Matchers with BeforeAndAfterAll {
+class VideoSequenceControllerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterAll {
 
   private[this] val n = 2
   private[this] val videoSequences = TestUtils.create(n, 10, 10)

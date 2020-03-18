@@ -21,11 +21,12 @@ import java.time.{ Duration, Instant }
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
-import org.scalatest.{ FlatSpec, Matchers }
 
 import scala.concurrent.Await
 import scala.concurrent.duration.{ Duration => SDuration }
 import scala.concurrent.ExecutionContext.Implicits.global
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 /**
  *
@@ -33,7 +34,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
  * @author Brian Schlining
  * @since 2016-05-06T15:43:00
  */
-class VideoSequenceDAOSpec extends FlatSpec with Matchers {
+class VideoSequenceDAOSpec extends AnyFlatSpec with Matchers {
 
   private[this] val daoFactory = DevelopmentTestDAOFactory
 

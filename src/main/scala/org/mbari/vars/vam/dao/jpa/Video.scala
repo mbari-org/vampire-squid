@@ -16,81 +16,84 @@
 
 package org.mbari.vars.vam.dao.jpa
 
-import java.time.{ Duration, Instant }
-import java.util.{ ArrayList => JArrayList, List => JList }
-import javax.persistence.{ CascadeType, _ }
+import java.time.{Duration, Instant}
+import java.util.{ArrayList => JArrayList, List => JList}
+import javax.persistence.{CascadeType, _}
 
-import com.google.gson.annotations.{ Expose, SerializedName }
+import com.google.gson.annotations.{Expose, SerializedName}
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 /**
- * A Video is an abstract representation of a discrete segment of video.
- *
- * @author Brian Schlining
- * @since 2016-05-05T17:54:00
- */
+  * A Video is an abstract representation of a discrete segment of video.
+  *
+  * @author Brian Schlining
+  * @since 2016-05-05T17:54:00
+  */
 @Entity(name = "Video")
-@Table(name = "videos", indexes = Array(
-  new Index(name = "idx_videos__name", columnList = "name"),
-  new Index(name = "idx_videos__start_time", columnList = "start_time"),
-  new Index(name = "idx_videos__video_sequence_uuid", columnList = "video_sequence_uuid")))
+@Table(
+  name = "videos",
+  indexes = Array(
+    new Index(name = "idx_videos__name", columnList = "name"),
+    new Index(name = "idx_videos__start_time", columnList = "start_time"),
+    new Index(name = "idx_videos__video_sequence_uuid", columnList = "video_sequence_uuid")
+  )
+)
 @EntityListeners(value = Array(classOf[TransactionLogger]))
-@NamedNativeQueries(Array(
-  new NamedNativeQuery(
-    name = "Video.findAllNames",
-    query = "SELECT name FROM videos ORDER BY name"),
-  new NamedNativeQuery(
-    name = "Video.findNamesByVideoSequenceName",
-    query = "SELECT v.name FROM videos v LEFT JOIN video_sequences vs ON v.video_sequence_uuid = vs.uuid WHERE vs.name = ?1 ORDER BY v.name ASC"),
-  new NamedNativeQuery(
-    name = "Video.findAllNamesAndStartDates",
-    query = "SELECT name, start_time FROM videos ORDER BY start_time")))
-@NamedQueries(Array(
-  new NamedQuery(
-    name = "Video.findAll",
-    query = "SELECT v FROM Video v ORDER BY v.start"),
-  new NamedQuery(
-    name = "Video.findByName",
-    query = "SELECT v FROM Video v WHERE v.name = :name"),
-  new NamedQuery(
-    name = "Video.findByUUID",
-    query = "SELECT v FROM Video v WHERE v.uuid = :uuid"),
-  new NamedQuery(
-    name = "Video.findByVideoReferenceUUID",
-    query = "SELECT v FROM Video v LEFT JOIN v.javaVideoReferences w WHERE w.uuid = :uuid"),
-  new NamedQuery(
-    name = "Video.findByVideoSequenceUUID",
-    query = "SELECT v FROM Video v JOIN v.videoSequence w WHERE w.uuid = :uuid"),
-  new NamedQuery(
-    name = "Video.findBetweenDates",
-    query = "SELECT v FROM Video v WHERE v.start >= :startDate AND v.start <= :endDate")))
+@NamedNativeQueries(
+  Array(
+    new NamedNativeQuery(
+      name = "Video.findAllNames",
+      query = "SELECT name FROM videos ORDER BY name"
+    ),
+    new NamedNativeQuery(
+      name = "Video.findNamesByVideoSequenceName",
+      query =
+        "SELECT v.name FROM videos v LEFT JOIN video_sequences vs ON v.video_sequence_uuid = vs.uuid WHERE vs.name = ?1 ORDER BY v.name ASC"
+    ),
+    new NamedNativeQuery(
+      name = "Video.findAllNamesAndStartDates",
+      query = "SELECT name, start_time FROM videos ORDER BY start_time"
+    )
+  )
+)
+@NamedQueries(
+  Array(
+    new NamedQuery(name = "Video.findAll", query = "SELECT v FROM Video v ORDER BY v.start"),
+    new NamedQuery(name = "Video.findByName", query = "SELECT v FROM Video v WHERE v.name = :name"),
+    new NamedQuery(name = "Video.findByUUID", query = "SELECT v FROM Video v WHERE v.uuid = :uuid"),
+    new NamedQuery(
+      name = "Video.findByVideoReferenceUUID",
+      query = "SELECT v FROM Video v LEFT JOIN v.javaVideoReferences w WHERE w.uuid = :uuid"
+    ),
+    new NamedQuery(
+      name = "Video.findByVideoSequenceUUID",
+      query = "SELECT v FROM Video v JOIN v.videoSequence w WHERE w.uuid = :uuid"
+    ),
+    new NamedQuery(
+      name = "Video.findBetweenDates",
+      query = "SELECT v FROM Video v WHERE v.start >= :startDate AND v.start <= :endDate"
+    )
+  )
+)
 class Video extends HasUUID with HasOptimisticLock with HasDescription {
 
   @Expose(serialize = true)
   @Basic(optional = false)
-  @Column(
-    name = "name",
-    nullable = false,
-    length = 512,
-    unique = true)
+  @Column(name = "name", nullable = false, length = 512, unique = true)
   var name: String = _
 
   @Expose(serialize = true)
   @SerializedName(value = "start_timestamp")
   @Basic(optional = false)
-  @Column(
-    name = "start_time",
-    nullable = false)
+  @Column(name = "start_time", nullable = false)
   @Temporal(value = TemporalType.TIMESTAMP)
   @Convert(converter = classOf[InstantConverter])
   var start: Instant = _
 
   @Expose(serialize = true)
   @SerializedName(value = "duration_millis")
-  @Column(
-    name = "duration_millis",
-    nullable = true)
+  @Column(name = "duration_millis", nullable = true)
   var duration: Duration = _
 
   @Expose(serialize = false)
@@ -105,7 +108,8 @@ class Video extends HasUUID with HasOptimisticLock with HasDescription {
     cascade = Array(CascadeType.ALL),
     fetch = FetchType.EAGER,
     mappedBy = "video",
-    orphanRemoval = true)
+    orphanRemoval = true
+  )
   protected var javaVideoReferences: JList[VideoReference] = new JArrayList[VideoReference]
 
   def addVideoReference(videoView: VideoReference): Unit = {
@@ -118,7 +122,7 @@ class Video extends HasUUID with HasOptimisticLock with HasDescription {
     videoView.video = null
   }
 
-  def videoReferences: Seq[VideoReference] = javaVideoReferences.asScala
+  def videoReferences: Seq[VideoReference] = javaVideoReferences.asScala.toSeq
 
   override def toString = s"Video($name, $start)"
 }
@@ -148,7 +152,12 @@ object Video {
     v
   }
 
-  def apply(name: String, start: Instant, duration: Option[Duration], videoReferences: Iterable[VideoReference]): Video = {
+  def apply(
+      name: String,
+      start: Instant,
+      duration: Option[Duration],
+      videoReferences: Iterable[VideoReference]
+  ): Video = {
     val v = new Video
     v.name = name
     v.start = start
@@ -157,7 +166,12 @@ object Video {
     v
   }
 
-  def apply(name: String, start: Instant, duration: Option[Duration], description: Option[String]) = {
+  def apply(
+      name: String,
+      start: Instant,
+      duration: Option[Duration],
+      description: Option[String]
+  ) = {
     val v = new Video
     v.name = name
     v.start = start

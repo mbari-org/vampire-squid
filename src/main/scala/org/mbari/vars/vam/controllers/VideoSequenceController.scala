@@ -16,21 +16,21 @@
 
 package org.mbari.vars.vam.controllers
 
-import java.time.{ Duration, Instant }
+import java.time.{Duration, Instant}
 import java.util.UUID
 
 import org.mbari.vars.vam.Constants
 import org.mbari.vars.vam.dao.VideoSequenceDAO
-import org.mbari.vars.vam.dao.jpa.{ JPADAOFactory, NotFoundInDatastoreException, VideoSequence }
+import org.mbari.vars.vam.dao.jpa.{JPADAOFactory, NotFoundInDatastoreException, VideoSequence}
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
- *
- *
- * @author Brian Schlining
- * @since 2016-05-23T11:30:00
- */
+  *
+  *
+  * @author Brian Schlining
+  * @since 2016-05-23T11:30:00
+  */
 class VideoSequenceController(val daoFactory: JPADAOFactory) extends BaseController {
 
   private type VSDAO = VideoSequenceDAO[VideoSequence]
@@ -57,17 +57,20 @@ class VideoSequenceController(val daoFactory: JPADAOFactory) extends BaseControl
     exec(d => d.findByCameraID(id).toSeq.sortBy(_.name))
 
   def findByCameraIDAndTimestamp(
-    cameraID: String,
-    timestamp: Instant,
-    window: Duration = Constants.DEFAULT_DURATION_WINDOW)(implicit ec: ExecutionContext): Future[Seq[VideoSequence]] =
+      cameraID: String,
+      timestamp: Instant,
+      window: Duration = Constants.DEFAULT_DURATION_WINDOW
+  )(implicit ec: ExecutionContext): Future[Seq[VideoSequence]] =
     exec(d => d.findByCameraIDAndTimestamp(cameraID, timestamp, window).toSeq)
 
-  def create(name: String, cameraID: String, description: Option[String] = None)(implicit ec: ExecutionContext): Future[VideoSequence] = {
+  def create(name: String, cameraID: String, description: Option[String] = None)(
+      implicit ec: ExecutionContext
+  ): Future[VideoSequence] = {
     def fn(dao: VSDAO): VideoSequence = {
       dao.findByName(name) match {
         case Some(vs) => vs
         case None =>
-          val vs = VideoSequence(name, cameraID)
+          val vs = VideoSequence(name, cameraID, description = description)
           dao.create(vs)
           vs
       }
@@ -89,14 +92,17 @@ class VideoSequenceController(val daoFactory: JPADAOFactory) extends BaseControl
   }
 
   def update(
-    uuid: UUID,
-    name: Option[String] = None,
-    cameraID: Option[String] = None,
-    description: Option[String] = None)(implicit ec: ExecutionContext): Future[VideoSequence] = {
+      uuid: UUID,
+      name: Option[String] = None,
+      cameraID: Option[String] = None,
+      description: Option[String] = None
+  )(implicit ec: ExecutionContext): Future[VideoSequence] = {
     def fn(dao: VSDAO): VideoSequence = {
       dao.findByUUID(uuid) match {
         case None =>
-          throw new NotFoundInDatastoreException(s"No VideoSequence with UUID of $uuid was found in the database")
+          throw new NotFoundInDatastoreException(
+            s"No VideoSequence with UUID of $uuid was found in the database"
+          )
         case Some(vs) =>
           name.foreach(n => vs.name = n)
           cameraID.foreach(c => vs.cameraID = c)
@@ -109,7 +115,7 @@ class VideoSequenceController(val daoFactory: JPADAOFactory) extends BaseControl
 
   private def exec[T](fn: VSDAO => T)(implicit ec: ExecutionContext): Future[T] = {
     val dao = daoFactory.newVideoSequenceDAO()
-    val f = dao.runTransaction(fn)
+    val f   = dao.runTransaction(fn)
     f.onComplete(t => dao.close())
     f
   }

@@ -23,6 +23,8 @@ import org.scalatra.swagger.{ ApiInfo, Swagger }
 import org.scalatra.test.scalatest.ScalatraFlatSpec
 
 import scala.concurrent.ExecutionContext
+import org.scalatra.swagger.ContactInfo
+import org.scalatra.swagger.LicenseInfo
 
 /**
  *
@@ -34,17 +36,16 @@ trait WebApiStack extends ScalatraFlatSpec with BeforeAndAfterAll {
 
   protected[this] val gson = Constants.GSON
   protected[this] val daoFactory = DevelopmentTestDAOFactory
-  protected[this] implicit val executionContext = ExecutionContext.global
+  implicit protected[this] val executionContext = ExecutionContext.global
 
-  protected[this] val apiInfo = ApiInfo(
-    """video-asset-manager""",
-    """Video Asset Manager - Server""",
-    """http://localhost:8080/api-docs""",
-    """brian@mbari.org""",
-    """MIT""",
-    """http://opensource.org/licenses/MIT""")
+  val apiInfo = ApiInfo(
+    "vampire-squid",
+    "A Video Asset Managment microservice0",
+    "http://www.mbari.org",
+    ContactInfo("Brian Schlining", "http://www.mbari.org", "brian@mbari.org"),
+    LicenseInfo("Apache 2.0", "https://www.apache.org/licenses/LICENSE-2.0"))
 
-  protected[this] implicit val swagger = new Swagger("1.2", "1.0.0", apiInfo)
+  implicit protected[this] val swagger = new Swagger("1.2", "1.0.0", apiInfo)
 
-  protected override def afterAll(): Unit = daoFactory.cleanup()
+  override protected def afterAll(): Unit = daoFactory.cleanup()
 }

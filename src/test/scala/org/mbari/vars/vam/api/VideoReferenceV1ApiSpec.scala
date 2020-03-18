@@ -108,11 +108,11 @@ class VideoReferenceV1ApiSpec extends WebApiStack {
   }
 
   it should "get by uri" in {
-    val uri =
-      get("/v1/videoreference/uri/" +
-        URLEncoder.encode(aVideoReference.uri.toURL.toExternalForm, "UTF-8")) {
-        status should be(200)
-      }
+    aVideoReference.uri should not be (null)
+    get("/v1/videoreference/uri/" +
+      URLEncoder.encode(aVideoReference.uri.toURL.toExternalForm, "UTF-8")) {
+      status should be(200)
+    }
   }
 
   it should "return a lastupdated time" in {

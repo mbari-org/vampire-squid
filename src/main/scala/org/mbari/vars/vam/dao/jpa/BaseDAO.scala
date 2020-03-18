@@ -19,21 +19,22 @@ package org.mbari.vars.vam.dao.jpa
 import java.util.UUID
 import javax.persistence.EntityManager
 
-import org.mbari.vars.vam.dao.{ DAO, PersistentObject }
+import org.mbari.vars.vam.dao.{DAO, PersistentObject}
 import org.slf4j.LoggerFactory
 
-import scala.collection.JavaConverters._
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.jdk.CollectionConverters._
+import scala.concurrent.{ExecutionContext, Future}
 import scala.reflect.ClassTag
 import scala.reflect.classTag
 
 /**
- *
- *
- * @author Brian Schlining
- * @since 2016-05-06T11:18:00
- */
-abstract class BaseDAO[B <: PersistentObject: ClassTag](val entityManager: EntityManager) extends DAO[B] {
+  *
+  *
+  * @author Brian Schlining
+  * @since 2016-05-06T11:18:00
+  */
+abstract class BaseDAO[B <: PersistentObject: ClassTag](val entityManager: EntityManager)
+    extends DAO[B] {
   private[this] val log = LoggerFactory.getLogger(getClass)
 
   if (log.isInfoEnabled) {
@@ -59,12 +60,12 @@ abstract class BaseDAO[B <: PersistentObject: ClassTag](val entityManager: Entit
   }
 
   /**
-   * Lookup entity by primary key. A DAO will only return entities of their type.
-   * Also, note that I had to use a little scala reflection magic here
-   *
-   * @param primaryKey
-   * @return
-   */
+    * Lookup entity by primary key. A DAO will only return entities of their type.
+    * Also, note that I had to use a little scala reflection magic here
+    *
+    * @param primaryKey
+    * @return
+    */
   override def findByUUID(primaryKey: UUID): Option[B] =
     Option(entityManager.find(classTag[B].runtimeClass, primaryKey).asInstanceOf[B])
 

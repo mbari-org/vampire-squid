@@ -22,17 +22,19 @@ import java.util.concurrent.TimeUnit
 
 import org.mbari.vars.vam.controllers.{ MediaController, VideoReferenceController, VideoSequenceController }
 import org.mbari.vars.vam.dao.jpa.DevelopmentTestDAOFactory
-import org.scalatest.{ BeforeAndAfterEach, FlatSpec, Matchers }
+import org.scalatest.BeforeAndAfterEach
 
 import scala.concurrent.Await
 import scala.concurrent.duration.{ Duration => SDuration }
 import scala.concurrent.ExecutionContext.Implicits.global
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 /**
  * @author Brian Schlining
  * @since 2017-03-06T15:54:00
  */
-class MediaControllerSpec extends FlatSpec with Matchers with BeforeAndAfterEach {
+class MediaControllerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEach {
 
   private[this] val daoFactory = DevelopmentTestDAOFactory
   private[this] val controller = new MediaController(daoFactory)

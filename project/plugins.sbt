@@ -1,28 +1,11 @@
-// https://github.com/sbt/sbt-assembly
-addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.10")
-
-// https://github.com/earldouglas/xsbt-web-plugin
-addSbtPlugin("com.earldouglas" % "xsbt-web-plugin" % "4.0.2")
-
-// https://github.com/sbt/sbt-native-packager
-addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.5.2")
-
-// https://github.com/rtimush/sbt-updates
-addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.5.0")
-
-// https://github.com/jrudolph/sbt-dependency-graph
-addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.9.2")
-
-// https://github.com/xerial/sbt-pack
-addSbtPlugin("org.xerial.sbt" % "sbt-pack" % "0.11")
-
-// https://github.com/sbt/sbt-scalariform
-addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.8.2")
-
-// http://www.scalastyle.org/sbt.html
-addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "1.0.0")
-
-// https://github.com/sbt/sbt-header
-addSbtPlugin("de.heikoseeberger" % "sbt-header" % "5.4.0")
+addSbtPlugin("ch.epfl.scala"     % "sbt-scalafix"                 % "0.9.4")
+addSbtPlugin("com.earldouglas"   % "xsbt-web-plugin"              % "4.1.0")
+addSbtPlugin("com.github.atais"  % "sbt-eclipselink-static-weave" % "0.1.1")
+addSbtPlugin("com.timushev.sbt"  % "sbt-updates"                  % "0.5.0")
+addSbtPlugin("com.typesafe.sbt"  % "sbt-git"                      % "1.0.0")
+addSbtPlugin("de.heikoseeberger" % "sbt-header"                   % "5.4.0")
+addSbtPlugin("org.scalameta"     % "sbt-scalafmt"                 % "2.3.2")
+addSbtPlugin("org.scalastyle"    %% "scalastyle-sbt-plugin"       % "1.0.0")
+addSbtPlugin("org.xerial.sbt"    % "sbt-pack"                     % "0.12")
 
 resolvers += Resolver.sonatypeRepo("releases")
