@@ -26,4 +26,5 @@ target/
 # vscode
 .metals/
 .vscode/
-.bloop/
+.bloop/ 
+project/metals.sbt

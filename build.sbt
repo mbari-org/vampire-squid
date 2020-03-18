@@ -72,7 +72,7 @@ lazy val optionSettings = Seq(
     //"-Xfatal-warnings",
     "-Xlint"
   ),
-  javacOptions ++= Seq("-target", "1.8", "-source", "1.8"),
+  javacOptions ++= Seq("-target", "11", "-source", "11"),
   updateOptions := updateOptions.value.withCachedResolution(true)
 )
 
