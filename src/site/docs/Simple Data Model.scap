@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ScappleDocument Version="1.1" ID="9A2111A4-082B-4B03-8DD3-24E9CA19FDF7">
+    <Notes>
+        <Note ID="0" FontSize="12.0" Position="275.359375,94.035156" Width="259.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+                <Fill>0.99454 0.964232 0.652697</Fill>
+            </Appearance>
+            <String>video_sequence
+  - camera_id: ROV name
+  - video sequence name: Deployment identifier </String>
+            <ConnectedNoteIDs>1</ConnectedNoteIDs>
+            <Formatting>
+                <FormatRange Bold="Yes">0,14</FormatRange>
+            </Formatting>
+        </Note>
+        <Note ID="1" FontSize="12.0" Position="256.5,251.089844" Width="296.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+                <Fill>0.99454 0.964232 0.652697</Fill>
+            </Appearance>
+            <String>video
+  - name: video segment identifier
+  - start_timestamp: date/time of start of video
+  - duration_millis: The length fo the video</String>
+            <ConnectedNoteIDs>0, 2</ConnectedNoteIDs>
+            <Formatting>
+                <FormatRange Bold="Yes">0,5</FormatRange>
+            </Formatting>
+        </Note>
+        <Note ID="2" FontSize="12.0" Position="279.0,420.664062" Width="251.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+                <Fill>0.99454 0.964232 0.652697</Fill>
+            </Appearance>
+            <String>video_reference
+  - uri: For files this is the web accessible URL
+  - sha512: checksum</String>
+            <ConnectedNoteIDs>1</ConnectedNoteIDs>
+            <Formatting>
+                <FormatRange Bold="Yes">0,15</FormatRange>
+            </Formatting>
+        </Note>
+        <Note ID="3" FontSize="12.0" Position="412.445312,228.53125" Width="20.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+            </Appearance>
+            <String>*</String>
+        </Note>
+        <Note ID="4" FontSize="12.0" Position="411.765625,147.53125" Width="20.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+            </Appearance>
+            <String>1</String>
+        </Note>
+        <Note ID="5" FontSize="12.0" Position="416.535156,396.101562" Width="20.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+            </Appearance>
+            <String>*</String>
+        </Note>
+        <Note ID="6" FontSize="12.0" Position="414.484375,321.609375" Width="20.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+            </Appearance>
+            <String>1</String>
+        </Note>
+        <Note ID="7" FontSize="12.0" Position="668.773438,77.269531" Width="147.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+                <Fill>0.99454 0.964232 0.652697</Fill>
+            </Appearance>
+            <String>media
+  - camera_id
+  - video_sequence_name
+  - video_name
+  - start_timestamp
+  - duration_millis
+  - uri
+  - sha512</String>
+            <Formatting>
+                <FormatRange Bold="Yes">0,6</FormatRange>
+            </Formatting>
+        </Note>
+        <Note ID="8" FontSize="12.0" Position="239.0,47.0" Width="199.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+            </Appearance>
+            <String>Internal Structure of video assets</String>
+            <Formatting>
+                <FormatRange Bold="Yes">0,34</FormatRange>
+            </Formatting>
+        </Note>
+        <Note ID="11" FontSize="12.0" Position="658.0,47.0" Width="147.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+            </Appearance>
+            <String>Flat “convenience” view</String>
+            <Formatting>
+                <FormatRange Bold="Yes">0,23</FormatRange>
+            </Formatting>
+        </Note>
+        <Note ID="12" FontSize="12.0" Position="237.0,508.0" Width="199.0">
+            <Appearance>
+                <Alignment>Left</Alignment>
+                <Fill>0.99369 0.706018 0.625254</Fill>
+            </Appearance>
+            <String>NOTE: Only showing required fields</String>
+        </Note>
+    </Notes>
+    <BackgroundShapes>
+        <Shape ID="9" Sticky="No" Position="239.0,73.0" Width="318.0" Height="422.296875">
+            <Appearance>
+                <Border Weight="1"></Border>
+                <Fill>0.842632 0.921673 0.792615</Fill>
+            </Appearance>
+        </Shape>
+        <Shape ID="10" Sticky="No" Position="657.582031,72.296875" Width="318.0" Height="422.296875">
+            <Appearance>
+                <Border Weight="1"></Border>
+                <Fill>0.842632 0.921673 0.792615</Fill>
+            </Appearance>
+        </Shape>
+    </BackgroundShapes>
+    <AutoFit>0, 2-8, 11-12</AutoFit>
+    <NoteStyles>
+        <Style Name="Bubble (Blue)" ID="9B9050D8-D872-438B-8FDD-F71053F1D13F" AffectFontStyle="No" AffectAlignment="No" AffectTextColor="No" AffectNoteBody="Yes" AffectFade="No">
+            <BorderThickness>1</BorderThickness>
+            <BorderColor>0.561855 0.71062 0.779401</BorderColor>
+            <FillColor>0.702319 0.888276 0.974252</FillColor>
+        </Style>
+        <Style Name="Bubble (Green)" ID="4FD29795-F1D8-4B8E-81EB-FB3B871F8890" AffectFontStyle="No" AffectAlignment="No" AffectTextColor="No" AffectNoteBody="Yes" AffectFade="No">
+            <BorderThickness>1</BorderThickness>
+            <BorderColor>0.572684 0.758969 0.558154</BorderColor>
+            <FillColor>0.715855 0.948712 0.697692</FillColor>
+        </Style>
+        <Style Name="Bubble (Pink)" ID="CCD63722-4BFB-4430-B6CC-23B09949E077" AffectFontStyle="No" AffectAlignment="No" AffectTextColor="No" AffectNoteBody="Yes" AffectFade="No">
+            <BorderThickness>1</BorderThickness>
+            <BorderColor>0.794796 0.560965 0.58607</BorderColor>
+            <FillColor>0.957566 0.766747 0.999616</FillColor>
+        </Style>
+        <Style Name="Bubble (Red)" ID="9AF60CF0-2E4F-4644-B1BD-E8BE9AE52F0F" AffectFontStyle="No" AffectAlignment="No" AffectTextColor="No" AffectNoteBody="Yes" AffectFade="No">
+            <BorderThickness>1</BorderThickness>
+            <BorderColor>0.794796 0.560965 0.58607</BorderColor>
+            <FillColor>0.993495 0.701207 0.732587</FillColor>
+        </Style>
+        <Style Name="Bubble (Yellow)" ID="03F70B53-40E7-42FF-9F6D-41BF3BB5DD9B" AffectFontStyle="No" AffectAlignment="No" AffectTextColor="No" AffectNoteBody="Yes" AffectFade="No">
+            <BorderThickness>1</BorderThickness>
+            <BorderColor>0.798177 0.714184 0.522055</BorderColor>
+            <FillColor>0.997722 0.89273 0.652569</FillColor>
+        </Style>
+        <Style Name="Red Text" ID="79E6E17D-6FBB-40E6-867E-AA2EA30A1B58" AffectFontStyle="No" AffectAlignment="No" AffectTextColor="Yes" AffectNoteBody="No" AffectFade="No">
+            <TextColor>0.985948 0.0 0.026951</TextColor>
+        </Style>
+        <Style Name="Title Text" ID="78CE0983-0017-48BF-BBAD-9AAC9FAB4E5B" AffectFontStyle="Yes" AffectAlignment="Yes" AffectTextColor="No" AffectNoteBody="No" AffectFade="No">
+            <FontSize>28.0</FontSize>
+            <IsBold>Yes</IsBold>
+        </Style>
+    </NoteStyles>
+    <UISettings>
+        <BackgroundColor>0.999767 0.98837 0.949907</BackgroundColor>
+        <DefaultFont>Helvetica</DefaultFont>
+    </UISettings>
+    <PrintSettings PaperSize="612.0,792.0" LeftMargin="72.0" RightMargin="72.0" TopMargin="90.0" BottomMargin="90.0" PaperType="na-letter" Orientation="Portrait" HorizontalPagination="Clip" VerticalPagination="Auto" ScaleFactor="1.0" HorizontallyCentered="Yes" VerticallyCentered="Yes" Collates="Yes" PagesAcross="1" PagesDown="1"></PrintSettings>
+</ScappleDocument>
