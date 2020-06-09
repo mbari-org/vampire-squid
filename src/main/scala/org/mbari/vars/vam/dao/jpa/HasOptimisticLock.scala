@@ -18,16 +18,16 @@ package org.mbari.vars.vam.dao.jpa
 
 import java.sql.Timestamp
 import java.time.Instant
-import javax.persistence.{ Column, Version }
+import javax.persistence.{Column, Version}
 
 import com.google.gson.annotations.Expose
 
 /**
- * OUr Entities should use optimixtic locks. This trait allows you to mixin the lock.
- *
- * @author Brian Schlining
- * @since 2016-05-05T16:22:00
- */
+  * OUr Entities should use optimixtic locks. This trait allows you to mixin the lock.
+  *
+  * @author Brian Schlining
+  * @since 2016-05-05T16:22:00
+  */
 trait HasOptimisticLock {
 
   /** Optimistic lock to prevent concurrent overwrites */

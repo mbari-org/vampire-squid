@@ -18,77 +18,79 @@ package org.mbari.vars.vam.dao.jpa
 
 import java.net.URI
 import javax.activation.MimeType
-import javax.persistence.{ EntityListeners, Table, _ }
+import javax.persistence.{EntityListeners, Table, _}
 
-import com.google.gson.annotations.{ Expose, SerializedName }
+import com.google.gson.annotations.{Expose, SerializedName}
 
 import scala.util.Try
 
 /**
- *
- *
- * @author Brian Schlining
- * @since 2016-05-05T18:19:00
- */
+  *
+  *
+  * @author Brian Schlining
+  * @since 2016-05-05T18:19:00
+  */
 @Entity(name = "VideoReference")
-@Table(name = "video_references", indexes = Array(
-  new Index(name = "idx_video_references__uri", columnList = "uri"),
-  new Index(name = "idx_video_references__video_uuid", columnList = "video_uuid")))
+@Table(
+  name = "video_references",
+  indexes = Array(
+    new Index(name = "idx_video_references__uri", columnList = "uri"),
+    new Index(name = "idx_video_references__video_uuid", columnList = "video_uuid")
+  )
+)
 @EntityListeners(value = Array(classOf[TransactionLogger]))
-@NamedNativeQueries(Array(
-  new NamedNativeQuery(
-    name = "VideoReference.findByFileName",
-    query = "SELECT uuid FROM video_references WHERE uri LIKE ?1"),
-  new NamedNativeQuery(
-    name = "VideoReference.findAllURIs",
-    query = "SELECT uri FROM video_references")))
+@NamedNativeQueries(
+  Array(
+    new NamedNativeQuery(
+      name = "VideoReference.findByFileName",
+      query = "SELECT uuid FROM video_references WHERE uri LIKE ?1"
+    ),
+    new NamedNativeQuery(
+      name = "VideoReference.findAllURIs",
+      query = "SELECT uri FROM video_references"
+    )
+  )
+)
 @NamedQueries(
   Array(
-    new NamedQuery(
-      name = "VideoReference.findAll",
-      query = "SELECT v FROM VideoReference v"),
+    new NamedQuery(name = "VideoReference.findAll", query = "SELECT v FROM VideoReference v"),
     new NamedQuery(
       name = "VideoReference.findBySha512",
-      query = "SELECT v FROM VideoReference v WHERE v.sha512 = :sha512"),
+      query = "SELECT v FROM VideoReference v WHERE v.sha512 = :sha512"
+    ),
     new NamedQuery(
       name = "VideoReference.findByVideoUUID",
-      query = "SELECT v FROM VideoReference v JOIN v.video w WHERE w.uuid = :uuid"),
+      query = "SELECT v FROM VideoReference v JOIN v.video w WHERE w.uuid = :uuid"
+    ),
     new NamedQuery(
       name = "VideoReference.findByURI",
-      query = "SELECT v FROM VideoReference v WHERE v.uri = :uri")))
+      query = "SELECT v FROM VideoReference v WHERE v.uri = :uri"
+    )
+  )
+)
 class VideoReference extends HasUUID with HasOptimisticLock with HasDescription {
 
   @Expose(serialize = true)
   @Basic(optional = false)
-  @Column(
-    name = "uri",
-    unique = true,
-    length = 1024,
-    nullable = false)
+  @Column(name = "uri", unique = true, length = 1024, nullable = false)
   @Convert(converter = classOf[URIConverter])
   var uri: URI = _
 
   /**
-   * Defines the video files container. We are using mimetypes to provide
-   * container definitions. Note that the mimetype does not always indicate
-   * the video/audio encoding
-   */
+    * Defines the video files container. We are using mimetypes to provide
+    * container definitions. Note that the mimetype does not always indicate
+    * the video/audio encoding
+    */
   @Expose(serialize = true)
-  @Column(
-    name = "container",
-    length = 128)
+  @Column(name = "container", length = 128)
   var container: String = _
 
   @Expose(serialize = true)
-  @Column(
-    name = "video_codec",
-    length = 128)
+  @Column(name = "video_codec", length = 128)
   var videoCodec: String = _
 
   @Expose(serialize = true)
-  @Column(
-    name = "audio_codec",
-    length = 128)
+  @Column(name = "audio_codec", length = 128)
   var audioCodec: String = _
 
   @Expose(serialize = true)
@@ -100,14 +102,12 @@ class VideoReference extends HasUUID with HasOptimisticLock with HasDescription 
   var height: Int = _
 
   @Expose(serialize = true)
-  @Column(
-    name = "frame_rate")
+  @Column(name = "frame_rate")
   var frameRate: Double = _
 
   @Expose(serialize = true)
   @SerializedName(value = "size_bytes")
-  @Column(
-    name = "size_bytes")
+  @Column(name = "size_bytes")
   var size: Long = _
 
   @Expose(serialize = false)
@@ -130,16 +130,17 @@ class VideoReference extends HasUUID with HasOptimisticLock with HasDescription 
 object VideoReference {
 
   def apply(
-    uri: URI,
-    container: Option[String] = None,
-    videoCodec: Option[String] = None,
-    audioCodec: Option[String] = None,
-    width: Option[Int] = None,
-    height: Option[Int] = None,
-    frameRate: Option[Double] = None,
-    sizeBytes: Option[Long] = None,
-    description: Option[String] = None,
-    sha512: Option[Array[Byte]] = None): VideoReference = {
+      uri: URI,
+      container: Option[String] = None,
+      videoCodec: Option[String] = None,
+      audioCodec: Option[String] = None,
+      width: Option[Int] = None,
+      height: Option[Int] = None,
+      frameRate: Option[Double] = None,
+      sizeBytes: Option[Long] = None,
+      description: Option[String] = None,
+      sha512: Option[Array[Byte]] = None
+  ): VideoReference = {
     val videoReference = new VideoReference
     videoReference.uri = uri
     container.foreach(v => videoReference.container = v)
@@ -157,62 +158,97 @@ object VideoReference {
   def apply(uri: URI): VideoReference = apply(uri, container = None)
 
   def apply(
-    uri: URI,
-    container: String,
-    videoCodec: String,
-    audioCodec: String,
-    width: Int,
-    height: Int): VideoReference =
-    apply(uri, Some(container), Some(videoCodec), Some(audioCodec),
-      Some(width), Some(height))
+      uri: URI,
+      container: String,
+      videoCodec: String,
+      audioCodec: String,
+      width: Int,
+      height: Int
+  ): VideoReference =
+    apply(uri, Some(container), Some(videoCodec), Some(audioCodec), Some(width), Some(height))
 
   def apply(
-    uri: URI,
-    container: String,
-    videoCodec: String,
-    audioCodec: String,
-    width: Int,
-    height: Int,
-    description: String): VideoReference =
-    apply(uri, Some(container), Some(videoCodec), Some(audioCodec),
-      Some(width), Some(height), description = Some(description))
+      uri: URI,
+      container: String,
+      videoCodec: String,
+      audioCodec: String,
+      width: Int,
+      height: Int,
+      description: String
+  ): VideoReference =
+    apply(
+      uri,
+      Some(container),
+      Some(videoCodec),
+      Some(audioCodec),
+      Some(width),
+      Some(height),
+      description = Some(description)
+    )
 
   def apply(
-    uri: URI,
-    container: String,
-    videoCodec: String,
-    audioCodec: String,
-    width: Int,
-    height: Int,
-    description: String,
-    sha512: Array[Byte]): VideoReference =
-    apply(uri, Some(container), Some(videoCodec), Some(audioCodec),
-      Some(width), Some(height), description = Some(description), sha512 = Some(sha512))
+      uri: URI,
+      container: String,
+      videoCodec: String,
+      audioCodec: String,
+      width: Int,
+      height: Int,
+      description: String,
+      sha512: Array[Byte]
+  ): VideoReference =
+    apply(
+      uri,
+      Some(container),
+      Some(videoCodec),
+      Some(audioCodec),
+      Some(width),
+      Some(height),
+      description = Some(description),
+      sha512 = Some(sha512)
+    )
 
   def apply(
-    uri: URI,
-    container: String,
-    videoCodec: String,
-    audioCodec: String,
-    width: Int,
-    height: Int,
-    frameRate: Double,
-    size: Long): VideoReference =
-    apply(uri, Some(container), Some(videoCodec), Some(audioCodec),
-      Some(width), Some(height), frameRate = Some(frameRate), sizeBytes = Some(size))
+      uri: URI,
+      container: String,
+      videoCodec: String,
+      audioCodec: String,
+      width: Int,
+      height: Int,
+      frameRate: Double,
+      size: Long
+  ): VideoReference =
+    apply(
+      uri,
+      Some(container),
+      Some(videoCodec),
+      Some(audioCodec),
+      Some(width),
+      Some(height),
+      frameRate = Some(frameRate),
+      sizeBytes = Some(size)
+    )
 
   def apply(
-    uri: URI,
-    container: String,
-    videoCodec: String,
-    audioCodec: String,
-    width: Int,
-    height: Int,
-    frameRate: Double,
-    size: Long,
-    description: String): VideoReference =
-    apply(uri, Some(container), Some(videoCodec), Some(audioCodec),
-      Some(width), Some(height), frameRate = Some(frameRate), sizeBytes = Some(size),
-      description = Some(description))
+      uri: URI,
+      container: String,
+      videoCodec: String,
+      audioCodec: String,
+      width: Int,
+      height: Int,
+      frameRate: Double,
+      size: Long,
+      description: String
+  ): VideoReference =
+    apply(
+      uri,
+      Some(container),
+      Some(videoCodec),
+      Some(audioCodec),
+      Some(width),
+      Some(height),
+      frameRate = Some(frameRate),
+      sizeBytes = Some(size),
+      description = Some(description)
+    )
 
 }

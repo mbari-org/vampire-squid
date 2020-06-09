@@ -20,11 +20,11 @@ import java.net.URI
 import java.util.UUID
 
 /**
- * Defines the API methods used for accessing VideoReference objects
- *
- * @author Brian Schlining
- * @since 2016-05-05T14:51:00
- */
+  * Defines the API methods used for accessing VideoReference objects
+  *
+  * @author Brian Schlining
+  * @since 2016-05-05T14:51:00
+  */
 trait VideoReferenceDAO[T <: PersistentObject] extends DAO[T] {
 
   def findAll(): Iterable[T]

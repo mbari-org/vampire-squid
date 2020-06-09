@@ -17,16 +17,16 @@
 package org.mbari.vars.vam.model
 
 import java.net.URI
-import java.time.{ Duration, Instant }
+import java.time.{Duration, Instant}
 import java.util.UUID
 
-import com.google.gson.annotations.{ Expose, SerializedName }
+import com.google.gson.annotations.{Expose, SerializedName}
 import org.mbari.vars.vam.dao.jpa.VideoReference
 
 /**
- * @author Brian Schlining
- * @since 2017-03-06T09:28:00
- */
+  * @author Brian Schlining
+  * @since 2017-03-06T09:28:00
+  */
 class Media {
 
   @Expose(serialize = true)
@@ -84,13 +84,15 @@ class Media {
   @Expose(serialize = true)
   var sha512: Array[Byte] = _
 
-  def endTimestamp: Option[Instant] = if (startTimestamp != null && duration != null) Some(startTimestamp.plus(duration))
-  else None
+  def endTimestamp: Option[Instant] =
+    if (startTimestamp != null && duration != null) Some(startTimestamp.plus(duration))
+    else None
 
   def contains(ts: Instant): Boolean = {
     endTimestamp match {
       case None => startTimestamp == ts
-      case Some(e) => startTimestamp == ts || e == ts || startTimestamp.isBefore(ts) && e.isAfter(ts)
+      case Some(e) =>
+        startTimestamp == ts || e == ts || startTimestamp.isBefore(ts) && e.isAfter(ts)
     }
   }
 
@@ -99,7 +101,7 @@ class Media {
 object Media {
 
   def apply(videoReference: VideoReference): Media = {
-    val video = videoReference.video
+    val video         = videoReference.video
     val videoSequence = video.videoSequence
 
     val m = new Media
@@ -126,5 +128,46 @@ object Media {
 
     m
   }
-}
 
+  def build(
+      videoReferenceUuid: Option[UUID] = None,
+      videoSequenceUuid: Option[UUID] = None,
+      videoUuid: Option[UUID] = None,
+      videoSequenceName: Option[String] = None,
+      cameraId: Option[String] = None,
+      videoName: Option[String] = None,
+      uri: Option[URI] = None,
+      startTimestamp: Option[Instant] = None,
+      duration: Option[Duration] = None,
+      container: Option[String] = None,
+      videoCodec: Option[String] = None,
+      audioCodec: Option[String] = None,
+      width: Option[Int] = None,
+      height: Option[Int] = None,
+      frameRate: Option[Double] = None,
+      sizeBytes: Option[Long] = None,
+      description: Option[String] = None,
+      sha512: Option[Array[Byte]] = None
+  ): Media = {
+    val m = new Media
+    videoReferenceUuid.foreach(m.videoReferenceUuid = _)
+    videoSequenceUuid.foreach(m.videoSequenceUuid = _)
+    videoUuid.foreach(m.videoUuid = _)
+    videoSequenceName.foreach(m.videoSequenceName = _)
+    cameraId.foreach(m.cameraId = _)
+    videoName.foreach(m.videoName = _)
+    uri.foreach(m.uri = _)
+    startTimestamp.foreach(m.startTimestamp = _)
+    duration.foreach(m.duration = _)
+    container.foreach(m.container = _)
+    videoCodec.foreach(m.videoCodec = _)
+    audioCodec.foreach(m.audioCodec = _)
+    width.foreach(m.width = _)
+    height.foreach(m.height = _)
+    frameRate.foreach(m.frameRate = _)
+    sizeBytes.foreach(m.sizeBytes = _)
+    description.foreach(m.description = _)
+    sha512.foreach(m.sha512 = _)
+    m
+  }
+}

@@ -26,16 +26,17 @@ import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
 /**
- * @author Brian Schlining
- * @since 2017-03-06T11:44:00
- */
+  * @author Brian Schlining
+  * @since 2017-03-06T11:44:00
+  */
 object TestDAOFactory {
 
   val TestProperties = Map(
-    "eclipselink.logging.level" -> "FINE",
-    "javax.persistence.schema-generation.scripts.action" -> "drop-and-create",
+    "eclipselink.logging.level"                                 -> "FINE",
+    "javax.persistence.schema-generation.scripts.action"        -> "drop-and-create",
     "javax.persistence.schema-generation.scripts.create-target" -> "target/test-database-create.ddl",
-    "javax.persistence.schema-generation.scripts.drop-target" -> "target/test-database-drop.ddl")
+    "javax.persistence.schema-generation.scripts.drop-target"   -> "target/test-database-drop.ddl"
+  )
 
   //val Instance: SpecDAOFactory = DerbyTestDAOFactory.asInstanceOf[SpecDAOFactory]
   val Instance: SpecDAOFactory = DevelopmentTestDAOFactory.asInstanceOf[SpecDAOFactory]
@@ -67,15 +68,17 @@ trait SpecDAOFactory extends JPADAOFactory {
 
 object DerbyTestDAOFactory extends SpecDAOFactory {
 
-  override def testProps(): Map[String, String] = TestDAOFactory.TestProperties ++
-    Map(
-      "eclipselink.target-database" -> TargetDatabase.Derby,
-      "javax.persistence.database-product-name" -> TargetDatabase.Derby)
+  override def testProps(): Map[String, String] =
+    TestDAOFactory.TestProperties ++
+      Map(
+        "eclipselink.target-database"             -> TargetDatabase.Derby,
+        "javax.persistence.database-product-name" -> TargetDatabase.Derby
+      )
 
   lazy val entityManagerFactory: EntityManagerFactory = {
-    val driver = config.getString("org.mbari.vars.vam.database.derby.driver")
-    val url = config.getString("org.mbari.vars.vam.database.derby.url")
-    val user = config.getString("org.mbari.vars.vam.database.derby.user")
+    val driver   = config.getString("org.mbari.vars.vam.database.derby.driver")
+    val url      = config.getString("org.mbari.vars.vam.database.derby.url")
+    val user     = config.getString("org.mbari.vars.vam.database.derby.user")
     val password = config.getString("org.mbari.vars.vam.database.derby.password")
     EntityManagerFactories(url, user, password, driver, testProps())
   }
@@ -84,15 +87,17 @@ object DerbyTestDAOFactory extends SpecDAOFactory {
 
 object H2TestDAOFactory extends SpecDAOFactory {
 
-  override def testProps(): Map[String, String] = TestDAOFactory.TestProperties ++
-    Map(
-      "eclipselink.target-database" -> TargetDatabase.Derby,
-      "javax.persistence.database-product-name" -> TargetDatabase.Derby)
+  override def testProps(): Map[String, String] =
+    TestDAOFactory.TestProperties ++
+      Map(
+        "eclipselink.target-database"             -> TargetDatabase.Derby,
+        "javax.persistence.database-product-name" -> TargetDatabase.Derby
+      )
 
   lazy val entityManagerFactory: EntityManagerFactory = {
-    val driver = config.getString("org.mbari.vars.vam.database.h2.driver")
-    val url = config.getString("org.mbari.vars.vam.database.h2.url")
-    val user = config.getString("org.mbari.vars.vam.database.h2.user")
+    val driver   = config.getString("org.mbari.vars.vam.database.h2.driver")
+    val url      = config.getString("org.mbari.vars.vam.database.h2.url")
+    val user     = config.getString("org.mbari.vars.vam.database.h2.user")
     val password = config.getString("org.mbari.vars.vam.database.h2.password")
     EntityManagerFactories(url, user, password, driver, testProps())
   }
@@ -103,15 +108,17 @@ object DevelopmentTestDAOFactory extends SpecDAOFactory {
 
   val productName = config.getString("org.mbari.vars.vam.database.development.name")
 
-  override def testProps(): Map[String, String] = TestDAOFactory.TestProperties ++
-    Map(
-      "eclipselink.target-database" -> productName,
-      "javax.persistence.database-product-name" -> productName)
+  override def testProps(): Map[String, String] =
+    TestDAOFactory.TestProperties ++
+      Map(
+        "eclipselink.target-database"             -> productName,
+        "javax.persistence.database-product-name" -> productName
+      )
 
   lazy val entityManagerFactory: EntityManagerFactory = {
-    val driver = config.getString("org.mbari.vars.vam.database.development.driver")
-    val url = config.getString("org.mbari.vars.vam.database.development.url")
-    val user = config.getString("org.mbari.vars.vam.database.development.user")
+    val driver   = config.getString("org.mbari.vars.vam.database.development.driver")
+    val url      = config.getString("org.mbari.vars.vam.database.development.url")
+    val user     = config.getString("org.mbari.vars.vam.database.development.user")
     val password = config.getString("org.mbari.vars.vam.database.development.password")
     EntityManagerFactories(url, user, password, driver, testProps())
   }

@@ -16,15 +16,15 @@
 
 package org.mbari.vars.vam.api
 
-import org.mbari.vars.vam.controllers.{ VideoSequenceController }
-import org.mbari.vars.vam.dao.jpa.{ VideoSequence }
+import org.mbari.vars.vam.controllers.{VideoSequenceController}
+import org.mbari.vars.vam.dao.jpa.{VideoSequence}
 
 /**
- *
- *
- * @author Brian Schlining
- * @since 2016-08-10T15:28:00
- */
+  *
+  *
+  * @author Brian Schlining
+  * @since 2016-08-10T15:28:00
+  */
 class VideoSequenceV1ApiSpec extends WebApiStack {
 
   private[this] val videoSequenceV1Api = {

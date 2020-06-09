@@ -23,14 +23,14 @@ import org.mbari.vars.vam.Constants
 import org.mbari.vars.vam.dao.VideoReferenceDAO
 import org.mbari.vars.vam.dao.jpa._
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
- *
- *
- * @author Brian Schlining
- * @since 2016-06-06T16:14:00
- */
+  *
+  *
+  * @author Brian Schlining
+  * @since 2016-06-06T16:14:00
+  */
 class VideoReferenceController(val daoFactory: JPADAOFactory) extends BaseController {
 
   private type VRDAO = VideoReferenceDAO[VideoReference]
@@ -44,42 +44,57 @@ class VideoReferenceController(val daoFactory: JPADAOFactory) extends BaseContro
   def findByUUID(uuid: UUID)(implicit ec: ExecutionContext): Future[Option[VideoReference]] =
     exec(d => d.findByUUID(uuid))
 
-  def findByVideoUUID(videoUUID: UUID)(implicit ec: ExecutionContext): Future[Iterable[VideoReference]] =
+  def findByVideoUUID(
+      videoUUID: UUID
+  )(implicit ec: ExecutionContext): Future[Iterable[VideoReference]] =
     exec(d => d.findByVideoUUID(videoUUID))
 
   def findByURI(uri: URI)(implicit ec: ExecutionContext): Future[Option[VideoReference]] =
     exec(d => d.findByURI(uri))
 
-  def findBySha512(sha512: Array[Byte])(implicit ec: ExecutionContext): Future[Option[VideoReference]] =
+  def findBySha512(
+      sha512: Array[Byte]
+  )(implicit ec: ExecutionContext): Future[Option[VideoReference]] =
     exec(d => d.findBySha512(sha512))
 
   def findConcurrent(uuid: UUID)(implicit ec: ExecutionContext): Future[Iterable[VideoReference]] =
     exec(d => d.findConcurrent(uuid))
 
   def create(
-    videoUUID: UUID,
-    uri: URI,
-    container: Option[String] = None,
-    videoCodec: Option[String],
-    audioCodec: Option[String] = None,
-    width: Option[Int] = None,
-    height: Option[Int] = None,
-    frameRate: Option[Double] = None,
-    sizeBytes: Option[Long] = None,
-    description: Option[String] = None,
-    sha512: Option[Array[Byte]] = None)(implicit ec: ExecutionContext): Future[VideoReference] = {
+      videoUUID: UUID,
+      uri: URI,
+      container: Option[String] = None,
+      videoCodec: Option[String],
+      audioCodec: Option[String] = None,
+      width: Option[Int] = None,
+      height: Option[Int] = None,
+      frameRate: Option[Double] = None,
+      sizeBytes: Option[Long] = None,
+      description: Option[String] = None,
+      sha512: Option[Array[Byte]] = None
+  )(implicit ec: ExecutionContext): Future[VideoReference] = {
 
     def fn(dao: VRDAO): VideoReference = {
       dao.findByURI(uri) match {
         case Some(v) => v
         case None =>
           val vdao = daoFactory.newVideoDAO(dao)
-          val v = vdao.findByUUID(videoUUID)
+          val v    = vdao.findByUUID(videoUUID)
           v match {
-            case None => throw new NotFoundInDatastoreException(s"No Video with UUID of $videoUUID exists")
+            case None =>
+              throw new NotFoundInDatastoreException(s"No Video with UUID of $videoUUID exists")
             case Some(video) =>
-              val videoReference = VideoReference(uri, container, videoCodec, audioCodec, width,
-                height, frameRate, sizeBytes, description)
+              val videoReference = VideoReference(
+                uri,
+                container,
+                videoCodec,
+                audioCodec,
+                width,
+                height,
+                frameRate,
+                sizeBytes,
+                description
+              )
               video.addVideoReference(videoReference)
               sha512.foreach(videoReference.sha512 = _)
               dao.create(videoReference)
@@ -93,22 +108,26 @@ class VideoReferenceController(val daoFactory: JPADAOFactory) extends BaseContro
   }
 
   def update(
-    uuid: UUID,
-    videoUUID: Option[UUID],
-    uri: Option[URI],
-    container: Option[String] = None,
-    videoCodec: Option[String],
-    audioCodec: Option[String] = None,
-    width: Option[Int] = None,
-    height: Option[Int] = None,
-    frameRate: Option[Double] = None,
-    sizeBytes: Option[Long] = None,
-    description: Option[String] = None,
-    sha512: Option[Array[Byte]] = None)(implicit ec: ExecutionContext): Future[VideoReference] = {
+      uuid: UUID,
+      videoUUID: Option[UUID],
+      uri: Option[URI],
+      container: Option[String] = None,
+      videoCodec: Option[String],
+      audioCodec: Option[String] = None,
+      width: Option[Int] = None,
+      height: Option[Int] = None,
+      frameRate: Option[Double] = None,
+      sizeBytes: Option[Long] = None,
+      description: Option[String] = None,
+      sha512: Option[Array[Byte]] = None
+  )(implicit ec: ExecutionContext): Future[VideoReference] = {
 
     def fn(dao: VRDAO): VideoReference = {
       dao.findByUUID(uuid) match {
-        case None => throw new NotFoundInDatastoreException(s"No VideoReference with UUID of $uuid was found in the datastore")
+        case None =>
+          throw new NotFoundInDatastoreException(
+            s"No VideoReference with UUID of $uuid was found in the datastore"
+          )
         case Some(videoReference) =>
           uri.foreach(v => videoReference.uri = v)
           container.foreach(v => videoReference.container = v)
@@ -154,7 +173,7 @@ class VideoReferenceController(val daoFactory: JPADAOFactory) extends BaseContro
 
   private def exec[T](fn: VRDAO => T)(implicit ec: ExecutionContext): Future[T] = {
     val dao = daoFactory.newVideoReferenceDAO()
-    val f = dao.runTransaction(fn)
+    val f   = dao.runTransaction(fn)
     f.onComplete(t => dao.close())
     f
   }

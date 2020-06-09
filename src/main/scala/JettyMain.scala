@@ -17,7 +17,7 @@
 class JettyMain {}
 import com.typesafe.config.ConfigFactory
 import javax.servlet.DispatcherType
-import net.bull.javamelody.{ MonitoringFilter, Parameter, ReportServlet, SessionListener }
+import net.bull.javamelody.{MonitoringFilter, Parameter, ReportServlet, SessionListener}
 import org.eclipse.jetty.server._
 import org.eclipse.jetty.servlet.FilterHolder
 import org.eclipse.jetty.webapp.WebAppContext
@@ -27,11 +27,11 @@ object JettyMain {
 
   object conf {
     private[this] val config = ConfigFactory.load()
-    val port = config.getInt("http.port")
-    val stopTimeout = config.getInt("http.stop.timeout")
+    val port                 = config.getInt("http.port")
+    val stopTimeout          = config.getInt("http.stop.timeout")
     val connectorIdleTimeout = config.getInt("http.connector.idle.timeout")
-    val webapp = config.getString("http.webapp")
-    val contextPath = config.getString("http.context.path")
+    val webapp               = config.getString("http.webapp")
+    val contextPath          = config.getString("http.context.path")
   }
 
   def main(args: Array[String]) = {
@@ -66,7 +66,8 @@ object JettyMain {
     webApp.addFilter(
       monitoringFilter,
       "/*",
-      java.util.EnumSet.of(DispatcherType.REQUEST, DispatcherType.ASYNC))
+      java.util.EnumSet.of(DispatcherType.REQUEST, DispatcherType.ASYNC)
+    )
 
     server setHandler webApp
 

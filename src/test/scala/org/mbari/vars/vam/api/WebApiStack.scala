@@ -17,9 +17,9 @@
 package org.mbari.vars.vam.api
 
 import org.mbari.vars.vam.Constants
-import org.mbari.vars.vam.dao.jpa.{ DevelopmentTestDAOFactory, H2TestDAOFactory }
+import org.mbari.vars.vam.dao.jpa.{DevelopmentTestDAOFactory, H2TestDAOFactory}
 import org.scalatest.BeforeAndAfterAll
-import org.scalatra.swagger.{ ApiInfo, Swagger }
+import org.scalatra.swagger.{ApiInfo, Swagger}
 import org.scalatra.test.scalatest.ScalatraFlatSpec
 
 import scala.concurrent.ExecutionContext
@@ -27,15 +27,15 @@ import org.scalatra.swagger.ContactInfo
 import org.scalatra.swagger.LicenseInfo
 
 /**
- *
- *
- * @author Brian Schlining
- * @since 2016-08-11T17:09:00
- */
+  *
+  *
+  * @author Brian Schlining
+  * @since 2016-08-11T17:09:00
+  */
 trait WebApiStack extends ScalatraFlatSpec with BeforeAndAfterAll {
 
-  protected[this] val gson = Constants.GSON
-  protected[this] val daoFactory = DevelopmentTestDAOFactory
+  protected[this] val gson                      = Constants.GSON
+  protected[this] val daoFactory                = DevelopmentTestDAOFactory
   implicit protected[this] val executionContext = ExecutionContext.global
 
   val apiInfo = ApiInfo(
@@ -43,7 +43,8 @@ trait WebApiStack extends ScalatraFlatSpec with BeforeAndAfterAll {
     "A Video Asset Managment microservice0",
     "http://www.mbari.org",
     ContactInfo("Brian Schlining", "http://www.mbari.org", "brian@mbari.org"),
-    LicenseInfo("Apache 2.0", "https://www.apache.org/licenses/LICENSE-2.0"))
+    LicenseInfo("Apache 2.0", "https://www.apache.org/licenses/LICENSE-2.0")
+  )
 
   implicit protected[this] val swagger = new Swagger("1.2", "1.0.0", apiInfo)
 

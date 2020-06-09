@@ -17,22 +17,21 @@
 package org.mbari.vars.vam.dao.jpa
 
 import java.net.URI
-import java.time.{ Duration, Instant }
+import java.time.{Duration, Instant}
 import java.util.concurrent.TimeUnit
 
-
 import scala.concurrent.Await
-import scala.concurrent.duration.{ Duration => SDuration }
+import scala.concurrent.duration.{Duration => SDuration}
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 /**
- *
- *
- * @author Brian Schlining
- * @since 2016-05-18T14:04:00
- */
+  *
+  *
+  * @author Brian Schlining
+  * @since 2016-05-18T14:04:00
+  */
 class VideoReferenceDAOSpec extends AnyFlatSpec with Matchers {
 
   private[this] val daoFactory = DevelopmentTestDAOFactory
@@ -45,14 +44,27 @@ class VideoReferenceDAOSpec extends AnyFlatSpec with Matchers {
   val name0 = "T0123"
   val videoReference0 = VideoReference(
     new URI("http://foo.bar/somevideo.mp4"),
-    "video/mp4", "hevc", "pcm_s24le", 1920, 1080, "some description",
-    Array.fill[Byte](64)(10))
+    "video/mp4",
+    "hevc",
+    "pcm_s24le",
+    1920,
+    1080,
+    "some description",
+    Array.fill[Byte](64)(10)
+  )
 
-  val videoSequence0 = VideoSequence(name0, "Bar", Seq(
-    Video("bar1", Instant.now, videoReferences = Seq(
-      VideoReference(new URI("uri:mbari:tape:T0123-04HD")),
-      videoReference0)),
-    Video("bar2", Instant.now, Duration.ofSeconds(23))))
+  val videoSequence0 = VideoSequence(
+    name0,
+    "Bar",
+    Seq(
+      Video(
+        "bar1",
+        Instant.now,
+        videoReferences = Seq(VideoReference(new URI("uri:mbari:tape:T0123-04HD")), videoReference0)
+      ),
+      Video("bar2", Instant.now, Duration.ofSeconds(23))
+    )
+  )
 
   "VideoReferenceDAOImpl" should "create a record in the datastore" in {
     Await.result(dao.runTransaction(d => d.create(videoReference0)), timeout)
@@ -82,7 +94,12 @@ class VideoReferenceDAOSpec extends AnyFlatSpec with Matchers {
   it should "throw an exception if no parent video is assigned" in {
     val vr = VideoReference(
       new URI("http://foo.bar/someothervideo.mp4"),
-      "video/mp4", "hevc", "pcm_s24le", 1920, 1080)
+      "video/mp4",
+      "hevc",
+      "pcm_s24le",
+      1920,
+      1080
+    )
 
     a[Exception] should be thrownBy {
       Await.result(dao.runTransaction(d => d.create(vr)), timeout)
@@ -93,15 +110,21 @@ class VideoReferenceDAOSpec extends AnyFlatSpec with Matchers {
   val name1 = "T9999"
   val videoReference1 = VideoReference(
     new URI("http://foo.bar/somevideoagain.mp4"),
-    "video/mp4", "hevc", "pcm_s24le", 1920, 1080)
+    "video/mp4",
+    "hevc",
+    "pcm_s24le",
+    1920,
+    1080
+  )
 
-  val video1 = Video("bar11", Instant.now, videoReferences = Seq(
-    VideoReference(new URI("uri:mbari:tape:T9999-08HD")),
-    videoReference1))
+  val video1 = Video(
+    "bar11",
+    Instant.now,
+    videoReferences = Seq(VideoReference(new URI("uri:mbari:tape:T9999-08HD")), videoReference1)
+  )
 
-  val videoSequence1 = VideoSequence(name1, "Bar", Seq(
-    video1,
-    Video("bar22", Instant.now, Duration.ofSeconds(23))))
+  val videoSequence1 =
+    VideoSequence(name1, "Bar", Seq(video1, Video("bar22", Instant.now, Duration.ofSeconds(23))))
 
   it should "create and findByUUID" in {
     Await.result(dao.runTransaction(d => d.create(videoReference1)), timeout)

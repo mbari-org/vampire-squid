@@ -17,11 +17,9 @@
 package org.mbari.vars.vam.dao
 
 /**
- *
- *
- * @author Brian Schlining
- * @since 2016-05-06T13:30:00
- */
-package object jpa {
-
-}
+  *
+  *
+  * @author Brian Schlining
+  * @since 2016-05-06T13:30:00
+  */
+package object jpa {}

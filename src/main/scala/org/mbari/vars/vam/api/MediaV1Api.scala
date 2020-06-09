@@ -136,6 +136,61 @@ class MediaV1Api(controller: MediaController)(
 
   }
 
+  put("/:video_reference_uuid") {
+    validateRequest()
+    val videoReferenceUuid = params
+      .getAs[UUID]("video_reference_uuid")
+      .getOrElse(halt(BadRequest("""{"error":"A 'video_reference_uuid' is required"}""")))
+    val sha512              = params.getAs[Array[Byte]]("sha512")
+    val videoSequenceName   = params.get("video_sequence_name")
+    val cameraId            = params.get("camera_id")
+    val videoName           = params.get("video_name")
+    val uri                 = params.getAs[URI]("uri")
+    val start               = params.getAs[Instant]("start_timestamp")
+    val duration            = params.getAs[Duration]("duration_millis")
+    val container           = params.get("container")
+    val videoCodec          = params.get("video_codec")
+    val audioCodec          = params.get("audio_codec")
+    val width               = params.getAs[Int]("width")
+    val height              = params.getAs[Int]("height")
+    val frameRate           = params.getAs[Double]("frame_rate")
+    val sizeBytes           = params.getAs[Long]("size_bytes")
+    val videoRefDescription = params.get("video_description")
+
+    controller
+      .findByVideoReferenceUuid(videoReferenceUuid)
+      .map(opt =>
+        opt match {
+          case None =>
+            halt(
+              NotFound(
+                s"""{"error": "A media with a video_reference_uuid of $videoReferenceUuid does not exist""""
+              )
+            )
+          case Some(m) =>
+            controller
+              .update(
+                sha512.getOrElse(m.sha512),
+                videoSequenceName.getOrElse(m.videoSequenceName),
+                cameraId.getOrElse(m.cameraId),
+                videoName.getOrElse(m.videoName),
+                uri,
+                start,
+                duration,
+                container,
+                videoCodec,
+                audioCodec,
+                width,
+                height,
+                frameRate,
+                sizeBytes,
+                videoRefDescription
+              )
+              .map(controller.toJson)
+        }
+      )
+  }
+
   get("/sha512/:sha512") {
     val shaString = params
       .get("sha512")
@@ -259,9 +314,9 @@ class MediaV1Api(controller: MediaController)(
       .map(controller.toJson)
   }
 
-  get("/uri/:uri") {
+  get("/uri/*") {
     val uri = params
-      .getAs[URI]("uri")
+      .getAs[URI]("splat")
       .getOrElse(halt(BadRequest("""{error: "A 'uri' parameter is required"}""")))
     controller
       .findByURI(uri)

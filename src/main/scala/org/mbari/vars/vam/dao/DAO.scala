@@ -18,15 +18,15 @@ package org.mbari.vars.vam.dao
 
 import java.util.UUID
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
- * All DAOs should implement this trait as it defines the minimum CRUD methods needed.
- *
- * @author Brian Schlining
- * @since 2016-05-05T12:44:00
- * @tparam B The type of the entity
- */
+  * All DAOs should implement this trait as it defines the minimum CRUD methods needed.
+  *
+  * @author Brian Schlining
+  * @since 2016-05-05T12:44:00
+  * @tparam B The type of the entity
+  */
 trait DAO[B <: PersistentObject] {
 
   def create(entity: B): Unit

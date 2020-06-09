@@ -19,15 +19,15 @@ package org.mbari.vars.vam.api
 import java.time.Instant
 import java.util
 
-import org.mbari.vars.vam.controllers.{ VideoController, VideoSequenceController }
-import org.mbari.vars.vam.dao.jpa.{ Video, VideoSequence }
+import org.mbari.vars.vam.controllers.{VideoController, VideoSequenceController}
+import org.mbari.vars.vam.dao.jpa.{Video, VideoSequence}
 
 /**
- *
- *
- * @author Brian Schlining
- * @since 2016-08-11T17:05:00
- */
+  *
+  *
+  * @author Brian Schlining
+  * @since 2016-08-11T17:05:00
+  */
 class VideoV1ApiSpec extends WebApiStack {
 
   private[this] val videoSequenceV1Api = {
@@ -50,9 +50,9 @@ class VideoV1ApiSpec extends WebApiStack {
   //    }
   //  }
 
-  val startDate = Instant.now()
+  val startDate                     = Instant.now()
   var aVideoSequence: VideoSequence = _
-  var aVideo: Video = _
+  var aVideo: Video                 = _
   "VideoV1Api" should "insert" in {
     post("/v1/videosequence", "name" -> "T1234", "camera_id" -> "Tiburon") {
       status should be(200)
@@ -62,17 +62,18 @@ class VideoV1ApiSpec extends WebApiStack {
 
     post(
       "/v1/video",
-      "name" -> "T1234-01",
+      "name"                -> "T1234-01",
       "video_sequence_uuid" -> aVideoSequence.uuid.toString,
-      "start" -> startDate.toString,
-      "duration_millis" -> s"${15 * 60 * 1000}") {
-        status should be(200)
-        body should include("name")
-        body should include("uuid")
-        body should include("start")
-        body should include("duration_millis")
-        aVideo = gson.fromJson(body, classOf[Video])
-      }
+      "start"               -> startDate.toString,
+      "duration_millis"     -> s"${15 * 60 * 1000}"
+    ) {
+      status should be(200)
+      body should include("name")
+      body should include("uuid")
+      body should include("start")
+      body should include("duration_millis")
+      aVideo = gson.fromJson(body, classOf[Video])
+    }
     aVideo should not be null
   }
 

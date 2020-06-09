@@ -252,13 +252,16 @@ class VideoV1Api(controller: VideoController)(
     val videoSequenceUUID = params
       .getAs[UUID]("video_sequence_uuid")
       .getOrElse(halt(BadRequest("""{error: "A 'video_sequence_uuid' parameter is required"}""")))
-    val start = params
-      .getAs[Instant]("start")
-      .getOrElse(halt(BadRequest("""{error: "A 'start' parameter is required"}""")))
+    val startTimestamp = params
+      .getAs[Instant]("start") // Allow alternatives names for old API
+      .orElse(params.getAs[Instant]("start_timestamp"))
+      .getOrElse(
+        halt(BadRequest("""{error: "A 'start' or 'start_timestamp' parameter is required"}"""))
+      )
     val duration    = params.getAs[Duration]("duration_millis")
     val description = params.get("description")
     controller
-      .create(videoSequenceUUID, name, start, duration, description)
+      .create(videoSequenceUUID, name, startTimestamp, duration, description)
       .map(controller.toJson)
   }
 
@@ -307,9 +310,11 @@ class VideoV1Api(controller: VideoController)(
     val uuid = params
       .getAs[UUID]("uuid")
       .getOrElse(halt(BadRequest("""{error: "A 'uuid' parameter is required"}""")))
-    val name              = params.get("name")
-    val description       = params.get("description")
-    val start             = params.getAs[Instant]("start")
+    val name        = params.get("name")
+    val description = params.get("description")
+    val start = params
+      .getAs[Instant]("start")
+      .orElse(params.getAs[Instant]("start_timestamp"))
     val duration          = params.getAs[Duration]("duration_millis")
     val videoSequenceUUID = params.getAs[UUID]("video_sequence_uuid")
     controller

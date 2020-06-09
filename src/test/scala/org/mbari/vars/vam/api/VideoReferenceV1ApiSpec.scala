@@ -20,15 +20,19 @@ import java.net.URLEncoder
 import java.time.Instant
 import java.util.Base64
 
-import org.mbari.vars.vam.controllers.{ VideoController, VideoReferenceController, VideoSequenceController }
-import org.mbari.vars.vam.dao.jpa.{ Video, VideoReference, VideoSequence }
+import org.mbari.vars.vam.controllers.{
+  VideoController,
+  VideoReferenceController,
+  VideoSequenceController
+}
+import org.mbari.vars.vam.dao.jpa.{Video, VideoReference, VideoSequence}
 
 /**
- *
- *
- * @author Brian Schlining
- * @since 2016-08-12T15:24:00
- */
+  *
+  *
+  * @author Brian Schlining
+  * @since 2016-08-12T15:24:00
+  */
 class VideoReferenceV1ApiSpec extends WebApiStack {
 
   private[this] val videoSequenceV1Api = {
@@ -57,9 +61,9 @@ class VideoReferenceV1ApiSpec extends WebApiStack {
     }
   }
 
-  val startDate = Instant.now()
-  var aVideoSequence: VideoSequence = _
-  var aVideo: Video = _
+  val startDate                       = Instant.now()
+  var aVideoSequence: VideoSequence   = _
+  var aVideo: Video                   = _
   var aVideoReference: VideoReference = _
   it should "insert" in {
     post("/v1/videosequence", "name" -> "T1234", "camera_id" -> "Tiburon") {
@@ -70,32 +74,34 @@ class VideoReferenceV1ApiSpec extends WebApiStack {
 
     post(
       "/v1/video",
-      "name" -> "T1234-01",
+      "name"                -> "T1234-01",
       "video_sequence_uuid" -> aVideoSequence.uuid.toString,
-      "start" -> startDate.toString,
-      "duration_millis" -> s"${15 * 60 * 1000}") {
-        status should be(200)
-        body should include("name")
-        body should include("uuid")
-        body should include("start")
-        body should include("duration_millis")
-        aVideo = gson.fromJson(body, classOf[Video])
-      }
+      "start"               -> startDate.toString,
+      "duration_millis"     -> s"${15 * 60 * 1000}"
+    ) {
+      status should be(200)
+      body should include("name")
+      body should include("uuid")
+      body should include("start")
+      body should include("duration_millis")
+      aVideo = gson.fromJson(body, classOf[Video])
+    }
     aVideo should not be null
 
     post(
       "/v1/videoreference",
-      "video_uuid" -> aVideo.uuid.toString,
-      "uri" -> "http://www.mbari.org/some/video.mp4",
-      "container" -> "video/mp4",
+      "video_uuid"  -> aVideo.uuid.toString,
+      "uri"         -> "http://www.mbari.org/some/video.mp4",
+      "container"   -> "video/mp4",
       "video_codec" -> "h.264",
-      "width" -> "1920",
-      "height" -> "1080",
-      "frame_rate" -> "30",
-      "sha512" -> Base64.getEncoder.encodeToString(Array.fill[Byte](64)(9))) {
-        status should be(200)
-        aVideoReference = gson.fromJson(body, classOf[VideoReference])
-      }
+      "width"       -> "1920",
+      "height"      -> "1080",
+      "frame_rate"  -> "30",
+      "sha512"      -> Base64.getEncoder.encodeToString(Array.fill[Byte](64)(9))
+    ) {
+      status should be(200)
+      aVideoReference = gson.fromJson(body, classOf[VideoReference])
+    }
     aVideoReference should not be null
   }
 
@@ -109,8 +115,10 @@ class VideoReferenceV1ApiSpec extends WebApiStack {
 
   it should "get by uri" in {
     aVideoReference.uri should not be (null)
-    get("/v1/videoreference/uri/" +
-      URLEncoder.encode(aVideoReference.uri.toURL.toExternalForm, "UTF-8")) {
+    get(
+      "/v1/videoreference/uri/" +
+        URLEncoder.encode(aVideoReference.uri.toURL.toExternalForm, "UTF-8")
+    ) {
       status should be(200)
     }
   }
@@ -123,13 +131,11 @@ class VideoReferenceV1ApiSpec extends WebApiStack {
   }
 
   it should "update" in {
-    put(
-      "/v1/videoreference/" + aVideoReference.uuid,
-      "size_bytes" -> "1234567") {
-        status should be(200)
-        val videoReference = gson.fromJson(body, classOf[VideoReference])
-        videoReference.size should be(1234567)
-      }
+    put("/v1/videoreference/" + aVideoReference.uuid, "size_bytes" -> "1234567") {
+      status should be(200)
+      val videoReference = gson.fromJson(body, classOf[VideoReference])
+      videoReference.size should be(1234567)
+    }
   }
 
   it should "delete" in {

@@ -17,23 +17,22 @@
 package org.mbari.vars.vam.dao.jpa
 
 import java.net.URI
-import java.time.{ Duration, Instant }
+import java.time.{Duration, Instant}
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
-
 import scala.concurrent.Await
-import scala.concurrent.duration.{ Duration => SDuration }
+import scala.concurrent.duration.{Duration => SDuration}
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 /**
- *
- *
- * @author Brian Schlining
- * @since 2016-05-06T15:43:00
- */
+  *
+  *
+  * @author Brian Schlining
+  * @since 2016-05-06T15:43:00
+  */
 class VideoSequenceDAOSpec extends AnyFlatSpec with Matchers {
 
   private[this] val daoFactory = DevelopmentTestDAOFactory
@@ -57,8 +56,8 @@ class VideoSequenceDAOSpec extends AnyFlatSpec with Matchers {
     var vs = VideoSequence("V05879", "Ventana")
     val d0 = Instant.parse("2016-04-01T00:15:00Z")
     vs.addVideo(Video("V20160401T001500", d0, Duration.ofMinutes(15)))
-    val d1 = Instant.parse("2016-04-01T00:30:00Z")
-    val v1 = Video("V20160401T003000", d1, Duration.ofMinutes(30))
+    val d1  = Instant.parse("2016-04-01T00:30:00Z")
+    val v1  = Video("V20160401T003000", d1, Duration.ofMinutes(30))
     val vr1 = VideoReference(new URI("http://www.mbari.org/movies/test.mp4"))
     v1.addVideoReference(vr1)
     vs.addVideo(v1)
@@ -106,7 +105,7 @@ class VideoSequenceDAOSpec extends AnyFlatSpec with Matchers {
   }
 
   it should "insert child videos in the datastore" in {
-    val name = "i2map 2009.123.04"
+    val name          = "i2map 2009.123.04"
     val videoSequence = VideoSequence(name, "i2map")
     videoSequence.addVideo(Video("woah there nelly", Instant.now(), Duration.ofMinutes(15)))
     videoSequence.addVideo(Video("woah there nelly II", Instant.now(), Duration.ofMinutes(30)))
@@ -118,7 +117,10 @@ class VideoSequenceDAOSpec extends AnyFlatSpec with Matchers {
 
     val v = Video("another one", Instant.now())
     vs.get.addVideo(v)
-    Await.result(dao.runTransaction(d => d.update(vs.get)), timeout) // update should insert our new video
+    Await.result(
+      dao.runTransaction(d => d.update(vs.get)),
+      timeout
+    ) // update should insert our new video
 
     val vs2 = dao.findByName(name)
     vs2 shouldBe defined
@@ -128,7 +130,8 @@ class VideoSequenceDAOSpec extends AnyFlatSpec with Matchers {
 
   var videoUUID: UUID = _
   it should "findByCameraID" in {
-    val vs = Await.result(dao.runTransaction(d => d.findByCameraID(videoSequence.cameraID)), timeout)
+    val vs =
+      Await.result(dao.runTransaction(d => d.findByCameraID(videoSequence.cameraID)), timeout)
     vs should have size 1
     val a = vs.head
     a.cameraID should be(videoSequence.cameraID)
@@ -146,7 +149,10 @@ class VideoSequenceDAOSpec extends AnyFlatSpec with Matchers {
   }
 
   it should "findByVideoUUID" in {
-    val vs = Await.result(dao.runTransaction(d => d.findByVideoUUID(videoSequence.videos.head.uuid)), timeout)
+    val vs = Await.result(
+      dao.runTransaction(d => d.findByVideoUUID(videoSequence.videos.head.uuid)),
+      timeout
+    )
     vs shouldBe defined
     val a = vs.get
     println(s"!!!!! ${a.videos.size}")
@@ -157,17 +163,29 @@ class VideoSequenceDAOSpec extends AnyFlatSpec with Matchers {
 
   it should "findByTimestamp" in {
     val timestamp = videoSequence.videos.head.start
-    val duration = videoSequence.videos.head.duration
-    val vs = Await.result(dao.runTransaction(d =>
-      d.findByTimestamp(timestamp.plusMillis(duration.dividedBy(2).toMillis), duration)), timeout)
+    val duration  = videoSequence.videos.head.duration
+    val vs = Await.result(
+      dao.runTransaction(d =>
+        d.findByTimestamp(timestamp.plusMillis(duration.dividedBy(2).toMillis), duration)
+      ),
+      timeout
+    )
     vs should have size (1)
   }
 
   it should "findByNameAndTimestamp" in {
     val timestamp = videoSequence.videos.head.start
-    val duration = videoSequence.videos.head.duration
-    val vs = Await.result(dao.runTransaction(d =>
-      d.findByNameAndTimestamp(videoSequence.name, timestamp.plusMillis(duration.dividedBy(2).toMillis), duration)), timeout)
+    val duration  = videoSequence.videos.head.duration
+    val vs = Await.result(
+      dao.runTransaction(d =>
+        d.findByNameAndTimestamp(
+          videoSequence.name,
+          timestamp.plusMillis(duration.dividedBy(2).toMillis),
+          duration
+        )
+      ),
+      timeout
+    )
     vs should have size (1)
   }
 
@@ -180,7 +198,7 @@ class VideoSequenceDAOSpec extends AnyFlatSpec with Matchers {
   }
 
   it should "deleteByUUID" in {
-    val name = "Brian's awesome AUV - 123456789"
+    val name          = "Brian's awesome AUV - 123456789"
     val videoSequence = VideoSequence(name, "awesome", Seq(Video("foo", Instant.now())))
     Await.result(dao.runTransaction(d => d.create(videoSequence)), timeout)
 

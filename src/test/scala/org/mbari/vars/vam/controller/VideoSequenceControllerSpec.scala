@@ -24,14 +24,14 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 /**
- * @author Brian Schlining
- * @since 2017-04-05T14:28:00
- */
+  * @author Brian Schlining
+  * @since 2017-04-05T14:28:00
+  */
 class VideoSequenceControllerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterAll {
 
-  private[this] val n = 2
+  private[this] val n              = 2
   private[this] val videoSequences = TestUtils.create(n, 10, 10)
-  private[this] val controller = new VideoSequenceController(TestUtils.DaoFactory)
+  private[this] val controller     = new VideoSequenceController(TestUtils.DaoFactory)
   import TestUtils.executionContext
 
   "VideoSequenceController" should "findAll" in {
@@ -51,8 +51,8 @@ class VideoSequenceControllerSpec extends AnyFlatSpec with Matchers with BeforeA
     val rs = Await.result(fn, TestUtils.Timeout)
     rs.size should be(n)
     val uuid = rs.head.uuid
-    val fn0 = controller.findByUUID(uuid)
-    val rs0 = Await.result(fn0, TestUtils.Timeout)
+    val fn0  = controller.findByUUID(uuid)
+    val rs0  = Await.result(fn0, TestUtils.Timeout)
     rs0 should not be (empty)
     rs0.get.uuid should be(uuid)
   }
@@ -68,8 +68,8 @@ class VideoSequenceControllerSpec extends AnyFlatSpec with Matchers with BeforeA
     val rs = Await.result(fn, TestUtils.Timeout)
     rs.size should be(n)
     val name = rs.head.name
-    val fn0 = controller.findByName(name)
-    val rs0 = Await.result(fn0, TestUtils.Timeout)
+    val fn0  = controller.findByName(name)
+    val rs0  = Await.result(fn0, TestUtils.Timeout)
     rs0 should not be (empty)
     rs0.get.name should be(name)
   }
@@ -78,10 +78,10 @@ class VideoSequenceControllerSpec extends AnyFlatSpec with Matchers with BeforeA
     val fn = controller.findAll
     val rs = Await.result(fn, TestUtils.Timeout)
     rs.size should be(n)
-    val cameraId = rs.head.cameraID
+    val cameraId  = rs.head.cameraID
     val timestamp = rs.head.videos.head.start
-    val fn0 = controller.findByCameraIDAndTimestamp(cameraId, timestamp)
-    val rs0 = Await.result(fn0, TestUtils.Timeout)
+    val fn0       = controller.findByCameraIDAndTimestamp(cameraId, timestamp)
+    val rs0       = Await.result(fn0, TestUtils.Timeout)
     rs0 should not be (empty)
   }
 

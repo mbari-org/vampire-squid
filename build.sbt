@@ -1,37 +1,42 @@
 val activationVersion   = "1.2.0"
 val akkaVersion         = "2.6.1"
-val auth0Version        = "3.10.1"
+val auth0Version        = "3.10.3"
 val codecVersion        = "1.14"
 val configVersion       = "1.4.0"
 val derbyVersion        = "10.15.2.0"
-val eclipselinkVersion  = "2.7.6"
+val eclipselinkVersion  = "2.7.7"
 val gsonJavatimeVersion = "1.1.1"
 val gsonVersion         = "2.8.6"
 val h2Version           = "1.4.200"
 val javamelodyVersion   = "1.82.0"
-val jettyVersion        = "9.4.27.v20200227"
-val json4sVersion       = "3.6.7"
+val jettyVersion        = "9.4.29.v20200521"
+val json4sVersion       = "3.6.8"
 val jtaVersion          = "1.1"
 val jtdsVersion         = "1.3.1"
 val junitVersion        = "4.13"
 val logbackVersion      = "1.2.3"
 val oracleVersion       = "19.3.0.0"
-val postgresqlVersion   = "42.2.9"
-val rabbitmqVersion     = "5.8.0"
-val scalaTestVersion    = "3.1.1"
+val postgresqlVersion   = "42.2.13"
+val rabbitmqVersion     = "5.9.0"
+val scalaTestVersion    = "3.1.2"
 val scalatraVersion     = "2.7.0"
 val servletVersion      = "4.0.1"
 val slf4jVersion        = "1.7.30"
-val sqlserverVersion    = "8.2.1.jre11"
+val sqlserverVersion    = "8.2.2.jre11"
 val xmlBindVersion      = "2.3.0"
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
+addCommandAlias(
+  "fix",
+  "clean;scalafix RemoveUnused;scalafix LeakingImplicitClassVal;scalafmtAll;compile"
+)
+
 lazy val buildSettings = Seq(
   organization := "org.mbari.vars",
   version := "0.2.1",
-  scalaVersion := "2.13.1",
-  crossScalaVersions := Seq("2.13.1"),
+  scalaVersion := "2.13.2",
+  crossScalaVersions := Seq("2.13.2"),
   organizationName := "Monterey Bay Aquarium Research Institute",
   startYear := Some(2017),
   licenses += ("Apache-2.0", new URL(
@@ -62,15 +67,27 @@ lazy val dependencySettings = Seq(
 
 lazy val optionSettings = Seq(
   scalacOptions ++= Seq(
-    "-deprecation",
+    "-deprecation", // Emit warning and location for usages of deprecated APIs.
     "-encoding",
-    "UTF-8", // yes, this is 2 args
-    "-feature",
+    "UTF-8",         // yes, this is 2 args. Specify character encoding used by source files.
+    "-explaintypes", // Explain type errors in more detail.
+    "-feature",      // Emit warning and location for usages of features that should be imported explicitly.
     "-language:existentials",
+    "-language:higherKinds",
     "-language:implicitConversions",
     "-unchecked",
-    //"-Xfatal-warnings",
-    "-Xlint"
+    "-Xlint",
+    "-Yrangepos",              // required by SemanticDB compiler plugin
+    "-Ywarn-dead-code",        // Warn when dead code is identified.
+    "-Ywarn-extra-implicit",   // Warn when more than one implicit parameter section is defined.
+    "-Ywarn-numeric-widen",    // Warn when numerics are widened.
+    "-Ywarn-unused:implicits", // Warn if an implicit parameter is unused.
+    "-Ywarn-unused:imports",   // Warn if an import selector is not referenced.
+    "-Ywarn-unused:locals",    // Warn if a local definition is unused.
+    "-Ywarn-unused:params",    // Warn if a value parameter is unused.
+    "-Ywarn-unused:patvars",   // Warn if a variable bound in a pattern is unused.
+    "-Ywarn-unused:privates",  // Warn if a private member is unused.
+    "-Ywarn-value-discard"     // Warn when non-Unit expression results are unused.
   ),
   javacOptions ++= Seq("-target", "11", "-source", "11"),
   updateOptions := updateOptions.value.withCachedResolution(true)
@@ -91,6 +108,8 @@ lazy val `vampire-squid` = (project in file("."))
   .enablePlugins(PackPlugin)
   .settings(appSettings)
   .settings(
+    semanticdbEnabled := true, // enable SemanticDB,
+    semanticdbVersion := scalafixSemanticdb.revision,
     libraryDependencies ++= Seq(
       "ch.qos.logback"                                 % "logback-classic"                   % logbackVersion,
       "ch.qos.logback"                                 % "logback-core"                      % logbackVersion,
