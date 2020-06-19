@@ -8,20 +8,21 @@ val eclipselinkVersion  = "2.7.7"
 val gsonJavatimeVersion = "1.1.1"
 val gsonVersion         = "2.8.6"
 val h2Version           = "1.4.200"
+val jansiVersion        = "1.18"
 val javamelodyVersion   = "1.82.0"
 val jettyVersion        = "9.4.29.v20200521"
 val json4sVersion       = "3.6.8"
 val jtaVersion          = "1.1"
 val jtdsVersion         = "1.3.1"
 val junitVersion        = "4.13"
-val logbackVersion      = "1.2.3"
+val logbackVersion      = "1.3.0-alpha4"
 val oracleVersion       = "19.3.0.0"
 val postgresqlVersion   = "42.2.13"
 val rabbitmqVersion     = "5.9.0"
 val scalaTestVersion    = "3.1.2"
 val scalatraVersion     = "2.7.0"
 val servletVersion      = "4.0.1"
-val slf4jVersion        = "1.7.30"
+val slf4jVersion        = "1.8.0-beta4"
 val sqlserverVersion    = "8.2.2.jre11"
 val xmlBindVersion      = "2.3.0"
 
@@ -34,7 +35,7 @@ addCommandAlias(
 
 lazy val buildSettings = Seq(
   organization := "org.mbari.vars",
-  version := "0.2.1",
+  version := "0.2.2",
   scalaVersion := "2.13.2",
   crossScalaVersions := Seq("2.13.2"),
   organizationName := "Monterey Bay Aquarium Research Institute",
@@ -142,6 +143,7 @@ lazy val `vampire-squid` = (project in file("."))
       "org.eclipse.jetty"                              % "jetty-webapp"                      % jettyVersion % "container;compile;test",
       "org.eclipse.persistence"                        % "org.eclipse.persistence.extension" % eclipselinkVersion,
       "org.eclipse.persistence"                        % "org.eclipse.persistence.jpa"       % eclipselinkVersion,
+      "org.fusesource.jansi"                           % "jansi"                             % jansiVersion % "runtime",
       "org.json4s"                                     %% "json4s-jackson"                   % json4sVersion,
       "org.postgresql"                                 % "postgresql"                        % postgresqlVersion,
       "org.scalatest"                                  %% "scalatest"                        % scalaTestVersion % "test",
