@@ -132,7 +132,7 @@ class MediaV1Api(controller: MediaController)(
         sizeBytes,
         videoRefDescription
       )
-      .map(controller.toJson)
+      .map(opt => opt.map(controller.toJson).getOrElse("{}"))
 
   }
 
@@ -186,7 +186,7 @@ class MediaV1Api(controller: MediaController)(
                 sizeBytes,
                 videoRefDescription
               )
-              .map(controller.toJson)
+              .map(opt => opt.map(controller.toJson).getOrElse("{}"))
         }
       )
   }

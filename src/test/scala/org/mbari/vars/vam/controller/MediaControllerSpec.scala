@@ -167,10 +167,11 @@ class MediaControllerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterE
     m2.videoReferenceUuid should be(m1.videoReferenceUuid)
     m2.videoSequenceUuid should be(m2.videoSequenceUuid)
     m2.videoUuid should be(m2.videoUuid)
-    m1.videoSequenceName should be(m1.videoSequenceName)
+    m2.videoSequenceName should be(m1.videoSequenceName)
     m2.startTimestamp should be(m1.startTimestamp)
     m2.duration should be(m1.duration)
     m2.uri should be(m1.uri)
+    m2.sha512 should be(m1.sha512)
 
   }
 

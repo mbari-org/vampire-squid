@@ -82,7 +82,6 @@ class MediaV1ApiSpec extends WebApiStack {
       media.videoSequenceUuid should not be (null)
       media.videoUuid should not be (null)
       media.videoReferenceUuid should not be (null)
-      println(body)
     }
   }
 
@@ -144,8 +143,7 @@ class MediaV1ApiSpec extends WebApiStack {
     val media = exec(mediaController.findByVideoName("V20160922T030001Z"))
     media should not be (null)
     media should not be empty
-    val m = media.head
-    println(gson.toJson(m))
+    val m      = media.head
     val sha512 = ByteArrayConverter.encode(m.sha512)
     put(
       "/v1/media",
@@ -157,20 +155,12 @@ class MediaV1ApiSpec extends WebApiStack {
       "height"              -> "2000"
     ) {
       status should be(200)
-      // FIXME: the update method is not returning a valid media object
-      // println(body)
-      // val um = gson.fromJson(body, classOf[Media])
-      // println(gson.toJson(um))
-      // um should not be (null)
-      // // um.width should be(4000)
-      // // um.height should be(2000)
+      val um = gson.fromJson(body, classOf[Media])
+      println(gson.toJson(um))
+      um should not be (null)
+      um.width should be(4000)
+      um.height should be(2000)
     }
-    val media2 = exec(mediaController.findByVideoName("V20160922T030001Z"))
-    media2 should not be (null)
-    val m2 = media2.head
-    m2.width should be(4000)
-    m2.height should be(2000)
-    m2.sha512 should be(m.sha512)
   }
 
   it should "update with uuid and form body" in {
@@ -180,13 +170,11 @@ class MediaV1ApiSpec extends WebApiStack {
     val m = media.head
     put(s"/v1/media/${m.videoReferenceUuid}", "width" -> "8000", "height" -> "4000") {
       status should be(200)
+      val m2 = gson.fromJson(body, classOf[Media])
+      m2.width should be(8000)
+      m2.height should be(4000)
+      m2.sha512 should be(m.sha512)
     }
-    val media2 = exec(mediaController.findByVideoName("V20160922T030001Z"))
-    media2 should not be (null)
-    media2 should not be empty
-    val m2 = media2.head
-    m2.width should be(8000)
-    m2.height should be(4000)
-    m2.sha512 should be(m.sha512)
+
   }
 }

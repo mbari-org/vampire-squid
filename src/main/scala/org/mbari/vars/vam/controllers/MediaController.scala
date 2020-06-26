@@ -216,6 +216,7 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
           frameRate.foreach(vr.frameRate = _)
           sizeBytes.foreach(vr.size = _)
           uri.foreach(vr.uri = _)
+          videoRefDescription.foreach(vr.description = _)
           vr
         })
 

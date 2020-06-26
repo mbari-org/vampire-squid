@@ -35,7 +35,7 @@ addCommandAlias(
 
 lazy val buildSettings = Seq(
   organization := "org.mbari.vars",
-  version := "0.3.1",
+  version := "0.3.2",
   scalaVersion := "2.13.2",
   crossScalaVersions := Seq("2.13.2"),
   organizationName := "Monterey Bay Aquarium Research Institute",
