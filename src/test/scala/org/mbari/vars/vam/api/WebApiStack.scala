@@ -25,6 +25,10 @@ import org.scalatra.test.scalatest.ScalatraFlatSpec
 import scala.concurrent.ExecutionContext
 import org.scalatra.swagger.ContactInfo
 import org.scalatra.swagger.LicenseInfo
+import scala.concurrent.Await
+import scala.concurrent.duration._
+import java.util.concurrent.TimeUnit
+import scala.concurrent.Future
 
 /**
   *
@@ -37,6 +41,8 @@ trait WebApiStack extends ScalatraFlatSpec with BeforeAndAfterAll {
   protected[this] val gson                      = Constants.GSON
   protected[this] val daoFactory                = DevelopmentTestDAOFactory
   implicit protected[this] val executionContext = ExecutionContext.global
+
+  def exec[A](f: Future[A]): A = Await.result(f, 10.seconds)
 
   val apiInfo = ApiInfo(
     "vampire-squid",
