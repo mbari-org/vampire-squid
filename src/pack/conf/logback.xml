@@ -6,7 +6,7 @@
 
     <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
 
-    <variable name="LOGBACK_LEVEL" value="${LOGBACK_LEVEL:-INFO}" />
+    <variable name="LOGBACK_LEVEL" value="${LOGBACK_LEVEL:-DEBUG}" />
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
@@ -19,7 +19,7 @@
         </encoder>
     </appender>
 
-    <logger name="java.util.Date" level="WARN" />
+    <logger name="org.eclipse.jetty" level="WARN" />
 
     <root level="${LOGBACK_LEVEL}">
         <appender-ref ref="CONSOLE" />

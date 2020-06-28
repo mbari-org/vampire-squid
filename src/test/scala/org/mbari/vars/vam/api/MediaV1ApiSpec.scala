@@ -156,7 +156,7 @@ class MediaV1ApiSpec extends WebApiStack {
     ) {
       status should be(200)
       val um = gson.fromJson(body, classOf[Media])
-      println(gson.toJson(um))
+      // println(gson.toJson(um))
       um should not be (null)
       um.width should be(4000)
       um.height should be(2000)
@@ -168,12 +168,18 @@ class MediaV1ApiSpec extends WebApiStack {
     media should not be (null)
     media should not be empty
     val m = media.head
-    put(s"/v1/media/${m.videoReferenceUuid}", "width" -> "8000", "height" -> "4000") {
+    put(
+      s"/v1/media/${m.videoReferenceUuid}",
+      "duration_millis" -> "1234",
+      "width"           -> "8000",
+      "height"          -> "4000"
+    ) {
       status should be(200)
       val m2 = gson.fromJson(body, classOf[Media])
       m2.width should be(8000)
       m2.height should be(4000)
       m2.sha512 should be(m.sha512)
+      m2.duration should be(java.time.Duration.ofMillis(1234))
     }
 
   }

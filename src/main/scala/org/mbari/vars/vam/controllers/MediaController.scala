@@ -203,6 +203,7 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
     val vsDao = daoFactory.newVideoSequenceDAO(vrDao)
     val vDao  = daoFactory.newVideoDAO(vrDao)
 
+    // TODO Need a method that looks up by videoReferenceUuid if present. Currently requires sha512
     def updateVideoReference(): Option[VideoReference] =
       vrDao
         .findBySha512(sha512)
