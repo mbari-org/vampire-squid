@@ -82,6 +82,12 @@ class Media {
   var description: String = _ // VideoReference description
 
   @Expose(serialize = true)
+  var videoSequenceDescription: String = _
+
+  @Expose(serialize = true)
+  var videoDescription: String = _
+
+  @Expose(serialize = true)
   var sha512: Array[Byte] = _
 
   def endTimestamp: Option[Instant] =
@@ -108,11 +114,13 @@ object Media {
     m.videoSequenceUuid = videoSequence.uuid
     m.videoSequenceName = videoSequence.name
     m.cameraId = videoSequence.cameraID
+    m.videoSequenceDescription = videoSequence.description
 
     m.videoUuid = video.uuid
     m.videoName = video.name
     m.startTimestamp = video.start
     m.duration = video.duration
+    m.videoDescription = video.description
 
     m.videoReferenceUuid = videoReference.uuid
     m.uri = videoReference.uri
@@ -147,7 +155,9 @@ object Media {
       frameRate: Option[Double] = None,
       sizeBytes: Option[Long] = None,
       description: Option[String] = None,
-      sha512: Option[Array[Byte]] = None
+      sha512: Option[Array[Byte]] = None,
+      videoSequenceDescription: Option[String] = None,
+      videoDescription: Option[String] = None,
   ): Media = {
     val m = new Media
     videoReferenceUuid.foreach(m.videoReferenceUuid = _)
@@ -168,6 +178,8 @@ object Media {
     sizeBytes.foreach(m.sizeBytes = _)
     description.foreach(m.description = _)
     sha512.foreach(m.sha512 = _)
+    videoSequenceDescription.foreach(m.videoSequenceDescription = _)
+    videoDescription.foreach(m.videoDescription = _)
     m
   }
 }

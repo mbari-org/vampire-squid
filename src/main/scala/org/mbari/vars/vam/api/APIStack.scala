@@ -86,8 +86,9 @@ abstract class APIStack
   def parsePostBody(body: String): Seq[(String, String)] =
     body
       .split('&')
+      .toIndexedSeq
       .map(p => p.split('='))
-      .filter(_.size == 2)
+      .filter(_.length == 2)
       .map(a => a(0) -> a(1))
 
   /**

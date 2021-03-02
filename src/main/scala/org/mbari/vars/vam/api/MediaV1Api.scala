@@ -64,7 +64,9 @@ class MediaV1Api(controller: MediaController)(
     val height              = params.getAs[Int]("height")
     val frameRate           = params.getAs[Double]("frame_rate")
     val sizeBytes           = params.getAs[Long]("size_bytes")
-    val videoRefDescription = params.get("video_description")
+    val description = params.get("description") // VideoReference description
+    val videoDescription = params.get("video_description")
+    val videoSequenceDescription = params.get("video_sequence_description")
     val sha512              = params.getAs[Array[Byte]]("sha512")
     validateRequest()
     controller
@@ -82,8 +84,10 @@ class MediaV1Api(controller: MediaController)(
         height,
         frameRate,
         sizeBytes,
-        videoRefDescription,
-        sha512
+        description,
+        sha512,
+        videoSequenceDescription,
+        videoDescription
       )
       .map(controller.toJson)
   }
@@ -112,7 +116,9 @@ class MediaV1Api(controller: MediaController)(
     val height              = params.getAs[Int]("height")
     val frameRate           = params.getAs[Double]("frame_rate")
     val sizeBytes           = params.getAs[Long]("size_bytes")
-    val videoRefDescription = params.get("video_description")
+    val description = params.get("description") // VideoReference description
+    val videoDescription = params.get("video_description")
+    val videoSequenceDescription = params.get("video_sequence_description")
     validateRequest()
     controller
       .update(
@@ -130,7 +136,9 @@ class MediaV1Api(controller: MediaController)(
         height,
         frameRate,
         sizeBytes,
-        videoRefDescription
+        description,
+        videoSequenceDescription,
+        videoDescription
       )
       .map(opt => opt.map(controller.toJson).getOrElse("{}"))
 
@@ -155,7 +163,9 @@ class MediaV1Api(controller: MediaController)(
     val height              = params.getAs[Int]("height")
     val frameRate           = params.getAs[Double]("frame_rate")
     val sizeBytes           = params.getAs[Long]("size_bytes")
-    val videoRefDescription = params.get("video_description")
+    val description = params.get("description")
+    val videoDescription = params.get("video_description")
+    val videoSequenceDescription = params.get("video_sequence_description")
 
     controller
       .findByVideoReferenceUuid(videoReferenceUuid)
@@ -184,7 +194,9 @@ class MediaV1Api(controller: MediaController)(
                 height,
                 frameRate,
                 sizeBytes,
-                videoRefDescription
+                description,
+                videoSequenceDescription,
+                videoDescription
               )
               .map(opt => opt.map(controller.toJson).getOrElse("{}"))
         }

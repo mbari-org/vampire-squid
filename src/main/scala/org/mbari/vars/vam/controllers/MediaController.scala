@@ -52,7 +52,9 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
     Option(media.frameRate),
     Option(media.sizeBytes),
     Option(media.description),
-    Option(media.sha512)
+    Option(media.sha512),
+    Option(media.videoSequenceDescription),
+    Option(media.videoDescription)
   )
 
   def create(
@@ -70,7 +72,9 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
       frameRate: Option[Double] = None,
       sizeBytes: Option[Long] = None,
       videoRefDescription: Option[String] = None,
-      sha512: Option[Array[Byte]] = None
+      sha512: Option[Array[Byte]] = None,
+      videoSequenceDescription: Option[String] = None,
+      videoDescription: Option[String] = None
   )(implicit ec: ExecutionContext): Future[Media] = {
 
     val dao = daoFactory.newVideoSequenceDAO()
@@ -112,19 +116,19 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
               v
             case None =>
               val v = Video(videoName, start, duration, List(vr))
+              videoDescription.foreach(v.description = _)
               log.debug("Created {}", v)
 
               vsDao.findByName(videoSequenceName) match {
                 case Some(vs) =>
                   vs.addVideo(v)
                   vDao.create(v)
-                  vs
                 case None =>
                   val vs = VideoSequence(videoSequenceName, cameraId, List(v))
+                  videoSequenceDescription.foreach(vs.description = _)
                   log.debug("Created {}", vs)
                   vsDao.create(vs)
               }
-
               v
           }
 
@@ -157,7 +161,9 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
       Option(media.height),
       Option(media.frameRate),
       Option(media.sizeBytes),
-      Option(media.description)
+      Option(media.description),
+      Option(media.videoSequenceDescription),
+      Option(media.videoDescription)
     )
   }
 
@@ -196,7 +202,9 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
       height: Option[Int] = None,
       frameRate: Option[Double] = None,
       sizeBytes: Option[Long] = None,
-      videoRefDescription: Option[String] = None
+      videoRefDescription: Option[String] = None,
+      videoSequenceDescription: Option[String] = None,
+      videoDescription: Option[String] = None
   )(implicit ec: ExecutionContext): Future[Option[Media]] = {
 
     val vrDao = daoFactory.newVideoReferenceDAO()
@@ -229,6 +237,7 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
             val vss = new VideoSequence
             vss.name = videoSequenceName
             vss.cameraID = cameraId
+            videoSequenceDescription.foreach(vss.description = _)
             vsDao.create(vss)
             vss
           case Some(vss) =>
@@ -236,6 +245,7 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
               s"Changing cameraId from ${vss.cameraID} to $cameraId for VideoSequence ${vss.uuid}"
             )
             vss.cameraID = cameraId
+            videoSequenceDescription.foreach(vss.description = _)
             vss
         }
       }
@@ -255,10 +265,12 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
             start.foreach(vv.start = _)
             duration.foreach(vv.duration = _)
             videoSequence.addVideo(vv)
+            videoDescription.foreach(vv.description = _)
             vv
           case Some(vv) =>
             start.foreach(vv.start = _)
             duration.foreach(vv.duration = _)
+            videoDescription.foreach(vv.description = _)
             vv.addVideoReference(videoReference)
             vv
         }
