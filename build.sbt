@@ -1,16 +1,16 @@
 val activationVersion   = "1.2.0"
-val akkaVersion         = "2.6.13"
-val auth0Version        = "3.13.0"
+val akkaVersion         = "2.6.14"
+val auth0Version        = "3.15.0"
 val codecVersion        = "1.15"
 val configVersion       = "1.4.1"
 val derbyVersion        = "10.15.2.0"
-val eclipselinkVersion  = "2.7.7"
+val eclipselinkVersion  = "2.7.8"
 val gsonJavatimeVersion = "1.1.1"
 val gsonVersion         = "2.8.6"
 val h2Version           = "1.4.200"
 val jansiVersion        = "1.18"
-val javamelodyVersion   = "1.86.0"
-val jettyVersion        = "9.4.38.v20210224"
+val javamelodyVersion   = "1.87.0"
+val jettyVersion        = "9.4.40.v20210413"
 val json4sVersion       = "3.6.11"
 val jtaVersion          = "1.1"
 val jtdsVersion         = "1.3.1"
@@ -18,12 +18,12 @@ val junitVersion        = "4.13.2"
 val logbackVersion      = "1.3.0-alpha4"
 val oracleVersion       = "19.3.0.0"
 val postgresqlVersion   = "42.2.19"
-val rabbitmqVersion     = "5.11.0"
-val scalaTestVersion    = "3.2.5"
+val rabbitmqVersion     = "5.12.0"
+val scalaTestVersion    = "3.2.7"
 val scalatraVersion     = "2.7.1"
 val servletVersion      = "4.0.1"
 val slf4jVersion        = "1.8.0-beta4"
-val sqlserverVersion    = "9.2.0.jre11"
+val sqlserverVersion    = "9.2.1.jre11"
 val xmlBindVersion      = "2.3.0"
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
@@ -35,7 +35,7 @@ addCommandAlias(
 
 lazy val buildSettings = Seq(
   organization := "org.mbari.vars",
-  version := "0.3.2",
+  version := "0.4.0",
   scalaVersion := "2.13.5",
   crossScalaVersions := Seq("2.13.5"),
   organizationName := "Monterey Bay Aquarium Research Institute",

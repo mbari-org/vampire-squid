@@ -76,7 +76,7 @@ class VideoV1Api(controller: VideoController)(
     parameters (pathParam[UUID]("uuid").description("The UUID of the video")))
 
   get("/videosequence/:uuid", operation(videoSequenceUUIDGet)) {
-    val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest("Please provide a UUID")))
+    val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest("Please provide a Video Sequence UUID")))
     controller
       .findByUUID(uuid)
       .map({
@@ -90,8 +90,19 @@ class VideoV1Api(controller: VideoController)(
       })
   }
 
+  get("/videoreference/:uuid") {
+    val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest("Please provide a Video Reference UUID")))
+    controller.findByVideoReferenceUUID(uuid)
+      .map({
+        case None => 
+          halt(NotFound(s"A video containing a videoreference with a UUID of $uuid was not found in the database"))
+        case Some(v) =>
+          controller.toJson(v)
+      })
+  }
+
   get("/lastupdate/:uuid") {
-    val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest("Please provide a UUID")))
+    val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest("Please provide a Video UUID")))
     controller
       .findByUUID(uuid)
       .map({
