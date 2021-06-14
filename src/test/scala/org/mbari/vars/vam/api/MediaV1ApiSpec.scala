@@ -75,6 +75,8 @@ class MediaV1ApiSpec extends WebApiStack {
       "frame_rate"          -> "60.07",
       "size_bytes"          -> "12233456",
       "video_description"   -> "A test movie",
+      "video_sequence_description" -> "A test sequence",
+      "description"        -> "A test",
       "sha512"              -> sha512
     ) {
       status should be(200)
@@ -106,7 +108,9 @@ class MediaV1ApiSpec extends WebApiStack {
       media.width should be(1920)
       media.height should be(1080)
       media.sizeBytes should be(12233456)
-      media.description should be("A test movie")
+      media.videoDescription should be("A test movie")
+      media.description should be ("A test")
+      media.videoSequenceDescription should be ("A test sequence")
 
       val thatSha = ByteArrayConverter.encode(media.sha512)
       thatSha should be(sha512)

@@ -33,11 +33,9 @@ import scala.concurrent.ExecutionContext
   * @since 2017-03-06T17:08:00
   */
 class MediaV1Api(controller: MediaController)(
-    implicit val swagger: Swagger,
-    val executor: ExecutionContext
+    implicit val executor: ExecutionContext
 ) extends APIStack {
 
-  override protected def applicationDescription: String = "Media API (v1)"
 
   post("/") {
     validateRequest()

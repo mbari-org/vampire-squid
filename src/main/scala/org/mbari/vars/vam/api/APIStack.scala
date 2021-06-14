@@ -42,7 +42,6 @@ abstract class APIStack
     extends ScalatraServlet
     with ApiAuthenticationSupport
     with ContentEncodingSupport
-    with SwaggerSupport
     with FutureSupport {
 
   before() {

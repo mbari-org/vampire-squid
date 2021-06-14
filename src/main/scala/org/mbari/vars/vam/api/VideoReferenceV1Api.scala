@@ -35,27 +35,17 @@ import org.slf4j.LoggerFactory
   * @since 2016-06-06T16:27:00
   */
 class VideoReferenceV1Api(controller: VideoReferenceController)(
-    implicit
-    val swagger: Swagger,
-    val executor: ExecutionContext
+    implicit val executor: ExecutionContext
 ) extends APIStack {
 
   val log = LoggerFactory.getLogger(getClass())
 
-  override protected def applicationDescription: String = "Video Reference API (v1)"
-
-  val vsGET = (apiOperation[Iterable[VideoReference]]("findAll")
-    summary "List all video-references")
-
-  get("/?", operation(vsGET)) {
+  get("/?") {
     controller.findAll.map(vs => controller.toJson(vs.asJava))
   }
 
-  val uuidGET = (apiOperation[VideoReference]("findByUUID")
-    summary "Find a video-reference by uuid"
-    parameters (pathParam[UUID]("uuid").description("The UUID of the video-reference")))
 
-  get("/:uuid", operation(uuidGET)) {
+  get("/:uuid") {
     val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest("Please provide a UUID")))
     controller
       .findByUUID(uuid)
@@ -95,11 +85,8 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(
       })
   }
 
-  val uriGET = (apiOperation[VideoReference]("findByURI")
-    summary "Find a video-reference by its URI"
-    parameters (pathParam[URI]("uri").description("The URI of the video-reference")))
 
-  get("/uri/*", operation(uriGET)) {
+  get("/uri/*") {
 
     val uri = params.getAs[URI]("splat").getOrElse(halt(BadRequest("Please provide a URI")))
 
@@ -119,12 +106,8 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(
     controller.findAllURIs.map(uris => controller.toJson(uris.asJava))
   }
 
-  val shaGET = (apiOperation[VideoReference]("findBySha512")
-    summary "Find a video-reference by checksum (SHA512)"
-    parameters (pathParam[String]("sha512")
-      .description("The Base64 encoded SHA512 of the video-reference")))
 
-  get("/sha512/:sha512", operation(shaGET)) {
+  get("/sha512/:sha512") {
     val sha = params
       .get("sha512")
       .map(s => ByteArrayConverter.decode(s))
@@ -140,12 +123,8 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(
     }
   }
 
-  val vrDELETE = (apiOperation[Unit]("delete")
-    summary "Delete a video-reference."
-    parameters (pathParam[UUID]("uuid")
-      .description("The UUID of the video-reference to be deleted")))
 
-  delete("/:uuid", operation(vrDELETE)) {
+  delete("/:uuid") {
     validateRequest()
     val uuid = params
       .getAs[UUID]("uuid")
@@ -163,87 +142,8 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(
       })
   }
 
-  val vPOST = (apiOperation[String]("create")
-    summary "Create a video-reference"
-    parameters (Parameter(
-      "video_uuid",
-      DataType.String,
-      Some("The uuid of the owning video"),
-      paramType = ParamType.Body,
-      required = true
-    ),
-    Parameter(
-      "uri",
-      DataType.String,
-      Some("The unique URI of the video"),
-      paramType = ParamType.Body,
-      required = true
-    ),
-    Parameter(
-      "container",
-      DataType.String,
-      Some("The container mimetype"),
-      paramType = ParamType.Body,
-      required = false
-    ),
-    Parameter(
-      "video_codec",
-      DataType.String,
-      Some("An identifier for the video codec"),
-      paramType = ParamType.Body,
-      required = false
-    ),
-    Parameter(
-      "audio_codec",
-      DataType.String,
-      Some("An identifier for the audio codec"),
-      paramType = ParamType.Body,
-      required = false
-    ),
-    Parameter(
-      "width",
-      DataType.Int,
-      Some("The video's width in pixels"),
-      paramType = ParamType.Body,
-      required = false
-    ),
-    Parameter(
-      "height",
-      DataType.Int,
-      Some("The video's height in pixels"),
-      paramType = ParamType.Body,
-      required = false
-    ),
-    Parameter(
-      "frame_rate",
-      DataType.Double,
-      Some("The frame-rate of the video in frames per second"),
-      paramType = ParamType.Body,
-      required = false
-    ),
-    Parameter(
-      "size_bytes",
-      DataType.Long,
-      Some("The size of the video in bytes"),
-      paramType = ParamType.Body,
-      required = false
-    ),
-    Parameter(
-      "description",
-      DataType.String,
-      Some("A description of the video"),
-      paramType = ParamType.Body,
-      required = false
-    ),
-    Parameter(
-      "sha512",
-      DataType.String,
-      Some("The SHA512 checksum of the video (base 64 encoded)"),
-      paramType = ParamType.Body,
-      required = false
-    )))
 
-  post("/", operation(vPOST)) {
+  post("/") {
     validateRequest()
     val videoUUID = params
       .getAs[UUID]("video_uuid")
@@ -277,89 +177,8 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(
       .map(controller.toJson)
   }
 
-  val vPUT = (apiOperation[String]("update")
-    summary "Update a video-reference"
-    parameters (pathParam[UUID]("uuid")
-      .description("The UUID of the video-reference to be updated"),
-    Parameter(
-      "video_uuid",
-      DataType.String,
-      Some("The uuid of the owning video"),
-      paramType = ParamType.Body,
-      required = false
-    ),
-    Parameter(
-      "uri",
-      DataType.String,
-      Some("The unique URI of the video"),
-      paramType = ParamType.Body,
-      required = false
-    ),
-    Parameter(
-      "container",
-      DataType.String,
-      Some("The container mimetype"),
-      paramType = ParamType.Body,
-      required = false
-    ),
-    Parameter(
-      "video_codec",
-      DataType.String,
-      Some("An identifier for the video codec"),
-      paramType = ParamType.Body,
-      required = false
-    ),
-    Parameter(
-      "audio_codec",
-      DataType.String,
-      Some("An identifier for the audio codec"),
-      paramType = ParamType.Body,
-      required = false
-    ),
-    Parameter(
-      "width",
-      DataType.Int,
-      Some("The video's width in pixels"),
-      paramType = ParamType.Body,
-      required = false
-    ),
-    Parameter(
-      "height",
-      DataType.Int,
-      Some("The video's height in pixels"),
-      paramType = ParamType.Body,
-      required = false
-    ),
-    Parameter(
-      "frame_rate",
-      DataType.Double,
-      Some("The frame-rate of the video in frames per second"),
-      paramType = ParamType.Body,
-      required = false
-    ),
-    Parameter(
-      "size_bytes",
-      DataType.Long,
-      Some("The size of the video in bytes"),
-      paramType = ParamType.Body,
-      required = false
-    ),
-    Parameter(
-      "description",
-      DataType.String,
-      Some("A description of the video"),
-      paramType = ParamType.Body,
-      required = false
-    ),
-    Parameter(
-      "sha512",
-      DataType.String,
-      Some("The SHA512 checksum of the video (base 64 encoded)"),
-      paramType = ParamType.Body,
-      required = false
-    )))
 
-  put("/:uuid", operation(vPUT)) {
+  put("/:uuid") {
     validateRequest()
     val uuid = params
       .getAs[UUID]("uuid")
