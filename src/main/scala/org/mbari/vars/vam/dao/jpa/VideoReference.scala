@@ -118,8 +118,10 @@ class VideoReference extends HasUUID with HasOptimisticLock with HasDescription 
   def mimetype: Option[MimeType] = Try(new MimeType(container)).toOption
 
   // Checksum allows reverse lookups. Store checksum as hex
+  // Ideally this would be a unique key. But we can't make it unique as
+  // tapes and real-time sessions use null. Unique would disallow more than one null.
   @Expose(serialize = true)
-  @Column(name = "sha512", length = 128, nullable = true, unique = true)
+  @Column(name = "sha512", length = 128, nullable = true)
   @Convert(converter = classOf[ByteArrayConverter])
   var sha512: Array[Byte] = _
 

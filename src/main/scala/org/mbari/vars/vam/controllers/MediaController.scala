@@ -19,8 +19,8 @@ package org.mbari.vars.vam.controllers
 import java.net.URI
 import java.time.{Duration, Instant}
 import java.util.{UUID, Arrays => JArrays}
-
 import org.mbari.vars.vam.Constants
+import org.mbari.vars.vam.dao.{DAO, VideoReferenceDAO}
 import org.mbari.vars.vam.dao.jpa.{JPADAOFactory, Video, VideoReference, VideoSequence}
 import org.mbari.vars.vam.model.Media
 import org.slf4j.LoggerFactory
@@ -168,53 +168,55 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
   }
 
   /**
-    * Mostly this is to deal with video files that have been moved
-    * @param sha512
-    * @param videoSequenceName
-    * @param cameraId
-    * @param videoName
-    * @param uri
-    * @param start
-    * @param duration
-    * @param container
-    * @param videoCodec
-    * @param audioCodec
-    * @param width
-    * @param height
-    * @param frameRate
-    * @param sizeBytes
-    * @param videoRefDescription
-    * @param ec
-    * @return
-    */
-  def update(
-      sha512: Array[Byte],
-      videoSequenceName: String,
-      cameraId: String,
-      videoName: String,
-      uri: Option[URI] = None,
-      start: Option[Instant] = None,
-      duration: Option[Duration] = None,
-      container: Option[String] = None,
-      videoCodec: Option[String] = None,
-      audioCodec: Option[String] = None,
-      width: Option[Int] = None,
-      height: Option[Int] = None,
-      frameRate: Option[Double] = None,
-      sizeBytes: Option[Long] = None,
-      videoRefDescription: Option[String] = None,
-      videoSequenceDescription: Option[String] = None,
-      videoDescription: Option[String] = None
-  )(implicit ec: ExecutionContext): Future[Option[Media]] = {
+   *
+   * @param findFn
+   * @param videoSequenceName
+   * @param cameraId
+   * @param videoName
+   * @param sha512
+   * @param uri
+   * @param start
+   * @param duration
+   * @param container
+   * @param videoCodec
+   * @param audioCodec
+   * @param width
+   * @param height
+   * @param frameRate
+   * @param sizeBytes
+   * @param videoRefDescription
+   * @param videoSequenceDescription
+   * @param videoDescription
+   * @param ec
+   * @return
+   */
+  def findAndUpdate(
+                     findFn: VideoReferenceDAO[VideoReference] => Option[VideoReference],
+                     videoSequenceName: String,
+                     cameraId: String,
+                     videoName: String,
+                     sha512: Option[Array[Byte]],
+                     uri: Option[URI] = None,
+                     start: Option[Instant] = None,
+                     duration: Option[Duration] = None,
+                     container: Option[String] = None,
+                     videoCodec: Option[String] = None,
+                     audioCodec: Option[String] = None,
+                     width: Option[Int] = None,
+                     height: Option[Int] = None,
+                     frameRate: Option[Double] = None,
+                     sizeBytes: Option[Long] = None,
+                     videoRefDescription: Option[String] = None,
+                     videoSequenceDescription: Option[String] = None,
+                     videoDescription: Option[String] = None
+            )(implicit ec: ExecutionContext): Future[Option[Media]] = {
 
     val vrDao = daoFactory.newVideoReferenceDAO()
     val vsDao = daoFactory.newVideoSequenceDAO(vrDao)
     val vDao  = daoFactory.newVideoDAO(vrDao)
 
-    // TODO Need a method that looks up by videoReferenceUuid if present. Currently requires sha512
-    def updateVideoReference(): Option[VideoReference] =
-      vrDao
-        .findBySha512(sha512)
+    def updateVideoReference(): Option[VideoReference] = {
+      findFn(vrDao)
         .map(vr => {
           // -- 1. Update VideoReference params
           container.foreach(vr.container = _)
@@ -226,8 +228,10 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
           sizeBytes.foreach(vr.size = _)
           uri.foreach(vr.uri = _)
           videoRefDescription.foreach(vr.description = _)
+          sha512.foreach(vr.sha512 = _)
           vr
         })
+    }
 
     def updateVideoSequence(videoReference: VideoReference): VideoSequence = {
       if (videoReference.video.videoSequence.name != videoSequenceName) {
@@ -292,6 +296,67 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
     })
     f.onComplete(_ => vrDao.close())
     f
+  }
+
+  /**
+    * Mostly this is to deal with video files that have been moved
+    * @param sha512
+    * @param videoSequenceName
+    * @param cameraId
+    * @param videoName
+    * @param uri
+    * @param start
+    * @param duration
+    * @param container
+    * @param videoCodec
+    * @param audioCodec
+    * @param width
+    * @param height
+    * @param frameRate
+    * @param sizeBytes
+    * @param videoRefDescription
+    * @param ec
+    * @return
+    */
+  def update(
+      sha512: Array[Byte],
+      videoSequenceName: String,
+      cameraId: String,
+      videoName: String,
+      uri: Option[URI] = None,
+      start: Option[Instant] = None,
+      duration: Option[Duration] = None,
+      container: Option[String] = None,
+      videoCodec: Option[String] = None,
+      audioCodec: Option[String] = None,
+      width: Option[Int] = None,
+      height: Option[Int] = None,
+      frameRate: Option[Double] = None,
+      sizeBytes: Option[Long] = None,
+      videoRefDescription: Option[String] = None,
+      videoSequenceDescription: Option[String] = None,
+      videoDescription: Option[String] = None
+  )(implicit ec: ExecutionContext): Future[Option[Media]] = {
+
+
+    findAndUpdate(d => d.findBySha512(sha512),
+      videoSequenceName,
+      cameraId,
+      videoName,
+      Option(sha512),
+      uri,
+      start,
+      duration,
+      container,
+      videoCodec,
+      audioCodec,
+      width,
+      height,
+      frameRate,
+      sizeBytes,
+      videoRefDescription,
+      videoSequenceDescription,
+      videoDescription)
 
   }
 

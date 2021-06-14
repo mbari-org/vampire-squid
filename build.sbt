@@ -1,23 +1,23 @@
 val activationVersion   = "1.2.0"
 val akkaVersion         = "2.6.14"
-val auth0Version        = "3.15.0"
+val auth0Version        = "3.16.0"
 val codecVersion        = "1.15"
 val configVersion       = "1.4.1"
 val derbyVersion        = "10.15.2.0"
 val eclipselinkVersion  = "2.7.8"
 val gsonJavatimeVersion = "1.1.1"
-val gsonVersion         = "2.8.6"
+val gsonVersion         = "2.8.7"
 val h2Version           = "1.4.200"
 val jansiVersion        = "1.18"
 val javamelodyVersion   = "1.87.0"
-val jettyVersion        = "9.4.40.v20210413"
-val json4sVersion       = "3.6.11"
+val jettyVersion        = "9.4.42.v20210604"
+val json4sVersion       = "3.6.11" // Scalatra is not compatible with v4.0.0
 val jtaVersion          = "1.1"
 val jtdsVersion         = "1.3.1"
 val junitVersion        = "4.13.2"
 val logbackVersion      = "1.3.0-alpha4"
 val oracleVersion       = "19.3.0.0"
-val postgresqlVersion   = "42.2.19"
+val postgresqlVersion   = "42.2.21"
 val rabbitmqVersion     = "5.12.0"
 val scalaTestVersion    = "3.2.7"
 val scalatraVersion     = "2.7.1"
@@ -36,8 +36,8 @@ addCommandAlias(
 lazy val buildSettings = Seq(
   organization := "org.mbari.vars",
   version := "0.4.0",
-  scalaVersion := "2.13.5",
-  crossScalaVersions := Seq("2.13.5"),
+  scalaVersion := "2.13.6",
+  crossScalaVersions := Seq("2.13.6"),
   organizationName := "Monterey Bay Aquarium Research Institute",
   startYear := Some(2017),
   licenses += ("Apache-2.0", new URL(
@@ -60,7 +60,7 @@ lazy val consoleSettings = Seq(
 lazy val dependencySettings = Seq(
   resolvers ++= Seq(
     Resolver.mavenLocal,
-    Resolver.bintrayRepo("hohonuuli", "maven"),
+    Resolver.githubPackages("mbari-org", "maven"),
     Resolver.sonatypeRepo("releases"),
     Resolver.sonatypeRepo("snapshots")
   )

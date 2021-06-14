@@ -167,40 +167,32 @@ class MediaV1Api(controller: MediaController)(
     val videoDescription = params.get("video_description")
     val videoSequenceDescription = params.get("video_sequence_description")
 
-    controller
-      .findByVideoReferenceUuid(videoReferenceUuid)
-      .map(opt =>
-        opt match {
-          case None =>
-            halt(
-              NotFound(
-                s"""{"error": "A media with a video_reference_uuid of $videoReferenceUuid does not exist""""
-              )
-            )
-          case Some(m) =>
-            controller
-              .update(
-                sha512.getOrElse(m.sha512),
-                videoSequenceName.getOrElse(m.videoSequenceName),
-                cameraId.getOrElse(m.cameraId),
-                videoName.getOrElse(m.videoName),
-                uri,
-                start,
-                duration,
-                container,
-                videoCodec,
-                audioCodec,
-                width,
-                height,
-                frameRate,
-                sizeBytes,
-                description,
-                videoSequenceDescription,
-                videoDescription
-              )
-              .map(opt => opt.map(controller.toJson).getOrElse("{}"))
-        }
-      )
+    controller.findByVideoReferenceUuid(videoReferenceUuid)
+      .map {
+        case None =>
+          halt(NotFound(
+              s"""{"error": "A media with a video_reference_uuid of $videoReferenceUuid does not exist""""))
+        case Some(m) =>
+          controller.findAndUpdate(d => d.findByUUID(videoReferenceUuid),
+            videoSequenceName.getOrElse(m.videoSequenceName),
+            cameraId.getOrElse(m.cameraId),
+            videoName.getOrElse(m.videoName),
+            sha512,
+            uri,
+            start,
+            duration,
+            container,
+            videoCodec,
+            audioCodec,
+            width,
+            height,
+            frameRate,
+            sizeBytes,
+            description,
+            videoSequenceDescription,
+            videoDescription).map(opt => opt.map(controller.toJson).getOrElse("{}"))
+      }
+
   }
 
   get("/sha512/:sha512") {
