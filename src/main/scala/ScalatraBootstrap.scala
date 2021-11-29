@@ -81,6 +81,7 @@ class ScalatraBootstrap extends LifeCycle {
     //context.mount(videoV2Api, "/v2/videos")
     context.mount(videoReferenceV1Api, "/v1/videoreferences")
     //context.mount(videoReferenceV2Api, "/v2/videoreferences")
+    context.mount(new HealthApi, "/v1/health")
 
   }
 
