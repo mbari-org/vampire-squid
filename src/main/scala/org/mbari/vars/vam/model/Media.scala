@@ -157,7 +157,7 @@ object Media {
       description: Option[String] = None,
       sha512: Option[Array[Byte]] = None,
       videoSequenceDescription: Option[String] = None,
-      videoDescription: Option[String] = None,
+      videoDescription: Option[String] = None
   ): Media = {
     val m = new Media
     videoReferenceUuid.foreach(m.videoReferenceUuid = _)

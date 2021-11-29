@@ -37,11 +37,9 @@ class VideoSequenceV1Api(controller: VideoSequenceController)(
     implicit val executor: ExecutionContext
 ) extends APIStack {
 
-
   get("/?") {
     controller.findAll.map(vs => controller.toJson(vs.asJava))
   }
-
 
   get("/:uuid") {
     val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest("Please provide a valid UUID")))
@@ -83,7 +81,6 @@ class VideoSequenceV1Api(controller: VideoSequenceController)(
       })
   }
 
-
   get("/name/:name") {
     val name = params("name")
     controller
@@ -99,7 +96,6 @@ class VideoSequenceV1Api(controller: VideoSequenceController)(
         case Some(vs) => controller.toJson(vs)
       })
   }
-
 
   get("/names") {
     controller
@@ -118,7 +114,6 @@ class VideoSequenceV1Api(controller: VideoSequenceController)(
       .map(controller.toJson)
   }
 
-
   get("/cameras") {
     controller
       .findAllCameraIDs
@@ -135,8 +130,6 @@ class VideoSequenceV1Api(controller: VideoSequenceController)(
       .map(controller.toJson)
   }
 
-
-
   get("/camera/:camera_id/:timestamp") {
     val cameraID = params
       .get("camera_id")
@@ -149,7 +142,6 @@ class VideoSequenceV1Api(controller: VideoSequenceController)(
       .findByCameraIDAndTimestamp(cameraID, timestamp, window)
       .map(controller.toJson)
   }
-
 
   post("/") {
     validateRequest()
@@ -164,7 +156,6 @@ class VideoSequenceV1Api(controller: VideoSequenceController)(
       .create(name, cameraID, description)
       .map(controller.toJson)
   }
-
 
   delete("/:uuid") {
     validateRequest()

@@ -28,4 +28,3 @@ class HealthApi extends ScalatraServlet {
   }
 
 }
-

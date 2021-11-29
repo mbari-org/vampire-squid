@@ -36,7 +36,6 @@ class MediaV1Api(controller: MediaController)(
     implicit val executor: ExecutionContext
 ) extends APIStack {
 
-
   post("/") {
     validateRequest()
     val videoSequenceName = params
@@ -54,18 +53,18 @@ class MediaV1Api(controller: MediaController)(
     val start = params
       .getAs[Instant]("start_timestamp")
       .getOrElse(halt(BadRequest("""{error: "A 'start_timestamp' parameter is required"}""")))
-    val duration            = params.getAs[Duration]("duration_millis")
-    val container           = params.get("container")
-    val videoCodec          = params.get("video_codec")
-    val audioCodec          = params.get("audio_codec")
-    val width               = params.getAs[Int]("width")
-    val height              = params.getAs[Int]("height")
-    val frameRate           = params.getAs[Double]("frame_rate")
-    val sizeBytes           = params.getAs[Long]("size_bytes")
-    val description = params.get("description") // VideoReference description
-    val videoDescription = params.get("video_description")
+    val duration                 = params.getAs[Duration]("duration_millis")
+    val container                = params.get("container")
+    val videoCodec               = params.get("video_codec")
+    val audioCodec               = params.get("audio_codec")
+    val width                    = params.getAs[Int]("width")
+    val height                   = params.getAs[Int]("height")
+    val frameRate                = params.getAs[Double]("frame_rate")
+    val sizeBytes                = params.getAs[Long]("size_bytes")
+    val description              = params.get("description") // VideoReference description
+    val videoDescription         = params.get("video_description")
     val videoSequenceDescription = params.get("video_sequence_description")
-    val sha512              = params.getAs[Array[Byte]]("sha512")
+    val sha512                   = params.getAs[Array[Byte]]("sha512")
     validateRequest()
     controller
       .create(
@@ -104,18 +103,18 @@ class MediaV1Api(controller: MediaController)(
     val videoName = params
       .get("video_name")
       .getOrElse(halt(BadRequest("""{error: "A 'video_name' parameter is required"}""")))
-    val uri                 = params.getAs[URI]("uri")
-    val start               = params.getAs[Instant]("start_timestamp")
-    val duration            = params.getAs[Duration]("duration_millis")
-    val container           = params.get("container")
-    val videoCodec          = params.get("video_codec")
-    val audioCodec          = params.get("audio_codec")
-    val width               = params.getAs[Int]("width")
-    val height              = params.getAs[Int]("height")
-    val frameRate           = params.getAs[Double]("frame_rate")
-    val sizeBytes           = params.getAs[Long]("size_bytes")
-    val description = params.get("description") // VideoReference description
-    val videoDescription = params.get("video_description")
+    val uri                      = params.getAs[URI]("uri")
+    val start                    = params.getAs[Instant]("start_timestamp")
+    val duration                 = params.getAs[Duration]("duration_millis")
+    val container                = params.get("container")
+    val videoCodec               = params.get("video_codec")
+    val audioCodec               = params.get("audio_codec")
+    val width                    = params.getAs[Int]("width")
+    val height                   = params.getAs[Int]("height")
+    val frameRate                = params.getAs[Double]("frame_rate")
+    val sizeBytes                = params.getAs[Long]("size_bytes")
+    val description              = params.get("description") // VideoReference description
+    val videoDescription         = params.get("video_description")
     val videoSequenceDescription = params.get("video_sequence_description")
     validateRequest()
     controller
@@ -147,48 +146,56 @@ class MediaV1Api(controller: MediaController)(
     val videoReferenceUuid = params
       .getAs[UUID]("video_reference_uuid")
       .getOrElse(halt(BadRequest("""{"error":"A 'video_reference_uuid' is required"}""")))
-    val sha512              = params.getAs[Array[Byte]]("sha512")
-    val videoSequenceName   = params.get("video_sequence_name")
-    val cameraId            = params.get("camera_id")
-    val videoName           = params.get("video_name")
-    val uri                 = params.getAs[URI]("uri")
-    val start               = params.getAs[Instant]("start_timestamp")
-    val duration            = params.getAs[Duration]("duration_millis")
-    val container           = params.get("container")
-    val videoCodec          = params.get("video_codec")
-    val audioCodec          = params.get("audio_codec")
-    val width               = params.getAs[Int]("width")
-    val height              = params.getAs[Int]("height")
-    val frameRate           = params.getAs[Double]("frame_rate")
-    val sizeBytes           = params.getAs[Long]("size_bytes")
-    val description = params.get("description")
-    val videoDescription = params.get("video_description")
+    val sha512                   = params.getAs[Array[Byte]]("sha512")
+    val videoSequenceName        = params.get("video_sequence_name")
+    val cameraId                 = params.get("camera_id")
+    val videoName                = params.get("video_name")
+    val uri                      = params.getAs[URI]("uri")
+    val start                    = params.getAs[Instant]("start_timestamp")
+    val duration                 = params.getAs[Duration]("duration_millis")
+    val container                = params.get("container")
+    val videoCodec               = params.get("video_codec")
+    val audioCodec               = params.get("audio_codec")
+    val width                    = params.getAs[Int]("width")
+    val height                   = params.getAs[Int]("height")
+    val frameRate                = params.getAs[Double]("frame_rate")
+    val sizeBytes                = params.getAs[Long]("size_bytes")
+    val description              = params.get("description")
+    val videoDescription         = params.get("video_description")
     val videoSequenceDescription = params.get("video_sequence_description")
 
-    controller.findByVideoReferenceUuid(videoReferenceUuid)
+    controller
+      .findByVideoReferenceUuid(videoReferenceUuid)
       .map {
         case None =>
-          halt(NotFound(
-              s"""{"error": "A media with a video_reference_uuid of $videoReferenceUuid does not exist""""))
+          halt(
+            NotFound(
+              s"""{"error": "A media with a video_reference_uuid of $videoReferenceUuid does not exist""""
+            )
+          )
         case Some(m) =>
-          controller.findAndUpdate(d => d.findByUUID(videoReferenceUuid),
-            videoSequenceName.getOrElse(m.videoSequenceName),
-            cameraId.getOrElse(m.cameraId),
-            videoName.getOrElse(m.videoName),
-            sha512,
-            uri,
-            start,
-            duration,
-            container,
-            videoCodec,
-            audioCodec,
-            width,
-            height,
-            frameRate,
-            sizeBytes,
-            description,
-            videoSequenceDescription,
-            videoDescription).map(opt => opt.map(controller.toJson).getOrElse("{}"))
+          controller
+            .findAndUpdate(
+              d => d.findByUUID(videoReferenceUuid),
+              videoSequenceName.getOrElse(m.videoSequenceName),
+              cameraId.getOrElse(m.cameraId),
+              videoName.getOrElse(m.videoName),
+              sha512,
+              uri,
+              start,
+              duration,
+              container,
+              videoCodec,
+              audioCodec,
+              width,
+              height,
+              frameRate,
+              sizeBytes,
+              description,
+              videoSequenceDescription,
+              videoDescription
+            )
+            .map(opt => opt.map(controller.toJson).getOrElse("{}"))
       }
 
   }

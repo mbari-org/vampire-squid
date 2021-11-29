@@ -25,9 +25,7 @@ import scala.concurrent.ExecutionContext
   * @author Brian Schlining
   * @since 2017-02-06T08:42:00
   */
-class AuthorizationV1Api(implicit val executor: ExecutionContext)
-    extends APIStack {
-
+class AuthorizationV1Api(implicit val executor: ExecutionContext) extends APIStack {
 
   before() {
     contentType = "application/json"

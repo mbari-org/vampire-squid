@@ -168,48 +168,48 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
   }
 
   /**
-   *
-   * @param findFn
-   * @param videoSequenceName
-   * @param cameraId
-   * @param videoName
-   * @param sha512
-   * @param uri
-   * @param start
-   * @param duration
-   * @param container
-   * @param videoCodec
-   * @param audioCodec
-   * @param width
-   * @param height
-   * @param frameRate
-   * @param sizeBytes
-   * @param videoRefDescription
-   * @param videoSequenceDescription
-   * @param videoDescription
-   * @param ec
-   * @return
-   */
+    *
+    * @param findFn
+    * @param videoSequenceName
+    * @param cameraId
+    * @param videoName
+    * @param sha512
+    * @param uri
+    * @param start
+    * @param duration
+    * @param container
+    * @param videoCodec
+    * @param audioCodec
+    * @param width
+    * @param height
+    * @param frameRate
+    * @param sizeBytes
+    * @param videoRefDescription
+    * @param videoSequenceDescription
+    * @param videoDescription
+    * @param ec
+    * @return
+    */
   def findAndUpdate(
-                     findFn: VideoReferenceDAO[VideoReference] => Option[VideoReference],
-                     videoSequenceName: String,
-                     cameraId: String,
-                     videoName: String,
-                     sha512: Option[Array[Byte]],
-                     uri: Option[URI] = None,
-                     start: Option[Instant] = None,
-                     duration: Option[Duration] = None,
-                     container: Option[String] = None,
-                     videoCodec: Option[String] = None,
-                     audioCodec: Option[String] = None,
-                     width: Option[Int] = None,
-                     height: Option[Int] = None,
-                     frameRate: Option[Double] = None,
-                     sizeBytes: Option[Long] = None,
-                     videoRefDescription: Option[String] = None,
-                     videoSequenceDescription: Option[String] = None,
-                     videoDescription: Option[String] = None
-            )(implicit ec: ExecutionContext): Future[Option[Media]] = {
+      findFn: VideoReferenceDAO[VideoReference] => Option[VideoReference],
+      videoSequenceName: String,
+      cameraId: String,
+      videoName: String,
+      sha512: Option[Array[Byte]],
+      uri: Option[URI] = None,
+      start: Option[Instant] = None,
+      duration: Option[Duration] = None,
+      container: Option[String] = None,
+      videoCodec: Option[String] = None,
+      audioCodec: Option[String] = None,
+      width: Option[Int] = None,
+      height: Option[Int] = None,
+      frameRate: Option[Double] = None,
+      sizeBytes: Option[Long] = None,
+      videoRefDescription: Option[String] = None,
+      videoSequenceDescription: Option[String] = None,
+      videoDescription: Option[String] = None
+  )(implicit ec: ExecutionContext): Future[Option[Media]] = {
 
     val vrDao = daoFactory.newVideoReferenceDAO()
     val vsDao = daoFactory.newVideoSequenceDAO(vrDao)
@@ -338,8 +338,8 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
       videoDescription: Option[String] = None
   )(implicit ec: ExecutionContext): Future[Option[Media]] = {
 
-
-    findAndUpdate(d => d.findBySha512(sha512),
+    findAndUpdate(
+      d => d.findBySha512(sha512),
       videoSequenceName,
       cameraId,
       videoName,
@@ -356,7 +356,8 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
       sizeBytes,
       videoRefDescription,
       videoSequenceDescription,
-      videoDescription)
+      videoDescription
+    )
 
   }
 

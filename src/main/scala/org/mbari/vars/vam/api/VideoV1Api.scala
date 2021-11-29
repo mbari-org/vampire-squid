@@ -39,14 +39,12 @@ class VideoV1Api(controller: VideoController)(
     implicit val executor: ExecutionContext
 ) extends APIStack {
 
-
   get("/?") {
     controller
       .findAll
       .map(_.asJava)
       .map(controller.toJson)
   }
-
 
   get("/:uuid") {
     val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest("Please provide a UUID")))
@@ -63,9 +61,9 @@ class VideoV1Api(controller: VideoController)(
       })
   }
 
-
   get("/videosequence/:uuid") {
-    val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest("Please provide a Video Sequence UUID")))
+    val uuid =
+      params.getAs[UUID]("uuid").getOrElse(halt(BadRequest("Please provide a Video Sequence UUID")))
     controller
       .findByUUID(uuid)
       .map({
@@ -80,11 +78,18 @@ class VideoV1Api(controller: VideoController)(
   }
 
   get("/videoreference/:uuid") {
-    val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest("Please provide a Video Reference UUID")))
-    controller.findByVideoReferenceUUID(uuid)
+    val uuid = params
+      .getAs[UUID]("uuid")
+      .getOrElse(halt(BadRequest("Please provide a Video Reference UUID")))
+    controller
+      .findByVideoReferenceUUID(uuid)
       .map({
-        case None => 
-          halt(NotFound(s"A video containing a videoreference with a UUID of $uuid was not found in the database"))
+        case None =>
+          halt(
+            NotFound(
+              s"A video containing a videoreference with a UUID of $uuid was not found in the database"
+            )
+          )
         case Some(v) =>
           controller.toJson(v)
       })
@@ -114,7 +119,6 @@ class VideoV1Api(controller: VideoController)(
       })
   }
 
-
   get("/name/:name") {
     val name = params.get("name").getOrElse(halt(BadRequest("Please provide a name")))
     controller
@@ -137,7 +141,6 @@ class VideoV1Api(controller: VideoController)(
       .map(controller.toJson)
   }
 
-
   get("/timestamp/:timestamp") {
     val timestamp = params
       .getAs[Instant]("timestamp")
@@ -149,7 +152,6 @@ class VideoV1Api(controller: VideoController)(
       .map(_.asJava)
       .map(controller.toJson)
   }
-
 
   get("/timestamp/:start/:end") {
     val startTime = params
@@ -163,7 +165,6 @@ class VideoV1Api(controller: VideoController)(
       .map(_.asJava)
       .map(controller.toJson)
   }
-
 
   delete("/:uuid") {
     validateRequest()
@@ -203,7 +204,6 @@ class VideoV1Api(controller: VideoController)(
       .create(videoSequenceUUID, name, startTimestamp, duration, description)
       .map(controller.toJson)
   }
-
 
   put("/:uuid") {
     validateRequest()

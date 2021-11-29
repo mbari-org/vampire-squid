@@ -53,7 +53,8 @@ object JettyMain {
 
   def main(args: Array[String]) = {
     System.setProperty("user.timezone", "UTC")
-    val s = """
+    val s =
+      """
       | ____   ____                     .__                   _________            .__    .___
       | \   \ /   /____    _____ ______ |__|______   ____    /   _____/ ________ __|__| __| _/
       |  \   Y   /\__  \  /     \\____ \|  \_  __ \_/ __ \   \_____  \ / ____/  |  \  |/ __ | 
@@ -62,9 +63,9 @@ object JettyMain {
       |                \/      \/|__|                   \/          \/    |__|             \/ """.stripMargin
     println(s)
 
-
     val server: Server = new Server
-    LoggerFactory.getLogger(getClass)
+    LoggerFactory
+      .getLogger(getClass)
       .atInfo
       .log("Starting Jetty server on port {}", conf.port)
 
