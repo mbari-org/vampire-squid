@@ -17,7 +17,6 @@
 package org.mbari.vars.vam.api
 
 import org.scalatra.Unauthorized
-import org.scalatra.swagger.Swagger
 
 import scala.concurrent.ExecutionContext
 

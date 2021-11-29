@@ -22,7 +22,7 @@ final case class HealthStatus(
     freeMemory: Long,
     maxMemory: Long,
     totalMemory: Long,
-    application: String = "annosaurus"
+    application: String = "vampire-squid"
 )
 
 object HealthStatus {

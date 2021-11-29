@@ -1,6 +1,6 @@
-FROM openjdk:11
+FROM openjdk:17-jre-slim
 
-MAINTAINER Brian Schlining <bschlining@gmail.com>
+LABEL maintainer="Brian Schlining <bschlining@gmail.com>"
 
 ENV APP_HOME /opt/vampire-squid
 

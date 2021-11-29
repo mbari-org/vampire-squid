@@ -25,11 +25,11 @@ import org.mbari.vars.vam.controllers.{
 }
 import org.mbari.vars.vam.dao.jpa.JPADAOFactory
 import org.scalatra.LifeCycle
-import org.scalatra.swagger.{ApiInfo, Swagger}
+// import org.scalatra.swagger.{ApiInfo, Swagger}
 
 import scala.concurrent.ExecutionContext
-import org.scalatra.swagger.ContactInfo
-import org.scalatra.swagger.LicenseInfo
+// import org.scalatra.swagger.ContactInfo
+// import org.scalatra.swagger.LicenseInfo
 
 /**
   *
@@ -39,15 +39,15 @@ import org.scalatra.swagger.LicenseInfo
   */
 class ScalatraBootstrap extends LifeCycle {
 
-  val apiInfo = ApiInfo(
-    "vampire-squid",
-    "A Video Asset Managment microservice0",
-    "http://www.mbari.org",
-    ContactInfo("Brian Schlining", "http://www.mbari.org", "brian@mbari.org"),
-    LicenseInfo("Apache 2.0", "https://www.apache.org/licenses/LICENSE-2.0")
-  )
+  // val apiInfo = ApiInfo(
+  //   "vampire-squid",
+  //   "A Video Asset Managment microservice0",
+  //   "http://www.mbari.org",
+  //   ContactInfo("Brian Schlining", "http://www.mbari.org", "brian@mbari.org"),
+  //   LicenseInfo("Apache 2.0", "https://www.apache.org/licenses/LICENSE-2.0")
+  // )
 
-  implicit val swagger = new Swagger("1.2", "1.0.0", apiInfo)
+  // implicit val swagger = new Swagger("1.2", "1.0.0", apiInfo)
 
   override def init(context: ServletContext): Unit = {
 

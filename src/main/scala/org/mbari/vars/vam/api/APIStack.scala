@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest
 
 import org.mbari.vars.vam.dao.jpa.ByteArrayConverter
 import org.scalatra.{ContentEncodingSupport, FutureSupport, ScalatraServlet}
-import org.scalatra.swagger.SwaggerSupport
+// import org.scalatra.swagger.SwaggerSupport
 import org.scalatra.util.conversion.TypeConverter
 
 import scala.io.Source
