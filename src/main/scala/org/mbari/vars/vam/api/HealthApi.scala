@@ -23,6 +23,10 @@ import org.mbari.vars.vam.model.CirceCodecs._
 
 class HealthApi extends ScalatraServlet {
 
+  before() {
+    contentType = "application/json"
+  }
+
   get("/") {
     CirceCodecs.print(HealthStatus.default)
   }
