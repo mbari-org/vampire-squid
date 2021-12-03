@@ -26,10 +26,6 @@ import scala.concurrent.ExecutionContext
   */
 class AuthorizationV1Api(implicit val executor: ExecutionContext) extends APIStack {
 
-  before() {
-    contentType = "application/json"
-  }
-
   post("/") {
     authorizationService.requestAuthorization(request) match {
       case None    => halt(Unauthorized())

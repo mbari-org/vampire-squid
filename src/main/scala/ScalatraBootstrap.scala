@@ -28,6 +28,8 @@ import org.scalatra.LifeCycle
 // import org.scalatra.swagger.{ApiInfo, Swagger}
 
 import scala.concurrent.ExecutionContext
+import org.slf4j.LoggerFactory
+import org.mbari.vars.vam.AppConfig
 // import org.scalatra.swagger.ContactInfo
 // import org.scalatra.swagger.LicenseInfo
 
@@ -51,7 +53,11 @@ class ScalatraBootstrap extends LifeCycle {
 
   override def init(context: ServletContext): Unit = {
 
-    println("STARTING UP NOW")
+    LoggerFactory.getLogger(getClass).info(s"Mounting ${AppConfig.Name} Servlets")
+    // Optional because * is the default
+    context.setInitParameter("org.scalatra.cors.allowedOrigins", "*")
+    // Disables cookies, but required because browsers will not allow passing credentials to wildcard domains
+    context.setInitParameter("org.scalatra.cors.allowCredentials", "false")
 
     implicit val executionContext = ExecutionContext.global
 

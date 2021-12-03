@@ -20,8 +20,6 @@ import java.time.{Duration, Instant}
 import java.util.UUID
 
 import org.mbari.vars.vam.controllers.VideoSequenceController
-import org.mbari.vars.vam.dao.jpa.VideoSequence
-import org.scalatra.swagger._
 import org.scalatra._
 
 import scala.concurrent.ExecutionContext

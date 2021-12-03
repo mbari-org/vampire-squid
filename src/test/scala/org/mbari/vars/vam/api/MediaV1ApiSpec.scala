@@ -92,6 +92,7 @@ class MediaV1ApiSpec extends WebApiStack {
     val sha512 = ByteArrayConverter.encode(Array.fill[Byte](64)(11))
     get(s"/v1/media/sha512/$sha512") {
       status should be(200)
+      header("Content-Type") should startWith("application/json")
       val media = gson.fromJson(body, classOf[Media])
       println(body)
       media.videoSequenceUuid should not be (null)

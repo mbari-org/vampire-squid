@@ -46,7 +46,6 @@ abstract class APIStack
 
   before() {
     contentType = "application/json"
-    response.headers.set("Access-Control-Allow-Origin", "*")
   }
 
   protected[this] val timeFormatter = DateTimeFormatter.ISO_DATE_TIME
