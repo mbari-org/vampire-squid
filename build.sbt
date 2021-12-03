@@ -32,7 +32,6 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 
 lazy val buildSettings = Seq(
   organization := "org.mbari.vars",
-  version := "0.4.2",
   scalaVersion := "2.13.7",
   crossScalaVersions := Seq("2.13.7"),
   organizationName := "Monterey Bay Aquarium Research Institute",
@@ -101,11 +100,21 @@ lazy val appSettings = buildSettings ++
 lazy val apps = Map("jetty-main" -> "JettyMain") // for sbt-pack
 
 lazy val `vampire-squid` = (project in file("."))
-  .enablePlugins(JettyPlugin)
-  .enablePlugins(AutomateHeaderPlugin)
-  .enablePlugins(PackPlugin)
+  .enablePlugins(
+    AutomateHeaderPlugin, 
+    GitBranchPrompt, 
+    GitVersioning, 
+    JettyPlugin,
+    PackPlugin)
   .settings(appSettings)
   .settings(
+    // Set version based on git tag. I use "0.0.0" format (no leading "v", which is the default)
+    // Use `show gitCurrentTags` in sbt to update/see the tags
+    git.gitTagToVersionNumber := { tag: String =>
+      if(tag matches "[0-9]+\\..*") Some(tag)
+      else None
+    },
+    git.useGitDescribe := true,
     libraryDependencies ++= Seq(
       "ch.qos.logback"                                 % "logback-classic"                   % logbackVersion,
       "ch.qos.logback"                                 % "logback-core"                      % logbackVersion,
