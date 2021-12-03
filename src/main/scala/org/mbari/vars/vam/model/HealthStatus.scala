@@ -16,13 +16,16 @@
 
 package org.mbari.vars.vam.model
 
+import org.mbari.vars.vam.AppConfig
+
 final case class HealthStatus(
     jdkVersion: String,
     availableProcessors: Int,
     freeMemory: Long,
     maxMemory: Long,
     totalMemory: Long,
-    application: String = "vampire-squid"
+    application: String = AppConfig.Name,
+    version: String = AppConfig.Version
 )
 
 object HealthStatus {
