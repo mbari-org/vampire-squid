@@ -16,21 +16,19 @@
 
 package org.mbari.vars.vam.api
 
-import org.scalatra.Unauthorized
+import org.scalatra.ScalatraServlet
+import org.mbari.vars.vam.model.HealthStatus
+import org.mbari.vars.vam.model.CirceCodecs
+import org.mbari.vars.vam.model.CirceCodecs._
 
-import scala.concurrent.ExecutionContext
+class HealthApi extends ScalatraServlet {
 
-/**
-  * @author Brian Schlining
-  * @since 2017-02-06T08:42:00
-  */
-class AuthorizationV1Api(implicit val executor: ExecutionContext) extends APIStack {
+  before() {
+    contentType = "application/json"
+  }
 
-  post("/") {
-    authorizationService.requestAuthorization(request) match {
-      case None    => halt(Unauthorized())
-      case Some(s) => s
-    }
+  get("/") {
+    CirceCodecs.print(HealthStatus.default)
   }
 
 }

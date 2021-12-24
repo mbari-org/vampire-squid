@@ -61,23 +61,23 @@ class MediaV1ApiSpec extends WebApiStack {
 
     post(
       "/v1/media",
-      "video_sequence_name" -> s"$name-bob",
-      "camera_id"           -> "Ventana",
-      "video_name"          -> "V20160922T030001Z",
-      "uri"                 -> "http://www.mbari.org/movies/anothermovie.mp4",
-      "start_timestamp"     -> "2016-09-22T03:00:01Z",
-      "duration_millis"     -> "90000",
-      "container"           -> "video/mp4",
-      "video_codec"         -> "h264",
-      "audio_codec"         -> "aac",
-      "width"               -> "1920",
-      "height"              -> "1080",
-      "frame_rate"          -> "60.07",
-      "size_bytes"          -> "12233456",
-      "video_description"   -> "A test movie",
+      "video_sequence_name"        -> s"$name-bob",
+      "camera_id"                  -> "Ventana",
+      "video_name"                 -> "V20160922T030001Z",
+      "uri"                        -> "http://www.mbari.org/movies/anothermovie.mp4",
+      "start_timestamp"            -> "2016-09-22T03:00:01Z",
+      "duration_millis"            -> "90000",
+      "container"                  -> "video/mp4",
+      "video_codec"                -> "h264",
+      "audio_codec"                -> "aac",
+      "width"                      -> "1920",
+      "height"                     -> "1080",
+      "frame_rate"                 -> "60.07",
+      "size_bytes"                 -> "12233456",
+      "video_description"          -> "A test movie",
       "video_sequence_description" -> "A test sequence",
-      "description"        -> "A test",
-      "sha512"              -> sha512
+      "description"                -> "A test",
+      "sha512"                     -> sha512
     ) {
       status should be(200)
       val media = gson.fromJson(body, classOf[Media])
@@ -92,6 +92,7 @@ class MediaV1ApiSpec extends WebApiStack {
     val sha512 = ByteArrayConverter.encode(Array.fill[Byte](64)(11))
     get(s"/v1/media/sha512/$sha512") {
       status should be(200)
+      header("Content-Type") should startWith("application/json")
       val media = gson.fromJson(body, classOf[Media])
       println(body)
       media.videoSequenceUuid should not be (null)
@@ -109,8 +110,8 @@ class MediaV1ApiSpec extends WebApiStack {
       media.height should be(1080)
       media.sizeBytes should be(12233456)
       media.videoDescription should be("A test movie")
-      media.description should be ("A test")
-      media.videoSequenceDescription should be ("A test sequence")
+      media.description should be("A test")
+      media.videoSequenceDescription should be("A test sequence")
 
       val thatSha = ByteArrayConverter.encode(media.sha512)
       thatSha should be(sha512)

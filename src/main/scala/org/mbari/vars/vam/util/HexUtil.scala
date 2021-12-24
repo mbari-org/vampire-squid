@@ -14,23 +14,20 @@
  * limitations under the License.
  */
 
-package org.mbari.vars.vam.api
+package org.mbari.vars.vam.util
 
-import org.scalatra.Unauthorized
-
-import scala.concurrent.ExecutionContext
-
-/**
-  * @author Brian Schlining
-  * @since 2017-02-06T08:42:00
-  */
-class AuthorizationV1Api(implicit val executor: ExecutionContext) extends APIStack {
-
-  post("/") {
-    authorizationService.requestAuthorization(request) match {
-      case None    => halt(Unauthorized())
-      case Some(s) => s
-    }
+object HexUtil {
+  def toHex(bytes: Array[Byte]): String = {
+    val sb = new StringBuilder
+    for (b <- bytes)
+      sb.append(String.format("%02x", Byte.box(b)))
+    sb.toString
   }
 
+  def fromHex(hex: String): Array[Byte] = {
+    hex
+      .grouped(2)
+      .toArray
+      .map(i => Integer.parseInt(i, 16).toByte)
+  }
 }

@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest
 
 import org.mbari.vars.vam.dao.jpa.ByteArrayConverter
 import org.scalatra.{ContentEncodingSupport, FutureSupport, ScalatraServlet}
-import org.scalatra.swagger.SwaggerSupport
+// import org.scalatra.swagger.SwaggerSupport
 import org.scalatra.util.conversion.TypeConverter
 
 import scala.io.Source
@@ -46,7 +46,6 @@ abstract class APIStack
 
   before() {
     contentType = "application/json"
-    response.headers.set("Access-Control-Allow-Origin", "*")
   }
 
   protected[this] val timeFormatter = DateTimeFormatter.ISO_DATE_TIME

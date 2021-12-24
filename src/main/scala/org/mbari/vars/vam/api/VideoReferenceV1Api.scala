@@ -44,7 +44,6 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(
     controller.findAll.map(vs => controller.toJson(vs.asJava))
   }
 
-
   get("/:uuid") {
     val uuid = params.getAs[UUID]("uuid").getOrElse(halt(BadRequest("Please provide a UUID")))
     controller
@@ -85,7 +84,6 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(
       })
   }
 
-
   get("/uri/*") {
 
     val uri = params.getAs[URI]("splat").getOrElse(halt(BadRequest("Please provide a URI")))
@@ -106,7 +104,6 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(
     controller.findAllURIs.map(uris => controller.toJson(uris.asJava))
   }
 
-
   get("/sha512/:sha512") {
     val sha = params
       .get("sha512")
@@ -122,7 +119,6 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(
       case Some(vr) => controller.toJson(vr)
     }
   }
-
 
   delete("/:uuid") {
     validateRequest()
@@ -141,7 +137,6 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(
           )
       })
   }
-
 
   post("/") {
     validateRequest()
@@ -176,7 +171,6 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(
       )
       .map(controller.toJson)
   }
-
 
   put("/:uuid") {
     validateRequest()

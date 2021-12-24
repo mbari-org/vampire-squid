@@ -57,7 +57,7 @@ class VideoController(val daoFactory: JPADAOFactory) extends BaseController {
   ): Future[Seq[Video]] =
     exec(d => d.findByTimestamp(t0, window).toSeq)
 
-  def findByVideoReferenceUUID(uuid: UUID)(implicit ec: ExecutionContext): Future[Option[Video]] = 
+  def findByVideoReferenceUUID(uuid: UUID)(implicit ec: ExecutionContext): Future[Option[Video]] =
     exec(d => d.findByVideoReferenceUUID(uuid))
 
   def findByVideoSequenceUUID(uuid: UUID)(implicit ec: ExecutionContext): Future[Seq[Video]] =

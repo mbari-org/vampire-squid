@@ -14,23 +14,14 @@
  * limitations under the License.
  */
 
-package org.mbari.vars.vam.api
+package org.mbari.vars.vam
 
-import org.scalatra.Unauthorized
+import scala.util.Try
 
-import scala.concurrent.ExecutionContext
+object AppConfig {
+  val Name: String = "vampire-squid"
 
-/**
-  * @author Brian Schlining
-  * @since 2017-02-06T08:42:00
-  */
-class AuthorizationV1Api(implicit val executor: ExecutionContext) extends APIStack {
+  val Version: String = Try(getClass.getPackage.getImplementationVersion).getOrElse("0.0.0")
 
-  post("/") {
-    authorizationService.requestAuthorization(request) match {
-      case None    => halt(Unauthorized())
-      case Some(s) => s
-    }
-  }
-
+  val Description: String = "Video Asset Manager"
 }

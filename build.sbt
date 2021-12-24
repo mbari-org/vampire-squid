@@ -1,43 +1,39 @@
 val activationVersion   = "1.2.0"
-val akkaVersion         = "2.6.14"
-val auth0Version        = "3.16.0"
+val akkaVersion         = "2.6.17"
+val auth0Version        = "3.18.2"
+val circeVersion        = "0.14.1"
 val codecVersion        = "1.15"
 val configVersion       = "1.4.1"
 val derbyVersion        = "10.15.2.0"
-val eclipselinkVersion  = "2.7.8"
+val eclipselinkVersion  = "2.7.9"
 val gsonJavatimeVersion = "1.1.1"
-val gsonVersion         = "2.8.7"
-val h2Version           = "1.4.200"
-val jansiVersion        = "1.18"
-val javamelodyVersion   = "1.87.0"
-val jettyVersion        = "9.4.42.v20210604"
-val json4sVersion       = "3.6.11" // Scalatra is not compatible with v4.0.0
+val gsonVersion         = "2.8.9"
+val h2Version           = "2.0.202"
+val jansiVersion        = "2.4.0"
+val javamelodyVersion   = "1.88.0"
+val jettyVersion        = "9.4.44.v20210927"
+val json4sVersion       = "4.0.3" //"3.6.11" // Scalatra is not compatible with v4.0.0
 val jtaVersion          = "1.1"
 val jtdsVersion         = "1.3.1"
 val junitVersion        = "4.13.2"
-val logbackVersion      = "1.3.0-alpha4"
+val logbackVersion      = "1.3.0-alpha10"
 val oracleVersion       = "19.3.0.0"
-val postgresqlVersion   = "42.2.21"
-val rabbitmqVersion     = "5.12.0"
-val scalaTestVersion    = "3.2.7"
-val scalatraVersion     = "2.7.1"
+val postgresqlVersion   = "42.3.1"
+val rabbitmqVersion     = "5.14.0"
+val scalaTestVersion    = "3.2.10"
+val scalatraVersion     = "2.8.2"
 val servletVersion      = "4.0.1"
-val slf4jVersion        = "1.8.0-beta4"
-val sqlserverVersion    = "9.2.1.jre11"
+val slf4jVersion        = "2.0.0-alpha5"
+val sqlserverVersion    = "9.4.0.jre11"
 val xmlBindVersion      = "2.3.0"
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
-addCommandAlias(
-  "fix",
-  "clean;scalafix RemoveUnused;scalafix LeakingImplicitClassVal;scalafmtAll;compile"
-)
 
 lazy val buildSettings = Seq(
   organization := "org.mbari.vars",
-  version := "0.4.1",
-  scalaVersion := "2.13.6",
-  crossScalaVersions := Seq("2.13.6"),
+  scalaVersion := "2.13.7",
+  crossScalaVersions := Seq("2.13.7"),
   organizationName := "Monterey Bay Aquarium Research Institute",
   startYear := Some(2017),
   licenses += ("Apache-2.0", new URL(
@@ -90,7 +86,7 @@ lazy val optionSettings = Seq(
     "-Ywarn-unused:privates",  // Warn if a private member is unused.
     "-Ywarn-value-discard"     // Warn when non-Unit expression results are unused.
   ),
-  javacOptions ++= Seq("-target", "11", "-source", "11"),
+  javacOptions ++= Seq("-target", "17", "-source", "17"),
   updateOptions := updateOptions.value.withCachedResolution(true)
 )
 
@@ -104,13 +100,21 @@ lazy val appSettings = buildSettings ++
 lazy val apps = Map("jetty-main" -> "JettyMain") // for sbt-pack
 
 lazy val `vampire-squid` = (project in file("."))
-  .enablePlugins(JettyPlugin)
-  .enablePlugins(AutomateHeaderPlugin)
-  .enablePlugins(PackPlugin)
+  .enablePlugins(
+    AutomateHeaderPlugin, 
+    GitBranchPrompt, 
+    GitVersioning, 
+    JettyPlugin,
+    PackPlugin)
   .settings(appSettings)
   .settings(
-    semanticdbEnabled := true, // enable SemanticDB,
-    semanticdbVersion := scalafixSemanticdb.revision,
+    // Set version based on git tag. I use "0.0.0" format (no leading "v", which is the default)
+    // Use `show gitCurrentTags` in sbt to update/see the tags
+    git.gitTagToVersionNumber := { tag: String =>
+      if(tag matches "[0-9]+\\..*") Some(tag)
+      else None
+    },
+    git.useGitDescribe := true,
     libraryDependencies ++= Seq(
       "ch.qos.logback"                                 % "logback-classic"                   % logbackVersion,
       "ch.qos.logback"                                 % "logback-core"                      % logbackVersion,
@@ -131,6 +135,9 @@ lazy val `vampire-squid` = (project in file("."))
       "javax.transaction"                              % "jta"                               % jtaVersion,
       "javax.xml.bind"                                 % "jaxb-api"                          % xmlBindVersion,
       "junit"                                          % "junit"                             % junitVersion % "test",
+      "io.circe"                                       %% "circe-core"                       % circeVersion,
+      "io.circe"                                       %% "circe-generic"                    % circeVersion,
+      "io.circe"                                       %% "circe-parser"                     % circeVersion,
       "net.bull.javamelody"                            % "javamelody-core"                   % javamelodyVersion,
       "net.sourceforge.jtds"                           % "jtds"                              % jtdsVersion,
       "org.apache.derby"                               % "derby"                             % derbyVersion, //          % "test",
@@ -175,5 +182,3 @@ lazy val `vampire-squid` = (project in file("."))
     packJarNameConvention := "original"
   )
 
-// Aliases
-addCommandAlias("cleanall", ";clean;clean-files")

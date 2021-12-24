@@ -25,11 +25,13 @@ import org.mbari.vars.vam.controllers.{
 }
 import org.mbari.vars.vam.dao.jpa.JPADAOFactory
 import org.scalatra.LifeCycle
-import org.scalatra.swagger.{ApiInfo, Swagger}
+// import org.scalatra.swagger.{ApiInfo, Swagger}
 
 import scala.concurrent.ExecutionContext
-import org.scalatra.swagger.ContactInfo
-import org.scalatra.swagger.LicenseInfo
+import org.slf4j.LoggerFactory
+import org.mbari.vars.vam.AppConfig
+// import org.scalatra.swagger.ContactInfo
+// import org.scalatra.swagger.LicenseInfo
 
 /**
   *
@@ -39,19 +41,23 @@ import org.scalatra.swagger.LicenseInfo
   */
 class ScalatraBootstrap extends LifeCycle {
 
-  val apiInfo = ApiInfo(
-    "vampire-squid",
-    "A Video Asset Managment microservice0",
-    "http://www.mbari.org",
-    ContactInfo("Brian Schlining", "http://www.mbari.org", "brian@mbari.org"),
-    LicenseInfo("Apache 2.0", "https://www.apache.org/licenses/LICENSE-2.0")
-  )
+  // val apiInfo = ApiInfo(
+  //   "vampire-squid",
+  //   "A Video Asset Managment microservice0",
+  //   "http://www.mbari.org",
+  //   ContactInfo("Brian Schlining", "http://www.mbari.org", "brian@mbari.org"),
+  //   LicenseInfo("Apache 2.0", "https://www.apache.org/licenses/LICENSE-2.0")
+  // )
 
-  implicit val swagger = new Swagger("1.2", "1.0.0", apiInfo)
+  // implicit val swagger = new Swagger("1.2", "1.0.0", apiInfo)
 
   override def init(context: ServletContext): Unit = {
 
-    println("STARTING UP NOW")
+    LoggerFactory.getLogger(getClass).info(s"Mounting ${AppConfig.Name} Servlets")
+    // Optional because * is the default
+    context.setInitParameter("org.scalatra.cors.allowedOrigins", "*")
+    // Disables cookies, but required because browsers will not allow passing credentials to wildcard domains
+    context.setInitParameter("org.scalatra.cors.allowCredentials", "false")
 
     implicit val executionContext = ExecutionContext.global
 
@@ -81,6 +87,7 @@ class ScalatraBootstrap extends LifeCycle {
     //context.mount(videoV2Api, "/v2/videos")
     context.mount(videoReferenceV1Api, "/v1/videoreferences")
     //context.mount(videoReferenceV2Api, "/v2/videoreferences")
+    context.mount(new HealthApi, "/v1/health")
 
   }
 
