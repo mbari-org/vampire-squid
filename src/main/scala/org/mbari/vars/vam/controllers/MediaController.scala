@@ -255,6 +255,7 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
       }
       else {
         videoReference.video.videoSequence.cameraID = cameraId
+        videoSequenceDescription.foreach(videoReference.video.videoSequence.description = _)
         videoReference.video.videoSequence
       }
     }
@@ -282,6 +283,7 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
       else {
         start.foreach(videoReference.video.start = _)
         duration.foreach(videoReference.video.duration = _)
+        videoDescription.foreach(videoReference.video.description = _)
         videoReference.video
       }
     }

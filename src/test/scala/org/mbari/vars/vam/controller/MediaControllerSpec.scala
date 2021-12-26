@@ -157,9 +157,13 @@ class MediaControllerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterE
     m1.videoSequenceName should be(m0.videoSequenceName)
     m1.startTimestamp should be(m0.startTimestamp)
     m1.duration should be(m0.duration)
+    m1.description should be(m0.description)
     m1.uri should be(m0.uri)
     m1.videoCodec = "prores"
     m1.container = "video/quicktime"
+    m1.description = "A test movie 2"
+    m1.videoDescription = "Some great video"
+    m1.videoSequenceDescription = "Our first deployment"
     val f1  = controller.updateMedia(m1)
     val opt = Await.result(f1, timeout)
     opt should not be (None)
@@ -170,6 +174,9 @@ class MediaControllerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterE
     m2.videoSequenceName should be(m1.videoSequenceName)
     m2.startTimestamp should be(m1.startTimestamp)
     m2.duration should be(m1.duration)
+    m2.description should be(m1.description)
+    m2.videoDescription should be(m1.videoDescription)
+    m2.videoSequenceDescription should be(m1.videoSequenceDescription)
     m2.uri should be(m1.uri)
     m2.sha512 should be(m1.sha512)
 

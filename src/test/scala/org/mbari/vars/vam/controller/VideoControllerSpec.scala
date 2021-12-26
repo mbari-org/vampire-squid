@@ -50,11 +50,11 @@ class VideoControllerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterE
   private[this] val now      = Instant.now()
 
   "VideoController" should "create" in {
-    val fn0 = vsController.create("A VideoSequence", "Thundar")
+    val fn0 = vsController.create("A VideoSequence", "Thundar", Some("Fancy description"))
     val vs  = Await.result(fn0, timeout)
     vs should not be (null)
 
-    val fn1   = controller.create(vs.uuid, "Proxy", now, Some(duration))
+    val fn1   = controller.create(vs.uuid, "Proxy", now, Some(duration), Some("Other description"))
     val video = Await.result(fn1, timeout)
     video should not be null
 
