@@ -24,7 +24,7 @@ val scalaTestVersion    = "3.2.11"
 val scalatraVersion     = "2.8.2"
 val servletVersion      = "4.0.1"
 val slf4jVersion        = "2.0.0-alpha6"
-val sqlserverVersion    = "10.2.0.jre17"
+val sqlserverVersion    = "9.4.1.jre11"
 val xmlBindVersion      = "2.3.0"
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
