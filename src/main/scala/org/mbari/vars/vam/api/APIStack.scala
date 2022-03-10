@@ -48,17 +48,33 @@ abstract class APIStack
     contentType = "application/json"
   }
 
-  protected[this] val timeFormatter = DateTimeFormatter.ISO_DATE_TIME
+  protected[this] val timeFormatter        = DateTimeFormatter.ISO_DATE_TIME
+  protected[this] val compactTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmssX")
+  protected[this] val compactTimeFormatter1 = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss.SSSX")
+  protected[this] val compactTimeFormatter2 = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss.SSSSSSX")
 
   implicit val stringToUUID = new TypeConverter[String, UUID] {
     override def apply(s: String): Option[UUID] =
       Try(UUID.fromString(s)).toOption
   }
 
-  implicit val stringToInstant = new TypeConverter[String, Instant] {
-    //override def apply(s: String): Option[Instant] = Try(Instant.parse(s)).toOption
-    override def apply(s: String): Option[Instant] =
-      Try(Instant.from(timeFormatter.parse(s))).toOption
+  implicit protected val stringToInstant = new TypeConverter[String, Instant] {
+    override def apply(s: String): Option[Instant] = {
+      val try1 = Try(Instant.from(compactTimeFormatter.parse(s))).toOption
+      val try2 = try1 match {
+        case Some(_) => try1
+        case None => Try(Instant.from(timeFormatter.parse(s))).toOption
+      }
+      val try3 = try2 match {
+        case Some(_) => try2
+        case None => Try(Instant.from(compactTimeFormatter1.parse(s))).toOption
+      }
+      val try4 = try3 match {
+        case Some(_) => try3
+        case None => Try(Instant.from(compactTimeFormatter2.parse(s))).toOption
+      }
+      try4
+    }
   }
 
   implicit val stringToDuration = new TypeConverter[String, Duration] {
