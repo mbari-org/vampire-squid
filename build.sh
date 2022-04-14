@@ -27,3 +27,4 @@ else
     docker push mbari/vampire-squid
 fi
  
+# docker buildx build --platform linux/arm64 -t mbari/vampire-squid:latest --load .

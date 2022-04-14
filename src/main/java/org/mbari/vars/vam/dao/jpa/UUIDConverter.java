@@ -22,17 +22,33 @@ import java.util.UUID;
 
 /**
  * Created by brian on 5/12/16.
+ * @author Brian Schlining
+ * @since 2016-05-12
  */
 @Converter(autoApply = true)
-public class UUIDConverter implements AttributeConverter<UUID, String> {
+public class UUIDConverter implements AttributeConverter<UUID, Object> {
+
+    private static final String databaseProductName = DatabaseProductName.name();
 
     @Override
-    public String convertToDatabaseColumn(UUID uuid) {
-        return uuid == null ? null : uuid.toString().toLowerCase();
+    public Object convertToDatabaseColumn(UUID uuid) {
+        if (uuid == null) {
+          return null;
+        }
+        else if (databaseProductName.equalsIgnoreCase("postgresql")) {
+          return uuid;
+        }
+        return uuid.toString().toLowerCase();
     }
 
     @Override
-    public UUID convertToEntityAttribute(String s) {
-        return s == null ? null : UUID.fromString(s.toLowerCase());
+    public UUID convertToEntityAttribute(Object obj) {
+        if (obj == null) {
+            return null;
+        }
+        else if (obj instanceof UUID uuid) {
+            return uuid;
+        }
+        return UUID.fromString(obj.toString().toLowerCase());
     }
 }
