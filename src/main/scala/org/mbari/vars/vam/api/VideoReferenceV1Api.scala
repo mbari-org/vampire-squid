@@ -108,7 +108,7 @@ class VideoReferenceV1Api(controller: VideoReferenceController)(
     val sha = params
       .get("sha512")
       .map(s => ByteArrayConverter.decode(s))
-      .getOrElse(halt(BadRequest("Please provide a Base64 encoded sha512 checksum")))
+      .getOrElse(halt(BadRequest("Please provide a hex encoded sha512 checksum")))
     controller.findBySha512(sha).map {
       case None =>
         halt(

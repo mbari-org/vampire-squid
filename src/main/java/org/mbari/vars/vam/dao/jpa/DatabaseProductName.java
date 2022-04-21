@@ -18,7 +18,7 @@ package org.mbari.vars.vam.dao.jpa;
 
 import com.typesafe.config.ConfigFactory;
 
-class DatabaseProductName {
+public class DatabaseProductName {
 
   private static String name;
 
@@ -32,6 +32,10 @@ class DatabaseProductName {
       name = config.getString(nodeName + ".name");
     }
     return name;
+  }
+
+  public static boolean isPostgres() {
+    return name().equalsIgnoreCase("postgresql");
   }
   
 }

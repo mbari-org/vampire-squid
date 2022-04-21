@@ -37,7 +37,7 @@ public class UUIDConverter implements AttributeConverter<UUID, Object> {
         if (uuid == null) {
           return null;
         }
-        else if (databaseProductName.equalsIgnoreCase("postgresql")) {
+        else if (DatabaseProductName.isPostgres()) {
           return uuid;
         }
         return uuid.toString().toLowerCase();
