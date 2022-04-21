@@ -23,7 +23,6 @@ import java.util.UUID
 import org.mbari.vars.vam.controllers.MediaController
 import org.mbari.vars.vam.dao.jpa.ByteArrayConverter
 import org.scalatra.{BadRequest, NotFound}
-import org.scalatra.swagger.Swagger
 
 import scala.jdk.CollectionConverters._
 import scala.concurrent.ExecutionContext
