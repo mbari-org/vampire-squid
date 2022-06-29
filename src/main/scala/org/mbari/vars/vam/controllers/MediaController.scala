@@ -111,7 +111,8 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
           log.debug("Created {}", vr)
 
           val video = vDao.findByName(videoName) match {
-            case Some(v) if (duration.isEmpty || (duration.isDefined && v.duration == duration.get))=>
+            // if a duration if provided, make sure it matches the existing duration
+            case Some(v) if (duration.map(d => d.toMillis().equals(v.duration.toMillis())).getOrElse(true))=>
               v.addVideoReference(vr)
               v
             case None =>
