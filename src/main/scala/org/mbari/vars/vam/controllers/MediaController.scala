@@ -111,7 +111,7 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
           log.debug("Created {}", vr)
 
           val video = vDao.findByName(videoName) match {
-            case Some(v) =>
+            case Some(v) if (duration.isEmpty || (duration.isDefined && v.duration == duration.get))=>
               v.addVideoReference(vr)
               v
             case None =>
@@ -130,6 +130,11 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
                   vsDao.create(vs)
               }
               v
+            case _ => 
+              throw new IllegalArgumentException(
+                s"A video with name $videoName " +
+                  s"exists, but it has a different duration than the one you provided"
+              )
           }
 
           video.addVideoReference(vr)
