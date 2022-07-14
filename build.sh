@@ -18,7 +18,8 @@ if [[ $ARCH == 'arm64' ]]; then
       --platform linux/amd64,linux/arm64 \
       -t mbari/vampire-squid:${VCS_REF} \
       -t mbari/vampire-squid:latest \
-      --push .
+      --push . && \
+    docker pull mbari/vampire-squid:${VCS_REF}
 else
     docker build --build-arg BUILD_DATE=$BUILD_DATE \
                  --build-arg VCS_REF=$VCS_REF \

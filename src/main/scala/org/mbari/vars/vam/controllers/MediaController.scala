@@ -112,7 +112,9 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
 
           val video = vDao.findByName(videoName) match {
             // if a duration if provided, make sure it matches the existing duration
-            case Some(v) if (duration.map(d => d.toMillis().equals(v.duration.toMillis())).getOrElse(true))=>
+            case Some(v) if (
+                duration.map(d => d.toMillis().equals(v.duration.toMillis())).getOrElse(true) &&
+                start.equals(v.start))=>
               v.addVideoReference(vr)
               v
             case None =>
@@ -134,7 +136,7 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
             case _ => 
               throw new IllegalArgumentException(
                 s"A video with name $videoName " +
-                  s"exists, but it has a different duration than the one you provided"
+                  s"exists, but it has a different duration and/or start time than the one you provided."
               )
           }
 
