@@ -149,6 +149,7 @@ class MediaControllerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterE
       description = Some("A test movie"),
       sha512 = Some(TestUtils.randomSha512())
     )
+
     val f0 = controller.createMedia(m0)
     val m1 = Await.result(f0, timeout)
     m1.videoSequenceUuid should not be (null)
@@ -164,6 +165,8 @@ class MediaControllerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterE
     m1.description = "A test movie 2"
     m1.videoDescription = "Some great video"
     m1.videoSequenceDescription = "Our first deployment"
+    m1.videoName = "B20220829T000000"
+    m1.startTimestamp = Instant.parse("2022-08-29T00:00:00Z")
     val f1  = controller.updateMedia(m1)
     val opt = Await.result(f1, timeout)
     opt should not be (None)
@@ -179,6 +182,66 @@ class MediaControllerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterE
     m2.videoSequenceDescription should be(m1.videoSequenceDescription)
     m2.uri should be(m1.uri)
     m2.sha512 should be(m1.sha512)
+    m2.videoName should be(m1.videoName)
+    m2.startTimestamp should be(m1.startTimestamp)
+
+  }
+
+  it should "findAndUpdate" in {
+
+    val m0 = Media.build(
+      videoSequenceName = Some(getClass.getSimpleName),
+      cameraId = Some("Y"),
+      videoName = Some("Y20160911T012345"),
+      uri = Some(new URI("http://www.mbari.org/movies/yairship_another.mov")),
+      startTimestamp = Some(Instant.parse("2016-08-11T01:23:45Z")),
+      duration = Some(Duration.ofMinutes(25)),
+      container = Some("video/mp4"),
+      videoCodec = Some("h264"),
+      audioCodec = Some("aac"),
+      width = Some(1920),
+      height = Some(1080),
+      frameRate = Some(30),
+      sizeBytes = Some(12345678),
+      description = Some("A test movie 3"),
+      sha512 = Some(TestUtils.randomSha512())
+    )
+
+    val f0 = controller.createMedia(m0)
+    val m1 = Await.result(f0, timeout)
+    m1.videoSequenceUuid should not be (null)
+    m1.videoReferenceUuid should not be (null)
+    m1.videoUuid should not be (null)
+    m1.videoSequenceName should be(m0.videoSequenceName)
+    m1.startTimestamp should be(m0.startTimestamp)
+    m1.duration should be(m0.duration)
+    m1.description should be(m0.description)
+    m1.uri should be(m0.uri)
+
+    val newVideoName = "Z20220829T000000"
+    val newStartTimestamp = Instant.parse("2022-08-29T00:00:00Z")
+    val f1  = controller.findAndUpdate(d => d.findByUUID(m1.videoReferenceUuid), 
+        m1.videoSequenceName,
+        m1.cameraId,
+        newVideoName,
+        None,
+        duration = Some(m1.duration),
+        start = Some(newStartTimestamp))
+    val opt = Await.result(f1, timeout)
+    opt should not be (None)
+    val m2 = opt.get
+    m2.videoReferenceUuid should be(m1.videoReferenceUuid)
+    m2.videoSequenceUuid should be(m2.videoSequenceUuid)
+    m2.videoUuid should be(m2.videoUuid)
+    m2.videoSequenceName should be(m1.videoSequenceName)
+    m2.duration should be(m1.duration)
+    m2.description should be(m1.description)
+    m2.videoDescription should be(m1.videoDescription)
+    m2.videoSequenceDescription should be(m1.videoSequenceDescription)
+    m2.uri should be(m1.uri)
+    m2.sha512 should be(m1.sha512)
+    m2.videoName should be(newVideoName)
+    m2.startTimestamp should be(newStartTimestamp)
 
   }
 
@@ -205,7 +268,7 @@ class MediaControllerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterE
   it should "findByVideoSequenceName" in {
     val fn0 = controller.findByVideoSequenceName(getClass.getSimpleName)
     val ms  = Await.result(fn0, timeout)
-    ms.size should be(6) // Finds all previous insertions as we used same videoSequenceName
+    ms.size should be(7) // Finds all previous insertions as we used same videoSequenceName
   }
 
   it should "findByVideoSequenceNameAndTimestamp" in {

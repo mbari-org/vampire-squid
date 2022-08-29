@@ -279,11 +279,14 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
             duration.foreach(vv.duration = _)
             videoSequence.addVideo(vv)
             videoDescription.foreach(vv.description = _)
+            // log.debug(s"Creating new video: $vv" )
+            // vDao.create(vv)  // Don't need to actually call this. JPA creates this for us
             vv
           case Some(vv) =>
             start.foreach(vv.start = _)
             duration.foreach(vv.duration = _)
             videoDescription.foreach(vv.description = _)
+            videoReference.video.removeVideoReference(videoReference)
             vv.addVideoReference(videoReference)
             vv
         }
