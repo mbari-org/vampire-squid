@@ -170,6 +170,7 @@ class VideoReferenceController(val daoFactory: JPADAOFactory) extends BaseContro
     }
     exec(fn)
   }
+  
 
   private def exec[T](fn: VRDAO => T)(implicit ec: ExecutionContext): Future[T] = {
     val dao = daoFactory.newVideoReferenceDAO()

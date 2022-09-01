@@ -34,6 +34,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import org.mbari.vars.vam.model.Media
+import org.mbari.vars.vam.Constants
 
 /**
   * @author Brian Schlining
@@ -305,5 +306,64 @@ class MediaControllerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterE
     ms3 should be(empty)
 
   }
+
+  it should "moveVideoReferences" in {
+    val m0 = Media.build(
+      videoSequenceName = Some(getClass.getSimpleName + "XXX"),
+      cameraId = Some("XXX"),
+      videoName = Some("XXX20160911T012345"),
+      uri = Some(new URI("http://www.mbari.org/movies/xxx_airship_another.mov")),
+      startTimestamp = Some(Instant.parse("2016-08-11T01:23:45Z")),
+      duration = Some(Duration.ofMinutes(25)),
+      container = Some("video/mp4"),
+      videoCodec = Some("h264"),
+      audioCodec = Some("aac"),
+      width = Some(1920),
+      height = Some(1080),
+      frameRate = Some(30),
+      sizeBytes = Some(12345678),
+      description = Some("A test movie"),
+      sha512 = Some(TestUtils.randomSha512())
+    )
+  
+
+  val m1 = Media.build(
+      videoSequenceName = Some(getClass.getSimpleName + "XXX"),
+      cameraId = Some("XXX"),
+      videoName = Some("XXX20160911T012345"),
+      uri = Some(new URI("http://www.mbari.org/movies/xxx_airship_another1.mov")),
+      startTimestamp = Some(Instant.parse("2016-08-11T01:23:45Z")),
+      duration = Some(Duration.ofMinutes(25)),
+      container = Some("video/mp4"),
+      videoCodec = Some("h264"),
+      audioCodec = Some("aac"),
+      width = Some(1920),
+      height = Some(1080),
+      frameRate = Some(30),
+      sizeBytes = Some(12345678),
+      description = Some("A test movie"),
+      sha512 = Some(TestUtils.randomSha512())
+    )
+
+    val m0p = Await.result(controller.createMedia(m0), timeout)
+    m0p.videoReferenceUuid should not be (null)
+    val m1p = Await.result(controller.createMedia(m1), timeout)
+    m1p.videoReferenceUuid should not be (null)
+    println(s"${Constants.GSON.toJson(m1p)}")
+    val newVideoName = "XXX20160911T022345"
+    val newStart = Instant.parse("2016-08-11T01:23:45Z")
+    val f = controller.moveVideoReference(m1p.videoReferenceUuid, 
+      newVideoName,
+      newStart,
+      m1p.duration)
+    val opt = Await.result(f, timeout)
+    opt should not be empty
+    val m1p2 = opt.get
+    m1p2.videoName should be (newVideoName)
+    m1p2.startTimestamp should be (newStart)
+    m1p2.videoSequenceName should be (m1.videoSequenceName)
+
+  }
+  
 
 }

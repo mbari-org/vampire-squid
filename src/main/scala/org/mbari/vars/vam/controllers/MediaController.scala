@@ -374,6 +374,74 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
 
   }
 
+  /**
+    * Move a videoReference to a different video under the videoReference's current
+    * videoSequence
+    *
+    * @param videoReferenceUuid
+    * @param videoName
+    * @param start
+    * @param duration
+    * @param ec
+    * @return
+    */
+  def moveVideoReference(videoReferenceUuid: UUID, 
+    videoName: String,
+    start: Instant,
+    duration: Duration)(implicit ec: ExecutionContext): Future[Option[Media]] = {
+
+  
+    val vrDao = daoFactory.newVideoReferenceDAO()
+    val vDao  = daoFactory.newVideoDAO(vrDao)
+
+    val f = vrDao.runTransaction(d => {
+    
+      d.findByUUID(videoReferenceUuid) match {
+        case None => 
+          log.debug(s"moveVideoReference: Unable to find videoReference.uuid = ${videoReferenceUuid}")
+          None
+        case Some(videoReference) =>
+          if (videoReference.video.name == videoName) {
+            log.debug(s"moveVideoReference: videoReference.uuid = ${videoReferenceUuid} already has video.name = $videoName. No changes made.")
+            Some(Media(videoReference))
+          }
+          else {
+            vDao.findByName(videoName) match {
+              case None => 
+                log.debug(s"moveVideoReference: Creating new video named $videoName for videoReference.uuid = $videoReferenceUuid")
+                val oldVideo = videoReference.video
+                val videoSequence = oldVideo.videoSequence
+                oldVideo.removeVideoReference(videoReference)
+                val newVideo = Video(videoName, start, Some(duration), List(videoReference))
+                videoSequence.addVideo(newVideo)
+                vDao.create(newVideo)
+                if (oldVideo.videoReferences.isEmpty) {
+                  log.debug(s"moveVideoReference: Deleting empty video named ${oldVideo.name}")
+                  vDao.delete(oldVideo)
+                }
+                Some(Media(videoReference))
+
+              case Some(video) => 
+                if (video.duration == duration && video.start == start) {
+                  log.debug(s"moveVideoReference: Moving videoReference.uuid = $videoReferenceUuid to existing video.name = $videoName")
+                  videoReference.video.removeVideoReference(videoReference)
+                  video.addVideoReference(videoReference)
+                  Some(Media(videoReference))
+                }
+                else {
+                  log.debug(s"moveVideoReference: videoReference.uuid = $videoReferenceUuid has different start or duration than an existing video.name = $videoName")
+                  None
+                }
+            }
+          }
+      }
+    })
+    f.onComplete(_ => vrDao.close())
+    f
+
+  }
+
+
   def findByVideoReferenceUuid(
       videoReferenceUuid: UUID
   )(implicit ec: ExecutionContext): Future[Option[Media]] = {
