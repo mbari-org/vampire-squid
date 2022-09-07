@@ -141,6 +141,7 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
           }
 
           video.addVideoReference(vr)
+          vrDao.create(vr)
 
           // Notify messaging service of new video reference
           if (didCreatedVR) Constants.MESSAGING_SERVICE.newVideoReference(vr)

@@ -308,7 +308,7 @@ class MediaControllerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterE
   }
 
   it should "moveVideoReferences" in {
-    val m0 = Media.build(
+    val m0a = Media.build(
       videoSequenceName = Some(getClass.getSimpleName + "XXX"),
       cameraId = Some("XXX"),
       videoName = Some("XXX20160911T012345"),
@@ -327,7 +327,7 @@ class MediaControllerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterE
     )
   
 
-  val m1 = Media.build(
+  val m1a = Media.build(
       videoSequenceName = Some(getClass.getSimpleName + "XXX"),
       cameraId = Some("XXX"),
       videoName = Some("XXX20160911T012345"),
@@ -345,23 +345,48 @@ class MediaControllerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterE
       sha512 = Some(TestUtils.randomSha512())
     )
 
-    val m0p = Await.result(controller.createMedia(m0), timeout)
-    m0p.videoReferenceUuid should not be (null)
-    val m1p = Await.result(controller.createMedia(m1), timeout)
-    m1p.videoReferenceUuid should not be (null)
-    println(s"${Constants.GSON.toJson(m1p)}")
+    // -- create
+    val m0b = Await.result(controller.createMedia(m0a), timeout)
+    m0b.videoReferenceUuid should not be (null)
+    val m1b = Await.result(controller.createMedia(m1a), timeout)
+    m1b.videoReferenceUuid should not be (null)
+    m1b.videoName should be(m0b.videoName)
+    m1b.startTimestamp should be(m0b.startTimestamp)
+    m1b.duration should be(m0b.duration)
+    m1b.videoSequenceName should be(m0b.videoSequenceName)
+//    println(s"${Constants.GSON.toJson(m1p)}")
+
+    // -- move
     val newVideoName = "XXX20160911T022345"
-    val newStart = Instant.parse("2016-08-11T01:23:45Z")
-    val f = controller.moveVideoReference(m1p.videoReferenceUuid, 
+    val newStart = Instant.parse("2016-08-11T02:23:45Z")
+    val f = controller.moveVideoReference(m1b.videoReferenceUuid,
       newVideoName,
       newStart,
-      m1p.duration)
+      m1b.duration)
     val opt = Await.result(f, timeout)
     opt should not be empty
-    val m1p2 = opt.get
-    m1p2.videoName should be (newVideoName)
-    m1p2.startTimestamp should be (newStart)
-    m1p2.videoSequenceName should be (m1.videoSequenceName)
+    val m1c = opt.get
+    m1c.videoName should be (newVideoName)
+    m1c.startTimestamp should be (newStart)
+    m1c.videoSequenceName should be (m1a.videoSequenceName)
+
+    // -- find/verify
+    val optM0 = Await.result(controller.findByVideoReferenceUuid(m0b.videoReferenceUuid), timeout)
+    optM0 should not be (empty)
+    val optM1 = Await.result(controller.findByVideoReferenceUuid(m1c.videoReferenceUuid), timeout)
+    optM1 should not be (empty)
+
+    val m0d = optM0.get
+    val m1d = optM1.get
+    m1d.videoName should be (newVideoName)
+    m1d.startTimestamp should be (newStart)
+    m1d.duration should be (m1b.duration)
+    m1d.videoSequenceName should be (m0b.videoSequenceName)
+
+    m0d.videoName should be (m0a.videoName)
+    m0d.startTimestamp should be (m0a.startTimestamp)
+    m0d.duration should be (m0a.duration)
+    m0d.videoSequenceName should be (m0a.videoSequenceName)
 
   }
   
