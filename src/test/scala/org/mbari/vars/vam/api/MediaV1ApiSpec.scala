@@ -19,11 +19,13 @@ package org.mbari.vars.vam.api
 import org.mbari.vars.vam.controllers.MediaController
 import org.mbari.vars.vam.dao.jpa.ByteArrayConverter
 import org.mbari.vars.vam.model.Media
+
 import java.net.URLEncoder
 import java.net.URI
 import scala.concurrent.Await
 import scala.concurrent.duration._
 import java.time.Instant
+import java.util.UUID
 
 /**
   * @author Brian Schlining
@@ -190,5 +192,36 @@ class MediaV1ApiSpec extends WebApiStack {
       m2.duration should be(java.time.Duration.ofMillis(1234))
     }
 
+  }
+
+  it should "move with uuid and form body" in {
+    val now = Instant.now()
+    val media = exec(mediaController.findByVideoName("V20160922T030001Z"))
+    media should not be (null)
+    media should not be empty
+    val m = media.head
+    put(
+      s"/v1/media/move/${m.videoReferenceUuid}",
+      "duration_millis" -> "2000",
+      "start_timestamp" -> now.toString,
+      "video_name" -> "XXX"
+    ) {
+      status should be(200)
+      val m2 = gson.fromJson(body, classOf[Media])
+      m2.startTimestamp should be (now)
+      m2.duration should be(java.time.Duration.ofMillis(2000))
+      m2.videoName should be ("XXX")
+    }
+  }
+
+  it should "move fails with 404" in {
+    put(
+      s"/v1/media/move/${UUID.randomUUID()}",
+      "duration_millis" -> "2000",
+      "start_timestamp" -> Instant.now().toString,
+      "video_name" -> "XXX"
+    ) {
+      status should be(404)
+    }
   }
 }

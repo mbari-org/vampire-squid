@@ -199,6 +199,25 @@ class MediaV1Api(controller: MediaController)(
 
   }
 
+  put("/move/:video_reference_uuid") {
+    validateRequest()
+    val videoReferenceUuid = params
+      .getAs[UUID]("video_reference_uuid")
+      .getOrElse(halt(BadRequest("""{"error":"A 'video_reference_uuid' is required"}""")))
+    val videoName = params.get("video_name")
+      .getOrElse(halt(BadRequest("""{"error":"A 'video_name' is required"}""")))
+    val start = params.getAs[Instant]("start_timestamp")
+      .getOrElse(halt(BadRequest("""{"error":"A 'start_timestamp' is required"}""")))
+    val duration = params.getAs[Duration]("duration_millis")
+      .getOrElse(halt(BadRequest("""{"error":"A 'duration_millis' is required"}""")))
+    controller.moveVideoReference(videoReferenceUuid, videoName, start, duration)
+      .map({
+        case Some(media) => controller.toJson(media)
+        case None => halt(NotFound(s"""{not_found: "A videoReference with uuid=$videoReferenceUuid was not found"}"""))
+      })
+
+  }
+
   get("/sha512/:sha512") {
     val shaString = params
       .get("sha512")
@@ -335,5 +354,7 @@ class MediaV1Api(controller: MediaController)(
       })
 
   }
+
+
 
 }
