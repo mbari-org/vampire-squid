@@ -389,6 +389,26 @@ class MediaControllerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterE
     m0d.videoSequenceName should be (m0a.videoSequenceName)
 
   }
+
+  it should "moveVideoReferences should not occur when same name but different start/duration exists" in {
+    val xs0 = Await.result(controller.findByVideoName("XXX20160911T012345"), timeout)
+    xs0 should not be (empty)
+    xs0.size should be (1)
+    val m0 = xs0.head
+
+    val xs1 = Await.result(controller.findByVideoName("XXX20160911T022345"), timeout)
+    xs1 should not be (empty)
+    xs1.size should be(1)
+    val m1 = xs1.head
+    val opt0 = Await.result(controller.moveVideoReference(m1.videoReferenceUuid, m0.videoName, m0.startTimestamp, Duration.ofMinutes(42)), timeout)
+    opt0 should be (empty)
+
+    val opt1 = Await.result(controller.moveVideoReference(m1.videoReferenceUuid, m0.videoName, m1.startTimestamp, m0.duration), timeout)
+    opt1 should be(empty)
+
+    val opt2 = Await.result(controller.moveVideoReference(m1.videoReferenceUuid, m0.videoName, m0.startTimestamp, m0.duration), timeout)
+    opt2 should not be(empty)
+  }
   
 
 }

@@ -430,7 +430,7 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
                   Some(Media(videoReference))
                 }
                 else {
-                  log.debug(s"moveVideoReference: videoReference.uuid = $videoReferenceUuid has different start or duration than an existing video.name = $videoName")
+                  log.warn(s"moveVideoReference: videoReference.uuid = $videoReferenceUuid has different start or duration than an existing video.name = $videoName")
                   None
                 }
             }

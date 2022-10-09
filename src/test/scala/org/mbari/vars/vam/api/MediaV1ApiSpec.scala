@@ -194,6 +194,17 @@ class MediaV1ApiSpec extends WebApiStack {
 
   }
 
+  it should "move fails with 404 when video_reference_uuid is not matched" in {
+    put(
+      s"/v1/media/move/${UUID.randomUUID()}",
+      "duration_millis" -> "2000",
+      "start_timestamp" -> Instant.now().toString,
+      "video_name" -> "XXX"
+    ) {
+      status should be(404)
+    }
+  }
+
   it should "move with uuid and form body" in {
     val now = Instant.now()
     val media = exec(mediaController.findByVideoName("V20160922T030001Z"))
@@ -214,14 +225,7 @@ class MediaV1ApiSpec extends WebApiStack {
     }
   }
 
-  it should "move fails with 404" in {
-    put(
-      s"/v1/media/move/${UUID.randomUUID()}",
-      "duration_millis" -> "2000",
-      "start_timestamp" -> Instant.now().toString,
-      "video_name" -> "XXX"
-    ) {
-      status should be(404)
-    }
-  }
+
+
+
 }
