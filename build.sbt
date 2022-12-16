@@ -56,9 +56,7 @@ lazy val consoleSettings = Seq(
 lazy val dependencySettings = Seq(
   resolvers ++= Seq(
     Resolver.mavenLocal,
-    Resolver.githubPackages("mbari-org", "maven"),
-    Resolver.sonatypeRepo("releases"),
-    Resolver.sonatypeRepo("snapshots")
+    Resolver.githubPackages("mbari-org", "maven")
   )
 )
 
