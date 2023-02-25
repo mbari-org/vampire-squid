@@ -104,6 +104,7 @@ lazy val `vampire-squid` = (project in file("."))
     GitVersioning, 
     JettyPlugin,
     PackPlugin)
+//.enablePlugins(EclipseLinkStaticWeaver)
   .settings(appSettings)
   .settings(
     // Set version based on git tag. I use "0.0.0" format (no leading "v", which is the default)

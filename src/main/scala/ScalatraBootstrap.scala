@@ -14,22 +14,18 @@
  * limitations under the License.
  */
 
-import javax.servlet.ServletContext
+import org.mbari.vampiresquid.api.{AuthorizationV1Api, HealthApi, MediaV1Api, VideoReferenceV1Api, VideoSequenceV1Api, VideoV1Api}
+import org.mbari.vampiresquid.controllers.{MediaController, VideoController, VideoReferenceController, VideoSequenceController}
+import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
 
-import org.mbari.vars.vam.api._
-import org.mbari.vars.vam.controllers.{
-  MediaController,
-  VideoController,
-  VideoReferenceController,
-  VideoSequenceController
-}
-import org.mbari.vars.vam.dao.jpa.JPADAOFactory
+import javax.servlet.ServletContext
+import org.mbari.vampiresquid.api._
 import org.scalatra.LifeCycle
 // import org.scalatra.swagger.{ApiInfo, Swagger}
 
+import org.mbari.vampiresquid.AppConfig
 import scala.concurrent.ExecutionContext
 import org.slf4j.LoggerFactory
-import org.mbari.vars.vam.AppConfig
 // import org.scalatra.swagger.ContactInfo
 // import org.scalatra.swagger.LicenseInfo
 

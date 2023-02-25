@@ -5,16 +5,16 @@
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
         <shared-cache-mode>NONE</shared-cache-mode>
         <!-- Converters -->
-        <class>org.mbari.vars.vam.dao.jpa.ByteArrayConverter</class>
-        <class>org.mbari.vars.vam.dao.jpa.DurationConverter</class>
-        <class>org.mbari.vars.vam.dao.jpa.InstantConverter</class>
-        <class>org.mbari.vars.vam.dao.jpa.URIConverter</class>
-        <class>org.mbari.vars.vam.dao.jpa.UUIDConverter</class>
+        <class>org.mbari.vampiresquid.etc.jpa.ByteArrayConverter</class>
+        <class>org.mbari.vampiresquid.etc.jpa.DurationConverter</class>
+        <class>org.mbari.vampiresquid.etc.jpa.InstantConverter</class>
+        <class>org.mbari.vampiresquid.etc.jpa.URIConverter</class>
+        <class>org.mbari.vampiresquid.etc.jpa.UUIDConverter</class>
 
         <!-- Entities -->
-        <class>org.mbari.vars.vam.dao.jpa.VideoSequence</class>
-        <class>org.mbari.vars.vam.dao.jpa.Video</class>
-        <class>org.mbari.vars.vam.dao.jpa.VideoReference</class>
+        <class>org.mbari.vampiresquid.repository.jpa.VideoSequence</class>
+        <class>org.mbari.vampiresquid.repository.jpa.Video</class>
+        <class>org.mbari.vampiresquid.repository.jpa.VideoReference</class>
         <properties>
             <property name="eclipselink.logging.level" value="INFO" />
             <property name="eclipselink.connection-pool.default.initial" value="2" />

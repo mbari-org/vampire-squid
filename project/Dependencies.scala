@@ -1,3 +1,4 @@
+import sbt._
 object Dependencies {
 
   lazy val activation = "com.sun.activation"                             % "javax.activation" % "1.2.0"
