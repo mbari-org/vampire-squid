@@ -19,7 +19,6 @@ package org.mbari.vampiresquid.repository.jpa
 import javax.persistence.EntityManagerFactory
 import com.typesafe.config.ConfigFactory
 import org.mbari.vampiresquid.repository.{DAO, DAOFactory, VideoDAO, VideoReferenceDAO, VideoSequenceDAO}
-import org.mbari.vampiresquid.repository.jpa._
 
 /**
   * Self-explanatory. THis class creates DAOs for the JPA implementation.

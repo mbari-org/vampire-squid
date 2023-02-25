@@ -16,21 +16,41 @@
 
 package org.mbari.vampiresquid.domain
 
+import org.mbari.vampiresquid.repository.jpa.entity.VideoReferenceEntity
+
 import java.net.URI
 import java.time.Instant
 import java.util.UUID
 
 case class VideoReference(
-                         uuid: UUID,
-                         uri: URI,
-                         container: Option[String] = None,
-                         video_codec: Option[String] = None,
-                         audio_codec: Option[String] = None,
-                         width: Option[Int] = None,
-                         height: Option[Int] = None,
-                         frame_rate: Option[Double] = None,
-                         size_bytes: Option[Long] = None,
-                         sha512: Option[Array[Byte]] = None,
-                         description: Option[String] = None,
-                         last_updated_time: Option[Instant] = None
+                           uuid: UUID,
+                           uri: URI,
+                           container: Option[String] = None,
+                           video_codec: Option[String] = None,
+                           audio_codec: Option[String] = None,
+                           width: Option[Int] = None,
+                           height: Option[Int] = None,
+                           frame_rate: Option[Double] = None,
+                           size_bytes: Option[Long] = None,
+                           sha512: Option[Array[Byte]] = None,
+                           description: Option[String] = None,
+                           last_updated_time: Option[Instant] = None
                          )
+
+object VideoReference {
+  def from(v: VideoReferenceEntity): VideoReference = {
+    VideoReference(v.getUuid,
+      v.getUri,
+      Option(v.getContainer),
+      Option(v.getVideoCodec),
+      Option(v.getAudioCodec),
+      Option(v.getWidth),
+      Option(v.getHeight),
+      Option(v.getFrameRate),
+      Option(v.getSize),
+      Option(v.getSha512),
+      Option(v.getDescription),
+      Option(v.getLastUpdatedTime).map(_.toInstant)
+    )
+  }
+}

@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package org.mbari.vampiresquid.domain
+package org.mbari.vampiresquid.etc.circe
 
 import io.circe._
-import io.circe.syntax._
 import io.circe.generic.semiauto._
+import io.circe.syntax._
+import org.mbari.vampiresquid.domain.{HealthStatus, LastUpdatedTime, Video, VideoReference, VideoSequence}
 import org.mbari.vampiresquid.util.HexUtil
-import java.net.URI
-import java.net.URL
+
+import java.net.{URI, URL}
 import scala.util.Try
 
 object CirceCodecs {
@@ -48,8 +49,20 @@ object CirceCodecs {
     .encodeString
     .contramap[URI](_.toString)
 
+  implicit val lastUpdatedTimeDecoder: Decoder[LastUpdatedTime] = deriveDecoder
+  implicit val lastUpdatedTimeEncoder: Encoder[LastUpdatedTime] = deriveEncoder
+
   implicit val healthStatusDecoder: Decoder[HealthStatus] = deriveDecoder
   implicit val healthStatusEncoder: Encoder[HealthStatus] = deriveEncoder
+
+  implicit val videoReferenceDecoder: Decoder[VideoReference] = deriveDecoder
+  implicit val videoReferenceEncoder: Encoder[VideoReference] = deriveEncoder
+
+  implicit val videoDecoder: Decoder[Video] = deriveDecoder
+  implicit val videoEncoder: Encoder[Video] = deriveEncoder
+
+  implicit val videoSequenceDecoder: Decoder[VideoSequence] = deriveDecoder
+  implicit val videoSequenceEncoder: Encoder[VideoSequence] = deriveEncoder
 
   private val printer = Printer.noSpaces.copy(dropNullValues = true)
 

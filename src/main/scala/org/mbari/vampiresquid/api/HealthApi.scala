@@ -16,7 +16,8 @@
 
 package org.mbari.vampiresquid.api
 
-import org.mbari.vampiresquid.domain.{CirceCodecs, HealthStatus}
+import org.mbari.vampiresquid.domain.HealthStatus
+import org.mbari.vampiresquid.etc.circe.CirceCodecs
 import org.scalatra.ScalatraServlet
 import CirceCodecs._
 

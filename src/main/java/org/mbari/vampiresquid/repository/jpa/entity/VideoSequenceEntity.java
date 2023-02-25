@@ -18,6 +18,8 @@ package org.mbari.vampiresquid.repository.jpa.entity;
 
 import org.mbari.vampiresquid.etc.jpa.TransactionLogger;
 import org.mbari.vampiresquid.etc.jpa.UUIDConverter;
+import org.mbari.vampiresquid.repository.PersistentObject;
+import scala.Option;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -82,7 +84,7 @@ import java.util.UUID;
                 )
         }
 )
-public class VideoSequenceEntity {
+public class VideoSequenceEntity implements PersistentObject {
 
     @Id
     @GeneratedValue(generator = "system-uuid")
@@ -122,6 +124,11 @@ public class VideoSequenceEntity {
     @Version
     @Column(name = "last_updated_time")
     protected Timestamp lastUpdatedTime;
+
+    @Override
+    public Option<UUID> primaryKey() {
+        return null;
+    }
 
     public List<VideoEntity> getVideos() {
         return videos;

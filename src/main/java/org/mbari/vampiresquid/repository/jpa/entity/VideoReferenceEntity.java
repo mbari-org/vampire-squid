@@ -20,6 +20,8 @@ import org.mbari.vampiresquid.etc.jpa.ByteArrayConverter;
 import org.mbari.vampiresquid.etc.jpa.TransactionLogger;
 import org.mbari.vampiresquid.etc.jpa.URIConverter;
 import org.mbari.vampiresquid.etc.jpa.UUIDConverter;
+import org.mbari.vampiresquid.repository.PersistentObject;
+import scala.Option;
 
 import javax.persistence.*;
 import java.net.URI;
@@ -64,7 +66,7 @@ import java.util.UUID;
                 )
         }
 )
-public class VideoReferenceEntity {
+public class VideoReferenceEntity implements PersistentObject {
 
 
     @Id
@@ -131,6 +133,11 @@ public class VideoReferenceEntity {
     @Version
     @Column(name = "last_updated_time")
     protected Timestamp lastUpdatedTime;
+
+    @Override
+    public Option<UUID> primaryKey() {
+        return Option.apply(uuid);
+    }
 
     @Override
     public String toString() {

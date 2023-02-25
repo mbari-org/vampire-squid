@@ -16,8 +16,11 @@
 
 package org.mbari.vampiresquid.domain
 
+import org.mbari.vampiresquid.repository.jpa.entity.VideoEntity
+
 import java.time.Instant
 import java.util.UUID
+import scala.jdk.CollectionConverters._
 
 case class Video(uuid: UUID,
                  name: String,
@@ -26,3 +29,17 @@ case class Video(uuid: UUID,
                  description: Option[String] = None,
                  last_updated_time: Option[Instant] = None,
                  video_references: List[VideoReference] = Nil)
+
+object Video {
+
+  def from(v: VideoEntity): Video = {
+    Video(v.getUuid,
+      v.getName,
+      v.getStart,
+      Option(v.getDuration).map(_.toMillis),
+      Option(v.getDescription),
+      Option(v.getLastUpdatedTime).map(_.toInstant),
+      v.getVideoReferences.asScala.map(VideoReference.from).toList
+    )
+  }
+}
