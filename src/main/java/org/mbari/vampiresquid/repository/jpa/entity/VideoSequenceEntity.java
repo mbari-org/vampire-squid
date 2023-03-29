@@ -125,6 +125,16 @@ public class VideoSequenceEntity implements PersistentObject {
     @Column(name = "last_updated_time")
     protected Timestamp lastUpdatedTime;
 
+    public VideoSequenceEntity() {
+
+    }
+
+    public VideoSequenceEntity(String name, String cameraID, String description) {
+        this.name = name;
+        this.cameraID = cameraID;
+        this.description = description;
+    }
+
     @Override
     public Option<UUID> primaryKey() {
         return null;

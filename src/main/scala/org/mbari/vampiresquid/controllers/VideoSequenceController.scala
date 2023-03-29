@@ -23,6 +23,8 @@ import java.time.{Duration, Instant}
 import java.util.UUID
 
 import scala.concurrent.{ExecutionContext, Future}
+import org.mbari.vampiresquid.repository.jpa.entity.VideoSequenceEntity
+import org.mbari.vampiresquid.domain.{VideoSequence => VSDTO}
 
 /**
   *
@@ -32,10 +34,10 @@ import scala.concurrent.{ExecutionContext, Future}
   */
 class VideoSequenceController(val daoFactory: JPADAOFactory) extends BaseController {
 
-  private type VSDAO = VideoSequenceDAO[VideoSequence]
+  private type VSDAO = VideoSequenceDAO[VideoSequenceEntity]
 
-  def findAll(implicit ec: ExecutionContext): Future[List[VideoSequence]] =
-    exec(d => d.findAll().toList.sortBy(_.name))
+  def findAll(implicit ec: ExecutionContext): Future[List[VSDTO]] =
+    exec(d => d.findAll().toList.sortBy(_.getName()).map(VSDTO.from))
 
   def findAllNames(implicit ec: ExecutionContext): Future[Seq[String]] =
     exec(d => d.findAllNames().toSeq.sorted)
@@ -46,32 +48,33 @@ class VideoSequenceController(val daoFactory: JPADAOFactory) extends BaseControl
   def findAllCameraIDs(implicit ec: ExecutionContext): Future[Seq[String]] =
     exec(d => d.findAllCameraIDs().toSeq.sorted)
 
-  def findByUUID(uuid: UUID)(implicit ec: ExecutionContext): Future[Option[VideoSequence]] =
-    exec(d => d.findByUUID(uuid))
+  def findByUUID(uuid: UUID)(implicit ec: ExecutionContext): Future[Option[VSDTO]] =
+    exec(d => d.findByUUID(uuid).map(VSDTO.from))
 
-  def findByName(name: String)(implicit ec: ExecutionContext): Future[Option[VideoSequence]] =
-    exec(d => d.findByName(name))
+  def findByName(name: String)(implicit ec: ExecutionContext): Future[Option[VSDTO]] =
+    exec(d => d.findByName(name).map(VSDTO.from))
 
-  def findByCameraId(id: String)(implicit ec: ExecutionContext): Future[Seq[VideoSequence]] =
-    exec(d => d.findByCameraID(id).toSeq.sortBy(_.name))
+  def findByCameraId(id: String)(implicit ec: ExecutionContext): Future[Seq[VSDTO]] =
+    exec(d => d.findByCameraID(id).toSeq.sortBy(_.getName()).map(VSDTO.from))
 
   def findByCameraIDAndTimestamp(
       cameraID: String,
       timestamp: Instant,
       window: Duration = Constants.DEFAULT_DURATION_WINDOW
-  )(implicit ec: ExecutionContext): Future[Seq[VideoSequence]] =
-    exec(d => d.findByCameraIDAndTimestamp(cameraID, timestamp, window).toSeq)
+  )(implicit ec: ExecutionContext): Future[Seq[VSDTO]] =
+    exec(d => d.findByCameraIDAndTimestamp(cameraID, timestamp, window).toSeq.map(VSDTO.from))
 
   def create(name: String, cameraID: String, description: Option[String] = None)(
       implicit ec: ExecutionContext
-  ): Future[VideoSequence] = {
-    def fn(dao: VSDAO): VideoSequence = {
+  ): Future[VSDTO] = {
+    def fn(dao: VSDAO): VSDTO = {
       dao.findByName(name) match {
-        case Some(vs) => vs
+        case Some(vs) => VSDTO.from(vs)
         case None =>
-          val vs = VideoSequence(name, cameraID, description = description)
+          // val vs = VideoSequence(name, cameraID, description = description)
+          val vs = new VideoSequenceEntity(name, cameraID, description.getOrElse(null))
           dao.create(vs)
-          vs
+          VSDTO.from(vs)
       }
     }
     exec(fn)
@@ -95,18 +98,18 @@ class VideoSequenceController(val daoFactory: JPADAOFactory) extends BaseControl
       name: Option[String] = None,
       cameraID: Option[String] = None,
       description: Option[String] = None
-  )(implicit ec: ExecutionContext): Future[VideoSequence] = {
-    def fn(dao: VSDAO): VideoSequence = {
+  )(implicit ec: ExecutionContext): Future[VSDTO] = {
+    def fn(dao: VSDAO): VSDTO = {
       dao.findByUUID(uuid) match {
         case None =>
           throw new NotFoundInDatastoreException(
             s"No VideoSequence with UUID of $uuid was found in the database"
           )
         case Some(vs) =>
-          name.foreach(n => vs.name = n)
-          cameraID.foreach(c => vs.cameraID = c)
-          description.foreach(d => vs.description = d)
-          vs
+          name.foreach(vs.setName)
+          cameraID.foreach(vs.setCameraID)
+          description.foreach(vs.setDescription)
+          VSDTO.from(vs)
       }
     }
     exec(fn)

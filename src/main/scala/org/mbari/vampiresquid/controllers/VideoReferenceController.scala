@@ -24,6 +24,8 @@ import java.net.URI
 import java.util.UUID
 
 import scala.concurrent.{ExecutionContext, Future}
+import org.mbari.vampiresquid.repository.jpa.entity.VideoReferenceEntity
+import org.mbari.vampiresquid.domain.{VideoReference => VRDTO}
 
 /**
   *
@@ -33,32 +35,32 @@ import scala.concurrent.{ExecutionContext, Future}
   */
 class VideoReferenceController(val daoFactory: JPADAOFactory) extends BaseController {
 
-  private type VRDAO = VideoReferenceDAO[VideoReference]
+  private type VRDAO = VideoReferenceDAO[VideoReferenceEntity]
 
-  def findAll(implicit ec: ExecutionContext): Future[Seq[VideoReference]] =
-    exec(d => d.findAll().toSeq)
+  def findAll(implicit ec: ExecutionContext): Future[Seq[VRDTO]] =
+    exec(d => d.findAll().toSeq.map(VRDTO.from))
 
   def findAllURIs(implicit ec: ExecutionContext): Future[Seq[URI]] =
     exec(d => d.findAllURIs().toSeq)
 
-  def findByUUID(uuid: UUID)(implicit ec: ExecutionContext): Future[Option[VideoReference]] =
-    exec(d => d.findByUUID(uuid))
+  def findByUUID(uuid: UUID)(implicit ec: ExecutionContext): Future[Option[VRDTO]] =
+    exec(d => d.findByUUID(uuid).map(VRDTO.from))
 
   def findByVideoUUID(
       videoUUID: UUID
-  )(implicit ec: ExecutionContext): Future[Iterable[VideoReference]] =
-    exec(d => d.findByVideoUUID(videoUUID))
+  )(implicit ec: ExecutionContext): Future[Iterable[VRDTO]] =
+    exec(d => d.findByVideoUUID(videoUUID).map(VRDTO.from))
 
-  def findByURI(uri: URI)(implicit ec: ExecutionContext): Future[Option[VideoReference]] =
-    exec(d => d.findByURI(uri))
+  def findByURI(uri: URI)(implicit ec: ExecutionContext): Future[Option[VRDTO]] =
+    exec(d => d.findByURI(uri).map(VRDTO.from))
 
   def findBySha512(
       sha512: Array[Byte]
-  )(implicit ec: ExecutionContext): Future[Option[VideoReference]] =
-    exec(d => d.findBySha512(sha512))
+  )(implicit ec: ExecutionContext): Future[Option[VRDTO]] =
+    exec(d => d.findBySha512(sha512).map(VRDTO.from))
 
-  def findConcurrent(uuid: UUID)(implicit ec: ExecutionContext): Future[Iterable[VideoReference]] =
-    exec(d => d.findConcurrent(uuid))
+  def findConcurrent(uuid: UUID)(implicit ec: ExecutionContext): Future[Iterable[VRDTO]] =
+    exec(d => d.findConcurrent(uuid).map(VRDTO.from))
 
   def create(
       videoUUID: UUID,
@@ -72,9 +74,9 @@ class VideoReferenceController(val daoFactory: JPADAOFactory) extends BaseContro
       sizeBytes: Option[Long] = None,
       description: Option[String] = None,
       sha512: Option[Array[Byte]] = None
-  )(implicit ec: ExecutionContext): Future[VideoReference] = {
+  )(implicit ec: ExecutionContext): Future[VRDTO] = {
 
-    def fn(dao: VRDAO): VideoReference = {
+    def fn(dao: VRDAO): VRDTO = {
       dao.findByURI(uri) match {
         case Some(v) => v
         case None =>
@@ -120,9 +122,9 @@ class VideoReferenceController(val daoFactory: JPADAOFactory) extends BaseContro
       sizeBytes: Option[Long] = None,
       description: Option[String] = None,
       sha512: Option[Array[Byte]] = None
-  )(implicit ec: ExecutionContext): Future[VideoReference] = {
+  )(implicit ec: ExecutionContext): Future[VRDTO] = {
 
-    def fn(dao: VRDAO): VideoReference = {
+    def fn(dao: VRDAO): VRDTO = {
       dao.findByUUID(uuid) match {
         case None =>
           throw new NotFoundInDatastoreException(
