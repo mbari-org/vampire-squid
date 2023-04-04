@@ -24,6 +24,8 @@ import java.time.{Duration, Instant}
 import java.util.UUID
 
 import scala.concurrent.{ExecutionContext, Future}
+import org.mbari.vampiresquid.repository.jpa.entity.VideoEntity
+import org.mbari.vampiresquid.domain.{Video => VDTO, VideoSequence => VSDTO}
 
 /**
   *
@@ -33,13 +35,16 @@ import scala.concurrent.{ExecutionContext, Future}
   */
 class VideoController(val daoFactory: JPADAOFactory) extends BaseController {
 
-  private type VDAO = VideoDAO[Video]
+  private type VDAO = VideoDAO[VideoEntity]
 
-  def findAll(implicit ec: ExecutionContext): Future[Seq[Video]] =
-    exec(d => d.findAll().toSeq)
+  def findAll(implicit ec: ExecutionContext): Future[Seq[VDTO]] =
+    exec(d => d.findAll().toSeq.map(VDTO.from))
 
-  def findByUUID(uuid: UUID)(implicit ec: ExecutionContext): Future[Option[Video]] =
-    exec(d => d.findByUUID(uuid))
+  def findByUUID(uuid: UUID)(implicit ec: ExecutionContext): Future[Option[VDTO]] =
+    exec(d => d.findByUUID(uuid).map(VDTO.from))
+
+  def findVideoSequenceByVideoUuid(videoUuid: UUID)(implicit executionContext: ExecutionContext): Future[Option[VSDTO]] =
+    exec(d => d.findByUUID(videoUuid).map(_.getVideoSequence).map(VSDTO.from))
 
   def findAllNames(implicit ec: ExecutionContext): Future[Seq[String]] =
     exec(d => d.findAllNames().toSeq)
@@ -49,22 +54,22 @@ class VideoController(val daoFactory: JPADAOFactory) extends BaseController {
 
   def findBetweenTimestamps(t0: Instant, t1: Instant)(
       implicit ec: ExecutionContext
-  ): Future[Seq[Video]] =
-    exec(d => d.findBetweenTimestamps(t0, t1).toSeq)
+  ): Future[Seq[VDTO]] =
+    exec(d => d.findBetweenTimestamps(t0, t1).toSeq.map(VDTO.from))
 
   def findByTimestamp(t0: Instant, window: Duration = Constants.DEFAULT_DURATION_WINDOW)(
       implicit ec: ExecutionContext
-  ): Future[Seq[Video]] =
-    exec(d => d.findByTimestamp(t0, window).toSeq)
+  ): Future[Seq[VDTO]] =
+    exec(d => d.findByTimestamp(t0, window).toSeq.map(VDTO.from))
 
-  def findByVideoReferenceUUID(uuid: UUID)(implicit ec: ExecutionContext): Future[Option[Video]] =
-    exec(d => d.findByVideoReferenceUUID(uuid))
+  def findByVideoReferenceUUID(uuid: UUID)(implicit ec: ExecutionContext): Future[Option[VDTO]] =
+    exec(d => d.findByVideoReferenceUUID(uuid).map(VDTO.from))
 
-  def findByVideoSequenceUUID(uuid: UUID)(implicit ec: ExecutionContext): Future[Seq[Video]] =
-    exec(d => d.findByVideoSequenceUUID(uuid).toSeq)
+  def findByVideoSequenceUUID(uuid: UUID)(implicit ec: ExecutionContext): Future[Seq[VDTO]] =
+    exec(d => d.findByVideoSequenceUUID(uuid).toSeq.map(VDTO.from))
 
-  def findByName(name: String)(implicit ec: ExecutionContext): Future[Option[Video]] =
-    exec(d => d.findByName(name))
+  def findByName(name: String)(implicit ec: ExecutionContext): Future[Option[VDTO]] =
+    exec(d => d.findByName(name).map(VDTO.from))
 
   def findNamesByVideoSequenceName(
       videoSequenceName: String
@@ -77,10 +82,10 @@ class VideoController(val daoFactory: JPADAOFactory) extends BaseController {
       start: Instant,
       duration: Option[Duration] = None,
       description: Option[String] = None
-  )(implicit ec: ExecutionContext): Future[Video] = {
-    def fn(dao: VDAO): Video = {
+  )(implicit ec: ExecutionContext): Future[VDTO] = {
+    def fn(dao: VDAO): VDTO = {
       dao.findByName(name) match {
-        case Some(v) => v
+        case Some(v) => VDTO.from(v)
         case None =>
           val vsdao = daoFactory.newVideoSequenceDAO(dao)
           val vs    = vsdao.findByUUID(videoSequenceUUID)
@@ -90,13 +95,14 @@ class VideoController(val daoFactory: JPADAOFactory) extends BaseController {
                 s"No VideoSequence with UUID of $videoSequenceUUID exists"
               )
             case Some(videoSequence) =>
-              val video = Video(name, start, duration, description)
+              val video = new VideoEntity(name, start, duration.orNull)
+              description.foreach(video.setDescription)
               videoSequence.addVideo(video)
               dao.create(video)
-              video
+              VDTO.from(video)
           }
+        }
       }
-    }
     exec(fn)
   }
 
@@ -107,9 +113,9 @@ class VideoController(val daoFactory: JPADAOFactory) extends BaseController {
       duration: Option[Duration] = None,
       description: Option[String] = None,
       videoSequenceUUID: Option[UUID] = None
-  )(implicit ec: ExecutionContext): Future[Video] = {
+  )(implicit ec: ExecutionContext): Future[VDTO] = {
 
-    def fn(dao: VDAO): Video = {
+    def fn(dao: VDAO): VDTO = {
 
       dao.findByUUID(uuid) match {
         case None =>
@@ -117,13 +123,13 @@ class VideoController(val daoFactory: JPADAOFactory) extends BaseController {
             s"No Video with UUID of $uuid was found in the datastore"
           )
         case Some(video) =>
-          name.foreach(n => video.name = n)
-          start.foreach(s => video.start = s)
-          duration.foreach(d => video.duration = d)
-          description.foreach(d => video.description = d)
+          name.foreach(video.setName)
+          start.foreach(video.setStart)
+          duration.foreach(video.setDuration)
+          description.foreach(video.setDescription)
 
           videoSequenceUUID match {
-            case None => video
+            case None => VDTO.from(video)
             case Some(vsUUID) =>
               val vsDao = daoFactory.newVideoSequenceDAO(dao)
               vsDao.findByUUID(vsUUID) match {
@@ -132,9 +138,9 @@ class VideoController(val daoFactory: JPADAOFactory) extends BaseController {
                     s"No VideoSequence with UUID of $videoSequenceUUID was found in the datastore"
                   )
                 case Some(videoSequence) =>
-                  video.videoSequence.removeVideo(video)
+                  video.getVideoSequence.removeVideo(video)
                   videoSequence.addVideo(video)
-                  video
+                  VDTO.from(video)
               }
 
           }

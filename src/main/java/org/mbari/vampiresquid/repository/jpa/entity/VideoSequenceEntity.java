@@ -129,6 +129,11 @@ public class VideoSequenceEntity implements PersistentObject {
 
     }
 
+    public VideoSequenceEntity(String name, String cameraID) {
+        this.name = name;
+        this.cameraID = cameraID;
+    }
+
     public VideoSequenceEntity(String name, String cameraID, String description) {
         this.name = name;
         this.cameraID = cameraID;

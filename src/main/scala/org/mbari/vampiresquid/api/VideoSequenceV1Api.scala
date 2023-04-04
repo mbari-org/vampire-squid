@@ -64,7 +64,7 @@ class VideoSequenceV1Api(controller: VideoSequenceController)(
           ).asJava
           halt(NotFound(controller.toJson(error)))
         case Some(v) =>
-          v.lastUpdated match {
+          v.lastUpdatedTimestamp match {
             case None =>
               val error = Map(
                 "missing_value"       -> "No last updated timestamp was found",

@@ -45,6 +45,19 @@ case class Media2(
                    sha512: Option[Array[Byte]] = None,
                  ) {
 
+  def videoSequenceUuid: UUID = video_sequence_uuid
+  def videoUuid: UUID = video_uuid
+  def videoReferenceUuid: UUID = video_reference_uuid
+  def videoSequenceName: String = video_sequence_name
+  def cameraId: String = camera_id
+  def videoName: String = video_name
+  def startTimestamp: Instant = start_timestamp
+  def videoCodec: Option[String] = video_codec
+  def audioCodec: Option[String] = audio_codec
+  def frameRate: Option[Double] = frame_rate
+  def sizeBytes: Option[Long] = size_bytes
+  def videoSequenceDesciption: Option[String] = video_sequence_description
+  def videoDescription: Option[String] = video_description
   lazy val duration: Option[Duration] = duration_millis.map(Duration.ofMillis)
   lazy val endTimestamp: Option[Instant] = duration.map(d => start_timestamp.plus(d))
   def contains(ts: Instant): Boolean = endTimestamp match {

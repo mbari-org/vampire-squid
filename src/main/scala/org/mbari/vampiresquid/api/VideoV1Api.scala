@@ -25,6 +25,7 @@ import java.util.UUID
 import scala.concurrent.ExecutionContext
 import scala.jdk.CollectionConverters._
 import scala.util.Try
+import org.mbari.vampiresquid.etc.circe.CirceCodecs._
 
 /**
   *
@@ -62,7 +63,7 @@ class VideoV1Api(controller: VideoController)(
     val uuid =
       params.getAs[UUID]("uuid").getOrElse(halt(BadRequest("Please provide a Video Sequence UUID")))
     controller
-      .findByUUID(uuid)
+      .findVideoSequenceByVideoUuid(uuid)
       .map({
         case None =>
           halt(
@@ -70,7 +71,7 @@ class VideoV1Api(controller: VideoController)(
               s"""{not_found: "A video with a UUID of $uuid was not found in the database"}"""
             )
           )
-        case Some(v) => controller.toJson(v.videoSequence)
+        case Some(vs) => controller.toJson(vs)
       })
   }
 
@@ -102,7 +103,7 @@ class VideoV1Api(controller: VideoController)(
             Map("not_found" -> s"A video with a UUID of $uuid was not found in the database").asJava
           halt(NotFound(controller.toJson(error)))
         case Some(v) =>
-          v.lastUpdated match {
+          v.lastUpdatedTimestamp match {
             case None =>
               val error = Map(
                 "missing_value" -> "No last updated timestamp was found",

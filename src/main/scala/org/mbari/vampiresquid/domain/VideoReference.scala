@@ -35,7 +35,9 @@ case class VideoReference(
                            sha512: Option[Array[Byte]] = None,
                            description: Option[String] = None,
                            last_updated_time: Option[Instant] = None
-                         )
+                         ) {
+  def lastUpdatedTimestamp: Option[Instant] = last_updated_time
+}
 
 object VideoReference {
   def from(v: VideoReferenceEntity): VideoReference = {

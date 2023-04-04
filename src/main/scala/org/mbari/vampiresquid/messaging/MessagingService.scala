@@ -16,8 +16,9 @@
 
 package org.mbari.vampiresquid.messaging
 
-import org.mbari.vampiresquid.repository.jpa.VideoReference
+
 import scala.concurrent.ExecutionContext
+import org.mbari.vampiresquid.domain.{Media2, VideoReference}
 
 /**
   * @author Brian Schlining
@@ -31,6 +32,6 @@ trait MessagingService {
     *
     * @param videoReference
     */
-  def newVideoReference(videoReference: VideoReference)(implicit ec: ExecutionContext): Unit
+  def newVideoReference(media: Media2)(implicit ec: ExecutionContext): Unit
 
 }

@@ -19,13 +19,21 @@ package org.mbari.vampiresquid.controllers
 import org.mbari.vampiresquid.Constants
 import org.mbari.vampiresquid.domain.Media
 import org.mbari.vampiresquid.repository.{DAO, VideoReferenceDAO}
-import org.mbari.vampiresquid.repository.jpa.{JPADAOFactory, Video, VideoReference, VideoSequence}
+import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
+
 import java.net.URI
 import java.time.{Duration, Instant}
 import java.util.{UUID, Arrays => JArrays}
 import org.slf4j.LoggerFactory
 
 import scala.concurrent.{ExecutionContext, Future}
+import org.mbari.vampiresquid.repository.jpa.entity.VideoReferenceEntity
+import org.mbari.vampiresquid.repository.jpa.entity.VideoEntity
+
+import org.mbari.vampiresquid.repository.jpa.entity.VideoSequenceEntity
+import org.mbari.vampiresquid.domain.{Media2, Video, VideoReference, VideoSequence}
+
+import scala.jdk.CollectionConverters._
 
 /**
   * Convenience API for registering a video
@@ -37,7 +45,7 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
 
   private[this] val log = LoggerFactory.getLogger(getClass)
 
-  def createMedia(media: Media)(implicit ec: ExecutionContext): Future[Media] = create(
+  def createMedia(media: Media)(implicit ec: ExecutionContext): Future[Media2] = create(
     media.videoSequenceName,
     media.cameraId,
     media.videoName,
@@ -75,7 +83,7 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
       sha512: Option[Array[Byte]] = None,
       videoSequenceDescription: Option[String] = None,
       videoDescription: Option[String] = None
-  )(implicit ec: ExecutionContext): Future[Media] = {
+  )(implicit ec: ExecutionContext): Future[Media2] = {
 
     val dao = daoFactory.newVideoSequenceDAO()
 
@@ -87,7 +95,7 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
 
       val videoReference = vrDao.findByURI(uri) match {
         case Some(vr) =>
-          if (sha512.isDefined && !JArrays.equals(vr.sha512, sha512.get)) {
+          if (sha512.isDefined && !JArrays.equals(vr.getSha512, sha512.get)) {
             throw new IllegalArgumentException(
               s"A video with a URI of $uri " +
                 s"exists, but it has a different checksum than the one you provided"
@@ -95,17 +103,17 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
           }
           vr
         case None =>
-          val vr = VideoReference(
+          val vr = new VideoReferenceEntity(
             uri,
-            container,
-            videoCodec,
-            audioCodec,
-            width,
-            height,
-            frameRate,
-            sizeBytes,
-            videoRefDescription,
-            sha512
+            container.orNull,
+            videoCodec.orNull,
+            audioCodec.orNull,
+            width.map(Integer.valueOf).orNull,
+            height.map(Integer.valueOf).orNull,
+            frameRate.map(java.lang.Double.valueOf).orNull,
+            sizeBytes.map(java.lang.Long.valueOf).orNull,
+            videoRefDescription.orNull,
+            sha512.orNull
           )
           didCreatedVR = true
           log.debug("Created {}", vr)
@@ -113,13 +121,18 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
           val video = vDao.findByName(videoName) match {
             // if a duration if provided, make sure it matches the existing duration
             case Some(v) if (
-                duration.map(d => d.toMillis().equals(v.duration.toMillis())).getOrElse(true) &&
-                start.equals(v.start))=>
+                duration.map(d => d.toMillis().equals(v.getDuration.toMillis())).getOrElse(true) &&
+                start.equals(v.getStart())) =>
               v.addVideoReference(vr)
               v
             case None =>
-              val v = Video(videoName, start, duration, List(vr))
-              videoDescription.foreach(v.description = _)
+              val v = new VideoEntity(
+                videoName,
+                start,
+                duration.getOrElse(null),
+                java.util.List.of(vr))
+              // val v = Video(videoName, start, duration, List(vr))
+              videoDescription.foreach(v.setDescription)
               log.debug("Created {}", v)
 
               vsDao.findByName(videoSequenceName) match {
@@ -127,8 +140,9 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
                   vs.addVideo(v)
                   vDao.create(v)
                 case None =>
-                  val vs = VideoSequence(videoSequenceName, cameraId, List(v))
-                  videoSequenceDescription.foreach(vs.description = _)
+                  val vs = new VideoSequenceEntity(videoSequenceName, cameraId)
+                  vs.addVideo(v)
+                  videoSequenceDescription.foreach(vs.setDescription)
                   log.debug("Created {}", vs)
                   vsDao.create(vs)
               }
@@ -144,17 +158,18 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
           vrDao.create(vr)
 
           // Notify messaging service of new video reference
-          if (didCreatedVR) Constants.MESSAGING_SERVICE.newVideoReference(vr)
+          if (didCreatedVR) Constants.MESSAGING_SERVICE.newVideoReference(Media2.from(vr))
 
           vr
+          
       }
 
-      Media(videoReference)
+      Media2.from(videoReference)
     })
 
   }
 
-  def updateMedia(media: Media)(implicit ec: ExecutionContext): Future[Option[Media]] = {
+  def updateMedia(media: Media)(implicit ec: ExecutionContext): Future[Option[Media2]] = {
     update(
       media.sha512,
       media.videoSequenceName,
@@ -200,7 +215,7 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
     * @return
     */
   def findAndUpdate(
-      findFn: VideoReferenceDAO[VideoReference] => Option[VideoReference],
+      findFn: VideoReferenceDAO[VideoReferenceEntity] => Option[VideoReferenceEntity],
       videoSequenceName: String,
       cameraId: String,
       videoName: String,
@@ -218,85 +233,84 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
       videoRefDescription: Option[String] = None,
       videoSequenceDescription: Option[String] = None,
       videoDescription: Option[String] = None
-  )(implicit ec: ExecutionContext): Future[Option[Media]] = {
+  )(implicit ec: ExecutionContext): Future[Option[Media2]] = {
 
     val vrDao = daoFactory.newVideoReferenceDAO()
     val vsDao = daoFactory.newVideoSequenceDAO(vrDao)
     val vDao  = daoFactory.newVideoDAO(vrDao)
 
-    def updateVideoReference(): Option[VideoReference] = {
+    def updateVideoReference(): Option[VideoReferenceEntity] = {
       findFn(vrDao)
         .map(vr => {
           // -- 1. Update VideoReference params
-          container.foreach(vr.container = _)
-          audioCodec.foreach(vr.audioCodec = _)
-          videoCodec.foreach(vr.videoCodec = _)
-          width.foreach(vr.width = _)
-          height.foreach(vr.height = _)
-          frameRate.foreach(vr.frameRate = _)
-          sizeBytes.foreach(vr.size = _)
-          uri.foreach(vr.uri = _)
-          videoRefDescription.foreach(vr.description = _)
-          sha512.foreach(vr.sha512 = _)
+          container.foreach(vr.setContainer)
+          audioCodec.foreach(vr.setAudioCodec)
+          videoCodec.foreach(vr.setVideoCodec)
+          width.foreach(v => vr.setWidth(Integer.valueOf(v)))
+          height.foreach(v => vr.setHeight(Integer.valueOf(v)))
+          frameRate.foreach(v => vr.setFrameRate(java.lang.Double.valueOf(v)))
+          sizeBytes.foreach(v => vr.setSize(java.lang.Long.valueOf(v)))
+          uri.foreach(vr.setUri)
+          videoRefDescription.foreach(vr.setDescription)
+          sha512.foreach(vr.setSha512)
           vr
         })
     }
 
-    def updateVideoSequence(videoReference: VideoReference): VideoSequence = {
-      if (videoReference.video.videoSequence.name != videoSequenceName) {
+    def updateVideoSequence(videoReference: VideoReferenceEntity): VideoSequenceEntity = {
+      if (videoReference.getVideo.getVideoSequence.getName != videoSequenceName) {
         val vs = vsDao.findByName(videoSequenceName)
         vs match {
           case None =>
-            val vss = new VideoSequence
-            vss.name = videoSequenceName
-            vss.cameraID = cameraId
-            videoSequenceDescription.foreach(vss.description = _)
+            val vss = new VideoSequenceEntity(videoSequenceName, cameraId)
+            videoSequenceDescription.foreach(vss.setDescription)
             vsDao.create(vss)
             vss
           case Some(vss) =>
             log.info(
-              s"Changing cameraId from ${vss.cameraID} to $cameraId for VideoSequence ${vss.uuid}"
+              s"Changing cameraId from ${vss.getCameraID} to $cameraId for VideoSequence ${vss.getUuid}"
             )
-            vss.cameraID = cameraId
-            videoSequenceDescription.foreach(vss.description = _)
+            vss.setCameraID(cameraId)
+            videoSequenceDescription.foreach(vss.setDescription)
             vss
         }
       }
       else {
-        videoReference.video.videoSequence.cameraID = cameraId
-        videoSequenceDescription.foreach(videoReference.video.videoSequence.description = _)
-        videoReference.video.videoSequence
+        videoReference.getVideo.getVideoSequence.setCameraID(cameraId)
+        videoSequenceDescription.foreach(videoReference.getVideo.getVideoSequence.setDescription)
+        videoReference.getVideo.getVideoSequence
       }
     }
 
-    def updateVideo(videoSequence: VideoSequence, videoReference: VideoReference): Video = {
-      if (videoReference.video.name != videoName) {
+    def updateVideo(videoSequence: VideoSequenceEntity, videoReference: VideoReferenceEntity): VideoEntity = {
+      if (videoReference.getVideo.getName != videoName) {
         val v = vDao.findByName(videoName)
         v match {
           case None =>
-            val vv = new Video
-            vv.name = videoName
-            start.foreach(vv.start = _)
-            duration.foreach(vv.duration = _)
+            val vv = new VideoEntity()
+            vv.setName(videoName)
+            start.foreach(vv.setStart)
+            duration.foreach(vv.setDuration)
             videoSequence.addVideo(vv)
-            videoDescription.foreach(vv.description = _)
+            videoDescription.foreach(vv.setDescription)
             // log.debug(s"Creating new video: $vv" )
             // vDao.create(vv)  // Don't need to actually call this. JPA creates this for us
             vv
           case Some(vv) =>
-            start.foreach(vv.start = _)
-            duration.foreach(vv.duration = _)
-            videoDescription.foreach(vv.description = _)
-            videoReference.video.removeVideoReference(videoReference)
+            start.foreach(vv.setStart)
+            duration.foreach(vv.setDuration)
+            videoDescription.foreach(vv.setDescription)
+            videoReference.getVideo.removeVideoReference(videoReference)
             vv.addVideoReference(videoReference)
             vv
         }
       }
       else {
-        start.foreach(videoReference.video.start = _)
-        duration.foreach(videoReference.video.duration = _)
-        videoDescription.foreach(videoReference.video.description = _)
-        videoReference.video
+        val video = videoReference.getVideo
+        start.foreach(video.setStart)
+        duration.foreach(video.setDuration)
+        videoDescription.foreach(video.setDescription)
+        video
       }
     }
 
@@ -305,7 +319,7 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
         val vs = updateVideoSequence(vr)
         val v  = updateVideo(vs, vr)
         v.addVideoReference(vr)
-        Media(vr)
+        Media2.from(vr)
       })
     })
     f.onComplete(_ => vrDao.close())
@@ -350,7 +364,7 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
       videoRefDescription: Option[String] = None,
       videoSequenceDescription: Option[String] = None,
       videoDescription: Option[String] = None
-  )(implicit ec: ExecutionContext): Future[Option[Media]] = {
+  )(implicit ec: ExecutionContext): Future[Option[Media2]] = {
 
     findAndUpdate(
       d => d.findBySha512(sha512),
@@ -389,7 +403,7 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
   def moveVideoReference(videoReferenceUuid: UUID, 
     videoName: String,
     start: Instant,
-    duration: Duration)(implicit ec: ExecutionContext): Future[Option[Media]] = {
+    duration: Duration)(implicit ec: ExecutionContext): Future[Option[Media2]] = {
 
   
     val vrDao = daoFactory.newVideoReferenceDAO()
@@ -402,32 +416,32 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
           log.debug(s"moveVideoReference: Unable to find videoReference.uuid = ${videoReferenceUuid}")
           None
         case Some(videoReference) =>
-          if (videoReference.video.name == videoName) {
+          if (videoReference.getVideo.getName == videoName) {
             log.debug(s"moveVideoReference: videoReference.uuid = ${videoReferenceUuid} already has video.name = $videoName. No changes made.")
-            Some(Media(videoReference))
+            Some(Media2.from(videoReference))
           }
           else {
             vDao.findByName(videoName) match {
               case None => 
                 log.debug(s"moveVideoReference: Creating new video named $videoName for videoReference.uuid = $videoReferenceUuid")
-                val oldVideo = videoReference.video
-                val videoSequence = oldVideo.videoSequence
+                val oldVideo = videoReference.getVideo
+                val videoSequence = oldVideo.getVideoSequence
                 oldVideo.removeVideoReference(videoReference)
-                val newVideo = Video(videoName, start, Some(duration), List(videoReference))
+                val newVideo = new VideoEntity(videoName, start, duration, java.util.List.of(videoReference))
                 videoSequence.addVideo(newVideo)
                 vDao.create(newVideo)
-                if (oldVideo.videoReferences.isEmpty) {
-                  log.debug(s"moveVideoReference: Deleting empty video named ${oldVideo.name}")
+                if (oldVideo.getVideoReferences.isEmpty) {
+                  log.debug(s"moveVideoReference: Deleting empty video named ${oldVideo.getName}")
                   vDao.delete(oldVideo)
                 }
-                Some(Media(videoReference))
+                Some(Media2.from(videoReference))
 
               case Some(video) => 
-                if (video.duration == duration && video.start == start) {
+                if (video.getDuration == duration && video.getStart == start) {
                   log.debug(s"moveVideoReference: Moving videoReference.uuid = $videoReferenceUuid to existing video.name = $videoName")
-                  videoReference.video.removeVideoReference(videoReference)
+                  videoReference.getVideo.removeVideoReference(videoReference)
                   video.addVideoReference(videoReference)
-                  Some(Media(videoReference))
+                  Some(Media2.from(videoReference))
                 }
                 else {
                   log.warn(s"moveVideoReference: videoReference.uuid = $videoReferenceUuid has different start or duration than an existing video.name = $videoName")
@@ -445,21 +459,21 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
 
   def findByVideoReferenceUuid(
       videoReferenceUuid: UUID
-  )(implicit ec: ExecutionContext): Future[Option[Media]] = {
+  )(implicit ec: ExecutionContext): Future[Option[Media2]] = {
     val dao = daoFactory.newVideoReferenceDAO()
     val f = dao.runTransaction(d => {
       d.findByUUID(videoReferenceUuid)
-        .map(Media(_))
+        .map(Media2.from)
     })
     f.onComplete(_ => dao.close())
     f
   }
 
-  def findBySha512(sha512: Array[Byte])(implicit ec: ExecutionContext): Future[Option[Media]] = {
+  def findBySha512(sha512: Array[Byte])(implicit ec: ExecutionContext): Future[Option[Media2]] = {
     val dao = daoFactory.newVideoReferenceDAO()
     val f = dao.runTransaction(d => {
       d.findBySha512(sha512)
-        .map(Media(_))
+        .map(Media2.from)
     })
     f.onComplete(t => dao.close())
     f
@@ -467,12 +481,12 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
 
   def findByVideoSequenceName(
       name: String
-  )(implicit ec: ExecutionContext): Future[Iterable[Media]] = {
+  )(implicit ec: ExecutionContext): Future[Iterable[Media2]] = {
     val dao = daoFactory.newVideoSequenceDAO()
     val f = dao.runTransaction(d => {
       d.findByName(name)
-        .map(v => v.videoReferences)
-        .map(v => v.map(Media(_)))
+        .map(v => v.getVideoReferences.asScala)
+        .map(v => v.map(Media2.from))
         .getOrElse(Nil)
     })
     f.onComplete(_ => dao.close())
@@ -481,18 +495,18 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
 
   def findByVideoSequenceNameAndTimestamp(name: String, ts: Instant)(
       implicit ec: ExecutionContext
-  ): Future[Iterable[Media]] =
+  ): Future[Iterable[Media2]] =
     findByVideoSequenceName(name)
       .map(ms => ms.filter(m => m.contains(ts)))
 
   def findByCameraIdAndTimestamp(cameraId: String, ts: Instant)(
       implicit ec: ExecutionContext
-  ): Future[Iterable[Media]] = {
+  ): Future[Iterable[Media2]] = {
     val dao = daoFactory.newVideoSequenceDAO()
     val f = dao.runTransaction(d => {
       d.findByCameraIDAndTimestamp(cameraId, ts)
-        .flatMap(vs => vs.videoReferences)
-        .map(Media(_))
+        .flatMap(vs => vs.getVideoReferences.asScala)
+        .map(Media2.from)
         .filter(m => m.contains(ts))
     })
     f.onComplete(_ => dao.close())
@@ -501,13 +515,13 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
 
   def findByCameraIdAndTimestamps(cameraId: String, startTime: Instant, endTime: Instant)(
       implicit ec: ExecutionContext
-  ): Future[Iterable[Media]] = {
+  ): Future[Iterable[Media2]] = {
     val dao = daoFactory.newVideoDAO()
     val f = dao.runTransaction(d => {
       d.findBetweenTimestamps(startTime, endTime)
-        .filter(v => v.videoSequence.cameraID == cameraId)
-        .flatMap(v => v.videoReferences)
-        .map(Media(_))
+        .filter(v => v.getVideoSequence.getCameraID == cameraId)
+        .flatMap(v => v.getVideoReferences.asScala)
+        .map(Media2.from)
     })
     f.onComplete(_ => dao.close())
     f
@@ -524,38 +538,38 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
     */
   def findConcurrent(
       videoReferenceUuid: UUID
-  )(implicit ec: ExecutionContext): Future[Iterable[Media]] = {
+  )(implicit ec: ExecutionContext): Future[Iterable[Media2]] = {
     val dao = daoFactory.newVideoReferenceDAO()
     val f = dao.runTransaction(d =>
       d.findConcurrent(videoReferenceUuid)
-        .map(Media(_))
+        .map(Media2.from)
     )
     f.onComplete(_ => dao.close())
     f
   }
 
-  def findByVideoName(name: String)(implicit ec: ExecutionContext): Future[Iterable[Media]] = {
+  def findByVideoName(name: String)(implicit ec: ExecutionContext): Future[Iterable[Media2]] = {
     val dao = daoFactory.newVideoDAO()
     val f = dao.runTransaction(d => {
       d.findByName(name) match {
         case None    => Nil
-        case Some(v) => v.videoReferences.map(Media(_))
+        case Some(v) => v.getVideoReferences.asScala.map(Media2.from)
       }
     })
     f.onComplete(_ => dao.close())
     f
   }
 
-  def findByURI(uri: URI)(implicit ec: ExecutionContext): Future[Option[Media]] = {
+  def findByURI(uri: URI)(implicit ec: ExecutionContext): Future[Option[Media2]] = {
     val dao = daoFactory.newVideoReferenceDAO()
-    val f   = dao.runTransaction(d => d.findByURI(uri).map(Media(_)))
+    val f   = dao.runTransaction(d => d.findByURI(uri).map(Media2.from))
     f.onComplete(_ => dao.close())
     f
   }
 
-  def findByFileName(filename: String)(implicit ec: ExecutionContext): Future[Iterable[Media]] = {
+  def findByFileName(filename: String)(implicit ec: ExecutionContext): Future[Iterable[Media2]] = {
     val dao = daoFactory.newVideoReferenceDAO()
-    val f   = dao.runTransaction(d => d.findByFileName(filename).map(Media(_)))
+    val f   = dao.runTransaction(d => d.findByFileName(filename).map(Media2.from))
     f.onComplete(_ => dao.close())
     f
   }

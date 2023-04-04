@@ -134,6 +134,59 @@ public class VideoReferenceEntity implements PersistentObject {
     @Column(name = "last_updated_time")
     protected Timestamp lastUpdatedTime;
 
+    public VideoReferenceEntity() {
+
+    }
+
+    public VideoReferenceEntity(URI uri, String container,
+        String videoCodec,
+        String audioCodec) {
+            this.uri = uri;
+            this.container = container;
+            this.videoCodec = videoCodec;
+            this.audioCodec = audioCodec;
+        }
+
+    public VideoReferenceEntity(URI uri, 
+        String container,
+        String videoCodec,
+        String audioCodec,
+        Integer width,
+        Integer height,
+        Double frameRate,
+        Long sizeBytes,
+        String description) {
+            this.uri = uri;
+            this.container = container;
+            this.videoCodec = videoCodec;
+            this.audioCodec = audioCodec;
+            this.width = width;
+            this.height = height;
+            this.size = sizeBytes;
+            this.description = description;
+        }
+
+        public VideoReferenceEntity(URI uri, 
+        String container,
+        String videoCodec,
+        String audioCodec,
+        Integer width,
+        Integer height,
+        Double frameRate,
+        Long sizeBytes,
+        String description,
+        byte[] sha512) {
+            this.uri = uri;
+            this.container = container;
+            this.videoCodec = videoCodec;
+            this.audioCodec = audioCodec;
+            this.width = width;
+            this.height = height;
+            this.size = sizeBytes;
+            this.description = description;
+            this.sha512 = sha512;
+        }
+
     @Override
     public Option<UUID> primaryKey() {
         return Option.apply(uuid);

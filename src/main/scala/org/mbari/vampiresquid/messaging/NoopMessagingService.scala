@@ -16,7 +16,7 @@
 
 package org.mbari.vampiresquid.messaging
 
-import org.mbari.vampiresquid.repository.jpa.VideoReference
+import org.mbari.vampiresquid.domain.{Media2, VideoReference}
 import org.slf4j.LoggerFactory
 
 import scala.concurrent.ExecutionContext
@@ -36,9 +36,9 @@ class NoopMessagingService extends MessagingService {
     * @param videoReference
     */
   override def newVideoReference(
-      videoReference: VideoReference
+      media: Media2
   )(implicit ec: ExecutionContext): Unit = {
-    val msg = videoReference.uri.toString
+    val msg = media.uri.toString
     log.debug("MessagingService: new video url: {}", msg)
 
   }

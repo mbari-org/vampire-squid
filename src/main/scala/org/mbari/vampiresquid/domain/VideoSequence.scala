@@ -28,7 +28,9 @@ case class VideoSequence(uuid: UUID,
                          description: Option[String] = None,
                          last_updated_time: Option[Instant] = None,
                          videos: List[Video] = Nil
-                        )
+                        ) {
+  def lastUpdatedTimestamp: Option[Instant] = last_updated_time
+}
 
 object VideoSequence {
   def from(v: VideoSequenceEntity): VideoSequence = {

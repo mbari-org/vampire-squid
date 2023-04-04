@@ -18,13 +18,13 @@ package org.mbari.vampiresquid.messaging
 
 import java.time.{Duration, Instant}
 import java.util.UUID
-
 import com.google.gson.annotations.Expose
 import com.rabbitmq.client.{Channel, Connection, ConnectionFactory}
 import org.mbari.vampiresquid.Constants
-import org.mbari.vampiresquid.repository.jpa.VideoReference
+import org.mbari.vampiresquid.domain.{Media2, VideoReference}
 import org.slf4j.LoggerFactory
 
+import java.net.URI
 import scala.annotation.meta.field
 import scala.concurrent.ExecutionContext
 import scala.util.Try
@@ -34,7 +34,7 @@ import scala.util.control.NonFatal
   * @author Brian Schlining
   * @since 2017-03-13T16:47:00
   */
-class RabbitMQMessagingService extends MessagingService {
+class RabbitMQMessagingService extends MessagingService with AutoCloseable {
 
   private[this] val log         = LoggerFactory.getLogger(getClass)
   private[this] val host        = Constants.CONFIG.getString("rabbitmq.host")
@@ -68,11 +68,11 @@ class RabbitMQMessagingService extends MessagingService {
     * @param videoReference
     */
   override def newVideoReference(
-      videoReference: VideoReference
+      media: Media2
   )(implicit ec: ExecutionContext): Unit = {
 
     ec.execute(() => {
-      val vm  = NewVideoMessage(videoReference)
+      val vm  = NewVideoMessage(media)
       val msg = Constants.GSON.toJson(vm)
       log.debug("Publishing new video message: {}", msg)
       channel.basicPublish(exchange, routingKey, null, msg.getBytes("UTF-8"))
@@ -80,7 +80,7 @@ class RabbitMQMessagingService extends MessagingService {
 
   }
 
-  override def finalize(): Unit = {
+  override def close(): Unit = {
     try {
       if (channel != null) {
         channel.close()
@@ -112,22 +112,20 @@ case class NewVideoMessage(
     @(Expose @field)(serialize = true) videoName: String,
     @(Expose @field)(serialize = true) startTimestamp: Instant,
     @(Expose @field)(serialize = true) durationMillis: Duration,
-    @(Expose @field)(serialize = true) videoReference: VideoReference
+    @(Expose @field)(serialize = true) uri: URI
 )
 
 object NewVideoMessage {
-  def apply(videoReference: VideoReference): NewVideoMessage = {
-    val v  = videoReference.video
-    val vs = v.videoSequence
-    NewVideoMessage(
-      vs.uuid,
-      vs.name,
-      vs.cameraID,
-      v.uuid,
-      v.name,
-      v.start,
-      v.duration,
-      videoReference
+  def apply(m: Media2): NewVideoMessage = {
+    new NewVideoMessage(
+      m.video_sequence_uuid,
+      m.videoSequenceName,
+      m.cameraId,
+      m.video_uuid,
+      m.videoName,
+      m.startTimestamp,
+      m.duration.orNull,
+      m.uri
     )
   }
 

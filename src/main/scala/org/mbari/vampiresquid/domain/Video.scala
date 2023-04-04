@@ -28,7 +28,9 @@ case class Video(uuid: UUID,
                  duration_millis: Option[Long] = None,
                  description: Option[String] = None,
                  last_updated_time: Option[Instant] = None,
-                 video_references: List[VideoReference] = Nil)
+                 video_references: List[VideoReference] = Nil) {
+  def lastUpdatedTimestamp: Option[Instant] = last_updated_time
+}
 
 object Video {
 

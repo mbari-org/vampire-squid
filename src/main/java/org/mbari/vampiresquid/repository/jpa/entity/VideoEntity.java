@@ -146,12 +146,12 @@ public class VideoEntity implements PersistentObject {
         videoRefs.forEach(this::addVideoReference);
     }
 
-    public VideoEntity(String name, Instant start, Duration duration, String description) {
-        this.description = description;
-        this.name = name;
-        this.start = start;
-        this.duration = duration;
-    }
+    // public VideoEntity(String name, Instant start, Duration duration, String description) {
+    //     this.description = description;
+    //     this.name = name;
+    //     this.start = start;
+    //     this.duration = duration;
+    // }
 
     public VideoEntity() {
 
