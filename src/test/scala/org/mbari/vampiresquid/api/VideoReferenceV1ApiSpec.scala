@@ -18,7 +18,7 @@ package org.mbari.vampiresquid.api
 
 import org.mbari.vampiresquid.api.{VideoReferenceV1Api, VideoSequenceV1Api, VideoV1Api}
 import org.mbari.vampiresquid.controllers.{VideoController, VideoReferenceController, VideoSequenceController}
-import org.mbari.vampiresquid.repository.jpa.{Video, VideoReference, VideoSequence}
+import org.mbari.vampiresquid.domain.{Video, VideoReference, VideoSequence}
 
 import java.net.URLEncoder
 import java.time.Instant
@@ -65,7 +65,9 @@ class VideoReferenceV1ApiSpec extends WebApiStack {
   it should "insert" in {
     post("/v1/videosequence", "name" -> "T1234", "camera_id" -> "Tiburon") {
       status should be(200)
-      aVideoSequence = gson.fromJson(body, classOf[VideoSequence])
+      val s = body
+      print(s)
+      aVideoSequence = gson.fromJson(s, classOf[VideoSequence])
     }
     aVideoSequence should not be null
 
@@ -131,7 +133,7 @@ class VideoReferenceV1ApiSpec extends WebApiStack {
     put("/v1/videoreference/" + aVideoReference.uuid, "size_bytes" -> "1234567") {
       status should be(200)
       val videoReference = gson.fromJson(body, classOf[VideoReference])
-      videoReference.size should be(1234567)
+      videoReference.sizeBytes.get should be(1234567)
     }
   }
 

@@ -27,6 +27,7 @@ import scala.concurrent.Await
 import scala.concurrent.duration._
 import java.time.Instant
 import java.util.UUID
+import org.mbari.vampiresquid.domain.Media2
 
 /**
   * @author Brian Schlining
@@ -155,7 +156,7 @@ class MediaV1ApiSpec extends WebApiStack {
     media should not be (null)
     media should not be empty
     val m      = media.head
-    val sha512 = ByteArrayConverter.encode(m.sha512)
+    val sha512 = ByteArrayConverter.encode(m.sha512.get)
     put(
       "/v1/media",
       "sha512"              -> sha512,
@@ -219,7 +220,7 @@ class MediaV1ApiSpec extends WebApiStack {
       "video_name" -> "XXX"
     ) {
       status should be(200)
-      val m2 = gson.fromJson(body, classOf[Media])
+      val m2 = gson.fromJson(body, classOf[Media2])
       m2.startTimestamp should be (now)
       m2.duration should be(java.time.Duration.ofMillis(2000))
       m2.videoName should be ("XXX")

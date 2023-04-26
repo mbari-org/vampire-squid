@@ -12,9 +12,9 @@
         <class>org.mbari.vampiresquid.etc.jpa.UUIDConverter</class>
 
         <!-- Entities -->
-        <class>org.mbari.vampiresquid.repository.jpa.VideoSequence</class>
-        <class>org.mbari.vampiresquid.repository.jpa.Video</class>
-        <class>org.mbari.vampiresquid.repository.jpa.VideoReference</class>
+        <class>org.mbari.vampiresquid.repository.jpa.entity.VideoSequenceEntity</class>
+        <class>org.mbari.vampiresquid.repository.jpa.entity.VideoEntity</class>
+        <class>org.mbari.vampiresquid.repository.jpa.entity.VideoReferenceEntity</class>
         <properties>
             <property name="eclipselink.logging.level" value="INFO" />
             <property name="eclipselink.connection-pool.default.initial" value="2" />

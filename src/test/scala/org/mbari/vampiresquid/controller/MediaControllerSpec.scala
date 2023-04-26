@@ -30,6 +30,7 @@ import scala.concurrent.duration.{Duration => SDuration}
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
+import org.mbari.vampiresquid.domain.Media2
 
 /**
   * @author Brian Schlining
@@ -95,6 +96,7 @@ class MediaControllerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterE
     vs shouldBe defined
     val v = vs.get
     //println(controller.toJson(v))
+
     v.videoReferences.size should be(3)
   }
 
@@ -128,7 +130,7 @@ class MediaControllerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterE
 
   it should "update" in {
 
-    val m0 = Media.build(
+    val m0 = Media2.build(
       videoSequenceName = Some(getClass.getSimpleName),
       cameraId = Some("A"),
       videoName = Some("A20160911T012345"),
@@ -156,36 +158,39 @@ class MediaControllerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterE
     m1.duration should be(m0.duration)
     m1.description should be(m0.description)
     m1.uri should be(m0.uri)
-    m1.videoCodec = "prores"
-    m1.container = "video/quicktime"
-    m1.description = "A test movie 2"
-    m1.videoDescription = "Some great video"
-    m1.videoSequenceDescription = "Our first deployment"
-    m1.videoName = "B20220829T000000"
-    m1.startTimestamp = Instant.parse("2022-08-29T00:00:00Z")
-    val f1  = controller.updateMedia(m1)
+    val m2 = m1.copy(video_codec = Some("prores"), 
+       container = Some("video/quicktime"), 
+       description = Some("A test movie 2"),
+       video_description = Some("Some great video"),
+       video_sequence_description = Some("Our first deployment"),
+       video_name = "B20220829T000000",
+       start_timestamp = Instant.parse("2022-08-29T00:00:00Z"))
+    m2.videoUuid should be(m1.videoUuid)
+
+    val f1  = controller.updateMedia(m2)
     val opt = Await.result(f1, timeout)
     opt should not be (None)
-    val m2 = opt.get
-    m2.videoReferenceUuid should be(m1.videoReferenceUuid)
-    m2.videoSequenceUuid should be(m2.videoSequenceUuid)
-    m2.videoUuid should be(m2.videoUuid)
-    m2.videoSequenceName should be(m1.videoSequenceName)
-    m2.startTimestamp should be(m1.startTimestamp)
-    m2.duration should be(m1.duration)
-    m2.description should be(m1.description)
-    m2.videoDescription should be(m1.videoDescription)
-    m2.videoSequenceDescription should be(m1.videoSequenceDescription)
-    m2.uri should be(m1.uri)
-    m2.sha512 should be(m1.sha512)
-    m2.videoName should be(m1.videoName)
-    m2.startTimestamp should be(m1.startTimestamp)
+    val m3 = opt.get
+    m3.videoReferenceUuid should be(m1.videoReferenceUuid)
+    m3.videoSequenceUuid should be(m2.videoSequenceUuid)
+    m3.video_uuid should not be (null)
+    m3.videoUuid should be(m2.videoUuid)
+    m3.videoSequenceName should be(m1.videoSequenceName)
+    m3.startTimestamp should be(m1.startTimestamp)
+    m3.duration should be(m1.duration)
+    m3.description should be(m1.description)
+    m3.videoDescription should be(m1.videoDescription)
+    m3.videoSequenceDescription should be(m1.videoSequenceDescription)
+    m3.uri should be(m1.uri)
+    m3.sha512 should be(m1.sha512)
+    m3.videoName should be(m1.videoName)
+    m3.startTimestamp should be(m1.startTimestamp)
 
   }
 
   it should "findAndUpdate" in {
 
-    val m0 = Media.build(
+    val m0 = Media2.build(
       videoSequenceName = Some(getClass.getSimpleName),
       cameraId = Some("Y"),
       videoName = Some("Y20160911T012345"),
@@ -221,7 +226,7 @@ class MediaControllerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterE
         m1.cameraId,
         newVideoName,
         None,
-        duration = Some(m1.duration),
+        duration = m1.duration,
         start = Some(newStartTimestamp))
     val opt = Await.result(f1, timeout)
     opt should not be (None)
@@ -235,7 +240,7 @@ class MediaControllerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterE
     m2.videoDescription should be(m1.videoDescription)
     m2.videoSequenceDescription should be(m1.videoSequenceDescription)
     m2.uri should be(m1.uri)
-    m2.sha512 should be(m1.sha512)
+    m2.sha512.get should be(m1.sha512.get)
     m2.videoName should be(newVideoName)
     m2.startTimestamp should be(newStartTimestamp)
 
@@ -258,7 +263,7 @@ class MediaControllerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterE
     val fn1 = controller.findBySha512(sha)
     val m   = Await.result(fn1, timeout)
     m shouldBe defined
-    m.get.sha512 should be(sha)
+    m.get.sha512.get should be(sha)
   }
 
   it should "findByVideoSequenceName" in {
@@ -303,7 +308,7 @@ class MediaControllerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterE
   }
 
   it should "moveVideoReferences" in {
-    val m0a = Media.build(
+    val m0a = Media2.build(
       videoSequenceName = Some(getClass.getSimpleName + "XXX"),
       cameraId = Some("XXX"),
       videoName = Some("XXX20160911T012345"),
@@ -322,7 +327,7 @@ class MediaControllerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterE
     )
   
 
-  val m1a = Media.build(
+  val m1a = Media2.build(
       videoSequenceName = Some(getClass.getSimpleName + "XXX"),
       cameraId = Some("XXX"),
       videoName = Some("XXX20160911T012345"),
@@ -357,7 +362,7 @@ class MediaControllerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterE
     val f = controller.moveVideoReference(m1b.videoReferenceUuid,
       newVideoName,
       newStart,
-      m1b.duration)
+      m1b.duration.orNull)
     val opt = Await.result(f, timeout)
     opt should not be empty
     val m1c = opt.get
@@ -398,10 +403,10 @@ class MediaControllerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterE
     val opt0 = Await.result(controller.moveVideoReference(m1.videoReferenceUuid, m0.videoName, m0.startTimestamp, Duration.ofMinutes(42)), timeout)
     opt0 should be (empty)
 
-    val opt1 = Await.result(controller.moveVideoReference(m1.videoReferenceUuid, m0.videoName, m1.startTimestamp, m0.duration), timeout)
+    val opt1 = Await.result(controller.moveVideoReference(m1.videoReferenceUuid, m0.videoName, m1.startTimestamp, m0.duration.orNull), timeout)
     opt1 should be(empty)
 
-    val opt2 = Await.result(controller.moveVideoReference(m1.videoReferenceUuid, m0.videoName, m0.startTimestamp, m0.duration), timeout)
+    val opt2 = Await.result(controller.moveVideoReference(m1.videoReferenceUuid, m0.videoName, m0.startTimestamp, m0.duration.orNull), timeout)
     opt2 should not be(empty)
   }
   

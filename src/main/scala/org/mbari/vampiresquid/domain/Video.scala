@@ -21,6 +21,7 @@ import org.mbari.vampiresquid.repository.jpa.entity.VideoEntity
 import java.time.Instant
 import java.util.UUID
 import scala.jdk.CollectionConverters._
+import java.time.Duration
 
 case class Video(uuid: UUID,
                  name: String,
@@ -30,6 +31,9 @@ case class Video(uuid: UUID,
                  last_updated_time: Option[Instant] = None,
                  video_references: List[VideoReference] = Nil) {
   def lastUpdatedTimestamp: Option[Instant] = last_updated_time
+  def start: Instant = start_timestamp
+  lazy val duration: Option[Duration] = duration_millis.map(Duration.ofMillis)
+  def videoReferences: List[VideoReference] = video_references
 }
 
 object Video {

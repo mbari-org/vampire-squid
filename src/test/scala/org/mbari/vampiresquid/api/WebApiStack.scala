@@ -27,7 +27,6 @@ import org.scalatra.swagger.ContactInfo
 import org.scalatra.swagger.LicenseInfo
 import scala.concurrent.Await
 import scala.concurrent.duration._
-import java.util.concurrent.TimeUnit
 import scala.concurrent.Future
 
 /**

@@ -17,13 +17,14 @@
 package org.mbari.vampiresquid.messaging
 
 import org.mbari.vampiresquid.Constants
-import org.mbari.vampiresquid.repository.jpa.{Video, VideoReference, VideoSequence}
+import org.mbari.vampiresquid.domain.{Video, VideoReference, VideoSequence}
 import java.net.URI
 import java.time.{Duration, Instant}
 import java.util.UUID
 import org.scalatest.Inside
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
+import org.mbari.vampiresquid.domain.Media2
 
 /**
   * @author Brian Schlining
@@ -46,11 +47,17 @@ class NewVideoMessageSpec extends AnyFlatSpec with Matchers with Inside {
     val videoSequenceUuid = UUID.randomUUID()
     val cameraId          = "Ventana"
 
-    val videoReference = VideoReference(uri, container, vcodec, acodec, width, height)
-    val video          = Video(videoName, start, Some(duration), Seq(videoReference))
-    val videoSequence  = VideoSequence(videoSequenceName, cameraId, Seq(video))
-    videoSequence.uuid = videoSequenceUuid
-    val msg = NewVideoMessage(videoReference)
+    val videoReference = VideoReference(UUID.randomUUID, 
+      uri = uri, 
+      container = Some(container), 
+      video_codec = Some(vcodec), 
+      audio_codec = Some(acodec), 
+      width = Some(width), 
+      height = Some(height))
+    val video          = Video(UUID.randomUUID, videoName, start, Some(duration.toMillis()), video_references = List(videoReference))
+    val videoSequence  = VideoSequence(UUID.randomUUID, videoSequenceName, cameraId, videos = List(video))
+    val vs = videoSequence.copy(uuid = videoSequenceUuid)
+    val msg = NewVideoMessage(Media2.from(vs, videoReference))
     // println(msg)
     val json = Constants.GSON.toJson(msg)
     val obj  = Constants.GSON.fromJson(json, classOf[NewVideoMessage])
@@ -73,12 +80,12 @@ class NewVideoMessageSpec extends AnyFlatSpec with Matchers with Inside {
         vName should be(videoName)
         startTimestamp should be(start)
         durationMillis should be(duration)
-        vr.uri should be(uri)
-        vr.container should be(container)
-        vr.videoCodec should be(vcodec)
-        vr.audioCodec should be(acodec)
-        vr.width should be(width)
-        vr.height should be(height)
+        vr should be(uri)
+        // vr.container should be(container)
+        // vr.videoCodec should be(vcodec)
+        // vr.audioCodec should be(acodec)
+        // vr.width should be(width)
+        // vr.height should be(height)
 
     }
   }

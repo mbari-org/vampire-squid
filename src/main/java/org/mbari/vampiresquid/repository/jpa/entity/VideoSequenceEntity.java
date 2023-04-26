@@ -140,6 +140,13 @@ public class VideoSequenceEntity implements PersistentObject {
         this.description = description;
     }
 
+    public VideoSequenceEntity(String name, String cameraID, String description, List<VideoEntity> videos) {
+        this.name = name;
+        this.cameraID = cameraID;
+        this.description = description;
+        videos.forEach(this::addVideo);
+    }
+
     @Override
     public Option<UUID> primaryKey() {
         return null;

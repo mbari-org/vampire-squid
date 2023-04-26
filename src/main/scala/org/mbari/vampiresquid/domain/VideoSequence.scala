@@ -29,7 +29,10 @@ case class VideoSequence(uuid: UUID,
                          last_updated_time: Option[Instant] = None,
                          videos: List[Video] = Nil
                         ) {
+
+  def cameraId: String = camera_id
   def lastUpdatedTimestamp: Option[Instant] = last_updated_time
+  lazy val videoReferences: List[VideoReference] = videos.flatMap(_.video_references)
 }
 
 object VideoSequence {

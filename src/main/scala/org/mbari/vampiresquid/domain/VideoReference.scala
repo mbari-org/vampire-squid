@@ -36,6 +36,10 @@ case class VideoReference(
                            description: Option[String] = None,
                            last_updated_time: Option[Instant] = None
                          ) {
+  def videoCodec: Option[String] = video_codec
+  def audioCodec: Option[String] = audio_codec
+  def frameRate: Option[Double] = frame_rate
+  def sizeBytes: Option[Long] = size_bytes
   def lastUpdatedTimestamp: Option[Instant] = last_updated_time
 }
 
@@ -46,10 +50,10 @@ object VideoReference {
       Option(v.getContainer),
       Option(v.getVideoCodec),
       Option(v.getAudioCodec),
-      Option(v.getWidth),
-      Option(v.getHeight),
-      Option(v.getFrameRate),
-      Option(v.getSize),
+      Option(v.getWidth).map(_.intValue()),
+      Option(v.getHeight).map(_.intValue()),
+      Option(v.getFrameRate).map(_.doubleValue()),
+      Option(v.getSize).map(_.longValue()),
       Option(v.getSha512),
       Option(v.getDescription),
       Option(v.getLastUpdatedTime).map(_.toInstant)

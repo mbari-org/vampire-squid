@@ -22,7 +22,7 @@ import org.scalatest.BeforeAndAfterAll
 import scala.concurrent.Await
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-
+import scala.jdk.CollectionConverters._
 /**
   * @author Brian Schlining
   * @since 2017-04-05T14:28:00
@@ -78,7 +78,7 @@ class VideoSequenceControllerSpec extends AnyFlatSpec with Matchers with BeforeA
     val fn = controller.findAll
     val rs = Await.result(fn, TestUtils.Timeout)
     rs.size should be(n)
-    val cameraId  = rs.head.cameraID
+    val cameraId  = rs.head.cameraId
     val timestamp = rs.head.videos.head.start
     val fn0       = controller.findByCameraIDAndTimestamp(cameraId, timestamp)
     val rs0       = Await.result(fn0, TestUtils.Timeout)

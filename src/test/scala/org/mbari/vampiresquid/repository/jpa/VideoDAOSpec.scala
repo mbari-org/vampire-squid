@@ -25,6 +25,10 @@ import scala.concurrent.duration.{Duration => SDuration}
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
+import org.mbari.vampiresquid.repository.jpa.entity.VideoSequenceEntity
+import java.{util => ju}
+import org.mbari.vampiresquid.repository.jpa.entity.VideoEntity
+import scala.jdk.CollectionConverters._
 
 /**
   * Created by brian on 5/12/16.
@@ -37,13 +41,14 @@ class VideoDAOSpec extends AnyFlatSpec with Matchers {
   private[this] val timeout  = SDuration(2, TimeUnit.SECONDS)
   private[this] val now      = Instant.now()
 
-  private[this] val videoSequence = VideoSequence(
+  private[this] val videoSequence = new VideoSequenceEntity(
     "A VideoSequence",
     "Thundar",
-    Seq(
-      Video("A", now.minus(duration), duration),
-      Video("B", now, duration),
-      Video("C", now.plus(duration), duration)
+    "A VideoSequence",
+    ju.List.of(
+      new VideoEntity("A", now.minus(duration), duration),
+      new VideoEntity("B", now, duration),
+      new VideoEntity("C", now.plus(duration), duration)
     )
   )
 
@@ -53,12 +58,12 @@ class VideoDAOSpec extends AnyFlatSpec with Matchers {
 
   "VideoDAOImpl" should "create" in {
     // Executing create assigns the uuid and lastUpdated fields values in our mutable object
-    Await.result(dao.runTransaction(d => d.create(videoSequence.videos.head)), timeout)
+    Await.result(dao.runTransaction(d => d.create(videoSequence.getVideos.asScala.head)), timeout)
     dao.entityManager.detach(videoSequence)
     val v =
-      Await.result(dao.runTransaction(d => d.findByName(videoSequence.videos.head.name)), timeout)
+      Await.result(dao.runTransaction(d => d.findByName(videoSequence.getVideos.asScala.head.getName())), timeout)
     v shouldBe defined
-    videoSequenceUUID = videoSequence.uuid
+    videoSequenceUUID = videoSequence.getUuid()
   }
 
   it should "findByVideoSequenceUUID" in {
@@ -83,18 +88,18 @@ class VideoDAOSpec extends AnyFlatSpec with Matchers {
   }
 
   it should "update" in {
-    val videoName = videoSequence.videos.head.name
+    val videoName = videoSequence.getVideos.asScala.head.getName()
     val v         = Await.result(dao.runTransaction(d => d.findByName(videoName)), timeout)
     v shouldBe defined
     dao.entityManager.detach(v.get)
-    v.get.name = "D"
+    v.get.setName("D")
     Await.result(dao.runTransaction(d => d.update(v.get)), timeout)
     val v3 = Await.result(dao.runTransaction(d => d.findByName("D")), timeout)
     v3 shouldBe defined
   }
 
   it should "delete" in {
-    val videoName = videoSequence.videos.last.name // Don't use head. We changed the value in the db
+    val videoName = videoSequence.getVideos.asScala.last.getName // Don't use head. We changed the value in the db
     val v         = Await.result(dao.runTransaction(d => d.findByName(videoName)), timeout)
     v shouldBe defined
     Await.result(dao.runTransaction(d => d.delete(v.get)), timeout)
@@ -103,7 +108,7 @@ class VideoDAOSpec extends AnyFlatSpec with Matchers {
   }
 
   it should "deleteByPrimaryKey" in {
-    val primaryKey = videoSequence.videos.head.uuid
+    val primaryKey = videoSequence.getVideos.asScala.head.getUuid()
     val v          = Await.result(dao.runTransaction(d => d.findByUUID(primaryKey)), timeout)
     v shouldBe defined
     Await.result(dao.runTransaction(d => d.deleteByUUID(primaryKey)), timeout)

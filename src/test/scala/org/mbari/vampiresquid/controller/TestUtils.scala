@@ -26,6 +26,10 @@ import java.util.concurrent.TimeUnit
 import scala.concurrent.{duration, Await, ExecutionContext}
 import scala.util.Random
 import scala.collection.BitSet
+import org.mbari.vampiresquid.repository.jpa.entity.VideoSequenceEntity
+import org.mbari.vampiresquid.repository.jpa.entity.VideoEntity
+import java.{util => ju}
+import org.mbari.vampiresquid.repository.jpa.entity.VideoReferenceEntity
 
 /**
   * @author Brian Schlining
@@ -39,9 +43,9 @@ object TestUtils {
   val Digest                                      = MessageDigest.getInstance("SHA-512")
   private[this] val random                        = Random
 
-  def createVideoSequence(name: String, videoName: String): VideoSequence = {
-    val video         = Video(videoName, Instant.now, Duration.ofMinutes(random.nextInt(15) + 5))
-    val videoSequence = VideoSequence(name, "Tiburon", Seq(video))
+  def createVideoSequence(name: String, videoName: String): VideoSequenceEntity = {
+    val video         = new VideoEntity(videoName, Instant.now, Duration.ofMinutes(random.nextInt(15) + 5))
+    val videoSequence = new VideoSequenceEntity(name, "Tiburon", "", ju.List.of(video))
     val dao           = DaoFactory.newVideoSequenceDAO()
     val f             = dao.runTransaction(d => d.create(videoSequence))
     f.onComplete(t => dao.close())
@@ -49,38 +53,38 @@ object TestUtils {
     videoSequence
   }
 
-  def randomVideoReference(): VideoReference = {
-    val v = new VideoReference
-    v.uri = new URI(
+  def randomVideoReference(): VideoReferenceEntity = {
+    val v = new VideoReferenceEntity
+    v.setUri(new URI(
       s"http://www.mbari.org/video/${random.nextInt(100000)}/video_${random.nextInt(100000)}.mp4"
-    )
-    v.sha512 = Digest.digest(v.uri.toString.getBytes(StandardCharsets.UTF_8))
-    v.container = "video/mp4"
-    v.videoCodec = "h264"
-    v.audioCodec = "aac"
-    v.width = random.nextInt(5000)
-    v.height = random.nextInt(3000)
-    v.frameRate = random.nextInt(50) + 10
-    v.description = s"This is dive ${random.nextInt(10000)}"
-    v.size = random.nextInt(9999999)
+    ))
+    v.setSha512(Digest.digest(v.getUri.toString.getBytes(StandardCharsets.UTF_8)))
+    v.setContainer("video/mp4")
+    v.setVideoCodec("h264")
+    v.setAudioCodec("aac")
+    v.setWidth(random.nextInt(5000))
+    v.setHeight(random.nextInt(3000))
+    v.setFrameRate(random.nextInt(50) + 10)
+    v.setDescription(s"This is dive ${random.nextInt(10000)}")
+    v.setSize(random.nextInt(9999999))
     v
   }
 
   def randomSha512(): Array[Byte] = Array.fill[Byte](64)((Random.nextInt(256) - 128).toByte)
 
-  def create(numVideoSeqs: Int, numVideos: Int, numVideoRef: Int): Seq[VideoSequence] = {
+  def create(numVideoSeqs: Int, numVideos: Int, numVideoRef: Int): Seq[VideoSequenceEntity] = {
     val longTimeout = duration.Duration(numVideoSeqs * 2, TimeUnit.SECONDS)
     for (i <- 0 until numVideoSeqs) yield {
       val videoSequence =
-        VideoSequence(s"A${random.nextInt()} B${random.nextInt()}", s"AUV ${random.nextInt()}")
+        new VideoSequenceEntity(s"A${random.nextInt()} B${random.nextInt()}", s"AUV ${random.nextInt()}")
 
-      for (i <- 0 until numVideos) {
-        val video = Video(
-          videoSequence.name + s"_C${random.nextInt()}",
+      for (_ <- 0 until numVideos) {
+        val video = new VideoEntity(
+          videoSequence.getName + s"_C${random.nextInt()}",
           Instant.ofEpochSecond(math.abs(random.nextInt())),
-          Some(Duration.ofMinutes(random.nextInt(15) + 1)),
-          Some(s"Some description ${random.nextInt()}")
+          Duration.ofMinutes(random.nextInt(15) + 1),
         )
+        video.setDescription(s"Some description ${random.nextInt()}")
         videoSequence.addVideo(video)
 
         for (i <- 0 until numVideoRef) {
@@ -91,7 +95,7 @@ object TestUtils {
 
       val dao = DaoFactory.newVideoSequenceDAO()
       val f   = dao.runTransaction(d => d.create(videoSequence))
-      f.onComplete(t => dao.close())
+      f.onComplete(_ => dao.close())
       Await.result(f, longTimeout)
       videoSequence
 

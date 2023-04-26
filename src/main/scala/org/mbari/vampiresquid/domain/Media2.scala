@@ -56,7 +56,7 @@ case class Media2(
   def audioCodec: Option[String] = audio_codec
   def frameRate: Option[Double] = frame_rate
   def sizeBytes: Option[Long] = size_bytes
-  def videoSequenceDesciption: Option[String] = video_sequence_description
+  def videoSequenceDescription: Option[String] = video_sequence_description
   def videoDescription: Option[String] = video_description
   lazy val duration: Option[Duration] = duration_millis.map(Duration.ofMillis)
   lazy val endTimestamp: Option[Instant] = duration.map(d => start_timestamp.plus(d))
@@ -77,7 +77,7 @@ object Media2 {
     val videoSequenceEntity = videoEntity.getVideoSequence
     Media2(videoSequenceEntity.getUuid,
       videoEntity.getUuid,
-      videoReference.uuid,
+      videoReferenceEntity.getUuid(),
       videoSequenceEntity.getName,
       videoSequenceEntity.getCameraID,
       videoEntity.getName,
@@ -95,6 +95,74 @@ object Media2 {
       Option(videoSequenceEntity.getDescription),
       Option(videoEntity.getDescription),
       videoReference.sha512
+    )
+  }
+
+  def from(videoSequence: VideoSequence, videoReference: VideoReference): Media2 = {
+    val video = videoSequence.videos.filter(vr => vr.video_references.contains(videoReference)).head
+    val temp = build(
+      videoSequenceName = Some(videoSequence.name),
+      cameraId = Some(videoSequence.camera_id),
+      videoName = Some(video.name),
+      uri = Some(videoReference.uri),
+      startTimestamp = Some(video.start),
+      duration = video.duration,
+      container = videoReference.container,
+      videoCodec = videoReference.video_codec,
+      audioCodec = videoReference.audio_codec,
+      width = videoReference.width,
+      height = videoReference.height,
+      frameRate = videoReference.frame_rate,
+      sizeBytes = videoReference.size_bytes,
+      description = videoReference.description,
+      sha512 = videoReference.sha512
+    )
+    temp.copy(
+      video_sequence_uuid = videoSequence.uuid,
+      video_uuid = video.uuid,
+      video_reference_uuid = videoReference.uuid)
+  }
+
+   def build(
+      videoSequenceName: Option[String] = None,
+      cameraId: Option[String] = None,
+      videoName: Option[String] = None,
+      uri: Option[URI] = None,
+      startTimestamp: Option[Instant] = None,
+      duration: Option[Duration] = None,
+      container: Option[String] = None,
+      videoCodec: Option[String] = None,
+      audioCodec: Option[String] = None,
+      width: Option[Int] = None,
+      height: Option[Int] = None,
+      frameRate: Option[Double] = None,
+      sizeBytes: Option[Long] = None,
+      description: Option[String] = None,
+      sha512: Option[Array[Byte]] = None,
+      videoSequenceDescription: Option[String] = None,
+      videoDescription: Option[String] = None
+  ): Media2 = {
+    Media2(
+      UUID.randomUUID(),
+      UUID.randomUUID(),
+      UUID.randomUUID(),
+      videoSequenceName.getOrElse(""),
+      cameraId.getOrElse(""),
+      videoName.getOrElse(""),
+      uri.getOrElse(new URI("")),
+      startTimestamp.getOrElse(Instant.EPOCH),
+      duration.map(_.toMillis),
+      container,
+      videoCodec,
+      audioCodec,
+      width,
+      height,
+      frameRate,
+      sizeBytes,
+      description,
+      videoSequenceDescription,
+      videoDescription,
+      sha512
     )
   }
 

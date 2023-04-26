@@ -138,6 +138,10 @@ public class VideoReferenceEntity implements PersistentObject {
 
     }
 
+    public VideoReferenceEntity(URI uri) {
+        this.uri = uri;
+    }
+
     public VideoReferenceEntity(URI uri, String container,
         String videoCodec,
         String audioCodec) {
