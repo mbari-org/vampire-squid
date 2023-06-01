@@ -53,12 +53,12 @@ abstract class APIStack
   protected[this] val compactTimeFormatter1 = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss.SSSX")
   protected[this] val compactTimeFormatter2 = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss.SSSSSSX")
 
-  implicit val stringToUUID = new TypeConverter[String, UUID] {
+  implicit val stringToUUID: TypeConverter[String, UUID] = new TypeConverter[String, UUID] {
     override def apply(s: String): Option[UUID] =
       Try(UUID.fromString(s)).toOption
   }
 
-  implicit protected val stringToInstant = new TypeConverter[String, Instant] {
+  implicit protected val stringToInstant: TypeConverter[String, Instant] = new TypeConverter[String, Instant] {
     override def apply(s: String): Option[Instant] = {
       val try1 = Try(Instant.from(compactTimeFormatter.parse(s))).toOption
       val try2 = try1 match {
@@ -77,16 +77,16 @@ abstract class APIStack
     }
   }
 
-  implicit val stringToDuration = new TypeConverter[String, Duration] {
+  implicit val stringToDuration: TypeConverter[String, Duration] = new TypeConverter[String, Duration] {
     override def apply(s: String): Option[Duration] =
       Try(Duration.ofMillis(s.toLong)).toOption
   }
 
-  implicit val stringToURI = new TypeConverter[String, URI] {
+  implicit val stringToURI: TypeConverter[String, URI] = new TypeConverter[String, URI] {
     override def apply(s: String): Option[URI] = Try(URI.create(s)).toOption
   }
 
-  implicit val stringToByteArray = new TypeConverter[String, Array[Byte]] {
+  implicit val stringToByteArray: TypeConverter[String, Array[Byte]] = new TypeConverter[String, Array[Byte]] {
     override def apply(s: String): Option[Array[Byte]] =
       Try(ByteArrayConverter.decode(s)).toOption
   }

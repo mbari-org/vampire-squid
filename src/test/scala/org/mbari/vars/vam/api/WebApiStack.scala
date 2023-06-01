@@ -26,6 +26,7 @@ import scala.concurrent.Await
 import scala.concurrent.duration._
 import java.util.concurrent.TimeUnit
 import scala.concurrent.Future
+import scala.concurrent.ExecutionContextExecutor
 
 /**
   *
@@ -37,7 +38,7 @@ trait WebApiStack extends ScalatraFlatSpec with BeforeAndAfterAll {
 
   protected[this] val gson                      = Constants.GSON
   protected[this] val daoFactory                = DevelopmentTestDAOFactory
-  implicit protected[this] val executionContext = ExecutionContext.global
+  implicit protected[this] val executionContext: ExecutionContextExecutor = ExecutionContext.global
 
   def exec[A](f: Future[A]): A = Await.result(f, 10.seconds)
 

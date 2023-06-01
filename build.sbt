@@ -4,8 +4,8 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 
 lazy val buildSettings = Seq(
   organization := "org.mbari.vars",
-  scalaVersion := "2.13.10",
-  crossScalaVersions := Seq("2.13.10"),
+  scalaVersion := "3.3.0",
+  crossScalaVersions := Seq("3.3.0"),
   organizationName := "Monterey Bay Aquarium Research Institute",
   startYear := Some(2017),
   licenses += ("Apache-2.0", new URL(
@@ -74,7 +74,6 @@ lazy val `vampire-squid` = (project in file("."))
     AutomateHeaderPlugin, 
     GitBranchPrompt, 
     GitVersioning, 
-    JettyPlugin,
     PackPlugin)
   .settings(appSettings)
   .settings(
@@ -86,8 +85,6 @@ lazy val `vampire-squid` = (project in file("."))
     },
     git.useGitDescribe := true,
     libraryDependencies ++= Seq(
-      akkaActor,
-      amqpClient,
       circeCore,
       circeGeneric,
       circeParser,
@@ -98,7 +95,7 @@ lazy val `vampire-squid` = (project in file("."))
       derbyShared,
       derbyTools,
       eclipsePersistenceExtension,
-      eclipsePersistenceVersion,
+      eclipsePersistenceJpa,
       gson,
       gsonJavatime,
       h2 % "test",

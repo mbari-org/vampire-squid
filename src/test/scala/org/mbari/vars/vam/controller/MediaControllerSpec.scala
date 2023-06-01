@@ -327,7 +327,7 @@ class MediaControllerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterE
     )
   
 
-  val m1a = Media.build(
+    val m1a = Media.build(
       videoSequenceName = Some(getClass.getSimpleName + "XXX"),
       cameraId = Some("XXX"),
       videoName = Some("XXX20160911T012345"),
