@@ -16,9 +16,8 @@
 
 package org.mbari.vampiresquid.api
 
-import org.mbari.vampiresquid.api.VideoSequenceV1Api
 import org.mbari.vampiresquid.controllers.VideoSequenceController
-import org.mbari.vampiresquid.repository.jpa.VideoSequence
+import org.mbari.vampiresquid.repository.jpa.entity.VideoSequenceEntity
 
 /**
   *
@@ -43,7 +42,7 @@ class VideoSequenceV1ApiSpec extends WebApiStack {
     }
   }
 
-  var aVideoSequence: VideoSequence = _
+  var aVideoSequence: VideoSequenceEntity = _
 
   it should "insert a videosequence" in {
     post("/v1/videosequence", "name" -> "T1234", "camera_id" -> "Tiburon") {
@@ -52,12 +51,12 @@ class VideoSequenceV1ApiSpec extends WebApiStack {
       body should include("name")
       body should include("camera_id")
       body should include("videos")
-      val videoSequence = gson.fromJson(body, classOf[VideoSequence])
+      val videoSequence = gson.fromJson(body, classOf[VideoSequenceEntity])
       videoSequence should not be (null)
-      videoSequence.name should be("T1234")
-      videoSequence.cameraID should be("Tiburon")
-      videoSequence.videos shouldBe empty
-      videoSequence.uuid should not be (null)
+      videoSequence.getName should be("T1234")
+      videoSequence.getCameraID should be("Tiburon")
+      videoSequence.getVideos shouldBe empty
+      videoSequence.getUuid should not be (null)
       aVideoSequence = videoSequence
     }
     post("/v1/videosequence", "name" -> "T2345", "camera_id" -> "Tiburon") {
@@ -72,9 +71,9 @@ class VideoSequenceV1ApiSpec extends WebApiStack {
   }
 
   it should "get by uuid" in {
-    get("/v1/videosequence/" + aVideoSequence.uuid) {
+    get("/v1/videosequence/" + aVideoSequence.getUuid) {
       status should be(200)
-      val videoSequence = gson.fromJson(body, classOf[VideoSequence])
+      val videoSequence = gson.fromJson(body, classOf[VideoSequenceEntity])
       videoSequence should equal(aVideoSequence)
     }
   }
@@ -86,7 +85,7 @@ class VideoSequenceV1ApiSpec extends WebApiStack {
       body should include("name")
       body should include("camera_id")
       body should include("videos")
-      val videoSequence = gson.fromJson(body, classOf[VideoSequence])
+      val videoSequence = gson.fromJson(body, classOf[VideoSequenceEntity])
       videoSequence should equal(aVideoSequence)
     }
   }
@@ -121,26 +120,26 @@ class VideoSequenceV1ApiSpec extends WebApiStack {
   }
 
   it should "return a lastupdated time" in {
-    get(s"/v1/videosequence/lastupdate/${aVideoSequence.uuid}") {
+    get(s"/v1/videosequence/lastupdate/${aVideoSequence.getUuid}") {
       status should be(200)
       body should include("timestamp")
     }
   }
 
   it should "update" in {
-    put("/v1/videosequence/" + aVideoSequence.uuid, "description" -> "updated") {
+    put("/v1/videosequence/" + aVideoSequence.getUuid, "description" -> "updated") {
       status should be(200)
-      val videoSequence = gson.fromJson(body, classOf[VideoSequence])
-      videoSequence.uuid should equal(aVideoSequence.uuid)
-      videoSequence.description should be("updated")
+      val videoSequence = gson.fromJson(body, classOf[VideoSequenceEntity])
+      videoSequence.getUuid should equal(aVideoSequence.getUuid)
+      videoSequence.getDescription should be("updated")
     }
   }
 
   it should "delete" in {
-    delete("/v1/videosequence/" + aVideoSequence.uuid) {
+    delete("/v1/videosequence/" + aVideoSequence.getUuid) {
       status should be(204)
     }
-    get("/v1/videosequence/" + aVideoSequence.uuid) {
+    get("/v1/videosequence/" + aVideoSequence.getUuid) {
       status should be(404)
     }
   }
