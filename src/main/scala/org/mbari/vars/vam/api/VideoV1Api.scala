@@ -21,9 +21,7 @@ import java.util.UUID
 
 import org.mbari.vars.vam.Constants
 import org.mbari.vars.vam.controllers.VideoController
-import org.mbari.vars.vam.dao.jpa.{Video, VideoSequence}
 import org.scalatra.{BadRequest, NoContent, NotFound}
-import org.scalatra.swagger.{DataType, ParamType, Parameter, Swagger}
 
 import scala.concurrent.ExecutionContext
 import scala.jdk.CollectionConverters._

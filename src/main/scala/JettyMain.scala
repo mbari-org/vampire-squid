@@ -15,6 +15,8 @@
  */
 
 import org.slf4j.LoggerFactory
+
+import java.util
 /*
  * Copyright 2017 Monterey Bay Aquarium Research Institute
  *
@@ -85,7 +87,7 @@ object JettyMain {
     val webApp = new WebAppContext
     webApp setContextPath conf.contextPath
     webApp setResourceBase conf.webapp
-    webApp setEventListeners Array(new ScalatraListener)
+    webApp setEventListeners java.util.List.of(new ScalatraListener)
 
     // Add JavaMelody for monitoring
     webApp.addServlet(classOf[ReportServlet], "/monitoring")

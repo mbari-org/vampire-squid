@@ -19,12 +19,9 @@ package org.mbari.vars.vam.api
 import org.mbari.vars.vam.Constants
 import org.mbari.vars.vam.dao.jpa.{DevelopmentTestDAOFactory, H2TestDAOFactory}
 import org.scalatest.BeforeAndAfterAll
-import org.scalatra.swagger.{ApiInfo, Swagger}
 import org.scalatra.test.scalatest.ScalatraFlatSpec
 
 import scala.concurrent.ExecutionContext
-import org.scalatra.swagger.ContactInfo
-import org.scalatra.swagger.LicenseInfo
 import scala.concurrent.Await
 import scala.concurrent.duration._
 import java.util.concurrent.TimeUnit
@@ -44,15 +41,6 @@ trait WebApiStack extends ScalatraFlatSpec with BeforeAndAfterAll {
 
   def exec[A](f: Future[A]): A = Await.result(f, 10.seconds)
 
-  val apiInfo = ApiInfo(
-    "vampire-squid",
-    "A Video Asset Managment microservice0",
-    "http://www.mbari.org",
-    ContactInfo("Brian Schlining", "http://www.mbari.org", "brian@mbari.org"),
-    LicenseInfo("Apache 2.0", "https://www.apache.org/licenses/LICENSE-2.0")
-  )
-
-  implicit protected[this] val swagger = new Swagger("1.2", "1.0.0", apiInfo)
 
   override protected def afterAll(): Unit = daoFactory.cleanup()
 }

@@ -1,39 +1,11 @@
-val activationVersion   = "1.2.0"
-val akkaVersion         = "2.6.19"
-val auth0Version        = "3.19.2"
-val circeVersion        = "0.14.3"
-val codecVersion        = "1.15"
-val configVersion       = "1.4.2"
-val derbyVersion        = "10.16.1.1"
-val eclipselinkVersion  = "2.7.11"
-val gsonJavatimeVersion = "1.1.2"
-val gsonVersion         = "2.9.1"
-val h2Version           = "2.1.214"
-val jansiVersion        = "2.4.0"
-val javamelodyVersion   = "1.91.0"
-val jettyVersion        = "9.4.48.v20220622"
-val json4sVersion       = "4.0.6" //"3.6.11" // Scalatra is not compatible with v4.0.0
-val jtaVersion          = "1.1"
-val jtdsVersion         = "1.3.1"
-val junitVersion        = "4.13.2"
-val logbackVersion      = "1.4.0"
-val oracleVersion       = "19.3.0.0"
-val postgresqlVersion   = "42.5.0"
-val rabbitmqVersion     = "5.15.0"
-val scalaTestVersion    = "3.2.14"
-val scalatraVersion     = "2.8.4"
-val servletVersion      = "4.0.1"
-val slf4jVersion        = "2.0.0"
-val sqlserverVersion    = "9.4.1.jre11"
-val xmlBindVersion      = "2.3.0"
-
+import Dependencies._
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
 
 lazy val buildSettings = Seq(
   organization := "org.mbari.vars",
-  scalaVersion := "2.13.8",
-  crossScalaVersions := Seq("2.13.8"),
+  scalaVersion := "2.13.10",
+  crossScalaVersions := Seq("2.13.10"),
   organizationName := "Monterey Bay Aquarium Research Institute",
   startYear := Some(2017),
   licenses += ("Apache-2.0", new URL(
@@ -114,52 +86,51 @@ lazy val `vampire-squid` = (project in file("."))
     },
     git.useGitDescribe := true,
     libraryDependencies ++= Seq(
-      "ch.qos.logback"                                 % "logback-classic"                   % logbackVersion,
-      "ch.qos.logback"                                 % "logback-core"                      % logbackVersion,
-      "com.auth0"                                      % "java-jwt"                          % auth0Version,
-      "com.fatboyindustrial.gson-javatime-serialisers" % "gson-javatime-serialisers"         % gsonJavatimeVersion,
-      "com.google.code.gson"                           % "gson"                              % gsonVersion,
-      "com.h2database"                                 % "h2"                                % h2Version % "test",
-      "com.rabbitmq"                                   % "amqp-client"                       % rabbitmqVersion,
-      "com.oracle.ojdbc"                               % "ojdbc8"                            % oracleVersion,
-      "com.sun.activation"                             % "javax.activation"                  % activationVersion,
-      "com.sun.xml.bind"                               % "jaxb-core"                         % xmlBindVersion,
-      "com.sun.xml.bind"                               % "jaxb-impl"                         % xmlBindVersion,
-      "com.microsoft.sqlserver"                        % "mssql-jdbc"                        % sqlserverVersion,
-      "com.typesafe"                                   % "config"                            % configVersion,
-      "com.typesafe.akka"                              %% "akka-actor"                       % akkaVersion,
-      "commons-codec"                                  % "commons-codec"                     % codecVersion,
-      "javax.servlet"                                  % "javax.servlet-api"                 % servletVersion,
-      "javax.transaction"                              % "jta"                               % jtaVersion,
-      "javax.xml.bind"                                 % "jaxb-api"                          % xmlBindVersion,
-      "junit"                                          % "junit"                             % junitVersion % "test",
-      "io.circe"                                       %% "circe-core"                       % circeVersion,
-      "io.circe"                                       %% "circe-generic"                    % circeVersion,
-      "io.circe"                                       %% "circe-parser"                     % circeVersion,
-      "net.bull.javamelody"                            % "javamelody-core"                   % javamelodyVersion,
-      "net.sourceforge.jtds"                           % "jtds"                              % jtdsVersion,
-      "org.apache.derby"                               % "derby"                             % derbyVersion, //          % "test",
-      "org.apache.derby"                               % "derbyclient"                       % derbyVersion, //          % "test",
-      "org.apache.derby"                               % "derbynet"                          % derbyVersion, //          % "test",
-      "org.apache.derby"                               % "derbyshared"                       % derbyVersion,
-      "org.apache.derby"                               % "derbytools"                        % derbyVersion,
-      "org.eclipse.jetty"                              % "jetty-server"                      % jettyVersion % "container;compile;test",
-      "org.eclipse.jetty"                              % "jetty-servlets"                    % jettyVersion % "container;compile;test",
-      "org.eclipse.jetty"                              % "jetty-webapp"                      % jettyVersion % "container;compile;test",
-      "org.eclipse.persistence"                        % "org.eclipse.persistence.extension" % eclipselinkVersion,
-      "org.eclipse.persistence"                        % "org.eclipse.persistence.jpa"       % eclipselinkVersion,
-      "org.fusesource.jansi"                           % "jansi"                             % jansiVersion % "runtime",
-      "org.json4s"                                     %% "json4s-jackson"                   % json4sVersion,
-      "org.postgresql"                                 % "postgresql"                        % postgresqlVersion,
-      "org.scalatest"                                  %% "scalatest"                        % scalaTestVersion % "test",
-      "org.scalatra"                                   %% "scalatra"                         % scalatraVersion,
-      "org.scalatra"                                   %% "scalatra-json"                    % scalatraVersion,
-      "org.scalatra"                                   %% "scalatra-scalate"                 % scalatraVersion,
-      "org.scalatra"                                   %% "scalatra-scalatest"               % scalatraVersion,
-      "org.scalatra"                                   %% "scalatra-swagger"                 % scalatraVersion,
-      "org.slf4j"                                      % "log4j-over-slf4j"                  % slf4jVersion,
-      "org.slf4j"                                      % "slf4j-api"                         % slf4jVersion
-    ).map(
+      akkaActor,
+      amqpClient,
+      circeCore,
+      circeGeneric,
+      circeParser,
+      commonsCodec,
+      derby, //          % "test",
+      derbyClient, //          % "test",
+      derbyNet, //          % "test",
+      derbyShared,
+      derbyTools,
+      eclipsePersistenceExtension,
+      eclipsePersistenceVersion,
+      gson,
+      gsonJavatime,
+      h2 % "test",
+      jansi % "runtime",
+      javaJwt,
+      javamelodyCore,
+      javaxActivation,
+      javaxServlet,
+      jaxbApi,
+      jaxbCore,
+      jaxbImpl,
+      jettyServer % "container;compile;test",
+      jettyServlets % "container;compile;test",
+      jettyWebapp % "container;compile;test",
+      json4sJackson,
+      javaxJta,
+      jtds,
+      junit % "test",
+      logbackClassic,
+      logbackCore,
+      mssqlJdbc,
+      oracleJdbc,
+      postgresql,
+      scalatest % "test",
+      scalatra,
+      scalatraJson,
+      scalatraTest,
+      slf4jApi,
+      slf4jLog4j,
+      typesafeConfig,
+    )
+    .map(
       _.excludeAll(
         ExclusionRule("org.slf4j", "slf4j-jdk14"),
         ExclusionRule("javax.servlet", "servlet-api")
