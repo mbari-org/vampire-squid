@@ -16,7 +16,7 @@
 
 package org.mbari.vars.vam.dao.jpa
 
-import javax.persistence.{EntityManagerFactory, Persistence}
+import jakarta.persistence.{EntityManagerFactory, Persistence}
 
 import com.typesafe.config.ConfigFactory
 import org.eclipse.persistence.config.PersistenceUnitProperties
@@ -26,7 +26,7 @@ import scala.jdk.CollectionConverters._
 /**
   * https://stackoverflow.com/questions/4106078/dynamic-jpa-connection
   *
-  * THis factory allows us to instantiate an javax.persistence.EntityManager from the
+  * THis factory allows us to instantiate an jakarta.persistence.EntityManager from the
   * basic parameters (url, driver, password, username). You can pass in a map of additional properties
   * to customize the EntityManager.
   *
@@ -45,7 +45,7 @@ object EntityManagerFactories {
     "eclipselink.logging.session"                         -> "false",
     "eclipselink.logging.thread"                          -> "false",
     "eclipselink.logging.timestamp"                       -> "false",
-    "javax.persistence.schema-generation.database.action" -> "create",
+    "jakarta.persistence.schema-generation.database.action" -> "create",
     PersistenceUnitProperties.SESSION_CUSTOMIZER          -> "org.mbari.vars.vam.dao.jpa.UUIDSequence"
   )
 
@@ -63,10 +63,10 @@ object EntityManagerFactories {
   ): EntityManagerFactory = {
 
     val map = Map(
-      "javax.persistence.jdbc.url"      -> url,
-      "javax.persistence.jdbc.user"     -> username,
-      "javax.persistence.jdbc.password" -> password,
-      "javax.persistence.jdbc.driver"   -> driverName
+      "jakarta.persistence.jdbc.url"      -> url,
+      "jakarta.persistence.jdbc.user"     -> username,
+      "jakarta.persistence.jdbc.password" -> password,
+      "jakarta.persistence.jdbc.driver"   -> driverName
     )
     apply(map ++ properties)
   }
@@ -81,11 +81,11 @@ object EntityManagerFactories {
     val props = Map(
       "eclipselink.logging.level"               -> logLevel,
       "eclipselink.target-database"             -> productName,
-      "javax.persistence.database-product-name" -> productName,
-      "javax.persistence.jdbc.driver"           -> driver,
-      "javax.persistence.jdbc.password"         -> password,
-      "javax.persistence.jdbc.url"              -> url,
-      "javax.persistence.jdbc.user"             -> user
+      "jakarta.persistence.database-product-name" -> productName,
+      "jakarta.persistence.jdbc.driver"           -> driver,
+      "jakarta.persistence.jdbc.password"         -> password,
+      "jakarta.persistence.jdbc.url"              -> url,
+      "jakarta.persistence.jdbc.user"             -> user
     )
     apply(props)
   }

@@ -16,9 +16,9 @@
 
 package org.mbari.vars.vam.dao.jpa;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
-import javax.xml.bind.DatatypeConverter;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
+import jakarta.xml.bind.DatatypeConverter;
 import java.util.Base64;
 
 /**

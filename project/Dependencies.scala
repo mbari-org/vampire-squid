@@ -18,7 +18,8 @@ object Dependencies {
   lazy val derbyShared      = "org.apache.derby"        % "derbyshared"         % derbyVersion
   lazy val derbyTools       = "org.apache.derby"        % "derbytools"          % derbyVersion
 
-  val eclipsePersistenceVersion        = "2.7.12"
+  // val eclipsePersistenceVersion        = "2.7.12"
+  val eclipsePersistenceVersion        = "4.0.1"
   lazy val eclipsePersistenceExtension = "org.eclipse.persistence" % "org.eclipse.persistence.extension" % eclipsePersistenceVersion
   lazy val eclipsePersistenceJpa       = "org.eclipse.persistence" % "org.eclipse.persistence.jpa" % eclipsePersistenceVersion
 
@@ -32,8 +33,9 @@ object Dependencies {
   lazy val javaxJta         = "javax.transaction"       % "jta"                 % "1.1"
   lazy val javaxServlet     = "javax.servlet"           % "javax.servlet-api"   % "4.0.1"
 
-  val xmlBindVersion        = "2.3.0"
-  lazy val jaxbApi          = "javax.xml.bind"          % "jaxb-api"            % xmlBindVersion
+  val xmlBindVersion        = "4.0.2"
+  // val xmlBindVersion        = "2.3.0"
+  // lazy val jaxbApi          = "javax.xml.bind"          % "jaxb-api"            % xmlBindVersion
   lazy val jaxbCore         = "com.sun.xml.bind"        % "jaxb-core"           % xmlBindVersion
   lazy val jaxbImpl         = "com.sun.xml.bind"        % "jaxb-impl"           % xmlBindVersion
 

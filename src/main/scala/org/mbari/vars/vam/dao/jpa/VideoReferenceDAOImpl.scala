@@ -19,7 +19,7 @@ package org.mbari.vars.vam.dao.jpa
 import java.net.URI
 import java.util.UUID
 
-import javax.persistence.EntityManager
+import jakarta.persistence.EntityManager
 
 import scala.jdk.CollectionConverters._
 import org.mbari.vars.vam.dao.VideoReferenceDAO

@@ -16,7 +16,7 @@
 
 package org.mbari.vars.vam.dao.jpa
 
-import javax.persistence.EntityManager
+import jakarta.persistence.EntityManager
 
 import scala.concurrent.{ExecutionContext, Future}
 

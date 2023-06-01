@@ -18,7 +18,7 @@ package org.mbari.vars.vam.dao.jpa
 
 import java.sql.Timestamp
 import java.time.Instant
-import javax.persistence.{Column, Version}
+import jakarta.persistence.{Column, Version}
 
 import com.google.gson.annotations.Expose
 

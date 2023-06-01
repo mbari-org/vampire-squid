@@ -19,7 +19,7 @@ package org.mbari.vars.vam.dao.jpa
 import java.sql.Timestamp
 import java.time.{Duration, Instant}
 import java.util.UUID
-import javax.persistence.EntityManager
+import jakarta.persistence.EntityManager
 
 import org.mbari.vars.vam.Constants
 import org.mbari.vars.vam.dao.VideoDAO

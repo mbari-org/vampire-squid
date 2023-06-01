@@ -16,7 +16,7 @@
 
 package org.mbari.vars.vam.dao.jpa
 
-import javax.persistence.EntityManagerFactory
+import jakarta.persistence.EntityManagerFactory
 
 import com.typesafe.config.ConfigFactory
 import org.mbari.vars.vam.dao._

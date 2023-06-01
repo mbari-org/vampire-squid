@@ -18,7 +18,7 @@ package org.mbari.vars.vam.dao.jpa
 
 import java.net.URI
 import javax.activation.MimeType
-import javax.persistence.{EntityListeners, Table, _}
+import jakarta.persistence.{EntityListeners, Table, _}
 
 import com.google.gson.annotations.{Expose, SerializedName}
 

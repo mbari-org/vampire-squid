@@ -17,7 +17,7 @@
 package org.mbari.vars.vam.dao.jpa
 
 import java.util.UUID
-import javax.persistence.EntityManager
+import jakarta.persistence.EntityManager
 
 import org.mbari.vars.vam.dao.{DAO, PersistentObject}
 import org.slf4j.LoggerFactory
@@ -86,5 +86,5 @@ abstract class BaseDAO[B <: PersistentObject: ClassTag](val entityManager: Entit
 }
 
 object BaseDAO {
-  val JDBC_URL_KEY = "javax.persistence.jdbc.url"
+  val JDBC_URL_KEY = "jakarta.persistence.jdbc.url"
 }

@@ -18,7 +18,7 @@ package org.mbari.vars.vam.dao.jpa
 
 import java.time.{Duration, Instant}
 import java.util.UUID
-import javax.persistence.{EntityManager, Transient}
+import jakarta.persistence.{EntityManager, Transient}
 
 import org.mbari.vars.vam.Constants
 import org.mbari.vars.vam.dao.VideoSequenceDAO

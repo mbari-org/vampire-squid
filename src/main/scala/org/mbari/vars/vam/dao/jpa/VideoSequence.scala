@@ -16,7 +16,7 @@
 
 package org.mbari.vars.vam.dao.jpa
 
-import javax.persistence._
+import jakarta.persistence._
 import java.util.{ArrayList => JArrayList, List => JList}
 
 import com.google.gson.annotations.{Expose, SerializedName}

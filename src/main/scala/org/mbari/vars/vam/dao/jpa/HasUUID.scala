@@ -17,7 +17,7 @@
 package org.mbari.vars.vam.dao.jpa
 
 import java.util.UUID
-import javax.persistence._
+import jakarta.persistence._
 
 import com.google.gson.annotations.Expose
 import org.mbari.vars.vam.dao.PersistentObject

@@ -104,7 +104,7 @@ lazy val `vampire-squid` = (project in file("."))
       javamelodyCore,
       javaxActivation,
       javaxServlet,
-      jaxbApi,
+      // jaxbApi,
       jaxbCore,
       jaxbImpl,
       jettyServer % "container;compile;test",

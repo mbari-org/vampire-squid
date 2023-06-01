@@ -16,7 +16,7 @@
 
 package org.mbari.vars.vam.dao.jpa
 
-import javax.persistence.Column
+import jakarta.persistence.Column
 
 import com.google.gson.annotations.Expose
 

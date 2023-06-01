@@ -18,7 +18,7 @@ package org.mbari.vars.vam.dao.jpa
 
 import java.time.{Duration, Instant}
 import java.util.{ArrayList => JArrayList, List => JList}
-import javax.persistence.{CascadeType, _}
+import jakarta.persistence.{CascadeType, _}
 
 import com.google.gson.annotations.{Expose, SerializedName}
 
