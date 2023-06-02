@@ -1,8 +1,6 @@
 import sbt._
 object Dependencies {
 
-  lazy val akkaActor        = "com.typesafe.akka"       %% "akka-actor"         % "2.6.20"
-  lazy val amqpClient       = "com.rabbitmq"            % "amqp-client"         % "5.17.0"
 
   val circeVersion          = "0.14.5"
   lazy val circeCore        = "io.circe"                %% "circe-core"         % circeVersion
@@ -27,7 +25,7 @@ object Dependencies {
   lazy val gsonJavatime     = "com.fatboyindustrial.gson-javatime-serialisers"  % "gson-javatime-serialisers" % "1.1.2"
   lazy val h2               = "com.h2database"          % "h2"                  % "2.1.214"
   lazy val jansi            = "org.fusesource.jansi"    % "jansi"               % "2.4.0"
-  lazy val javaJwt          = "com.auth0"               % "java-jwt"            % "3.19.4"
+  lazy val javaJwt          = "com.auth0"               % "java-jwt"            % "4.4.0"
   lazy val javamelodyCore   = "net.bull.javamelody"     % "javamelody-core"     % "1.94.0"
   lazy val javaxActivation  = "com.sun.activation"      % "javax.activation"    % "1.2.0"
   lazy val javaxJta         = "javax.transaction"       % "jta"                 % "1.1"
