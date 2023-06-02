@@ -76,7 +76,7 @@ import scala.jdk.CollectionConverters._
     )
   )
 )
-class Video extends HasUUID with HasOptimisticLock with HasDescription {
+class VideoEntity extends HasUUID with HasOptimisticLock with HasDescription {
 
   @Expose(serialize = true)
   @Basic(optional = false)
@@ -99,53 +99,53 @@ class Video extends HasUUID with HasOptimisticLock with HasDescription {
   @Expose(serialize = false)
   @ManyToOne(cascade = Array(CascadeType.PERSIST, CascadeType.DETACH), optional = false)
   @JoinColumn(name = "video_sequence_uuid", nullable = false)
-  var videoSequence: VideoSequence = _
+  var videoSequence: VideoSequenceEntity = _
 
   @Expose(serialize = true)
   @SerializedName(value = "video_references")
   @OneToMany(
-    targetEntity = classOf[VideoReference],
+    targetEntity = classOf[VideoReferenceEntity],
     cascade = Array(CascadeType.ALL),
     fetch = FetchType.EAGER,
     mappedBy = "video",
     orphanRemoval = true
   )
-  protected var javaVideoReferences: JList[VideoReference] = new JArrayList[VideoReference]
+  protected var javaVideoReferences: JList[VideoReferenceEntity] = new JArrayList[VideoReferenceEntity]
 
-  def addVideoReference(videoView: VideoReference): Unit = {
+  def addVideoReference(videoView: VideoReferenceEntity): Unit = {
     javaVideoReferences.add(videoView)
     videoView.video = this
   }
 
-  def removeVideoReference(videoView: VideoReference): Unit = {
+  def removeVideoReference(videoView: VideoReferenceEntity): Unit = {
     javaVideoReferences.remove(videoView)
     videoView.video = null
   }
 
-  def videoReferences: Seq[VideoReference] = javaVideoReferences.asScala.toSeq
+  def videoReferences: Seq[VideoReferenceEntity] = javaVideoReferences.asScala.toSeq
 
   override def toString = s"Video($name, $start)"
 }
 
-object Video {
+object VideoEntity {
 
-  def apply(name: String, start: Instant): Video = {
-    val v = new Video
+  def apply(name: String, start: Instant): VideoEntity = {
+    val v = new VideoEntity
     v.name = name
     v.start = start
     v
   }
 
-  def apply(name: String, start: Instant, duration: Duration): Video = {
-    val v = new Video
+  def apply(name: String, start: Instant, duration: Duration): VideoEntity = {
+    val v = new VideoEntity
     v.name = name
     v.start = start
     v.duration = duration
     v
   }
 
-  def apply(name: String, start: Instant, videoReferences: Iterable[VideoReference]): Video = {
-    val v = new Video
+  def apply(name: String, start: Instant, videoReferences: Iterable[VideoReferenceEntity]): VideoEntity = {
+    val v = new VideoEntity
     v.name = name
     v.start = start
     videoReferences.foreach(v.addVideoReference)
@@ -156,9 +156,9 @@ object Video {
       name: String,
       start: Instant,
       duration: Option[Duration],
-      videoReferences: Iterable[VideoReference]
-  ): Video = {
-    val v = new Video
+      videoReferences: Iterable[VideoReferenceEntity]
+  ): VideoEntity = {
+    val v = new VideoEntity
     v.name = name
     v.start = start
     duration.foreach(v.duration = _)
@@ -172,7 +172,7 @@ object Video {
       duration: Option[Duration],
       description: Option[String]
   ) = {
-    val v = new Video
+    val v = new VideoEntity
     v.name = name
     v.start = start
     duration.foreach(v.duration = _)

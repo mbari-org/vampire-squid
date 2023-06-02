@@ -27,7 +27,7 @@ import org.mbari.vars.vam.dao._
   * @author Brian Schlining
   * @since 2016-06-08T15:28:00
   */
-trait JPADAOFactory extends DAOFactory[VideoSequence, Video, VideoReference] {
+trait JPADAOFactory extends DAOFactory[VideoSequenceEntity, VideoEntity, VideoReferenceEntity] {
 
   def entityManagerFactory: EntityManagerFactory
 
@@ -37,7 +37,7 @@ trait JPADAOFactory extends DAOFactory[VideoSequence, Video, VideoReference] {
   override def newVideoDAO(): VideoDAOImpl =
     new VideoDAOImpl(entityManagerFactory.createEntityManager())
 
-  override def newVideoReferenceDAO(): VideoReferenceDAO[VideoReference] =
+  override def newVideoReferenceDAO(): VideoReferenceDAO[VideoReferenceEntity] =
     new VideoReferenceDAOImpl(entityManagerFactory.createEntityManager())
 
   /**
@@ -46,7 +46,7 @@ trait JPADAOFactory extends DAOFactory[VideoSequence, Video, VideoReference] {
     * @param dao
     * @return
     */
-  override def newVideoDAO(dao: DAO[_]): VideoDAO[Video] =
+  override def newVideoDAO(dao: DAO[_]): VideoDAO[VideoEntity] =
     new VideoDAOImpl(dao.asInstanceOf[BaseDAO[_]].entityManager)
 
   /**
@@ -55,7 +55,7 @@ trait JPADAOFactory extends DAOFactory[VideoSequence, Video, VideoReference] {
     * @param dao
     * @return
     */
-  override def newVideoSequenceDAO(dao: DAO[_]): VideoSequenceDAO[VideoSequence] =
+  override def newVideoSequenceDAO(dao: DAO[_]): VideoSequenceDAO[VideoSequenceEntity] =
     new VideoSequenceDAOImpl(dao.asInstanceOf[BaseDAO[_]].entityManager)
 
   /**
@@ -64,7 +64,7 @@ trait JPADAOFactory extends DAOFactory[VideoSequence, Video, VideoReference] {
     * @param dao
     * @return
     */
-  override def newVideoReferenceDAO(dao: DAO[_]): VideoReferenceDAO[VideoReference] =
+  override def newVideoReferenceDAO(dao: DAO[_]): VideoReferenceDAO[VideoReferenceEntity] =
     new VideoReferenceDAOImpl(dao.asInstanceOf[BaseDAO[_]].entityManager)
 
 }

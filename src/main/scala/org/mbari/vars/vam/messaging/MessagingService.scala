@@ -16,7 +16,7 @@
 
 package org.mbari.vars.vam.messaging
 
-import org.mbari.vars.vam.dao.jpa.VideoReference
+import org.mbari.vars.vam.dao.jpa.VideoReferenceEntity
 
 import scala.concurrent.ExecutionContext
 
@@ -32,6 +32,6 @@ trait MessagingService {
     *
     * @param videoReference
     */
-  def newVideoReference(videoReference: VideoReference)(implicit ec: ExecutionContext): Unit
+  def newVideoReference(videoReference: VideoReferenceEntity)(implicit ec: ExecutionContext): Unit
 
 }

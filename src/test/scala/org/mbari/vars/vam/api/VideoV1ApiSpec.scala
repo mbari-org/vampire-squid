@@ -20,7 +20,7 @@ import java.time.Instant
 import java.util
 
 import org.mbari.vars.vam.controllers.{VideoController, VideoSequenceController}
-import org.mbari.vars.vam.dao.jpa.{Video, VideoSequence}
+import org.mbari.vars.vam.dao.jpa.{VideoEntity, VideoSequenceEntity}
 
 /**
   *
@@ -51,12 +51,12 @@ class VideoV1ApiSpec extends WebApiStack {
   //  }
 
   val startDate                     = Instant.now()
-  var aVideoSequence: VideoSequence = _
-  var aVideo: Video                 = _
+  var aVideoSequence: VideoSequenceEntity = _
+  var aVideo: VideoEntity                 = _
   "VideoV1Api" should "insert" in {
     post("/v1/videosequence", "name" -> "T1234", "camera_id" -> "Tiburon") {
       status should be(200)
-      aVideoSequence = gson.fromJson(body, classOf[VideoSequence])
+      aVideoSequence = gson.fromJson(body, classOf[VideoSequenceEntity])
     }
     aVideoSequence should not be null
 
@@ -72,7 +72,7 @@ class VideoV1ApiSpec extends WebApiStack {
       body should include("uuid")
       body should include("start")
       body should include("duration_millis")
-      aVideo = gson.fromJson(body, classOf[Video])
+      aVideo = gson.fromJson(body, classOf[VideoEntity])
     }
     aVideo should not be null
   }
@@ -80,7 +80,7 @@ class VideoV1ApiSpec extends WebApiStack {
   it should "get a videosequence by video UUID" in {
     get("/v1/video/videosequence/" + aVideo.uuid) {
       status should be(200)
-      val videoSequence = gson.fromJson(body, classOf[VideoSequence])
+      val videoSequence = gson.fromJson(body, classOf[VideoSequenceEntity])
       videoSequence should equal(aVideoSequence)
       videoSequence.videos.map(_.uuid) should contain(aVideo.uuid)
     }
@@ -89,7 +89,7 @@ class VideoV1ApiSpec extends WebApiStack {
   it should "get by name" in {
     get("/v1/video/name/" + aVideo.name) {
       status should be(200)
-      val video = gson.fromJson(body, classOf[Video])
+      val video = gson.fromJson(body, classOf[VideoEntity])
       video.uuid should equal(aVideo.uuid)
       video.name should equal(aVideo.name)
     }
@@ -105,7 +105,7 @@ class VideoV1ApiSpec extends WebApiStack {
   it should "get by timestamp" in {
     get("/v1/video/timestamp/" + startDate.plusMillis(1000)) {
       status should be(200)
-      val video = gson.fromJson(body, classOf[util.ArrayList[Video]])
+      val video = gson.fromJson(body, classOf[util.ArrayList[VideoEntity]])
       video should not be empty
     }
   }
@@ -113,7 +113,7 @@ class VideoV1ApiSpec extends WebApiStack {
   it should "get between timestamps" in {
     get("/v1/video/timestamp/" + startDate.minusMillis(1000) + "/" + startDate.plusMillis(10000)) {
       status should be(200)
-      val video = gson.fromJson(body, classOf[util.ArrayList[Video]])
+      val video = gson.fromJson(body, classOf[util.ArrayList[VideoEntity]])
       video should not be empty
     }
   }
@@ -121,7 +121,7 @@ class VideoV1ApiSpec extends WebApiStack {
   it should "update" in {
     put("/v1/video/" + aVideo.uuid, "description" -> "a description") {
       status should be(200)
-      val video = gson.fromJson(body, classOf[Video])
+      val video = gson.fromJson(body, classOf[VideoEntity])
       video.description should equal("a description")
     }
   }

@@ -68,7 +68,7 @@ import scala.util.Try
     )
   )
 )
-class VideoReference extends HasUUID with HasOptimisticLock with HasDescription {
+class VideoReferenceEntity extends HasUUID with HasOptimisticLock with HasDescription {
 
   @Expose(serialize = true)
   @Basic(optional = false)
@@ -113,7 +113,7 @@ class VideoReference extends HasUUID with HasOptimisticLock with HasDescription 
   @Expose(serialize = false)
   @ManyToOne(cascade = Array(CascadeType.PERSIST, CascadeType.DETACH), optional = false)
   @JoinColumn(name = "video_uuid", nullable = false)
-  var video: Video = _
+  var video: VideoEntity = _
 
   def mimetype: Option[MimeType] = Try(new MimeType(container)).toOption
 
@@ -129,7 +129,7 @@ class VideoReference extends HasUUID with HasOptimisticLock with HasDescription 
 
 }
 
-object VideoReference {
+object VideoReferenceEntity {
 
   def apply(
       uri: URI,
@@ -142,8 +142,8 @@ object VideoReference {
       sizeBytes: Option[Long] = None,
       description: Option[String] = None,
       sha512: Option[Array[Byte]] = None
-  ): VideoReference = {
-    val videoReference = new VideoReference
+  ): VideoReferenceEntity = {
+    val videoReference = new VideoReferenceEntity
     videoReference.uri = uri
     container.foreach(v => videoReference.container = v)
     videoCodec.foreach(v => videoReference.videoCodec = v)
@@ -157,7 +157,7 @@ object VideoReference {
     videoReference
   }
 
-  def apply(uri: URI): VideoReference = apply(uri, container = None)
+  def apply(uri: URI): VideoReferenceEntity = apply(uri, container = None)
 
   def apply(
       uri: URI,
@@ -166,7 +166,7 @@ object VideoReference {
       audioCodec: String,
       width: Int,
       height: Int
-  ): VideoReference =
+  ): VideoReferenceEntity =
     apply(uri, Some(container), Some(videoCodec), Some(audioCodec), Some(width), Some(height))
 
   def apply(
@@ -177,7 +177,7 @@ object VideoReference {
       width: Int,
       height: Int,
       description: String
-  ): VideoReference =
+  ): VideoReferenceEntity =
     apply(
       uri,
       Some(container),
@@ -197,7 +197,7 @@ object VideoReference {
       height: Int,
       description: String,
       sha512: Array[Byte]
-  ): VideoReference =
+  ): VideoReferenceEntity =
     apply(
       uri,
       Some(container),
@@ -218,7 +218,7 @@ object VideoReference {
       height: Int,
       frameRate: Double,
       size: Long
-  ): VideoReference =
+  ): VideoReferenceEntity =
     apply(
       uri,
       Some(container),
@@ -240,7 +240,7 @@ object VideoReference {
       frameRate: Double,
       size: Long,
       description: String
-  ): VideoReference =
+  ): VideoReferenceEntity =
     apply(
       uri,
       Some(container),

@@ -33,12 +33,12 @@ import scala.concurrent.{ExecutionContext, Future}
   */
 class VideoController(val daoFactory: JPADAOFactory) extends BaseController {
 
-  private type VDAO = VideoDAO[Video]
+  private type VDAO = VideoDAO[VideoEntity]
 
-  def findAll(implicit ec: ExecutionContext): Future[Seq[Video]] =
+  def findAll(implicit ec: ExecutionContext): Future[Seq[VideoEntity]] =
     exec(d => d.findAll().toSeq)
 
-  def findByUUID(uuid: UUID)(implicit ec: ExecutionContext): Future[Option[Video]] =
+  def findByUUID(uuid: UUID)(implicit ec: ExecutionContext): Future[Option[VideoEntity]] =
     exec(d => d.findByUUID(uuid))
 
   def findAllNames(implicit ec: ExecutionContext): Future[Seq[String]] =
@@ -49,21 +49,21 @@ class VideoController(val daoFactory: JPADAOFactory) extends BaseController {
 
   def findBetweenTimestamps(t0: Instant, t1: Instant)(
       implicit ec: ExecutionContext
-  ): Future[Seq[Video]] =
+  ): Future[Seq[VideoEntity]] =
     exec(d => d.findBetweenTimestamps(t0, t1).toSeq)
 
   def findByTimestamp(t0: Instant, window: Duration = Constants.DEFAULT_DURATION_WINDOW)(
       implicit ec: ExecutionContext
-  ): Future[Seq[Video]] =
+  ): Future[Seq[VideoEntity]] =
     exec(d => d.findByTimestamp(t0, window).toSeq)
 
-  def findByVideoReferenceUUID(uuid: UUID)(implicit ec: ExecutionContext): Future[Option[Video]] =
+  def findByVideoReferenceUUID(uuid: UUID)(implicit ec: ExecutionContext): Future[Option[VideoEntity]] =
     exec(d => d.findByVideoReferenceUUID(uuid))
 
-  def findByVideoSequenceUUID(uuid: UUID)(implicit ec: ExecutionContext): Future[Seq[Video]] =
+  def findByVideoSequenceUUID(uuid: UUID)(implicit ec: ExecutionContext): Future[Seq[VideoEntity]] =
     exec(d => d.findByVideoSequenceUUID(uuid).toSeq)
 
-  def findByName(name: String)(implicit ec: ExecutionContext): Future[Option[Video]] =
+  def findByName(name: String)(implicit ec: ExecutionContext): Future[Option[VideoEntity]] =
     exec(d => d.findByName(name))
 
   def findNamesByVideoSequenceName(
@@ -77,8 +77,8 @@ class VideoController(val daoFactory: JPADAOFactory) extends BaseController {
       start: Instant,
       duration: Option[Duration] = None,
       description: Option[String] = None
-  )(implicit ec: ExecutionContext): Future[Video] = {
-    def fn(dao: VDAO): Video = {
+  )(implicit ec: ExecutionContext): Future[VideoEntity] = {
+    def fn(dao: VDAO): VideoEntity = {
       dao.findByName(name) match {
         case Some(v) => v
         case None =>
@@ -90,7 +90,7 @@ class VideoController(val daoFactory: JPADAOFactory) extends BaseController {
                 s"No VideoSequence with UUID of $videoSequenceUUID exists"
               )
             case Some(videoSequence) =>
-              val video = Video(name, start, duration, description)
+              val video = VideoEntity(name, start, duration, description)
               videoSequence.addVideo(video)
               dao.create(video)
               video
@@ -107,9 +107,9 @@ class VideoController(val daoFactory: JPADAOFactory) extends BaseController {
       duration: Option[Duration] = None,
       description: Option[String] = None,
       videoSequenceUUID: Option[UUID] = None
-  )(implicit ec: ExecutionContext): Future[Video] = {
+  )(implicit ec: ExecutionContext): Future[VideoEntity] = {
 
-    def fn(dao: VDAO): Video = {
+    def fn(dao: VDAO): VideoEntity = {
 
       dao.findByUUID(uuid) match {
         case None =>

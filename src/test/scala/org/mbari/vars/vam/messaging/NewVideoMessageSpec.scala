@@ -21,7 +21,7 @@ import java.time.{Duration, Instant}
 import java.util.UUID
 
 import org.mbari.vars.vam.Constants
-import org.mbari.vars.vam.dao.jpa.{Video, VideoReference, VideoSequence}
+import org.mbari.vars.vam.dao.jpa.{VideoEntity, VideoReferenceEntity, VideoSequenceEntity}
 import org.scalatest.Inside
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -47,9 +47,9 @@ class NewVideoMessageSpec extends AnyFlatSpec with Matchers with Inside {
     val videoSequenceUuid = UUID.randomUUID()
     val cameraId          = "Ventana"
 
-    val videoReference = VideoReference(uri, container, vcodec, acodec, width, height)
-    val video          = Video(videoName, start, Some(duration), Seq(videoReference))
-    val videoSequence  = VideoSequence(videoSequenceName, cameraId, Seq(video))
+    val videoReference = VideoReferenceEntity(uri, container, vcodec, acodec, width, height)
+    val video          = VideoEntity(videoName, start, Some(duration), Seq(videoReference))
+    val videoSequence  = VideoSequenceEntity(videoSequenceName, cameraId, Seq(video))
     videoSequence.uuid = videoSequenceUuid
     val msg = NewVideoMessage(videoReference)
     // println(msg)

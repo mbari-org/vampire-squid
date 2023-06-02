@@ -37,13 +37,13 @@ class VideoDAOSpec extends AnyFlatSpec with Matchers {
   private[this] val timeout  = SDuration(2, TimeUnit.SECONDS)
   private[this] val now      = Instant.now()
 
-  private[this] val videoSequence = VideoSequence(
+  private[this] val videoSequence = VideoSequenceEntity(
     "A VideoSequence",
     "Thundar",
     Seq(
-      Video("A", now.minus(duration), duration),
-      Video("B", now, duration),
-      Video("C", now.plus(duration), duration)
+      VideoEntity("A", now.minus(duration), duration),
+      VideoEntity("B", now, duration),
+      VideoEntity("C", now.plus(duration), duration)
     )
   )
 

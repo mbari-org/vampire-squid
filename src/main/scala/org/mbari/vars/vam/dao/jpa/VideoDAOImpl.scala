@@ -33,22 +33,22 @@ import scala.jdk.CollectionConverters._
   * @since 2016-05-11T14:35:00
   */
 class VideoDAOImpl(entityManager: EntityManager)
-    extends BaseDAO[Video](entityManager)
-    with VideoDAO[Video] {
+    extends BaseDAO[VideoEntity](entityManager)
+    with VideoDAO[VideoEntity] {
 
-  override def findByName(name: String): Option[Video] =
+  override def findByName(name: String): Option[VideoEntity] =
     findByNamedQuery("Video.findByName", Map("name" -> name)).headOption
 
-  override def findByVideoSequenceUUID(uuid: UUID): Iterable[Video] =
+  override def findByVideoSequenceUUID(uuid: UUID): Iterable[VideoEntity] =
     findByNamedQuery("Video.findByVideoSequenceUUID", Map("uuid" -> uuid))
 
-  override def findByVideoReferenceUUID(uuid: UUID): Option[Video] =
+  override def findByVideoReferenceUUID(uuid: UUID): Option[VideoEntity] =
     findByNamedQuery("Video.findByVideoReferenceUUID", Map("uuid" -> uuid)).headOption
 
   override def findByTimestamp(
       timestamp: Instant,
       window: Duration = Constants.DEFAULT_DURATION_WINDOW
-  ): Iterable[Video] = {
+  ): Iterable[VideoEntity] = {
     val halfRange = window.dividedBy(2)
     val startDate = timestamp.minus(halfRange)
     val endDate   = timestamp.plus(halfRange)
@@ -56,21 +56,21 @@ class VideoDAOImpl(entityManager: EntityManager)
       "Video.findBetweenDates",
       Map("startDate" -> startDate, "endDate" -> endDate)
     )
-    val hasTimestamp = containsTimestamp(_: Video, timestamp)
+    val hasTimestamp = containsTimestamp(_: VideoEntity, timestamp)
     videos.filter(hasTimestamp)
   }
 
-  override def findBetweenTimestamps(t0: Instant, t1: Instant): Iterable[Video] =
+  override def findBetweenTimestamps(t0: Instant, t1: Instant): Iterable[VideoEntity] =
     findByNamedQuery("Video.findBetweenDates", Map("startDate" -> t0, "endDate" -> t1))
 
-  override def findAll(): Iterable[Video] = findByNamedQuery("Video.findAll")
+  override def findAll(): Iterable[VideoEntity] = findByNamedQuery("Video.findAll")
 
   override def deleteByUUID(primaryKey: UUID): Unit = {
     val video = findByUUID(primaryKey)
     video.foreach(v => delete(v))
   }
 
-  private def containsTimestamp(video: Video, timestamp: Instant): Boolean = {
+  private def containsTimestamp(video: VideoEntity, timestamp: Instant): Boolean = {
     val startDate = video.start
     val endDate   = video.start.plus(video.duration)
 

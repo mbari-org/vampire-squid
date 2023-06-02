@@ -86,7 +86,7 @@ import scala.jdk.CollectionConverters._
     )
   )
 )
-class VideoSequence extends HasUUID with HasOptimisticLock with HasDescription {
+class VideoSequenceEntity extends HasUUID with HasOptimisticLock with HasDescription {
 
   @Expose(serialize = true)
   @Basic(optional = false)
@@ -102,30 +102,30 @@ class VideoSequence extends HasUUID with HasOptimisticLock with HasDescription {
   @Expose(serialize = true)
   @SerializedName(value = "videos")
   @OneToMany(
-    targetEntity = classOf[Video],
+    targetEntity = classOf[VideoEntity],
     cascade = Array(CascadeType.ALL),
     fetch = FetchType.EAGER,
     mappedBy = "videoSequence",
     orphanRemoval = true
   )
-  private var javaVideos: JList[Video] = new JArrayList[Video]
+  private var javaVideos: JList[VideoEntity] = new JArrayList[VideoEntity]
 
-  def addVideo(video: Video): Unit = {
+  def addVideo(video: VideoEntity): Unit = {
     javaVideos.add(video)
     video.videoSequence = this
   }
-  def removeVideo(video: Video): Unit = {
+  def removeVideo(video: VideoEntity): Unit = {
     javaVideos.remove(video)
     video.videoSequence = null
   }
-  def videos: Seq[Video] = javaVideos.asScala.toSeq
+  def videos: Seq[VideoEntity] = javaVideos.asScala.toSeq
 
-  def videoReferences: Seq[VideoReference] = videos.flatMap(_.videoReferences)
+  def videoReferences: Seq[VideoReferenceEntity] = videos.flatMap(_.videoReferences)
 
-  def canEqual(other: Any): Boolean = other.isInstanceOf[VideoSequence]
+  def canEqual(other: Any): Boolean = other.isInstanceOf[VideoSequenceEntity]
 
   override def equals(other: Any): Boolean = other match {
-    case that: VideoSequence =>
+    case that: VideoSequenceEntity =>
       (that canEqual this) &&
         name == that.name
     case _ => false
@@ -139,15 +139,15 @@ class VideoSequence extends HasUUID with HasOptimisticLock with HasDescription {
   override def toString = s"VideoSequence($name, $cameraID)"
 }
 
-object VideoSequence {
+object VideoSequenceEntity {
 
   def apply(
-      name: String,
-      cameraID: String,
-      videos: Seq[Video] = Nil,
-      description: Option[String] = None
-  ): VideoSequence = {
-    val vs = new VideoSequence
+             name: String,
+             cameraID: String,
+             videos: Seq[VideoEntity] = Nil,
+             description: Option[String] = None
+  ): VideoSequenceEntity = {
+    val vs = new VideoSequenceEntity
     vs.name = name
     vs.cameraID = cameraID
     videos.foreach(vs.addVideo)

@@ -34,19 +34,19 @@ import scala.jdk.CollectionConverters._
   * @since 2016-05-06T14:20:00
   */
 class VideoSequenceDAOImpl(entityManager: EntityManager)
-    extends BaseDAO[VideoSequence](entityManager)
-    with VideoSequenceDAO[VideoSequence] {
+    extends BaseDAO[VideoSequenceEntity](entityManager)
+    with VideoSequenceDAO[VideoSequenceEntity] {
 
   @Transient
   private[this] val log = LoggerFactory.getLogger(getClass)
 
-  override def findByCameraID(cameraID: String): Iterable[VideoSequence] =
+  override def findByCameraID(cameraID: String): Iterable[VideoSequenceEntity] =
     findByNamedQuery("VideoSequence.findByCameraID", Map("cameraID" -> cameraID))
 
-  override def findByName(name: String): Option[VideoSequence] =
+  override def findByName(name: String): Option[VideoSequenceEntity] =
     findByNamedQuery("VideoSequence.findByName", Map("name" -> name)).headOption
 
-  override def findByVideoUUID(uuid: UUID): Option[VideoSequence] =
+  override def findByVideoUUID(uuid: UUID): Option[VideoSequenceEntity] =
     findByNamedQuery("VideoSequence.findByVideoUUID", Map("uuid" -> uuid)).headOption
 
   /**
@@ -58,7 +58,7 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
   override def findByTimestamp(
       timestamp: Instant,
       window: Duration = Constants.DEFAULT_DURATION_WINDOW
-  ): Iterable[VideoSequence] = {
+  ): Iterable[VideoSequenceEntity] = {
     val halfRange = window.dividedBy(2)
     val startDate = timestamp.minus(halfRange)
     val endDate   = timestamp.plus(halfRange)
@@ -81,7 +81,7 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
       log.debug(s)
     }
 
-    val hasTimestamp = containsTimestamp(_: VideoSequence, timestamp) // Partially apply the function to timestamp
+    val hasTimestamp = containsTimestamp(_: VideoSequenceEntity, timestamp) // Partially apply the function to timestamp
 
     videoSequences.filter(hasTimestamp).toSet
 
@@ -91,7 +91,7 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
       name: String,
       timestamp: Instant,
       window: Duration = Constants.DEFAULT_DURATION_WINDOW
-  ): Iterable[VideoSequence] = {
+  ): Iterable[VideoSequenceEntity] = {
     val halfRange = window.dividedBy(2)
     val startDate = timestamp.minus(halfRange)
     val endDate   = timestamp.plus(halfRange)
@@ -100,7 +100,7 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
       Map("startDate" -> startDate, "endDate" -> endDate, "name" -> name)
     )
 
-    val hasTimestamp = containsTimestamp(_: VideoSequence, timestamp) // Partially apply the function to timestamp
+    val hasTimestamp = containsTimestamp(_: VideoSequenceEntity, timestamp) // Partially apply the function to timestamp
 
     videoSequences.filter(hasTimestamp).toSet
   }
@@ -109,7 +109,7 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
       cameraID: String,
       timestamp: Instant,
       window: Duration = Constants.DEFAULT_DURATION_WINDOW
-  ): Iterable[VideoSequence] = {
+  ): Iterable[VideoSequenceEntity] = {
     val halfRange = window.dividedBy(2)
     val startDate = timestamp.minus(halfRange)
     val endDate   = timestamp.plus(halfRange)
@@ -119,7 +119,7 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
       Map("startDate" -> startDate, "endDate" -> endDate, "cameraID" -> cameraID)
     )
 
-    val hasTimestamp = containsTimestamp(_: VideoSequence, timestamp) // Partially apply the function to timestamp
+    val hasTimestamp = containsTimestamp(_: VideoSequenceEntity, timestamp) // Partially apply the function to timestamp
 
     videoSequences.filter(hasTimestamp).toSet
   }
@@ -127,7 +127,7 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
   override def deleteByUUID(primaryKey: UUID): Unit =
     findByUUID(primaryKey).foreach(delete)
 
-  private def containsTimestamp(vs: VideoSequence, timestamp: Instant): Boolean =
+  private def containsTimestamp(vs: VideoSequenceEntity, timestamp: Instant): Boolean =
     vs.videos
       .map(v => (v.start, Try(v.start.plus(v.duration)).getOrElse(v.start)))
       .exists({
@@ -137,7 +137,7 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
             (a.isBefore(timestamp) && b.isAfter(timestamp))
       })
 
-  override def findAll(): Iterable[VideoSequence] = findByNamedQuery("VideoSequence.findAll")
+  override def findAll(): Iterable[VideoSequenceEntity] = findByNamedQuery("VideoSequence.findAll")
 
   override def findAllNames(): Iterable[String] =
     entityManager

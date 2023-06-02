@@ -22,7 +22,7 @@ import java.security.MessageDigest
 import java.time.{Duration, Instant}
 import java.util.concurrent.TimeUnit
 
-import org.mbari.vars.vam.dao.jpa.{DevelopmentTestDAOFactory, Video, VideoReference, VideoSequence}
+import org.mbari.vars.vam.dao.jpa.{DevelopmentTestDAOFactory, VideoEntity, VideoReferenceEntity, VideoSequenceEntity}
 
 import scala.concurrent.{duration, Await, ExecutionContext}
 import scala.util.Random
@@ -40,9 +40,9 @@ object TestUtils {
   val Digest                                      = MessageDigest.getInstance("SHA-512")
   private[this] val random                        = Random
 
-  def createVideoSequence(name: String, videoName: String): VideoSequence = {
-    val video         = Video(videoName, Instant.now, Duration.ofMinutes(random.nextInt(15) + 5))
-    val videoSequence = VideoSequence(name, "Tiburon", Seq(video))
+  def createVideoSequence(name: String, videoName: String): VideoSequenceEntity = {
+    val video         = VideoEntity(videoName, Instant.now, Duration.ofMinutes(random.nextInt(15) + 5))
+    val videoSequence = VideoSequenceEntity(name, "Tiburon", Seq(video))
     val dao           = DaoFactory.newVideoSequenceDAO()
     val f             = dao.runTransaction(d => d.create(videoSequence))
     f.onComplete(t => dao.close())
@@ -50,8 +50,8 @@ object TestUtils {
     videoSequence
   }
 
-  def randomVideoReference(): VideoReference = {
-    val v = new VideoReference
+  def randomVideoReference(): VideoReferenceEntity = {
+    val v = new VideoReferenceEntity
     v.uri = new URI(
       s"http://www.mbari.org/video/${random.nextInt(100000)}/video_${random.nextInt(100000)}.mp4"
     )
@@ -69,14 +69,14 @@ object TestUtils {
 
   def randomSha512(): Array[Byte] = Array.fill[Byte](64)((Random.nextInt(256) - 128).toByte)
 
-  def create(numVideoSeqs: Int, numVideos: Int, numVideoRef: Int): Seq[VideoSequence] = {
+  def create(numVideoSeqs: Int, numVideos: Int, numVideoRef: Int): Seq[VideoSequenceEntity] = {
     val longTimeout = duration.Duration(numVideoSeqs * 2, TimeUnit.SECONDS)
     for (i <- 0 until numVideoSeqs) yield {
       val videoSequence =
-        VideoSequence(s"A${random.nextInt()} B${random.nextInt()}", s"AUV ${random.nextInt()}")
+        VideoSequenceEntity(s"A${random.nextInt()} B${random.nextInt()}", s"AUV ${random.nextInt()}")
 
       for (i <- 0 until numVideos) {
-        val video = Video(
+        val video = VideoEntity(
           videoSequence.name + s"_C${random.nextInt()}",
           Instant.ofEpochSecond(math.abs(random.nextInt())),
           Some(Duration.ofMinutes(random.nextInt(15) + 1)),

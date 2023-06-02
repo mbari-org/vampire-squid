@@ -15,7 +15,7 @@
  */
 
 package org.mbari.vars.vam.messaging
-import org.mbari.vars.vam.dao.jpa.VideoReference
+import org.mbari.vars.vam.dao.jpa.VideoReferenceEntity
 import org.slf4j.LoggerFactory
 
 import scala.concurrent.ExecutionContext
@@ -35,7 +35,7 @@ class NoopMessagingService extends MessagingService {
     * @param videoReference
     */
   override def newVideoReference(
-      videoReference: VideoReference
+      videoReference: VideoReferenceEntity
   )(implicit ec: ExecutionContext): Unit = {
     val msg = videoReference.uri.toString
     log.debug("MessagingService: new video url: {}", msg)

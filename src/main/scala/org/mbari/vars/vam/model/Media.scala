@@ -21,7 +21,7 @@ import java.time.{Duration, Instant}
 import java.util.UUID
 
 import com.google.gson.annotations.{Expose, SerializedName}
-import org.mbari.vars.vam.dao.jpa.VideoReference
+import org.mbari.vars.vam.dao.jpa.VideoReferenceEntity
 
 /**
   * @author Brian Schlining
@@ -106,7 +106,7 @@ class Media {
 
 object Media {
 
-  def apply(videoReference: VideoReference): Media = {
+  def apply(videoReference: VideoReferenceEntity): Media = {
     val video         = videoReference.video
     val videoSequence = video.videoSequence
 

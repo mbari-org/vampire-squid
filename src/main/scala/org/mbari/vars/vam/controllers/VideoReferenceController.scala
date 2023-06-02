@@ -33,31 +33,31 @@ import scala.concurrent.{ExecutionContext, Future}
   */
 class VideoReferenceController(val daoFactory: JPADAOFactory) extends BaseController {
 
-  private type VRDAO = VideoReferenceDAO[VideoReference]
+  private type VRDAO = VideoReferenceDAO[VideoReferenceEntity]
 
-  def findAll(implicit ec: ExecutionContext): Future[Seq[VideoReference]] =
+  def findAll(implicit ec: ExecutionContext): Future[Seq[VideoReferenceEntity]] =
     exec(d => d.findAll().toSeq)
 
   def findAllURIs(implicit ec: ExecutionContext): Future[Seq[URI]] =
     exec(d => d.findAllURIs().toSeq)
 
-  def findByUUID(uuid: UUID)(implicit ec: ExecutionContext): Future[Option[VideoReference]] =
+  def findByUUID(uuid: UUID)(implicit ec: ExecutionContext): Future[Option[VideoReferenceEntity]] =
     exec(d => d.findByUUID(uuid))
 
   def findByVideoUUID(
       videoUUID: UUID
-  )(implicit ec: ExecutionContext): Future[Iterable[VideoReference]] =
+  )(implicit ec: ExecutionContext): Future[Iterable[VideoReferenceEntity]] =
     exec(d => d.findByVideoUUID(videoUUID))
 
-  def findByURI(uri: URI)(implicit ec: ExecutionContext): Future[Option[VideoReference]] =
+  def findByURI(uri: URI)(implicit ec: ExecutionContext): Future[Option[VideoReferenceEntity]] =
     exec(d => d.findByURI(uri))
 
   def findBySha512(
       sha512: Array[Byte]
-  )(implicit ec: ExecutionContext): Future[Option[VideoReference]] =
+  )(implicit ec: ExecutionContext): Future[Option[VideoReferenceEntity]] =
     exec(d => d.findBySha512(sha512))
 
-  def findConcurrent(uuid: UUID)(implicit ec: ExecutionContext): Future[Iterable[VideoReference]] =
+  def findConcurrent(uuid: UUID)(implicit ec: ExecutionContext): Future[Iterable[VideoReferenceEntity]] =
     exec(d => d.findConcurrent(uuid))
 
   def create(
@@ -72,9 +72,9 @@ class VideoReferenceController(val daoFactory: JPADAOFactory) extends BaseContro
       sizeBytes: Option[Long] = None,
       description: Option[String] = None,
       sha512: Option[Array[Byte]] = None
-  )(implicit ec: ExecutionContext): Future[VideoReference] = {
+  )(implicit ec: ExecutionContext): Future[VideoReferenceEntity] = {
 
-    def fn(dao: VRDAO): VideoReference = {
+    def fn(dao: VRDAO): VideoReferenceEntity = {
       dao.findByURI(uri) match {
         case Some(v) => v
         case None =>
@@ -84,7 +84,7 @@ class VideoReferenceController(val daoFactory: JPADAOFactory) extends BaseContro
             case None =>
               throw new NotFoundInDatastoreException(s"No Video with UUID of $videoUUID exists")
             case Some(video) =>
-              val videoReference = VideoReference(
+              val videoReference = VideoReferenceEntity(
                 uri,
                 container,
                 videoCodec,
@@ -120,9 +120,9 @@ class VideoReferenceController(val daoFactory: JPADAOFactory) extends BaseContro
       sizeBytes: Option[Long] = None,
       description: Option[String] = None,
       sha512: Option[Array[Byte]] = None
-  )(implicit ec: ExecutionContext): Future[VideoReference] = {
+  )(implicit ec: ExecutionContext): Future[VideoReferenceEntity] = {
 
-    def fn(dao: VRDAO): VideoReference = {
+    def fn(dao: VRDAO): VideoReferenceEntity = {
       dao.findByUUID(uuid) match {
         case None =>
           throw new NotFoundInDatastoreException(

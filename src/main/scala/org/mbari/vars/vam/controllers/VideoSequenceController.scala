@@ -21,7 +21,7 @@ import java.util.UUID
 
 import org.mbari.vars.vam.Constants
 import org.mbari.vars.vam.dao.VideoSequenceDAO
-import org.mbari.vars.vam.dao.jpa.{JPADAOFactory, NotFoundInDatastoreException, VideoSequence}
+import org.mbari.vars.vam.dao.jpa.{JPADAOFactory, NotFoundInDatastoreException, VideoSequenceEntity}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -33,9 +33,9 @@ import scala.concurrent.{ExecutionContext, Future}
   */
 class VideoSequenceController(val daoFactory: JPADAOFactory) extends BaseController {
 
-  private type VSDAO = VideoSequenceDAO[VideoSequence]
+  private type VSDAO = VideoSequenceDAO[VideoSequenceEntity]
 
-  def findAll(implicit ec: ExecutionContext): Future[List[VideoSequence]] =
+  def findAll(implicit ec: ExecutionContext): Future[List[VideoSequenceEntity]] =
     exec(d => d.findAll().toList.sortBy(_.name))
 
   def findAllNames(implicit ec: ExecutionContext): Future[Seq[String]] =
@@ -47,30 +47,30 @@ class VideoSequenceController(val daoFactory: JPADAOFactory) extends BaseControl
   def findAllCameraIDs(implicit ec: ExecutionContext): Future[Seq[String]] =
     exec(d => d.findAllCameraIDs().toSeq.sorted)
 
-  def findByUUID(uuid: UUID)(implicit ec: ExecutionContext): Future[Option[VideoSequence]] =
+  def findByUUID(uuid: UUID)(implicit ec: ExecutionContext): Future[Option[VideoSequenceEntity]] =
     exec(d => d.findByUUID(uuid))
 
-  def findByName(name: String)(implicit ec: ExecutionContext): Future[Option[VideoSequence]] =
+  def findByName(name: String)(implicit ec: ExecutionContext): Future[Option[VideoSequenceEntity]] =
     exec(d => d.findByName(name))
 
-  def findByCameraId(id: String)(implicit ec: ExecutionContext): Future[Seq[VideoSequence]] =
+  def findByCameraId(id: String)(implicit ec: ExecutionContext): Future[Seq[VideoSequenceEntity]] =
     exec(d => d.findByCameraID(id).toSeq.sortBy(_.name))
 
   def findByCameraIDAndTimestamp(
       cameraID: String,
       timestamp: Instant,
       window: Duration = Constants.DEFAULT_DURATION_WINDOW
-  )(implicit ec: ExecutionContext): Future[Seq[VideoSequence]] =
+  )(implicit ec: ExecutionContext): Future[Seq[VideoSequenceEntity]] =
     exec(d => d.findByCameraIDAndTimestamp(cameraID, timestamp, window).toSeq)
 
   def create(name: String, cameraID: String, description: Option[String] = None)(
       implicit ec: ExecutionContext
-  ): Future[VideoSequence] = {
-    def fn(dao: VSDAO): VideoSequence = {
+  ): Future[VideoSequenceEntity] = {
+    def fn(dao: VSDAO): VideoSequenceEntity = {
       dao.findByName(name) match {
         case Some(vs) => vs
         case None =>
-          val vs = VideoSequence(name, cameraID, description = description)
+          val vs = VideoSequenceEntity(name, cameraID, description = description)
           dao.create(vs)
           vs
       }
@@ -96,8 +96,8 @@ class VideoSequenceController(val daoFactory: JPADAOFactory) extends BaseControl
       name: Option[String] = None,
       cameraID: Option[String] = None,
       description: Option[String] = None
-  )(implicit ec: ExecutionContext): Future[VideoSequence] = {
-    def fn(dao: VSDAO): VideoSequence = {
+  )(implicit ec: ExecutionContext): Future[VideoSequenceEntity] = {
+    def fn(dao: VSDAO): VideoSequenceEntity = {
       dao.findByUUID(uuid) match {
         case None =>
           throw new NotFoundInDatastoreException(

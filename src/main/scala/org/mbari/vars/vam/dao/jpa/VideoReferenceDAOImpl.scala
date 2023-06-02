@@ -33,16 +33,16 @@ import scala.util.control.NonFatal
   * @since 2016-05-18T13:11:00
   */
 class VideoReferenceDAOImpl(entityManager: EntityManager)
-    extends BaseDAO[VideoReference](entityManager)
-    with VideoReferenceDAO[VideoReference] {
+    extends BaseDAO[VideoReferenceEntity](entityManager)
+    with VideoReferenceDAO[VideoReferenceEntity] {
 
-  override def findByVideoUUID(uuid: UUID): Iterable[VideoReference] =
+  override def findByVideoUUID(uuid: UUID): Iterable[VideoReferenceEntity] =
     findByNamedQuery("VideoReference.findByVideoUUID", Map("uuid" -> uuid))
 
-  override def findByURI(uri: URI): Option[VideoReference] =
+  override def findByURI(uri: URI): Option[VideoReferenceEntity] =
     findByNamedQuery("VideoReference.findByURI", Map("uri" -> uri)).headOption
 
-  override def findByFileName(filename: String): Iterable[VideoReference] = {
+  override def findByFileName(filename: String): Iterable[VideoReferenceEntity] = {
     val query = entityManager.createNamedQuery("VideoReference.findByFileName")
     query.setParameter(1, s"%$filename")
     query
@@ -53,7 +53,7 @@ class VideoReferenceDAOImpl(entityManager: EntityManager)
       .flatMap(findByUUID)
   }
 
-  override def findAll(): Iterable[VideoReference] =
+  override def findAll(): Iterable[VideoReferenceEntity] =
     findByNamedQuery("VideoReference.findAll")
 
   override def findAllURIs(): Iterable[URI] = {
@@ -65,7 +65,7 @@ class VideoReferenceDAOImpl(entityManager: EntityManager)
       .map(URI.create)
   }
 
-  def findConcurrent(uuid: UUID): Iterable[VideoReference] = {
+  def findConcurrent(uuid: UUID): Iterable[VideoReferenceEntity] = {
     findByUUID(uuid) match {
       case None => Nil
       case Some(videoReference) =>
@@ -73,7 +73,7 @@ class VideoReferenceDAOImpl(entityManager: EntityManager)
         val endDate   = startDate.plus(videoReference.video.duration)
         val siblings  = videoReference.video.videoSequence.videoReferences
 
-        def filterSiblings(vr: VideoReference): Boolean = {
+        def filterSiblings(vr: VideoReferenceEntity): Boolean = {
           try {
             val s = vr.video.start
             if (s == null) false
@@ -102,7 +102,7 @@ class VideoReferenceDAOImpl(entityManager: EntityManager)
     videoReference.foreach(vr => delete(vr))
   }
 
-  override def findBySha512(sha: Array[Byte]): Option[VideoReference] = {
+  override def findBySha512(sha: Array[Byte]): Option[VideoReferenceEntity] = {
     //val shaEncoded = Base64.getEncoder.encodeToString(sha)
     findByNamedQuery("VideoReference.findBySha512", Map("sha512" -> sha)).headOption
   }

@@ -25,7 +25,7 @@ import org.mbari.vars.vam.controllers.{
   VideoReferenceController,
   VideoSequenceController
 }
-import org.mbari.vars.vam.dao.jpa.{Video, VideoReference, VideoSequence}
+import org.mbari.vars.vam.dao.jpa.{VideoEntity, VideoReferenceEntity, VideoSequenceEntity}
 
 /**
   *
@@ -62,13 +62,13 @@ class VideoReferenceV1ApiSpec extends WebApiStack {
   }
 
   val startDate                       = Instant.now()
-  var aVideoSequence: VideoSequence   = _
-  var aVideo: Video                   = _
-  var aVideoReference: VideoReference = _
+  var aVideoSequence: VideoSequenceEntity   = _
+  var aVideo: VideoEntity                   = _
+  var aVideoReference: VideoReferenceEntity = _
   it should "insert" in {
     post("/v1/videosequence", "name" -> "T1234", "camera_id" -> "Tiburon") {
       status should be(200)
-      aVideoSequence = gson.fromJson(body, classOf[VideoSequence])
+      aVideoSequence = gson.fromJson(body, classOf[VideoSequenceEntity])
     }
     aVideoSequence should not be null
 
@@ -84,7 +84,7 @@ class VideoReferenceV1ApiSpec extends WebApiStack {
       body should include("uuid")
       body should include("start")
       body should include("duration_millis")
-      aVideo = gson.fromJson(body, classOf[Video])
+      aVideo = gson.fromJson(body, classOf[VideoEntity])
     }
     aVideo should not be null
 
@@ -100,7 +100,7 @@ class VideoReferenceV1ApiSpec extends WebApiStack {
       "sha512"      -> Base64.getEncoder.encodeToString(Array.fill[Byte](64)(9))
     ) {
       status should be(200)
-      aVideoReference = gson.fromJson(body, classOf[VideoReference])
+      aVideoReference = gson.fromJson(body, classOf[VideoReferenceEntity])
     }
     aVideoReference should not be null
   }
@@ -108,7 +108,7 @@ class VideoReferenceV1ApiSpec extends WebApiStack {
   it should "get by uuid" in {
     get("/v1/videoreference/" + aVideoReference.uuid) {
       status should be(200)
-      val videoReference = gson.fromJson(body, classOf[VideoReference])
+      val videoReference = gson.fromJson(body, classOf[VideoReferenceEntity])
       videoReference.uuid should be(aVideoReference.uuid)
     }
   }
@@ -133,7 +133,7 @@ class VideoReferenceV1ApiSpec extends WebApiStack {
   it should "update" in {
     put("/v1/videoreference/" + aVideoReference.uuid, "size_bytes" -> "1234567") {
       status should be(200)
-      val videoReference = gson.fromJson(body, classOf[VideoReference])
+      val videoReference = gson.fromJson(body, classOf[VideoReferenceEntity])
       videoReference.size should be(1234567)
     }
   }

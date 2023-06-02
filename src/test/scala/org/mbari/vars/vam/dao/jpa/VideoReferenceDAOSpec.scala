@@ -42,7 +42,7 @@ class VideoReferenceDAOSpec extends AnyFlatSpec with Matchers {
 
   // --- Test setup
   val name0 = "T0123"
-  val videoReference0 = VideoReference(
+  val videoReference0 = VideoReferenceEntity(
     new URI("http://foo.bar/somevideo.mp4"),
     "video/mp4",
     "hevc",
@@ -53,16 +53,16 @@ class VideoReferenceDAOSpec extends AnyFlatSpec with Matchers {
     Array.fill[Byte](64)(10)
   )
 
-  val videoSequence0 = VideoSequence(
+  val videoSequence0 = VideoSequenceEntity(
     name0,
     "Bar",
     Seq(
-      Video(
+      VideoEntity(
         "bar1",
         Instant.now,
-        videoReferences = Seq(VideoReference(new URI("uri:mbari:tape:T0123-04HD")), videoReference0)
+        videoReferences = Seq(VideoReferenceEntity(new URI("uri:mbari:tape:T0123-04HD")), videoReference0)
       ),
-      Video("bar2", Instant.now, Duration.ofSeconds(23))
+      VideoEntity("bar2", Instant.now, Duration.ofSeconds(23))
     )
   )
 
@@ -92,7 +92,7 @@ class VideoReferenceDAOSpec extends AnyFlatSpec with Matchers {
   }
 
   it should "throw an exception if no parent video is assigned" in {
-    val vr = VideoReference(
+    val vr = VideoReferenceEntity(
       new URI("http://foo.bar/someothervideo.mp4"),
       "video/mp4",
       "hevc",
@@ -108,7 +108,7 @@ class VideoReferenceDAOSpec extends AnyFlatSpec with Matchers {
 
   // --- Test  setup for multiple refs
   val name1 = "T9999"
-  val videoReference1 = VideoReference(
+  val videoReference1 = VideoReferenceEntity(
     new URI("http://foo.bar/somevideoagain.mp4"),
     "video/mp4",
     "hevc",
@@ -117,14 +117,14 @@ class VideoReferenceDAOSpec extends AnyFlatSpec with Matchers {
     1080
   )
 
-  val video1 = Video(
+  val video1 = VideoEntity(
     "bar11",
     Instant.now,
-    videoReferences = Seq(VideoReference(new URI("uri:mbari:tape:T9999-08HD")), videoReference1)
+    videoReferences = Seq(VideoReferenceEntity(new URI("uri:mbari:tape:T9999-08HD")), videoReference1)
   )
 
   val videoSequence1 =
-    VideoSequence(name1, "Bar", Seq(video1, Video("bar22", Instant.now, Duration.ofSeconds(23))))
+    VideoSequenceEntity(name1, "Bar", Seq(video1, VideoEntity("bar22", Instant.now, Duration.ofSeconds(23))))
 
   it should "create and findByUUID" in {
     Await.result(dao.runTransaction(d => d.create(videoReference1)), timeout)

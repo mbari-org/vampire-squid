@@ -36,17 +36,17 @@ class GsonSpec extends AnyFlatSpec with Matchers {
 
   "GSON" should "serialize a VideoSequence" in {
 
-    val videoSequence = VideoSequence("Foo", "Bar")
+    val videoSequence = VideoSequenceEntity("Foo", "Bar")
     val json          = Constants.GSON.toJson(videoSequence)
     log.info(json)
 
   }
 
   it should "serialize a VideoSequence with Videos" in {
-    val videoSequence = VideoSequence(
+    val videoSequence = VideoSequenceEntity(
       "Foo",
       "Bar",
-      Seq(Video("bar1", Instant.now), Video("bar1", Instant.now, Duration.ofSeconds(23)))
+      Seq(VideoEntity("bar1", Instant.now), VideoEntity("bar1", Instant.now, Duration.ofSeconds(23)))
     )
 
     val json = Constants.GSON.toJson(videoSequence)
@@ -54,16 +54,16 @@ class GsonSpec extends AnyFlatSpec with Matchers {
   }
 
   it should "serialize a VideoSequence with Videos that have VideoReferences" in {
-    val videoSequence = VideoSequence(
+    val videoSequence = VideoSequenceEntity(
       "Foo",
       "Bar",
       Seq(
-        Video(
+        VideoEntity(
           "bar1",
           Instant.now,
           videoReferences = Seq(
-            VideoReference(new URI("uri:mbari:tape:T0123-04HD")),
-            VideoReference(
+            VideoReferenceEntity(new URI("uri:mbari:tape:T0123-04HD")),
+            VideoReferenceEntity(
               new URI("http://foo.bar/somevideo.mp4"),
               "video/mp4",
               "hevc",
@@ -73,7 +73,7 @@ class GsonSpec extends AnyFlatSpec with Matchers {
             )
           )
         ),
-        Video("bar2", Instant.now, Duration.ofSeconds(23))
+        VideoEntity("bar2", Instant.now, Duration.ofSeconds(23))
       )
     )
 

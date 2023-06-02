@@ -43,7 +43,7 @@ class VideoSequenceDAOSpec extends AnyFlatSpec with Matchers {
 
   "VideoSequenceDAOImpl" should "create" in {
 
-    var vs = VideoSequence("T12345", "Tiburon")
+    var vs = VideoSequenceEntity("T12345", "Tiburon")
     Await.result(dao.runTransaction(d => d.create(vs)), timeout)
 
     val vs2 = dao.findByName(vs.name)
@@ -51,14 +51,14 @@ class VideoSequenceDAOSpec extends AnyFlatSpec with Matchers {
 
   }
 
-  var videoSequence: VideoSequence = _
+  var videoSequence: VideoSequenceEntity = _
   it should "create w/ child objects" in {
-    var vs = VideoSequence("V05879", "Ventana")
+    var vs = VideoSequenceEntity("V05879", "Ventana")
     val d0 = Instant.parse("2016-04-01T00:15:00Z")
-    vs.addVideo(Video("V20160401T001500", d0, Duration.ofMinutes(15)))
+    vs.addVideo(VideoEntity("V20160401T001500", d0, Duration.ofMinutes(15)))
     val d1  = Instant.parse("2016-04-01T00:30:00Z")
-    val v1  = Video("V20160401T003000", d1, Duration.ofMinutes(30))
-    val vr1 = VideoReference(new URI("http://www.mbari.org/movies/test.mp4"))
+    val v1  = VideoEntity("V20160401T003000", d1, Duration.ofMinutes(30))
+    val vr1 = VideoReferenceEntity(new URI("http://www.mbari.org/movies/test.mp4"))
     v1.addVideoReference(vr1)
     vs.addVideo(v1)
 
@@ -71,7 +71,7 @@ class VideoSequenceDAOSpec extends AnyFlatSpec with Matchers {
   }
 
   it should "fail to create VideoSequence with a name already stored in the database" in {
-    val vs = VideoSequence(videoSequence.name, "Fubar")
+    val vs = VideoSequenceEntity(videoSequence.name, "Fubar")
     a[Exception] should be thrownBy {
       Await.result(dao.runTransaction(d => d.create(vs)), timeout)
     }
@@ -106,16 +106,16 @@ class VideoSequenceDAOSpec extends AnyFlatSpec with Matchers {
 
   it should "insert child videos in the datastore" in {
     val name          = "i2map 2009.123.04"
-    val videoSequence = VideoSequence(name, "i2map")
-    videoSequence.addVideo(Video("woah there nelly", Instant.now(), Duration.ofMinutes(15)))
-    videoSequence.addVideo(Video("woah there nelly II", Instant.now(), Duration.ofMinutes(30)))
+    val videoSequence = VideoSequenceEntity(name, "i2map")
+    videoSequence.addVideo(VideoEntity("woah there nelly", Instant.now(), Duration.ofMinutes(15)))
+    videoSequence.addVideo(VideoEntity("woah there nelly II", Instant.now(), Duration.ofMinutes(30)))
     Await.result(dao.runTransaction(d => d.create(videoSequence)), timeout)
 
     val vs = dao.findByName(name)
     vs shouldBe defined
     vs.get.videos.size should be(2)
 
-    val v = Video("another one", Instant.now())
+    val v = VideoEntity("another one", Instant.now())
     vs.get.addVideo(v)
     Await.result(
       dao.runTransaction(d => d.update(vs.get)),
@@ -199,7 +199,7 @@ class VideoSequenceDAOSpec extends AnyFlatSpec with Matchers {
 
   it should "deleteByUUID" in {
     val name          = "Brian's awesome AUV - 123456789"
-    val videoSequence = VideoSequence(name, "awesome", Seq(Video("foo", Instant.now())))
+    val videoSequence = VideoSequenceEntity(name, "awesome", Seq(VideoEntity("foo", Instant.now())))
     Await.result(dao.runTransaction(d => d.create(videoSequence)), timeout)
 
     val vs = dao.findByName(name)
