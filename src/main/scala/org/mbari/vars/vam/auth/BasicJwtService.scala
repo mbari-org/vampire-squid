@@ -96,6 +96,8 @@ class BasicJwtService extends AuthorizationService {
     Authorization(tokenType, accessToken)
   }
 
+  def validate(auth: Authorization): Boolean = isValid(Some(auth))
+
   override def validateAuthorization(request: HttpServletRequest): Boolean =
     isValid(authorize(request))
 
@@ -121,4 +123,28 @@ class BasicJwtService extends AuthorizationService {
       .map(Authorization("Bearer", _))
       .map(gson.toJson)
   }
+
+
+
+  override def authorize(providedApiKey: String): Option[String] =
+    if (apiKey == providedApiKey) 
+      val now      = Instant.now()
+      val tomorrow = now.plus(1, ChronoUnit.DAYS)
+      val iat      = Date.from(now)
+      val exp      = Date.from(tomorrow)
+
+      val jwt = JWT
+        .create()
+        .withIssuer(issuer)
+        .withIssuedAt(iat)
+        .withExpiresAt(exp)
+        .sign(algorithm)
+
+      Some(jwt)
+    else None
 }
+
+  
+      
+
+  

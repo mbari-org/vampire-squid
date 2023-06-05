@@ -42,4 +42,14 @@ trait AuthorizationService {
 
   def validateAuthorization(request: HttpServletRequest): Boolean
 
+  def validate(auth: Authorization): Boolean
+  
+  /**
+    * Authorized an ApiKey and return a JWT if it is valid  
+    *
+    * @param apiKey The API key to authorize
+    * @return The JWT if the API key is valid
+    */
+  def authorize(apiKey: String): Option[String]
+
 }

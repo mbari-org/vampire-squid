@@ -105,6 +105,7 @@ lazy val `vampire-squid` = (project in file("."))
       logbackClassic,
       logbackCore,
       mssqlJdbc,
+      munit % Test,
       oracleJdbc,
       postgresql,
       scalatest % "test",
@@ -113,7 +114,12 @@ lazy val `vampire-squid` = (project in file("."))
       scalatraTest,
       slf4jApi,
       slf4jLog4j,
-      typesafeConfig,
+      tapirCirce,
+      tapirCirceClient % Test,
+      tapirStubServer % Test,
+      tapirSwagger,
+      tapirVertx, 
+      typesafeConfig
     )
     .map(
       _.excludeAll(
