@@ -23,7 +23,7 @@ import java.util.UUID
 
 import java.time.Instant
 
-
+import org.mbari.vars.vam.model.MutableMedia
 import java.time.Duration
 
 final case class Media(
@@ -44,19 +44,48 @@ final case class Media(
   frame_rate: Option[Double] = None,
   size_bytes: Option[Long] = None,
   description: Option[String] = None,
-  sha512: Option[String] = None,
+  sha512: Option[Array[Byte]] = None,
+  video_sequence_description: Option[String] = None,
+  video_description: Option[String] = None
 ) {
 
   lazy val duration: Option[Duration] = duration_millis.map(Duration.ofMillis)
-  lazy val endTimestamp: Option[Instant] = if (start_timestamp.isDefined && duration.isDefined) {
+  lazy val end_timestamp: Option[Instant] = if (start_timestamp.isDefined && duration.isDefined) {
     start_timestamp.map(_.plus(duration.get))
   } else None
 
   def contains(ts: Instant): Boolean = {
-    endTimestamp match {
+    end_timestamp match {
       case None => start_timestamp.get == ts
       case Some(e) =>
         start_timestamp.get == ts || e == ts || start_timestamp.get.isBefore(ts) && e.isAfter(ts)
     }
   }
 }
+
+object Media:
+
+  def from(m: MutableMedia): Media = {
+    Media(Option(m.videoReferenceUuid), 
+      Option(m.videoReferenceUuid), 
+      Option(m.videoUuid), 
+      Option(m.videoSequenceName), 
+      Option(m.cameraId), 
+      Option(m.videoName), 
+      Option(m.uri), 
+      Option(m.startTimestamp), 
+      Option(m.duration).map(_.toMillis), 
+      Option(m.container), 
+      Option(m.videoCodec), 
+      Option(m.audioCodec), 
+      Option(m.width), 
+      Option(m.height), 
+      Option(m.frameRate), 
+      Option(m.sizeBytes), 
+      Option(m.description), 
+      Option(m.sha512), 
+      Option(m.videoSequenceDescription), 
+      Option(m.videoDescription)
+    )
+  }
+

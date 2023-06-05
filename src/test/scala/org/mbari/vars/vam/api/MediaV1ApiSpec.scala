@@ -18,7 +18,7 @@ package org.mbari.vars.vam.api
 
 import org.mbari.vars.vam.controllers.MediaController
 import org.mbari.vars.vam.dao.jpa.ByteArrayConverter
-import org.mbari.vars.vam.model.Media
+import org.mbari.vars.vam.model.MutableMedia
 
 import java.net.URLEncoder
 import java.net.URI
@@ -49,7 +49,7 @@ class MediaV1ApiSpec extends WebApiStack {
       "start_timestamp"     -> "1968-09-22T03:00:01Z"
     ) {
       status should be(200)
-      val media = gson.fromJson(body, classOf[Media])
+      val media = gson.fromJson(body, classOf[MutableMedia])
       media.videoSequenceUuid should not be (null)
       media.videoUuid should not be (null)
       media.videoReferenceUuid should not be (null)
@@ -82,7 +82,7 @@ class MediaV1ApiSpec extends WebApiStack {
       "sha512"                     -> sha512
     ) {
       status should be(200)
-      val media = gson.fromJson(body, classOf[Media])
+      val media = gson.fromJson(body, classOf[MutableMedia])
       println(body)
       media.videoSequenceUuid should not be (null)
       media.videoUuid should not be (null)
@@ -95,7 +95,7 @@ class MediaV1ApiSpec extends WebApiStack {
     get(s"/v1/media/sha512/$sha512") {
       status should be(200)
       header("Content-Type") should startWith("application/json")
-      val media = gson.fromJson(body, classOf[Media])
+      val media = gson.fromJson(body, classOf[MutableMedia])
       println(body)
       media.videoSequenceUuid should not be (null)
       media.videoUuid should not be (null)
@@ -124,7 +124,7 @@ class MediaV1ApiSpec extends WebApiStack {
     val uri = URI.create("http://www.mbari.org/movies/somemovie.mov")
     get("/v1/media/uri/" + URLEncoder.encode(uri.toString, "UTF-8")) {
       status should be(200)
-      val media = gson.fromJson(body, classOf[Media])
+      val media = gson.fromJson(body, classOf[MutableMedia])
       media.uri should be(uri)
       media.videoReferenceUuid should not be (null)
       media.videoUuid should not be (null)
@@ -135,7 +135,7 @@ class MediaV1ApiSpec extends WebApiStack {
   it should "find by video sequence name" in {
     get(s"/v1/media/videosequence/$name") {
       status should be(200)
-      val media = gson.fromJson(body, classOf[Array[Media]])
+      val media = gson.fromJson(body, classOf[Array[MutableMedia]])
       media.size should be(1)
       media(0).videoSequenceName should be(name)
     }
@@ -144,7 +144,7 @@ class MediaV1ApiSpec extends WebApiStack {
   it should "findByCameraIdandTimestamp" in {
     get(s"/v1/media/camera/Ventana/1968-09-22T03:00:01Z") {
       status should be(200)
-      val media = gson.fromJson(body, classOf[Array[Media]])
+      val media = gson.fromJson(body, classOf[Array[MutableMedia]])
       media.size should be(1)
     }
   }
@@ -165,7 +165,7 @@ class MediaV1ApiSpec extends WebApiStack {
       "height"              -> "2000"
     ) {
       status should be(200)
-      val um = gson.fromJson(body, classOf[Media])
+      val um = gson.fromJson(body, classOf[MutableMedia])
       // println(gson.toJson(um))
       um should not be (null)
       um.width should be(4000)
@@ -185,7 +185,7 @@ class MediaV1ApiSpec extends WebApiStack {
       "height"          -> "4000"
     ) {
       status should be(200)
-      val m2 = gson.fromJson(body, classOf[Media])
+      val m2 = gson.fromJson(body, classOf[MutableMedia])
       m2.width should be(8000)
       m2.height should be(4000)
       m2.sha512 should be(m.sha512)
@@ -218,7 +218,7 @@ class MediaV1ApiSpec extends WebApiStack {
       "video_name" -> "XXX"
     ) {
       status should be(200)
-      val m2 = gson.fromJson(body, classOf[Media])
+      val m2 = gson.fromJson(body, classOf[MutableMedia])
       m2.startTimestamp should be (now)
       m2.duration should be(java.time.Duration.ofMillis(2000))
       m2.videoName should be ("XXX")

@@ -27,7 +27,7 @@ import org.mbari.vars.vam.dao.jpa.VideoReferenceEntity
   * @author Brian Schlining
   * @since 2017-03-06T09:28:00
   */
-class Media {
+class MutableMedia {
 
   @Expose(serialize = true)
   var videoSequenceUuid: UUID = _
@@ -104,13 +104,13 @@ class Media {
 
 }
 
-object Media {
+object MutableMedia {
 
-  def apply(videoReference: VideoReferenceEntity): Media = {
+  def apply(videoReference: VideoReferenceEntity): MutableMedia = {
     val video         = videoReference.video
     val videoSequence = video.videoSequence
 
-    val m = new Media
+    val m = new MutableMedia
     m.videoSequenceUuid = videoSequence.uuid
     m.videoSequenceName = videoSequence.name
     m.cameraId = videoSequence.cameraID
@@ -158,8 +158,8 @@ object Media {
       sha512: Option[Array[Byte]] = None,
       videoSequenceDescription: Option[String] = None,
       videoDescription: Option[String] = None
-  ): Media = {
-    val m = new Media
+  ): MutableMedia = {
+    val m = new MutableMedia
     videoReferenceUuid.foreach(m.videoReferenceUuid = _)
     videoSequenceUuid.foreach(m.videoSequenceUuid = _)
     videoUuid.foreach(m.videoUuid = _)

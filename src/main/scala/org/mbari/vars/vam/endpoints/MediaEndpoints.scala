@@ -52,7 +52,9 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
   val createEndpointImpl: ServerEndpoint[Any, Future] =
     createEndpoint
       .serverSecurityLogic(jwtOpt => verify(jwtOpt))
-      .serverLogic(media => mediaController.create(media).map(Right(_)))
+      .serverLogic(_ => media => mediaController.create(media)
+          .map(Media.from(_))
+          .map(Right(_)))
 
   override def all: List[Endpoint[?, ?, ?, ?, ?]] = ???
 

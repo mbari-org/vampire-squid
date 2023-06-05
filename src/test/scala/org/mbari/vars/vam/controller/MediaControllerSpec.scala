@@ -33,7 +33,7 @@ import scala.concurrent.duration.{Duration => SDuration}
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-import org.mbari.vars.vam.model.Media
+import org.mbari.vars.vam.model.MutableMedia
 import org.mbari.vars.vam.Constants
 
 /**
@@ -133,7 +133,7 @@ class MediaControllerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterE
 
   it should "update" in {
 
-    val m0 = Media.build(
+    val m0 = MutableMedia.build(
       videoSequenceName = Some(getClass.getSimpleName),
       cameraId = Some("A"),
       videoName = Some("A20160911T012345"),
@@ -190,7 +190,7 @@ class MediaControllerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterE
 
   it should "findAndUpdate" in {
 
-    val m0 = Media.build(
+    val m0 = MutableMedia.build(
       videoSequenceName = Some(getClass.getSimpleName),
       cameraId = Some("Y"),
       videoName = Some("Y20160911T012345"),
@@ -308,7 +308,7 @@ class MediaControllerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterE
   }
 
   it should "moveVideoReferences" in {
-    val m0a = Media.build(
+    val m0a = MutableMedia.build(
       videoSequenceName = Some(getClass.getSimpleName + "XXX"),
       cameraId = Some("XXX"),
       videoName = Some("XXX20160911T012345"),
@@ -327,7 +327,7 @@ class MediaControllerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterE
     )
   
 
-    val m1a = Media.build(
+    val m1a = MutableMedia.build(
       videoSequenceName = Some(getClass.getSimpleName + "XXX"),
       cameraId = Some("XXX"),
       videoName = Some("XXX20160911T012345"),
