@@ -199,6 +199,29 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
     )
   }
 
+  def findAndUpdateMedia(findFn: VideoReferenceDAO[VideoReferenceEntity] => Option[VideoReferenceEntity], media: MutableMedia)
+      (implicit ec: ExecutionContext): Future[Option[MutableMedia]] = 
+    findAndUpdate(
+      findFn,
+      media.videoSequenceName,
+      media.cameraId,
+      media.videoName,
+      Option(media.sha512),
+      Option(media.uri),
+      Option(media.startTimestamp),
+      Option(media.duration),
+      Option(media.container),
+      Option(media.videoCodec),
+      Option(media.audioCodec),
+      Option(media.width),
+      Option(media.height),
+      Option(media.frameRate),
+      Option(media.sizeBytes),
+      Option(media.description),
+      Option(media.videoSequenceDescription),
+      Option(media.videoDescription)
+    )
+
   /**
     *
     * @param findFn

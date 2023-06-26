@@ -66,19 +66,17 @@ object Dependencies {
   lazy val slf4jLog4j       = "org.slf4j"               % "log4j-over-slf4j"    % slf4jVersion
   lazy val slf4jSystem      = "org.slf4j"               % "slf4j-jdk-platform-logging" % slf4jVersion
 
-  private val sttpVersion   = "3.8.15"
+  private val sttpVersion     = "3.8.15"
   lazy val sttpClient3Backend = "com.softwaremill.sttp.client3" %% "slf4j-backend" % sttpVersion
-  lazy val sttpCirceClient = "com.softwaremill.sttp.client3" %% "circe" % sttpVersion
+  lazy val sttpCirce          = "com.softwaremill.sttp.client3" %% "circe"         % sttpVersion
 
   private val tapirVersion  = "1.5.5"
-  lazy val tapirStubServer  = "com.softwaremill.sttp.tapir" %% "tapir-sttp-stub-server" % tapirVersion
+  lazy val tapirStubServer  = "com.softwaremill.sttp.tapir" %% "tapir-sttp-stub-server"  % tapirVersion
   lazy val tapirSwagger     = "com.softwaremill.sttp.tapir" %% "tapir-swagger-ui-bundle" % tapirVersion
-  lazy val tapirCirce       = "com.softwaremill.sttp.tapir" %% "tapir-json-circe" % tapirVersion
-  lazy val tapirVertx       = "com.softwaremill.sttp.tapir" %% "tapir-vertx-server" % tapirVersion
+  lazy val tapirCirce       = "com.softwaremill.sttp.tapir" %% "tapir-json-circe"        % tapirVersion
+  lazy val tapirVertx       = "com.softwaremill.sttp.tapir" %% "tapir-vertx-server"      % tapirVersion
 
   
- 
-    
   
   lazy val typesafeConfig   = "com.typesafe"            % "config"              % "1.4.2"
 

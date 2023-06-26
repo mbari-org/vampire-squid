@@ -23,6 +23,7 @@ import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 import org.mbari.vars.vam.domain.{
+    BadRequest,
     ErrorMsg,
     NotFound,
     ServerError,
@@ -46,10 +47,18 @@ trait Endpoints:
       case Success(value) => Success(Right(value))
       case Failure(exception) => Success(Left(ServerError(exception.getMessage)))
     }
+
+  def handleOption[T](f: Future[Option[T]])(using ec: ExecutionContext): Future[Either[ErrorMsg, T]] =
+    f.transform {
+      case Success(Some(value)) => Success(Right(value))
+      case Success(None) => Success(Left(NotFound("Not found")))
+      case Failure(exception) => Success(Left(ServerError(exception.getMessage)))
+    }
     
 
   val secureEndpoint = endpoint.errorOut(
     oneOf[ErrorMsg](
+      oneOfVariant(statusCode(StatusCode.BadRequest).and(jsonBody[BadRequest])),
       oneOfVariant(statusCode(StatusCode.NotFound).and(jsonBody[NotFound])),
       oneOfVariant(statusCode(StatusCode.InternalServerError).and(jsonBody[ServerError])),
       oneOfVariant(statusCode(StatusCode.Unauthorized).and(jsonBody[Unauthorized]))
@@ -58,6 +67,7 @@ trait Endpoints:
 
   val openEndpoint = endpoint.errorOut(
     oneOf[ErrorMsg](
+      oneOfVariant(statusCode(StatusCode.BadRequest).and(jsonBody[BadRequest])),
       oneOfVariant(statusCode(StatusCode.NotFound).and(jsonBody[NotFound])),
       oneOfVariant(statusCode(StatusCode.InternalServerError).and(jsonBody[ServerError]))
     )

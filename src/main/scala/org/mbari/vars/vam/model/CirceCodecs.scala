@@ -23,6 +23,7 @@ import java.net.URI
 import java.net.URL
 import org.mbari.vars.vam.util.HexUtil
 import scala.util.Try
+import org.mbari.vars.vam.domain.Media
 
 object CirceCodecs {
 
@@ -36,7 +37,7 @@ object CirceCodecs {
 
   implicit val urlDecoder: Decoder[URL] = Decoder
     .decodeString
-    .emapTry(str => Try(new URL(str)))
+    .emapTry(str => Try(URI.create(str).toURL))
   implicit val urlEncoder: Encoder[URL] = Encoder
     .encodeString
     .contramap(_.toString)
@@ -50,6 +51,7 @@ object CirceCodecs {
 
   implicit val healthStatusDecoder: Decoder[HealthStatus] = deriveDecoder
   implicit val healthStatusEncoder: Encoder[HealthStatus] = deriveEncoder
+
 
   private val printer = Printer.noSpaces.copy(dropNullValues = true)
 

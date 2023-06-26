@@ -21,6 +21,7 @@ import io.circe.generic.semiauto.*
 import java.net.{URI, URL}
 import org.mbari.vars.vam.domain.{
   BearerAuth,
+  BadRequest,
   ErrorMsg,
   StatusMsg,
   NotFound,
@@ -73,6 +74,9 @@ object CirceCodecs:
 
   given Decoder[ErrorMsg] = deriveDecoder
   given Encoder[ErrorMsg] = deriveEncoder
+
+  given Decoder[BadRequest] = deriveDecoder
+  given Encoder[BadRequest] = deriveEncoder
 
   given Decoder[HealthStatus] = deriveDecoder
   given Encoder[HealthStatus] = deriveEncoder
