@@ -7,7 +7,7 @@ object Dependencies {
   lazy val circeGeneric     = "io.circe"                %% "circe-generic"      % circeVersion
   lazy val circeParser      = "io.circe"                %% "circe-parser"       % circeVersion
 
-  lazy val commonsCodec     = "commons-codec"           % "commons-codec"       % "1.15"
+  lazy val commonsCodec     = "commons-codec"           % "commons-codec"       % "1.16.0"
 
   val derbyVersion          = "10.16.1.1"
   lazy val derby            = "org.apache.derby"        % "derby"               % derbyVersion //          % "test"
@@ -17,7 +17,7 @@ object Dependencies {
   lazy val derbyTools       = "org.apache.derby"        % "derbytools"          % derbyVersion
 
   // val eclipsePersistenceVersion        = "2.7.12"
-  val eclipsePersistenceVersion        = "4.0.1"
+  val eclipsePersistenceVersion        = "4.0.2"
   lazy val eclipsePersistenceExtension = "org.eclipse.persistence" % "org.eclipse.persistence.extension" % eclipsePersistenceVersion
   lazy val eclipsePersistenceJpa       = "org.eclipse.persistence" % "org.eclipse.persistence.jpa" % eclipsePersistenceVersion
 
@@ -31,7 +31,7 @@ object Dependencies {
   lazy val javaxJta         = "javax.transaction"       % "jta"                 % "1.1"
   lazy val javaxServlet     = "javax.servlet"           % "javax.servlet-api"   % "4.0.1"
 
-  val xmlBindVersion        = "4.0.2"
+  val xmlBindVersion        = "4.0.3"
   // val xmlBindVersion        = "2.3.0"
   // lazy val jaxbApi          = "javax.xml.bind"          % "jaxb-api"            % xmlBindVersion
   lazy val jaxbCore         = "com.sun.xml.bind"        % "jaxb-core"           % xmlBindVersion
@@ -46,12 +46,12 @@ object Dependencies {
   lazy val jtds             = "net.sourceforge.jtds"    % "jtds"                % "1.3.1"
   lazy val junit            = "junit"                   % "junit"               % "4.13.2"
 
-  val logbackVersion        = "1.4.7"
+  val logbackVersion        = "1.4.8"
   lazy val logbackClassic   = "ch.qos.logback"          % "logback-classic"     % logbackVersion
   lazy val logbackCore      = "ch.qos.logback"          % "logback-core"        % logbackVersion
 
   lazy val mssqlJdbc        = "com.microsoft.sqlserver" % "mssql-jdbc"          % "9.4.1.jre11"
-  lazy val munit            = "org.scalameta"           %% "munit"              % "1.0.0-M7"
+  lazy val munit            = "org.scalameta"           %% "munit"              % "1.0.0-M8"
   lazy val oracleJdbc       = "com.oracle.ojdbc"        % "ojdbc8"              % "19.3.0.0"
   lazy val postgresql       = "org.postgresql"          % "postgresql"          % "42.6.0"
   lazy val scalatest        = "org.scalatest"           %% "scalatest"          % "3.2.16" 
@@ -66,14 +66,17 @@ object Dependencies {
   lazy val slf4jLog4j       = "org.slf4j"               % "log4j-over-slf4j"    % slf4jVersion
   lazy val slf4jSystem      = "org.slf4j"               % "slf4j-jdk-platform-logging" % slf4jVersion
 
-  lazy val sttpClient3Backend = "com.softwaremill.sttp.client3" %% "slf4j-backend" % "3.8.15"
+  private val sttpVersion   = "3.8.15"
+  lazy val sttpClient3Backend = "com.softwaremill.sttp.client3" %% "slf4j-backend" % sttpVersion
+  lazy val sttpCirceClient = "com.softwaremill.sttp.client3" %% "circe" % sttpVersion
 
-  private val tapirVersion  = "1.5.0"
+  private val tapirVersion  = "1.5.5"
   lazy val tapirStubServer  = "com.softwaremill.sttp.tapir" %% "tapir-sttp-stub-server" % tapirVersion
   lazy val tapirSwagger     = "com.softwaremill.sttp.tapir" %% "tapir-swagger-ui-bundle" % tapirVersion
   lazy val tapirCirce       = "com.softwaremill.sttp.tapir" %% "tapir-json-circe" % tapirVersion
-  lazy val tapirCirceClient = "com.softwaremill.sttp.client3" %% "circe" % "3.8.8"
   lazy val tapirVertx       = "com.softwaremill.sttp.tapir" %% "tapir-vertx-server" % tapirVersion
+
+  
  
     
   
