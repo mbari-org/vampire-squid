@@ -32,12 +32,21 @@ import sttp.model.StatusCode
 import org.mbari.vars.vam.etc.circe.CirceCodecs.given
 import org.mbari.vars.vam.etc.jwt.JwtService
 import scala.concurrent.ExecutionContext
+import scala.util.Success
+import scala.util.Failure
 
 trait Endpoints:
   val log = System.getLogger(getClass.getName)
 
   def all: List[Endpoint[?, ?, ?, ?, ?]]
   def allImpl: List[ServerEndpoint[Any, Future]]
+
+  def handleErrors[T](f: Future[T])(using ec: ExecutionContext): Future[Either[ErrorMsg, T]] =
+    f.transform {
+      case Success(value) => Success(Right(value))
+      case Failure(exception) => Success(Left(ServerError(exception.getMessage)))
+    }
+    
 
   val secureEndpoint = endpoint.errorOut(
     oneOf[ErrorMsg](

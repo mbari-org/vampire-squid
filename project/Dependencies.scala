@@ -64,6 +64,9 @@ object Dependencies {
   val slf4jVersion          = "2.0.7"
   lazy val slf4jApi         = "org.slf4j"               % "slf4j-api"           % slf4jVersion
   lazy val slf4jLog4j       = "org.slf4j"               % "log4j-over-slf4j"    % slf4jVersion
+  lazy val slf4jSystem      = "org.slf4j"               % "slf4j-jdk-platform-logging" % slf4jVersion
+
+  lazy val sttpClient3Backend = "com.softwaremill.sttp.client3" %% "slf4j-backend" % "3.8.15"
 
   private val tapirVersion  = "1.5.0"
   lazy val tapirStubServer  = "com.softwaremill.sttp.tapir" %% "tapir-sttp-stub-server" % tapirVersion

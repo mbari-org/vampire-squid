@@ -114,6 +114,8 @@ lazy val `vampire-squid` = (project in file("."))
       scalatraTest,
       slf4jApi,
       slf4jLog4j,
+      slf4jSystem,
+      sttpClient3Backend % Test,
       tapirCirce,
       tapirCirceClient % Test,
       tapirStubServer % Test,

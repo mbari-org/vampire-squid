@@ -51,10 +51,10 @@ object CirceCodecs:
     .encodeString
     .contramap(_.toString)
 
-  given Decoder[URI] = Decoder
+  given uriDecoder: Decoder[URI] = Decoder
     .decodeString
     .emapTry(s => Try(URI.create(s)))
-  given Encoder[URI] = Encoder
+  given uriEncoder: Encoder[URI] = Encoder
     .encodeString
     .contramap[URI](_.toString)
 
@@ -107,4 +107,5 @@ object CirceCodecs:
    *   Any value with an implicit circe coder in scope
    */
   extension [T: Encoder](value: T) def stringify: String = Encoder[T].apply(value).stringify
+
 

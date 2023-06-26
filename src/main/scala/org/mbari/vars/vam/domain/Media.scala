@@ -25,6 +25,11 @@ import java.time.Instant
 
 import org.mbari.vars.vam.model.MutableMedia
 import java.time.Duration
+import org.mbari.vars.vam.util.HexUtil
+import org.mbari.vars.vam.etc.sdk.FormTransform
+import org.mbari.vars.vam.etc.sdk.ToStringTransforms
+import scala.util.Try
+import scala.util.chaining.*
 
 final case class Media(
   video_sequence_uuid: Option[UUID] = None,
@@ -66,6 +71,9 @@ final case class Media(
 object Media:
 
   def from(m: MutableMedia): Media = {
+
+    val durationMillis = Option(m.duration).map(_.toMillis)
+
     Media(Option(m.videoReferenceUuid), 
       Option(m.videoReferenceUuid), 
       Option(m.videoUuid), 
@@ -74,7 +82,7 @@ object Media:
       Option(m.videoName), 
       Option(m.uri), 
       Option(m.startTimestamp), 
-      Option(m.duration).map(_.toMillis), 
+      durationMillis, 
       Option(m.container), 
       Option(m.videoCodec), 
       Option(m.audioCodec), 
@@ -88,4 +96,61 @@ object Media:
       Option(m.videoDescription)
     )
   }
+
+  def toMutableMedia(m: Media): MutableMedia =
+    var mm = new MutableMedia()
+    mm.videoReferenceUuid = m.video_reference_uuid.orNull
+    mm.videoUuid = m.video_uuid.orNull
+    mm.videoSequenceName = m.video_sequence_name.orNull
+    mm.cameraId = m.camera_id.orNull
+    mm.videoName = m.video_name.orNull
+    mm.uri = m.uri.orNull
+    mm.startTimestamp = m.start_timestamp.orNull
+    mm.duration = m.duration.orNull
+    mm.container = m.container.orNull
+    mm.videoCodec = m.video_codec.orNull
+    mm.audioCodec = m.audio_codec.orNull
+    m.width.foreach(mm.width = _)
+    m.height.foreach(mm.height = _)
+    m.frame_rate.foreach(mm.frameRate = _)
+    m.size_bytes.foreach(mm.sizeBytes = _)
+    mm.description = m.description.orNull
+    mm.sha512 = m.sha512.orNull
+    mm.videoSequenceDescription = m.video_sequence_description.orNull
+    mm.videoDescription = m.video_description.orNull
+    mm
+    
+
+  def fromFormMap(map: Map[String, String]): Media = {
+    val durationMillis = Try(map.get("duration_millis").map(_.toLong)).toOption.flatten
+    Media(
+      map.get("video_sequence_uuid").map(UUID.fromString),
+      map.get("video_reference_uuid").map(UUID.fromString),
+      map.get("video_uuid").map(UUID.fromString),
+      map.get("video_sequence_name"),
+      map.get("camera_id"),
+      map.get("video_name"),
+      map.get("uri").map(URI.create),
+      map.get("start_timestamp").map(Instant.parse),
+      durationMillis, //Try(map.get("duration_millis").map(_.toLong)).getOrElse(None).tap(println),
+      map.get("container"),
+      map.get("video_codec"),
+      map.get("audio_codec"),
+      map.get("width").map(_.toInt),
+      map.get("height").map(_.toInt),
+      map.get("frame_rate").map(_.toDouble),
+      map.get("size_bytes").map(_.toLong),
+      map.get("description"),
+      map.get("sha512").map(HexUtil.fromHex(_)),
+      map.get("video_sequence_description"),
+      map.get("video_description")
+    )
+  }
+
+  def toFormMap(m: Media): String = 
+
+    import ToStringTransforms.{transform, given}
+    import FormTransform.given 
+
+    transform(m)
 

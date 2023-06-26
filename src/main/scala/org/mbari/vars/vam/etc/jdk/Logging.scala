@@ -69,27 +69,6 @@ object Logging:
   given Conversion[Logger, LoggerBuilder] with
     def apply(logger: Logger): LoggerBuilder = LoggerBuilder(logger)
 
-  case class TapLogBuilder[T](
-      obj: T,
-      logger: Logger,
-      level: Level = Level.OFF,
-      throwable: Option[Throwable] = None
-  ) extends Builder:
+  def apply(name: String) = System.getLogger(name)
+  def apply(clazz: Class[_]) = System.getLogger(clazz.getName)
 
-    def atTrace: TapLogBuilder[T] = copy(level = Level.TRACE)
-    def atDebug: TapLogBuilder[T] = copy(level = Level.DEBUG)
-    def atInfo: TapLogBuilder[T]  = copy(level = Level.INFO)
-    def atWarn: TapLogBuilder[T]  = copy(level = Level.WARNING)
-    def atError: TapLogBuilder[T] = copy(level = Level.ERROR)
-
-    def withCause(cause: Throwable): TapLogBuilder[T] = copy(throwable = Some(cause))
-
-    def log(fn: T => String): T =
-      if (logger.isLoggable(level))
-        throwable match
-          case Some(e) => logger.log(level, fn(obj), e)
-          case None    => logger.log(level, fn(obj))
-      obj
-
-  extension [T](obj: T)(using logger: Logger)
-    def tapLog: TapLogBuilder[T] = TapLogBuilder(obj, logger)

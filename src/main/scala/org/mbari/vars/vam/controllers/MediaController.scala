@@ -59,11 +59,11 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
   )
 
   def create(media: Media)(implicit ec: ExecutionContext): Future[MutableMedia] = create(
-    media.video_sequence_name.get,
-    media.camera_id.get,
-    media.video_name.get,
-    media.uri.get,
-    media.start_timestamp.get,
+    media.video_sequence_name.getOrElse(throw new IllegalArgumentException("video_sequence_name is required")),
+    media.camera_id.getOrElse(throw new IllegalArgumentException("camera_id is required")),
+    media.video_name.getOrElse(throw new IllegalArgumentException("video_name is required")),
+    media.uri.getOrElse(throw new IllegalArgumentException("uri is required")),
+    media.start_timestamp.getOrElse(throw new IllegalArgumentException("start_timestamp is required")),
     media.duration,
     media.container,
     media.video_codec,
@@ -174,6 +174,8 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController {
     })
 
   }
+
+  
 
   def updateMedia(media: MutableMedia)(implicit ec: ExecutionContext): Future[Option[MutableMedia]] = {
     update(
