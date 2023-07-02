@@ -28,7 +28,7 @@ class HealthApi extends ScalatraServlet {
   }
 
   get("/") {
-    CirceCodecs.print(HealthStatus.default)
+    HealthStatus.default.stringify
   }
 
 }

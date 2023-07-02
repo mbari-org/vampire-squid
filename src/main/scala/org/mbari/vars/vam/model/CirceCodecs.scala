@@ -52,9 +52,34 @@ object CirceCodecs {
   implicit val healthStatusDecoder: Decoder[HealthStatus] = deriveDecoder
   implicit val healthStatusEncoder: Encoder[HealthStatus] = deriveEncoder
 
-
   private val printer = Printer.noSpaces.copy(dropNullValues = true)
 
-  def print[T: Encoder](t: T): String = printer.print(t.asJson)
+  /**
+   * Convert a circe Json object to a JSON string
+   *
+   * @param value
+   * Any value with an implicit circe coder in scope
+   */
+  extension (json: Json) def stringify: String = printer.print(json)
+
+  /**
+   * Convert an object to a JSON string
+   *
+   * @param value
+   * Any value with an implicit circe coder in scope
+   */
+  extension[T: Encoder] (value: T) def stringify: String = Encoder[T].apply(value).stringify
+
+  extension[T: Decoder] (jsonString: String) def toJson: Either[ParsingFailure, Json] = parser.parse(jsonString);
+  extension[T: Decoder] (jsonString: String) def reify: Either[Error, T] = {
+    for
+      json <- jsonString.toJson
+      result <-  Decoder[T].apply(json.hcursor)
+    yield
+      result
+  }
+
+
+
 
 }

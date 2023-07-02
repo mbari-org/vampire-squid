@@ -74,7 +74,7 @@ object Media:
 
     val durationMillis = Option(m.duration).map(_.toMillis)
 
-    Media(Option(m.videoReferenceUuid), 
+    Media(Option(m.videoSequenceUuid),
       Option(m.videoReferenceUuid), 
       Option(m.videoUuid), 
       Option(m.videoSequenceName), 

@@ -22,6 +22,7 @@ import org.mbari.vars.vam.domain.Media
 import org.mbari.vars.vam.etc.jwt.JwtService
 import org.mbari.vars.vam.etc.sdk.Reflect
 import org.mbari.vars.vam.etc.sdk.FutureUtil.*
+
 import scala.concurrent.{ExecutionContext, Future}
 import sttp.client3.*
 import sttp.client3.SttpBackend
@@ -30,13 +31,15 @@ import sttp.client3.testing.SttpBackendStub
 import sttp.model.StatusCode
 import sttp.tapir.server.stub.TapirStubInterpreter
 
-
 import java.net.URI
-import java.time.Instant
+import java.time.{Duration, Instant}
 import java.nio.charset.StandardCharsets
 import org.mbari.vars.vam.etc.jdk.Logging
 import org.mbari.vars.vam.etc.jdk.Logging.given
 import sttp.tapir.server.interceptor.CustomiseInterceptors
+import io.circe.*
+import io.circe.parser.*
+import org.mbari.vars.vam.etc.circe.CirceCodecs.{*, given}
 
 
 class MediaEndpointsSpec extends munit.FunSuite {
@@ -111,6 +114,51 @@ class MediaEndpointsSpec extends munit.FunSuite {
     response.map(r => {
       assertEquals(r.code, StatusCode.Ok)
       assert(r.body.isRight)
+    }).join
+  }
+
+  test("PUT v1/media/{videoReferenceUuid}") {
+    val jwt = jwtService.authorize("foo").orNull
+    val now = Instant.now()
+    val media0 = new Media(video_sequence_name = Some("Test Dive 03"),
+      video_name = Some("Test Dive 03 " + now),
+      camera_id = Some("Tester 03"),
+      uri = Some(URI.create("http://test.me/movie03.mp4")),
+      start_timestamp = Some(now),
+      duration_millis = Some(30000),
+      sha512 = Some(Array[Byte](1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)))
+
+    val media1 = controller.create(media0).join
+    media1.uri = URI.create("http://test.me/movie03_changed.mp4")
+
+    val backendStub: SttpBackend[Future, Any] = TapirStubInterpreter(SttpBackendStub.asynchronousFuture)
+      .whenServerEndpointRunLogic(mediaEndpoints.updateByVideoReferenceUuidEndpointImpl)
+      .backend()
+
+    val m = Media.from(media1)
+    val request = basicRequest
+      .put(uri"http://test.com/v1/media/${media1.videoReferenceUuid}")
+      .header("Authorization", s"Bearer $jwt")
+      .body(Media.toFormMap(m))
+
+    log.atDebug.log(request.toRfc2616Format(Set()))
+
+    val response = request.send(backendStub)
+
+    response.map(r => {
+      assertEquals(r.code, StatusCode.Ok)
+      assert(r.body.isRight)
+      val body = r.body.getOrElse(fail("no body was returned"))
+      val e = decode[Media](body)
+      e match
+        case Left(e) => fail("")
+        case Right(m) =>
+          assert(m.video_sequence_uuid.isDefined)
+          assert(m.video_uuid.isDefined)
+          assert(m.video_reference_uuid.isDefined)
+          assert(m.uri.isDefined)
+          assertEquals(media1.uri, m.uri.get)
+
     }).join
   }
 
