@@ -28,10 +28,8 @@ import scala.util.Try
 import scala.jdk.CollectionConverters._
 import org.mbari.vampiresquid.repository.jpa.entity.VideoSequenceEntity
 
-/**
-  *
-  *
-  * @author Brian Schlining
+/** @author
+  *   Brian Schlining
   * @since 2016-05-06T14:20:00
   */
 class VideoSequenceDAOImpl(entityManager: EntityManager)
@@ -50,10 +48,10 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
   override def findByVideoUUID(uuid: UUID): Option[VideoSequenceEntity] =
     findByNamedQuery("VideoSequence.findByVideoUUID", Map("uuid" -> uuid)).headOption
 
-  /**
-    *
-    * @param timestamp The moment of interest
-    * @param window A search window that so that the actual search is timestamp +/- (range / 2)
+  /** @param timestamp
+    *   The moment of interest
+    * @param window
+    *   A search window that so that the actual search is timestamp +/- (range / 2)
     * @return
     */
   override def findByTimestamp(
@@ -74,7 +72,7 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
         .flatMap(_.getVideos().asScala)
         .map(v => s"\t${v.getName()} at ${v.getStart()} for ${v.getDuration()}")
         .mkString("\n")
-      val s =
+      val s    =
         s"""
            | Found ${videoSequences.size} VideoSequences between $startDate and $endDate
            | $info
@@ -85,15 +83,14 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
 
     videoSequences.filter(hasTimestamp).toSet
 
-
   override def findByNameAndTimestamp(
       name: String,
       timestamp: Instant,
       window: Duration = Constants.DEFAULT_DURATION_WINDOW
   ): Iterable[VideoSequenceEntity] =
-    val halfRange = window.dividedBy(2)
-    val startDate = timestamp.minus(halfRange)
-    val endDate   = timestamp.plus(halfRange)
+    val halfRange      = window.dividedBy(2)
+    val startDate      = timestamp.minus(halfRange)
+    val endDate        = timestamp.plus(halfRange)
     val videoSequences = findByNamedQuery(
       "VideoSequence.findByNameAndBetweenDates",
       Map("startDate" -> startDate, "endDate" -> endDate, "name" -> name)
@@ -128,12 +125,11 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
     vs.getVideos()
       .asScala
       .map(v => (v.getStart, Try(v.getStart.plus(v.getDuration())).getOrElse(v.getStart())))
-      .exists({
-        case (a, b) =>
-          a.equals(timestamp) ||
-            b.equals(timestamp) ||
-            (a.isBefore(timestamp) && b.isAfter(timestamp))
-      })
+      .exists { case (a, b) =>
+        a.equals(timestamp) ||
+        b.equals(timestamp) ||
+        (a.isBefore(timestamp) && b.isAfter(timestamp))
+      }
 
   override def findAll(): Iterable[VideoSequenceEntity] = findByNamedQuery("VideoSequence.findAll")
 

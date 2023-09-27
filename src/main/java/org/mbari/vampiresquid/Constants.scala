@@ -24,27 +24,23 @@ import java.time.Duration
 import scala.util.control.NonFatal
 import scala.util.{Failure, Success, Try}
 
-/**
- *
- *
- * @author Brian Schlining
- * @since 2016-05-17T16:03:00
- */
+/** @author
+  *   Brian Schlining
+  * @since 2016-05-17T16:03:00
+  */
 object Constants:
 
-  val CONFIG                  = ConfigFactory.load()
+  val CONFIG            = ConfigFactory.load()
   private val keyWindow = "vampiresquid.time.window"
   private val log       = LoggerFactory.getLogger(getClass)
 
-  /**
-   * Defines the width of a search window used for searching by date.
-   *
-   * Reads the 'org.mbari.vars.vam.time.window' property from the config files to configure
-   * the window.
-   */
+  /** Defines the width of a search window used for searching by date.
+    *
+    * Reads the 'org.mbari.vars.vam.time.window' property from the config files to configure the window.
+    */
   val DEFAULT_DURATION_WINDOW = Try(CONFIG.getDuration(keyWindow)) match
     case Success(window) => window
-    case Failure(e) =>
+    case Failure(e)      =>
       log.info(
         s"Failed to find '$keyWindow' in the configuration files (reference.conf or " +
           s"application.conf). Using default window of 120 minutes"
@@ -79,5 +75,3 @@ object Constants:
 //        new NoopMessagingService
 //    }
 //  }
-
-

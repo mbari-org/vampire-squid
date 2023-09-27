@@ -26,10 +26,8 @@ import scala.jdk.CollectionConverters._
 import scala.util.control.NonFatal
 import org.mbari.vampiresquid.repository.jpa.entity.VideoReferenceEntity
 
-/**
-  *
-  *
-  * @author Brian Schlining
+/** @author
+  *   Brian Schlining
   * @since 2016-05-18T13:11:00
   */
 class VideoReferenceDAOImpl(entityManager: EntityManager)
@@ -65,9 +63,9 @@ class VideoReferenceDAOImpl(entityManager: EntityManager)
 
   def findConcurrent(uuid: UUID): Iterable[VideoReferenceEntity] =
     findByUUID(uuid) match
-      case None => Nil
+      case None                 => Nil
       case Some(videoReference) =>
-        val video = videoReference.getVideo
+        val video     = videoReference.getVideo
         val startDate = video.getStart
         val endDate   = startDate.plus(video.getDuration)
         val siblings  = video.getVideoSequence.getVideoReferences.asScala
@@ -89,11 +87,10 @@ class VideoReferenceDAOImpl(entityManager: EntityManager)
 
         siblings.filter(filterSiblings)
 
-
   override def deleteByUUID(primaryKey: UUID): Unit =
     val videoReference = findByUUID(primaryKey)
     videoReference.foreach(vr => delete(vr))
 
   override def findBySha512(sha: Array[Byte]): Option[VideoReferenceEntity] =
-    //val shaEncoded = Base64.getEncoder.encodeToString(sha)
+    // val shaEncoded = Base64.getEncoder.encodeToString(sha)
     findByNamedQuery("VideoReference.findBySha512", Map("sha512" -> sha)).headOption

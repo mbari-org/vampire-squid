@@ -20,10 +20,10 @@ import jakarta.persistence.EntityManager
 
 import scala.concurrent.{ExecutionContext, Future}
 
-/**
-  * Implicits used in this package
+/** Implicits used in this package
   *
-  * @author Brian Schlining
+  * @author
+  *   Brian Schlining
   * @since 2016-05-06T13:34:00
   */
 object extensions:
@@ -59,4 +59,3 @@ object extensions:
 //      }
 //    }
 //  }
-

@@ -23,24 +23,25 @@ import java.util.UUID
 import scala.jdk.CollectionConverters._
 import java.time.Duration
 
-case class Video(uuid: UUID,
-                 name: String,
-                 start_timestamp: Instant,
-                 duration_millis: Option[Long] = None,
-                 description: Option[String] = None,
-                 last_updated_time: Option[Instant] = None,
-                 video_references: List[VideoReference] = Nil):
+case class Video(
+    uuid: UUID,
+    name: String,
+    start_timestamp: Instant,
+    duration_millis: Option[Long] = None,
+    description: Option[String] = None,
+    last_updated_time: Option[Instant] = None,
+    video_references: List[VideoReference] = Nil
+):
   def lastUpdatedTimestamp: Option[Instant] = last_updated_time
-  def start: Instant = start_timestamp
-  lazy val duration: Option[Duration] = duration_millis.map(Duration.ofMillis)
+  def start: Instant                        = start_timestamp
+  lazy val duration: Option[Duration]       = duration_millis.map(Duration.ofMillis)
   def videoReferences: List[VideoReference] = video_references
-
-
 
 object Video:
 
   def from(v: VideoEntity): Video =
-    Video(v.getUuid,
+    Video(
+      v.getUuid,
       v.getName,
       v.getStart,
       Option(v.getDuration).map(_.toMillis),

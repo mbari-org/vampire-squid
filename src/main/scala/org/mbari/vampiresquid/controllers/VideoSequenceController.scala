@@ -26,10 +26,8 @@ import scala.concurrent.{ExecutionContext, Future}
 import org.mbari.vampiresquid.repository.jpa.entity.VideoSequenceEntity
 import org.mbari.vampiresquid.domain.{VideoSequence => VSDTO}
 
-/**
-  *
-  *
-  * @author Brian Schlining
+/** @author
+  *   Brian Schlining
   * @since 2016-05-23T11:30:00
   */
 class VideoSequenceController(val daoFactory: JPADAOFactory) extends BaseController:
@@ -64,13 +62,13 @@ class VideoSequenceController(val daoFactory: JPADAOFactory) extends BaseControl
   )(implicit ec: ExecutionContext): Future[Seq[VSDTO]] =
     exec(d => d.findByCameraIDAndTimestamp(cameraID, timestamp, window).toSeq.map(VSDTO.from))
 
-  def create(name: String, cameraID: String, description: Option[String] = None)(
-      implicit ec: ExecutionContext
+  def create(name: String, cameraID: String, description: Option[String] = None)(implicit
+      ec: ExecutionContext
   ): Future[VSDTO] =
     def fn(dao: VSDAO): VSDTO =
       dao.findByName(name) match
         case Some(vs) => VSDTO.from(vs)
-        case None =>
+        case None     =>
           // val vs = VideoSequence(name, cameraID, description = description)
           val vs = new VideoSequenceEntity(name, cameraID, description.getOrElse(null))
           dao.create(vs)
@@ -83,7 +81,7 @@ class VideoSequenceController(val daoFactory: JPADAOFactory) extends BaseControl
         case Some(vs) =>
           dao.delete(vs)
           true
-        case None =>
+        case None     =>
           false
     exec(fn)
 
@@ -95,7 +93,7 @@ class VideoSequenceController(val daoFactory: JPADAOFactory) extends BaseControl
   )(implicit ec: ExecutionContext): Future[VSDTO] =
     def fn(dao: VSDAO): VSDTO =
       dao.findByUUID(uuid) match
-        case None =>
+        case None     =>
           throw new NotFoundInDatastoreException(
             s"No VideoSequence with UUID of $uuid was found in the database"
           )
@@ -111,4 +109,3 @@ class VideoSequenceController(val daoFactory: JPADAOFactory) extends BaseControl
     val f   = dao.runTransaction(fn)
     f.onComplete(t => dao.close())
     f
-

@@ -30,14 +30,11 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.reflect.ClassTag
 import scala.reflect.classTag
 
-/**
-  *
-  *
-  * @author Brian Schlining
+/** @author
+  *   Brian Schlining
   * @since 2016-05-06T11:18:00
   */
-abstract class BaseDAO[B <: IPersistentObject: ClassTag](val entityManager: EntityManager)
-    extends DAO[B]:
+abstract class BaseDAO[B <: IPersistentObject: ClassTag](val entityManager: EntityManager) extends DAO[B]:
   private[this] val log = LoggerFactory.getLogger(getClass)
 
   if (log.isInfoEnabled)
@@ -50,17 +47,16 @@ abstract class BaseDAO[B <: IPersistentObject: ClassTag](val entityManager: Enti
 
   def findByNamedQuery(name: String, namedParameters: Map[String, Any] = Map.empty): List[B] =
     val query = entityManager.createNamedQuery(name)
-    namedParameters.foreach({ case (a, b) => query.setParameter(a, b) })
+    namedParameters.foreach { case (a, b) => query.setParameter(a, b) }
     query.getResultList.asScala.toList.map(_.asInstanceOf[B])
 
   def executeNamedQuery(name: String, namedParameters: Map[String, Any] = Map.empty): Unit =
     val query = entityManager.createNamedQuery(name)
-    namedParameters.foreach({ case (a, b) => query.setParameter(a, b) })
+    namedParameters.foreach { case (a, b) => query.setParameter(a, b) }
     query.executeUpdate()
 
-  /**
-    * Lookup entity by primary key. A DAO will only return entities of their type.
-    * Also, note that I had to use a little scala reflection magic here
+  /** Lookup entity by primary key. A DAO will only return entities of their type. Also, note that I had to use a little scala reflection
+    * magic here
     *
     * @param primaryKey
     * @return
@@ -79,7 +75,6 @@ abstract class BaseDAO[B <: IPersistentObject: ClassTag](val entityManager: Enti
   override def delete(entity: B): Unit = entityManager.remove(entity)
 
   def close(): Unit = if (entityManager.isOpen) entityManager.close()
-
 
 object BaseDAO:
   val JDBC_URL_KEY = "javax.persistence.jdbc.url"

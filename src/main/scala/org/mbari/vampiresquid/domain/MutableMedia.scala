@@ -21,10 +21,10 @@ import java.time.{Duration, Instant}
 import java.util.UUID
 import org.mbari.vampiresquid.repository.jpa.entity.VideoReferenceEntity
 
-/**
- * @author Brian Schlining
- * @since 2017-03-06T09:28:00
- */
+/** @author
+  *   Brian Schlining
+  * @since 2017-03-06T09:28:00
+  */
 class MutableMedia:
 
   var videoSequenceUuid: UUID = _
@@ -75,15 +75,14 @@ class MutableMedia:
 
   def contains(ts: Instant): Boolean =
     endTimestamp match
-      case None => startTimestamp == ts
+      case None    => startTimestamp == ts
       case Some(e) =>
         startTimestamp == ts || e == ts || startTimestamp.isBefore(ts) && e.isAfter(ts)
-
 
 object MutableMedia:
 
   def apply(videoReference: VideoReferenceEntity): MutableMedia =
-    val video = videoReference.getVideo
+    val video         = videoReference.getVideo
     val videoSequence = video.getVideoSequence
 
     val m = new MutableMedia
@@ -113,27 +112,27 @@ object MutableMedia:
     m
 
   def build(
-             videoReferenceUuid: Option[UUID] = None,
-             videoSequenceUuid: Option[UUID] = None,
-             videoUuid: Option[UUID] = None,
-             videoSequenceName: Option[String] = None,
-             cameraId: Option[String] = None,
-             videoName: Option[String] = None,
-             uri: Option[URI] = None,
-             startTimestamp: Option[Instant] = None,
-             duration: Option[Duration] = None,
-             container: Option[String] = None,
-             videoCodec: Option[String] = None,
-             audioCodec: Option[String] = None,
-             width: Option[Int] = None,
-             height: Option[Int] = None,
-             frameRate: Option[Double] = None,
-             sizeBytes: Option[Long] = None,
-             description: Option[String] = None,
-             sha512: Option[Array[Byte]] = None,
-             videoSequenceDescription: Option[String] = None,
-             videoDescription: Option[String] = None
-           ): MutableMedia =
+      videoReferenceUuid: Option[UUID] = None,
+      videoSequenceUuid: Option[UUID] = None,
+      videoUuid: Option[UUID] = None,
+      videoSequenceName: Option[String] = None,
+      cameraId: Option[String] = None,
+      videoName: Option[String] = None,
+      uri: Option[URI] = None,
+      startTimestamp: Option[Instant] = None,
+      duration: Option[Duration] = None,
+      container: Option[String] = None,
+      videoCodec: Option[String] = None,
+      audioCodec: Option[String] = None,
+      width: Option[Int] = None,
+      height: Option[Int] = None,
+      frameRate: Option[Double] = None,
+      sizeBytes: Option[Long] = None,
+      description: Option[String] = None,
+      sha512: Option[Array[Byte]] = None,
+      videoSequenceDescription: Option[String] = None,
+      videoDescription: Option[String] = None
+  ): MutableMedia =
     val m = new MutableMedia
     videoReferenceUuid.foreach(m.videoReferenceUuid = _)
     videoSequenceUuid.foreach(m.videoSequenceUuid = _)
@@ -156,4 +155,3 @@ object MutableMedia:
     videoSequenceDescription.foreach(m.videoSequenceDescription = _)
     videoDescription.foreach(m.videoDescription = _)
     m
-

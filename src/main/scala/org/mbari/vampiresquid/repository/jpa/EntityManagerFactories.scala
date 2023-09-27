@@ -23,14 +23,13 @@ import org.eclipse.persistence.config.PersistenceUnitProperties
 
 import scala.jdk.CollectionConverters._
 
-/**
-  * https://stackoverflow.com/questions/4106078/dynamic-jpa-connection
+/** https://stackoverflow.com/questions/4106078/dynamic-jpa-connection
   *
-  * THis factory allows us to instantiate an javax.persistence.EntityManager from the
-  * basic parameters (url, driver, password, username). You can pass in a map of additional properties
-  * to customize the EntityManager.
+  * THis factory allows us to instantiate an javax.persistence.EntityManager from the basic parameters (url, driver, password, username).
+  * You can pass in a map of additional properties to customize the EntityManager.
   *
-  * @author Brian Schlining
+  * @author
+  *   Brian Schlining
   * @since 2016-05-05T17:29:00
   */
 object EntityManagerFactories:
@@ -38,15 +37,15 @@ object EntityManagerFactories:
   private lazy val config = ConfigFactory.load()
 
   val PRODUCTION_PROPS = Map(
-    "eclipselink.connection-pool.default.initial"         -> "2",
-    "eclipselink.connection-pool.default.max"             -> "16",
-    "eclipselink.connection-pool.default.min"             -> "2",
-    "eclipselink.logging.logger"                          -> "org.eclipse.persistence.logging.slf4j.SLF4JLogger",
-    "eclipselink.logging.session"                         -> "false",
-    "eclipselink.logging.thread"                          -> "false",
-    "eclipselink.logging.timestamp"                       -> "false",
+    "eclipselink.connection-pool.default.initial"           -> "2",
+    "eclipselink.connection-pool.default.max"               -> "16",
+    "eclipselink.connection-pool.default.min"               -> "2",
+    "eclipselink.logging.logger"                            -> "org.eclipse.persistence.logging.slf4j.SLF4JLogger",
+    "eclipselink.logging.session"                           -> "false",
+    "eclipselink.logging.thread"                            -> "false",
+    "eclipselink.logging.timestamp"                         -> "false",
     "jakarta.persistence.schema-generation.database.action" -> "create",
-    PersistenceUnitProperties.SESSION_CUSTOMIZER          -> "org.mbari.vampiresquid.etc.eclipselink.UUIDSequence"
+    PersistenceUnitProperties.SESSION_CUSTOMIZER            -> "org.mbari.vampiresquid.etc.eclipselink.UUIDSequence"
   )
 
   def apply(properties: Map[String, String]): EntityManagerFactory =
@@ -76,9 +75,9 @@ object EntityManagerFactories:
     val productName = config.getString(configNode + ".name")
     val url         = config.getString(configNode + ".url")
     val user        = config.getString(configNode + ".user")
-    val props = Map(
-      "eclipselink.logging.level"               -> logLevel,
-      "eclipselink.target-database"             -> productName,
+    val props       = Map(
+      "eclipselink.logging.level"                 -> logLevel,
+      "eclipselink.target-database"               -> productName,
       "jakarta.persistence.database-product-name" -> productName,
       "jakarta.persistence.jdbc.driver"           -> driver,
       "jakarta.persistence.jdbc.password"         -> password,

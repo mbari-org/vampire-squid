@@ -28,17 +28,19 @@ import scala.io.StdIn
 
 @main def run(): Unit =
 
-  val serverOptions = VertxFutureServerOptions.customiseInterceptors
+  val serverOptions = VertxFutureServerOptions
+    .customiseInterceptors
     .metricsInterceptor(Endpoints.prometheusMetrics.metricsInterceptor())
     .options
 
   val port = sys.env.get("HTTP_PORT").flatMap(_.toIntOption).getOrElse(8080)
 
-  val vertx = Vertx.vertx()
+  val vertx  = Vertx.vertx()
   val server = vertx.createHttpServer()
   val router = Router.router(vertx)
 
-  Endpoints.all
+  Endpoints
+    .all
     .foreach(endpoint => {
       VertxFutureServerInterpreter(serverOptions)
         .route(endpoint)
@@ -47,10 +49,10 @@ import scala.io.StdIn
 
   val program = for {
     binding <- server.requestHandler(router).listen(port).asScala
-    _ <- Future:
-      println(s"Go to http://localhost:${binding.actualPort()}/docs to open SwaggerUI. Press ENTER key to exit.")
-      StdIn.readLine()
-    stop <- binding.close().asScala
+    _       <- Future:
+                 println(s"Go to http://localhost:${binding.actualPort()}/docs to open SwaggerUI. Press ENTER key to exit.")
+                 StdIn.readLine()
+    stop    <- binding.close().asScala
   } yield stop
 
   Await.result(program, Duration.Inf)

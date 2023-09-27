@@ -40,4 +40,3 @@ object HealthStatus:
       maxMemory = runtime.maxMemory,
       totalMemory = runtime.totalMemory
     )
-

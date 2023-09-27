@@ -40,7 +40,7 @@ object CirceCodecs:
 
   implicit val urlDecoder: Decoder[URL] = Decoder
     .decodeString
-    .emapTry(str => Try(new URL(str)))
+    .emapTry(str => Try(URI.create(str).toURL()))
   implicit val urlEncoder: Encoder[URL] = Encoder
     .encodeString
     .contramap(_.toString)
@@ -69,23 +69,16 @@ object CirceCodecs:
 
   private val printer = Printer.noSpaces.copy(dropNullValues = true)
 
-
-  /**
-   * Convert a circe Json object to a JSON string
-   *
-   * @param value
-   * Any value with an implicit circe coder in scope
-   */
+  /** Convert a circe Json object to a JSON string
+    *
+    * @param value
+    *   Any value with an implicit circe coder in scope
+    */
   extension (json: Json) def stringify: String = printer.print(json)
 
-  /**
-   * Convert an object to a JSON string
-   *
-   * @param value
-   * Any value with an implicit circe coder in scope
-   */
-  extension[T: Encoder] (value: T) def stringify: String = Encoder[T].apply(value).stringify
-
-
-
-
+  /** Convert an object to a JSON string
+    *
+    * @param value
+    *   Any value with an implicit circe coder in scope
+    */
+  extension [T: Encoder](value: T) def stringify: String = Encoder[T].apply(value).stringify

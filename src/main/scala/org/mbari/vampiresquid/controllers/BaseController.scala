@@ -22,18 +22,14 @@ import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
 import org.mbari.vampiresquid.etc.circe.CirceCodecs.{*, given}
 import io.circe.parser.decode
 
-/**
-  *
-  *
-  * @author Brian Schlining
+/** @author
+  *   Brian Schlining
   * @since 2016-05-23T13:51:00
   */
 trait BaseController:
-  
 
   def daoFactory: JPADAOFactory
-  def toJson[T: Encoder](obj: T): String = obj.stringify
+  def toJson[T: Encoder](obj: T): String    = obj.stringify
   def fromJson[T: Decoder](json: String): T = decode[T](json) match
-    case Left(e) => throw new RuntimeException(e)
+    case Left(e)      => throw new RuntimeException(e)
     case Right(value) => value
-

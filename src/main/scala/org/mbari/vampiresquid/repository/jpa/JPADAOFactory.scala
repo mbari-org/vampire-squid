@@ -23,10 +23,10 @@ import org.mbari.vampiresquid.repository.jpa.entity.VideoSequenceEntity
 import org.mbari.vampiresquid.repository.jpa.entity.VideoEntity
 import org.mbari.vampiresquid.repository.jpa.entity.VideoReferenceEntity
 
-/**
-  * Self-explanatory. THis class creates DAOs for the JPA implementation.
+/** Self-explanatory. THis class creates DAOs for the JPA implementation.
   *
-  * @author Brian Schlining
+  * @author
+  *   Brian Schlining
   * @since 2016-06-08T15:28:00
   */
 trait JPADAOFactory extends DAOFactory[VideoSequenceEntity, VideoEntity, VideoReferenceEntity]:
@@ -42,8 +42,7 @@ trait JPADAOFactory extends DAOFactory[VideoSequenceEntity, VideoEntity, VideoRe
   override def newVideoReferenceDAO(): VideoReferenceDAOImpl =
     new VideoReferenceDAOImpl(entityManagerFactory.createEntityManager())
 
-  /**
-    * Create a new DAO that share the underlying connection (e.g. EntityManager)
+  /** Create a new DAO that share the underlying connection (e.g. EntityManager)
     *
     * @param dao
     * @return
@@ -51,8 +50,7 @@ trait JPADAOFactory extends DAOFactory[VideoSequenceEntity, VideoEntity, VideoRe
   override def newVideoDAO(dao: DAO[_]): VideoDAO[VideoEntity] =
     new VideoDAOImpl(dao.asInstanceOf[BaseDAO[_]].entityManager)
 
-  /**
-    * Create a new DAO that share the underlying connection (e.g. EntityManager)
+  /** Create a new DAO that share the underlying connection (e.g. EntityManager)
     *
     * @param dao
     * @return
@@ -60,15 +58,13 @@ trait JPADAOFactory extends DAOFactory[VideoSequenceEntity, VideoEntity, VideoRe
   override def newVideoSequenceDAO(dao: DAO[_]): VideoSequenceDAO[VideoSequenceEntity] =
     new VideoSequenceDAOImpl(dao.asInstanceOf[BaseDAO[_]].entityManager)
 
-  /**
-    * Create a new DAO that share the underlying connection (e.g. EntityManager)
+  /** Create a new DAO that share the underlying connection (e.g. EntityManager)
     *
     * @param dao
     * @return
     */
   override def newVideoReferenceDAO(dao: DAO[_]): VideoReferenceDAO[VideoReferenceEntity] =
     new VideoReferenceDAOImpl(dao.asInstanceOf[BaseDAO[_]].entityManager)
-
 
 class JPADAOFactoryImpl(val entityManagerFactory: EntityManagerFactory) extends JPADAOFactory
 

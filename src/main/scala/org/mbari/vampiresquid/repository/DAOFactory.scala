@@ -18,19 +18,17 @@ package org.mbari.vampiresquid.repository
 
 import org.mbari.vampiresquid.repository.jpa.entity.IPersistentObject
 
-/**
-  * OUr intent is to eventually support different backends. This factory provides an abstraction
-  * to obtaining the appropriate DAO.
+/** OUr intent is to eventually support different backends. This factory provides an abstraction to obtaining the appropriate DAO.
   *
-  * @author Brian Schlining
+  * @author
+  *   Brian Schlining
   * @since 2016-05-06T15:39:00
   */
 trait DAOFactory[A <: IPersistentObject, B <: IPersistentObject, C <: IPersistentObject]:
 
   def newVideoSequenceDAO(): VideoSequenceDAO[A]
 
-  /**
-    * Create a new DAO that share the underlying connection (e.g. EntityManager)
+  /** Create a new DAO that share the underlying connection (e.g. EntityManager)
     * @param dao
     * @return
     */
@@ -38,8 +36,7 @@ trait DAOFactory[A <: IPersistentObject, B <: IPersistentObject, C <: IPersisten
 
   def newVideoDAO(): VideoDAO[B]
 
-  /**
-    * Create a new DAO that share the underlying connection (e.g. EntityManager)
+  /** Create a new DAO that share the underlying connection (e.g. EntityManager)
     * @param dao
     * @return
     */
@@ -47,10 +44,8 @@ trait DAOFactory[A <: IPersistentObject, B <: IPersistentObject, C <: IPersisten
 
   def newVideoReferenceDAO(): VideoReferenceDAO[C]
 
-  /**
-    * Create a new DAO that share the underlying connection (e.g. EntityManager)
+  /** Create a new DAO that share the underlying connection (e.g. EntityManager)
     * @param dao
     * @return
     */
   def newVideoReferenceDAO(dao: DAO[_]): VideoReferenceDAO[C]
-

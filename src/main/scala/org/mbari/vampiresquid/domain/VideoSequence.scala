@@ -22,24 +22,26 @@ import java.time.Instant
 import java.util.UUID
 import scala.jdk.CollectionConverters._
 
-case class VideoSequence(uuid: UUID,
-                         name: String,
-                         camera_id: String,
-                         description: Option[String] = None,
-                         last_updated_time: Option[Instant] = None,
-                         videos: List[Video] = Nil
-                        ):
+case class VideoSequence(
+    uuid: UUID,
+    name: String,
+    camera_id: String,
+    description: Option[String] = None,
+    last_updated_time: Option[Instant] = None,
+    videos: List[Video] = Nil
+):
 
-  def cameraId: String = camera_id
-  def lastUpdatedTimestamp: Option[Instant] = last_updated_time
+  def cameraId: String                           = camera_id
+  def lastUpdatedTimestamp: Option[Instant]      = last_updated_time
   lazy val videoReferences: List[VideoReference] = videos.flatMap(_.video_references)
 
-object VideoSequence {
+object VideoSequence:
   def from(v: VideoSequenceEntity): VideoSequence =
-    VideoSequence(v.getUuid,
+    VideoSequence(
+      v.getUuid,
       v.getName,
       v.getCameraID,
       Option(v.getDescription),
       Option(v.getLastUpdatedTime).map(_.toInstant),
-      v.getVideos.asScala.map(Video.from).toList)
-}
+      v.getVideos.asScala.map(Video.from).toList
+    )

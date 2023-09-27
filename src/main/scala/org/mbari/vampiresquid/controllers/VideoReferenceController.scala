@@ -26,10 +26,8 @@ import scala.concurrent.{ExecutionContext, Future}
 import org.mbari.vampiresquid.repository.jpa.entity.VideoReferenceEntity
 import org.mbari.vampiresquid.domain.{Media, VideoReference => VRDTO}
 
-/**
-  *
-  *
-  * @author Brian Schlining
+/** @author
+  *   Brian Schlining
   * @since 2016-06-06T16:14:00
   */
 class VideoReferenceController(val daoFactory: JPADAOFactory) extends BaseController:
@@ -78,14 +76,15 @@ class VideoReferenceController(val daoFactory: JPADAOFactory) extends BaseContro
     def fn(dao: VRDAO): VRDTO =
       dao.findByURI(uri) match
         case Some(v) => VRDTO.from(v)
-        case None =>
+        case None    =>
           val vdao = daoFactory.newVideoDAO(dao)
           val v    = vdao.findByUUID(videoUUID)
           v match
-            case None =>
+            case None        =>
               throw new NotFoundInDatastoreException(s"No Video with UUID of $videoUUID exists")
             case Some(video) =>
-              val videoReference = new VideoReferenceEntity(uri,
+              val videoReference = new VideoReferenceEntity(
+                uri,
                 container.orNull,
                 videoCodec.orNull,
                 audioCodec.orNull,
@@ -93,13 +92,13 @@ class VideoReferenceController(val daoFactory: JPADAOFactory) extends BaseContro
                 height.map(i => Integer.valueOf(i)).orNull,
                 frameRate.map(d => java.lang.Double.valueOf(d)).orNull,
                 sizeBytes.map(l => java.lang.Long.valueOf(l)).orNull,
-                description.orNull,
-                )
+                description.orNull
+              )
               video.addVideoReference(videoReference)
               sha512.foreach(videoReference.setSha512)
               dao.create(videoReference)
-              val vr = VRDTO.from(videoReference)
-              val media = Media.from(videoReference)
+              val vr             = VRDTO.from(videoReference)
+              val media          = Media.from(videoReference)
               // Notify messaging service of new video reference
               // Constants.MESSAGING_SERVICE.newVideoReference(media)
               vr
@@ -122,7 +121,7 @@ class VideoReferenceController(val daoFactory: JPADAOFactory) extends BaseContro
 
     def fn(dao: VRDAO): VRDTO =
       dao.findByUUID(uuid) match
-        case None =>
+        case None                 =>
           throw new NotFoundInDatastoreException(
             s"No VideoReference with UUID of $uuid was found in the datastore"
           )
@@ -139,11 +138,11 @@ class VideoReferenceController(val daoFactory: JPADAOFactory) extends BaseContro
           sha512.foreach(videoReference.setSha512)
 
           videoUUID match
-            case None => VRDTO.from(videoReference)
+            case None        => VRDTO.from(videoReference)
             case Some(vUUID) =>
               val vDao = daoFactory.newVideoDAO(dao)
               vDao.findByUUID(vUUID) match
-                case None =>
+                case None        =>
                   throw new NotFoundInDatastoreException(s"No Video with UUID of $vUUID was found.")
                 case Some(video) =>
                   videoReference.getVideo.removeVideoReference(videoReference)
@@ -157,14 +156,12 @@ class VideoReferenceController(val daoFactory: JPADAOFactory) extends BaseContro
         case Some(v) =>
           dao.delete(v)
           true
-        case None =>
+        case None    =>
           false
     exec(fn)
-  
 
   private def exec[T](fn: VRDAO => T)(implicit ec: ExecutionContext): Future[T] =
     val dao = daoFactory.newVideoReferenceDAO()
     val f   = dao.runTransaction(fn)
     f.onComplete(t => dao.close())
     f
-

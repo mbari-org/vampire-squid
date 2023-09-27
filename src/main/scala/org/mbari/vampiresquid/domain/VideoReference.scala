@@ -23,28 +23,29 @@ import java.time.Instant
 import java.util.UUID
 
 case class VideoReference(
-                           uuid: UUID,
-                           uri: URI,
-                           container: Option[String] = None,
-                           video_codec: Option[String] = None,
-                           audio_codec: Option[String] = None,
-                           width: Option[Int] = None,
-                           height: Option[Int] = None,
-                           frame_rate: Option[Double] = None,
-                           size_bytes: Option[Long] = None,
-                           sha512: Option[Array[Byte]] = None,
-                           description: Option[String] = None,
-                           last_updated_time: Option[Instant] = None
-                         ):
-  def videoCodec: Option[String] = video_codec
-  def audioCodec: Option[String] = audio_codec
-  def frameRate: Option[Double] = frame_rate
-  def sizeBytes: Option[Long] = size_bytes
+    uuid: UUID,
+    uri: URI,
+    container: Option[String] = None,
+    video_codec: Option[String] = None,
+    audio_codec: Option[String] = None,
+    width: Option[Int] = None,
+    height: Option[Int] = None,
+    frame_rate: Option[Double] = None,
+    size_bytes: Option[Long] = None,
+    sha512: Option[Array[Byte]] = None,
+    description: Option[String] = None,
+    last_updated_time: Option[Instant] = None
+):
+  def videoCodec: Option[String]            = video_codec
+  def audioCodec: Option[String]            = audio_codec
+  def frameRate: Option[Double]             = frame_rate
+  def sizeBytes: Option[Long]               = size_bytes
   def lastUpdatedTimestamp: Option[Instant] = last_updated_time
 
 object VideoReference:
   def from(v: VideoReferenceEntity): VideoReference =
-    VideoReference(v.getUuid,
+    VideoReference(
+      v.getUuid,
       v.getUri,
       Option(v.getContainer),
       Option(v.getVideoCodec),

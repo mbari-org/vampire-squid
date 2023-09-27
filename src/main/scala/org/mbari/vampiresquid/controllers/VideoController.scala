@@ -27,10 +27,8 @@ import scala.concurrent.{ExecutionContext, Future}
 import org.mbari.vampiresquid.repository.jpa.entity.VideoEntity
 import org.mbari.vampiresquid.domain.{Video => VDTO, VideoSequence => VSDTO}
 
-/**
-  *
-  *
-  * @author Brian Schlining
+/** @author
+  *   Brian Schlining
   * @since 2016-05-26T08:27:00
   */
 class VideoController(val daoFactory: JPADAOFactory) extends BaseController:
@@ -52,13 +50,13 @@ class VideoController(val daoFactory: JPADAOFactory) extends BaseController:
   def findAllNamesAndTimestamps()(implicit ec: ExecutionContext): Future[Seq[(String, Instant)]] =
     exec(d => d.findAllNamesAndTimestamps().toSeq)
 
-  def findBetweenTimestamps(t0: Instant, t1: Instant)(
-      implicit ec: ExecutionContext
+  def findBetweenTimestamps(t0: Instant, t1: Instant)(implicit
+      ec: ExecutionContext
   ): Future[Seq[VDTO]] =
     exec(d => d.findBetweenTimestamps(t0, t1).toSeq.map(VDTO.from))
 
-  def findByTimestamp(t0: Instant, window: Duration = Constants.DEFAULT_DURATION_WINDOW)(
-      implicit ec: ExecutionContext
+  def findByTimestamp(t0: Instant, window: Duration = Constants.DEFAULT_DURATION_WINDOW)(implicit
+      ec: ExecutionContext
   ): Future[Seq[VDTO]] =
     exec(d => d.findByTimestamp(t0, window).toSeq.map(VDTO.from))
 
@@ -86,11 +84,11 @@ class VideoController(val daoFactory: JPADAOFactory) extends BaseController:
     def fn(dao: VDAO): VDTO =
       dao.findByName(name) match
         case Some(v) => VDTO.from(v)
-        case None =>
+        case None    =>
           val vsdao = daoFactory.newVideoSequenceDAO(dao)
           val vs    = vsdao.findByUUID(videoSequenceUUID)
           vs match
-            case None =>
+            case None                =>
               throw new NotFoundInDatastoreException(
                 s"No VideoSequence with UUID of $videoSequenceUUID exists"
               )
@@ -112,9 +110,8 @@ class VideoController(val daoFactory: JPADAOFactory) extends BaseController:
   )(implicit ec: ExecutionContext): Future[VDTO] =
 
     def fn(dao: VDAO): VDTO =
-
       dao.findByUUID(uuid) match
-        case None =>
+        case None        =>
           throw new NotFoundInDatastoreException(
             s"No Video with UUID of $uuid was found in the datastore"
           )
@@ -125,11 +122,11 @@ class VideoController(val daoFactory: JPADAOFactory) extends BaseController:
           description.foreach(video.setDescription)
 
           videoSequenceUUID match
-            case None => VDTO.from(video)
+            case None         => VDTO.from(video)
             case Some(vsUUID) =>
               val vsDao = daoFactory.newVideoSequenceDAO(dao)
               vsDao.findByUUID(vsUUID) match
-                case None =>
+                case None                =>
                   throw new NotFoundInDatastoreException(
                     s"No VideoSequence with UUID of $videoSequenceUUID was found in the datastore"
                   )
@@ -146,7 +143,7 @@ class VideoController(val daoFactory: JPADAOFactory) extends BaseController:
         case Some(v) =>
           dao.delete(v)
           true
-        case None =>
+        case None    =>
           false
     exec(fn)
 
@@ -155,4 +152,3 @@ class VideoController(val daoFactory: JPADAOFactory) extends BaseController:
     val f   = dao.runTransaction(fn)
     f.onComplete(t => dao.close())
     f
-

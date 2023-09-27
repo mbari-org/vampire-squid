@@ -29,16 +29,18 @@ import sttp.tapir.swagger.bundle.SwaggerInterpreter
 
 object Endpoints:
   case class User(name: String) extends AnyVal
-  val helloEndpoint: PublicEndpoint[User, Unit, String, Any] = endpoint.get
+  val helloEndpoint: PublicEndpoint[User, Unit, String, Any] = endpoint
+    .get
     .in("hello")
     .in(query[User]("name"))
     .out(stringBody)
-  val helloServerEndpoint: ServerEndpoint[Any, Future] = helloEndpoint.serverLogicSuccess(user => Future.successful(s"Hello ${user.name}"))
+  val helloServerEndpoint: ServerEndpoint[Any, Future]       = helloEndpoint.serverLogicSuccess(user => Future.successful(s"Hello ${user.name}"))
 
-  val booksListing: PublicEndpoint[Unit, Unit, List[Book], Any] = endpoint.get
+  val booksListing: PublicEndpoint[Unit, Unit, List[Book], Any] = endpoint
+    .get
     .in("books" / "list" / "all")
     .out(jsonBody[List[Book]])
-  val booksListingServerEndpoint: ServerEndpoint[Any, Future] = booksListing.serverLogicSuccess(_ => Future.successful(Library.books))
+  val booksListingServerEndpoint: ServerEndpoint[Any, Future]   = booksListing.serverLogicSuccess(_ => Future.successful(Library.books))
 
   val apiEndpoints: List[ServerEndpoint[Any, Future]] = List(helloServerEndpoint, booksListingServerEndpoint)
 

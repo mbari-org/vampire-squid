@@ -18,9 +18,8 @@ package org.mbari.vampiresquid.domain
 
 import java.time.Instant
 
-
-/**
-  * @author Brian Schlining
+/** @author
+  *   Brian Schlining
   * @since 2019-01-30T10:41:00
   */
 case class LastUpdatedTime(timestamp: Instant)

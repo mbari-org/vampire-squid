@@ -28,15 +28,11 @@ import org.mbari.vampiresquid.repository.jpa.entity.VideoEntity
 
 import java.sql.Timestamp
 
-/**
-  *
-  *
-  * @author Brian Schlining
+/** @author
+  *   Brian Schlining
   * @since 2016-05-11T14:35:00
   */
-class VideoDAOImpl(entityManager: EntityManager)
-  extends BaseDAO[VideoEntity](entityManager)
-    with VideoDAO[VideoEntity]:
+class VideoDAOImpl(entityManager: EntityManager) extends BaseDAO[VideoEntity](entityManager) with VideoDAO[VideoEntity]:
 
   override def findByName(name: String): Option[VideoEntity] =
     findByNamedQuery("Video.findByName", Map("name" -> name)).headOption
@@ -51,10 +47,10 @@ class VideoDAOImpl(entityManager: EntityManager)
       timestamp: Instant,
       window: Duration = Constants.DEFAULT_DURATION_WINDOW
   ): Iterable[VideoEntity] =
-    val halfRange = window.dividedBy(2)
-    val startDate = timestamp.minus(halfRange)
-    val endDate   = timestamp.plus(halfRange)
-    val videos = findByNamedQuery(
+    val halfRange    = window.dividedBy(2)
+    val startDate    = timestamp.minus(halfRange)
+    val endDate      = timestamp.plus(halfRange)
+    val videos       = findByNamedQuery(
       "Video.findBetweenDates",
       Map("startDate" -> startDate, "endDate" -> endDate)
     )
@@ -100,4 +96,3 @@ class VideoDAOImpl(entityManager: EntityManager)
       .getResultList
       .asScala
       .map(_.toString)
-

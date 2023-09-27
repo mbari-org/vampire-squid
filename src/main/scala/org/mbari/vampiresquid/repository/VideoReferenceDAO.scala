@@ -21,10 +21,10 @@ import org.mbari.vampiresquid.repository.jpa.entity.IPersistentObject
 import java.net.URI
 import java.util.UUID
 
-/**
-  * Defines the API methods used for accessing VideoReference objects
+/** Defines the API methods used for accessing VideoReference objects
   *
-  * @author Brian Schlining
+  * @author
+  *   Brian Schlining
   * @since 2016-05-05T14:51:00
   */
 trait VideoReferenceDAO[T <: IPersistentObject] extends DAO[T]:
@@ -36,4 +36,3 @@ trait VideoReferenceDAO[T <: IPersistentObject] extends DAO[T]:
   def findByURI(uri: URI): Option[T]
   def findByFileName(filename: String): Iterable[T]
   def findBySha512(sha: Array[Byte]): Option[T]
-

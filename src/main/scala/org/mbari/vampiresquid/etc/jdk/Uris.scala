@@ -23,5 +23,3 @@ object Uris:
 
   def filename(uri: URI): String =
     Paths.get(uri.getPath).getFileName.toString
-
-
