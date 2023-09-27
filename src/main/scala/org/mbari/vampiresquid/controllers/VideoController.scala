@@ -37,7 +37,7 @@ class VideoController(val daoFactory: JPADAOFactory) extends BaseController:
 
   private type VDAO = VideoDAO[VideoEntity]
 
-  def findAll(implicit ec: ExecutionContext): Future[Seq[VDTO]] =
+  def findAll()(implicit ec: ExecutionContext): Future[Seq[VDTO]] =
     exec(d => d.findAll().toSeq.map(VDTO.from))
 
   def findByUUID(uuid: UUID)(implicit ec: ExecutionContext): Future[Option[VDTO]] =
@@ -46,10 +46,10 @@ class VideoController(val daoFactory: JPADAOFactory) extends BaseController:
   def findVideoSequenceByVideoUuid(videoUuid: UUID)(implicit executionContext: ExecutionContext): Future[Option[VSDTO]] =
     exec(d => d.findByUUID(videoUuid).map(_.getVideoSequence).map(VSDTO.from))
 
-  def findAllNames(implicit ec: ExecutionContext): Future[Seq[String]] =
+  def findAllNames()(implicit ec: ExecutionContext): Future[Seq[String]] =
     exec(d => d.findAllNames().toSeq)
 
-  def findAllNamesAndTimestamps(implicit ec: ExecutionContext): Future[Seq[(String, Instant)]] =
+  def findAllNamesAndTimestamps()(implicit ec: ExecutionContext): Future[Seq[(String, Instant)]] =
     exec(d => d.findAllNamesAndTimestamps().toSeq)
 
   def findBetweenTimestamps(t0: Instant, t1: Instant)(

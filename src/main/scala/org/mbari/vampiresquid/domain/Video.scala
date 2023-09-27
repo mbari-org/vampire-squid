@@ -35,6 +35,8 @@ case class Video(uuid: UUID,
   lazy val duration: Option[Duration] = duration_millis.map(Duration.ofMillis)
   def videoReferences: List[VideoReference] = video_references
 
+
+
 object Video:
 
   def from(v: VideoEntity): Video =

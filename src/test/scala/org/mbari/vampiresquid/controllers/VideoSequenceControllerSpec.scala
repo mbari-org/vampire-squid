@@ -37,17 +37,17 @@ class VideoSequenceControllerSpec extends AnyFlatSpec with Matchers with BeforeA
   import TestUtils.executionContext
 
   "VideoSequenceController" should "findAll" in:
-    val fn = controller.findAll
+    val fn = controller.findAll()
     val rs = Await.result(fn, TestUtils.Timeout)
     rs.size should be(n)
 
   it should "findAllNames" in:
-    val fn = controller.findAllNames
+    val fn = controller.findAllNames()
     val rs = Await.result(fn, TestUtils.Timeout)
     rs.size should be(n)
 
   it should "findByUUID" in:
-    val fn = controller.findAll
+    val fn = controller.findAll()
     val rs = Await.result(fn, TestUtils.Timeout)
     rs.size should be(n)
     val uuid = rs.head.uuid
@@ -57,12 +57,12 @@ class VideoSequenceControllerSpec extends AnyFlatSpec with Matchers with BeforeA
     rs0.get.uuid should be(uuid)
 
   it should "findAllCameraIDs" in:
-    val fn = controller.findAllCameraIDs
+    val fn = controller.findAllCameraIDs()
     val rs = Await.result(fn, TestUtils.Timeout)
     rs.size should be(n)
 
   it should "findByName" in:
-    val fn = controller.findAll
+    val fn = controller.findAll()
     val rs = Await.result(fn, TestUtils.Timeout)
     rs.size should be(n)
     val name = rs.head.name
@@ -72,7 +72,7 @@ class VideoSequenceControllerSpec extends AnyFlatSpec with Matchers with BeforeA
     rs0.get.name should be(name)
 
   it should "findByCameraIDAndTimestamp" in:
-    val fn = controller.findAll
+    val fn = controller.findAll()
     val rs = Await.result(fn, TestUtils.Timeout)
     rs.size should be(n)
     val cameraId  = rs.head.cameraId
