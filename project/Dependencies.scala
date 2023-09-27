@@ -20,7 +20,7 @@ object Dependencies {
   lazy val logback  = "ch.qos.logback"               % "logback-classic" % "1.3.0-alpha16"
   lazy val methanol = "com.github.mizosoft.methanol" % "methanol"        % "1.7.0"
   lazy val microsoft = "com.microsoft.sqlserver"                        % "mssql-jdbc" % "9.4.0.jre11"
-  lazy val munit    = "org.scalameta"               %% "munit"           % "1.0.0-M6"
+  lazy val munit    = "org.scalameta"               %% "munit"           % "1.0.0-M10"
   lazy val oracle = "com.oracle.ojdbc"                               % "ojdbc8" % "19.3.0.0"
   lazy val picocli  = "info.picocli"                 % "picocli"         % "4.6.3"
 
