@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Monterey Bay Aquarium Research Institute
+ * Copyright 2021 MBARI
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,8 @@ package org.mbari.vampiresquid.repository.jpa.entity;
 
 import org.mbari.vampiresquid.etc.jpa.TransactionLogger;
 import org.mbari.vampiresquid.etc.jpa.UUIDConverter;
-import org.mbari.vampiresquid.repository.PersistentObject;
-import scala.Option;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +82,7 @@ import java.util.UUID;
                 )
         }
 )
-public class VideoSequenceEntity implements PersistentObject {
+public class VideoSequenceEntity implements IPersistentObject {
 
     @Id
     @GeneratedValue(generator = "system-uuid")
@@ -111,7 +109,7 @@ public class VideoSequenceEntity implements PersistentObject {
     @OneToMany(
             targetEntity = VideoEntity.class,
             cascade = {CascadeType.ALL},
-            fetch = FetchType.EAGER,
+            fetch = FetchType.LAZY,
             mappedBy = "videoSequence",
             orphanRemoval = true
     )
@@ -145,11 +143,6 @@ public class VideoSequenceEntity implements PersistentObject {
         this.cameraID = cameraID;
         this.description = description;
         videos.forEach(this::addVideo);
-    }
-
-    @Override
-    public Option<UUID> primaryKey() {
-        return null;
     }
 
     public List<VideoEntity> getVideos() {
@@ -227,9 +220,13 @@ public class VideoSequenceEntity implements PersistentObject {
         return name.hashCode() * 31;
     }
 
+
     @Override
     public String toString() {
-        return "VideoSequence(%s, %s)".formatted(name, cameraID);
+        return "VideoSequenceEntity{" +
+                "uuid=" + uuid +
+                ", name='" + name + '\'' +
+                ", cameraID='" + cameraID + '\'' +
+                '}';
     }
-
 }

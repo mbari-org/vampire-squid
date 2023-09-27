@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Monterey Bay Aquarium Research Institute
+ * Copyright 2021 MBARI
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.mbari.vampiresquid.repository
 
+import org.mbari.vampiresquid.repository.jpa.entity.IPersistentObject
+
 import java.net.URI
 import java.util.UUID
 
@@ -25,7 +27,7 @@ import java.util.UUID
   * @author Brian Schlining
   * @since 2016-05-05T14:51:00
   */
-trait VideoReferenceDAO[T <: PersistentObject] extends DAO[T] {
+trait VideoReferenceDAO[T <: IPersistentObject] extends DAO[T]:
 
   def findAll(): Iterable[T]
   def findAllURIs(): Iterable[URI]
@@ -35,4 +37,3 @@ trait VideoReferenceDAO[T <: PersistentObject] extends DAO[T] {
   def findByFileName(filename: String): Iterable[T]
   def findBySha512(sha: Array[Byte]): Option[T]
 
-}

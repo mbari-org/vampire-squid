@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Monterey Bay Aquarium Research Institute
+ * Copyright 2021 MBARI
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package org.mbari.vampiresquid.controllers
 
 import org.mbari.vampiresquid.Constants
 import org.mbari.vampiresquid.repository.VideoSequenceDAO
-import org.mbari.vampiresquid.repository.jpa.{JPADAOFactory, NotFoundInDatastoreException, VideoSequence}
+import org.mbari.vampiresquid.repository.jpa.{JPADAOFactory, NotFoundInDatastoreException}
 import java.time.{Duration, Instant}
 import java.util.UUID
 
@@ -32,7 +32,7 @@ import org.mbari.vampiresquid.domain.{VideoSequence => VSDTO}
   * @author Brian Schlining
   * @since 2016-05-23T11:30:00
   */
-class VideoSequenceController(val daoFactory: JPADAOFactory) extends BaseController {
+class VideoSequenceController(val daoFactory: JPADAOFactory) extends BaseController:
 
   private type VSDAO = VideoSequenceDAO[VideoSequenceEntity]
 
@@ -66,41 +66,35 @@ class VideoSequenceController(val daoFactory: JPADAOFactory) extends BaseControl
 
   def create(name: String, cameraID: String, description: Option[String] = None)(
       implicit ec: ExecutionContext
-  ): Future[VSDTO] = {
-    def fn(dao: VSDAO): VSDTO = {
-      dao.findByName(name) match {
+  ): Future[VSDTO] =
+    def fn(dao: VSDAO): VSDTO =
+      dao.findByName(name) match
         case Some(vs) => VSDTO.from(vs)
         case None =>
           // val vs = VideoSequence(name, cameraID, description = description)
           val vs = new VideoSequenceEntity(name, cameraID, description.getOrElse(null))
           dao.create(vs)
           VSDTO.from(vs)
-      }
-    }
     exec(fn)
-  }
 
-  def delete(uuid: UUID)(implicit ec: ExecutionContext): Future[Boolean] = {
-    def fn(dao: VSDAO): Boolean = {
-      dao.findByUUID(uuid) match {
+  def delete(uuid: UUID)(implicit ec: ExecutionContext): Future[Boolean] =
+    def fn(dao: VSDAO): Boolean =
+      dao.findByUUID(uuid) match
         case Some(vs) =>
           dao.delete(vs)
           true
         case None =>
           false
-      }
-    }
     exec(fn)
-  }
 
   def update(
       uuid: UUID,
       name: Option[String] = None,
       cameraID: Option[String] = None,
       description: Option[String] = None
-  )(implicit ec: ExecutionContext): Future[VSDTO] = {
-    def fn(dao: VSDAO): VSDTO = {
-      dao.findByUUID(uuid) match {
+  )(implicit ec: ExecutionContext): Future[VSDTO] =
+    def fn(dao: VSDAO): VSDTO =
+      dao.findByUUID(uuid) match
         case None =>
           throw new NotFoundInDatastoreException(
             s"No VideoSequence with UUID of $uuid was found in the database"
@@ -110,16 +104,11 @@ class VideoSequenceController(val daoFactory: JPADAOFactory) extends BaseControl
           cameraID.foreach(vs.setCameraID)
           description.foreach(vs.setDescription)
           VSDTO.from(vs)
-      }
-    }
     exec(fn)
-  }
 
-  private def exec[T](fn: VSDAO => T)(implicit ec: ExecutionContext): Future[T] = {
+  private def exec[T](fn: VSDAO => T)(implicit ec: ExecutionContext): Future[T] =
     val dao = daoFactory.newVideoSequenceDAO()
     val f   = dao.runTransaction(fn)
     f.onComplete(t => dao.close())
     f
-  }
 
-}

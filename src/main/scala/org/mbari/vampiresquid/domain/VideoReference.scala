@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Monterey Bay Aquarium Research Institute
+ * Copyright 2021 MBARI
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,16 +35,15 @@ case class VideoReference(
                            sha512: Option[Array[Byte]] = None,
                            description: Option[String] = None,
                            last_updated_time: Option[Instant] = None
-                         ) {
+                         ):
   def videoCodec: Option[String] = video_codec
   def audioCodec: Option[String] = audio_codec
   def frameRate: Option[Double] = frame_rate
   def sizeBytes: Option[Long] = size_bytes
   def lastUpdatedTimestamp: Option[Instant] = last_updated_time
-}
 
-object VideoReference {
-  def from(v: VideoReferenceEntity): VideoReference = {
+object VideoReference:
+  def from(v: VideoReferenceEntity): VideoReference =
     VideoReference(v.getUuid,
       v.getUri,
       Option(v.getContainer),
@@ -58,5 +57,3 @@ object VideoReference {
       Option(v.getDescription),
       Option(v.getLastUpdatedTime).map(_.toInstant)
     )
-  }
-}

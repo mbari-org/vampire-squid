@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Monterey Bay Aquarium Research Institute
+ * Copyright 2021 MBARI
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,14 @@ package org.mbari.vampiresquid.repository.jpa
 import org.mbari.vampiresquid.Constants
 import org.mbari.vampiresquid.repository.VideoDAO
 
-import java.sql.Timestamp
 import java.time.{Duration, Instant}
 import java.util.UUID
-import javax.persistence.EntityManager
+import jakarta.persistence.EntityManager
 
-import scala.jdk.CollectionConverters._
+import scala.jdk.CollectionConverters.*
 import org.mbari.vampiresquid.repository.jpa.entity.VideoEntity
+
+import java.sql.Timestamp
 
 /**
   *
@@ -35,7 +36,7 @@ import org.mbari.vampiresquid.repository.jpa.entity.VideoEntity
   */
 class VideoDAOImpl(entityManager: EntityManager)
   extends BaseDAO[VideoEntity](entityManager)
-    with VideoDAO[VideoEntity] {
+    with VideoDAO[VideoEntity]:
 
   override def findByName(name: String): Option[VideoEntity] =
     findByNamedQuery("Video.findByName", Map("name" -> name)).headOption
@@ -49,7 +50,7 @@ class VideoDAOImpl(entityManager: EntityManager)
   override def findByTimestamp(
       timestamp: Instant,
       window: Duration = Constants.DEFAULT_DURATION_WINDOW
-  ): Iterable[VideoEntity] = {
+  ): Iterable[VideoEntity] =
     val halfRange = window.dividedBy(2)
     val startDate = timestamp.minus(halfRange)
     val endDate   = timestamp.plus(halfRange)
@@ -59,26 +60,23 @@ class VideoDAOImpl(entityManager: EntityManager)
     )
     val hasTimestamp = containsTimestamp(_: VideoEntity, timestamp)
     videos.filter(hasTimestamp)
-  }
 
   override def findBetweenTimestamps(t0: Instant, t1: Instant): Iterable[VideoEntity] =
     findByNamedQuery("Video.findBetweenDates", Map("startDate" -> t0, "endDate" -> t1))
 
   override def findAll(): Iterable[VideoEntity] = findByNamedQuery("Video.findAll")
 
-  override def deleteByUUID(primaryKey: UUID): Unit = {
+  override def deleteByUUID(primaryKey: UUID): Unit =
     val video = findByUUID(primaryKey)
     video.foreach(v => delete(v))
-  }
 
-  private def containsTimestamp(video: VideoEntity, timestamp: Instant): Boolean = {
+  private def containsTimestamp(video: VideoEntity, timestamp: Instant): Boolean =
     val startDate = video.getStart()
     val endDate   = video.getStart.plus(video.getDuration())
 
     startDate.equals(timestamp) ||
     endDate.equals(timestamp) ||
     (startDate.isBefore(timestamp) && endDate.isAfter(timestamp))
-  }
 
   override def findAllNames(): Iterable[String] =
     entityManager
@@ -95,13 +93,11 @@ class VideoDAOImpl(entityManager: EntityManager)
       .map(r => r.asInstanceOf[Array[Any]])
       .map(r => r(0).toString -> r(1).asInstanceOf[Timestamp].toInstant)
 
-  def findNamesByVideoSequenceName(videoSequenceName: String): Iterable[String] = {
+  def findNamesByVideoSequenceName(videoSequenceName: String): Iterable[String] =
     val query = entityManager.createNamedQuery("Video.findNamesByVideoSequenceName")
     query.setParameter(1, videoSequenceName)
     query
       .getResultList
       .asScala
       .map(_.toString)
-  }
 
-}

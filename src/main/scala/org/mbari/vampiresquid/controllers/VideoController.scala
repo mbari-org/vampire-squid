@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Monterey Bay Aquarium Research Institute
+ * Copyright 2021 MBARI
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package org.mbari.vampiresquid.controllers
 
 import org.mbari.vampiresquid.Constants
 import org.mbari.vampiresquid.repository.VideoDAO
-import org.mbari.vampiresquid.repository.jpa.{JPADAOFactory, NotFoundInDatastoreException, Video}
+import org.mbari.vampiresquid.repository.jpa.{JPADAOFactory, NotFoundInDatastoreException}
 
 import java.time.{Duration, Instant}
 import java.util.UUID
@@ -33,7 +33,7 @@ import org.mbari.vampiresquid.domain.{Video => VDTO, VideoSequence => VSDTO}
   * @author Brian Schlining
   * @since 2016-05-26T08:27:00
   */
-class VideoController(val daoFactory: JPADAOFactory) extends BaseController {
+class VideoController(val daoFactory: JPADAOFactory) extends BaseController:
 
   private type VDAO = VideoDAO[VideoEntity]
 
@@ -82,14 +82,14 @@ class VideoController(val daoFactory: JPADAOFactory) extends BaseController {
       start: Instant,
       duration: Option[Duration] = None,
       description: Option[String] = None
-  )(implicit ec: ExecutionContext): Future[VDTO] = {
-    def fn(dao: VDAO): VDTO = {
-      dao.findByName(name) match {
+  )(implicit ec: ExecutionContext): Future[VDTO] =
+    def fn(dao: VDAO): VDTO =
+      dao.findByName(name) match
         case Some(v) => VDTO.from(v)
         case None =>
           val vsdao = daoFactory.newVideoSequenceDAO(dao)
           val vs    = vsdao.findByUUID(videoSequenceUUID)
-          vs match {
+          vs match
             case None =>
               throw new NotFoundInDatastoreException(
                 s"No VideoSequence with UUID of $videoSequenceUUID exists"
@@ -100,11 +100,7 @@ class VideoController(val daoFactory: JPADAOFactory) extends BaseController {
               videoSequence.addVideo(video)
               dao.create(video)
               VDTO.from(video)
-          }
-        }
-      }
     exec(fn)
-  }
 
   def update(
       uuid: UUID,
@@ -113,11 +109,11 @@ class VideoController(val daoFactory: JPADAOFactory) extends BaseController {
       duration: Option[Duration] = None,
       description: Option[String] = None,
       videoSequenceUUID: Option[UUID] = None
-  )(implicit ec: ExecutionContext): Future[VDTO] = {
+  )(implicit ec: ExecutionContext): Future[VDTO] =
 
-    def fn(dao: VDAO): VDTO = {
+    def fn(dao: VDAO): VDTO =
 
-      dao.findByUUID(uuid) match {
+      dao.findByUUID(uuid) match
         case None =>
           throw new NotFoundInDatastoreException(
             s"No Video with UUID of $uuid was found in the datastore"
@@ -128,11 +124,11 @@ class VideoController(val daoFactory: JPADAOFactory) extends BaseController {
           duration.foreach(video.setDuration)
           description.foreach(video.setDescription)
 
-          videoSequenceUUID match {
+          videoSequenceUUID match
             case None => VDTO.from(video)
             case Some(vsUUID) =>
               val vsDao = daoFactory.newVideoSequenceDAO(dao)
-              vsDao.findByUUID(vsUUID) match {
+              vsDao.findByUUID(vsUUID) match
                 case None =>
                   throw new NotFoundInDatastoreException(
                     s"No VideoSequence with UUID of $videoSequenceUUID was found in the datastore"
@@ -141,32 +137,22 @@ class VideoController(val daoFactory: JPADAOFactory) extends BaseController {
                   video.getVideoSequence.removeVideo(video)
                   videoSequence.addVideo(video)
                   VDTO.from(video)
-              }
 
-          }
-      }
-    }
     exec(fn)
-  }
 
-  def delete(uuid: UUID)(implicit ec: ExecutionContext): Future[Boolean] = {
-    def fn(dao: VDAO): Boolean = {
-      dao.findByUUID(uuid) match {
+  def delete(uuid: UUID)(implicit ec: ExecutionContext): Future[Boolean] =
+    def fn(dao: VDAO): Boolean =
+      dao.findByUUID(uuid) match
         case Some(v) =>
           dao.delete(v)
           true
         case None =>
           false
-      }
-    }
     exec(fn)
-  }
 
-  private def exec[T](fn: VDAO => T)(implicit ec: ExecutionContext): Future[T] = {
+  private def exec[T](fn: VDAO => T)(implicit ec: ExecutionContext): Future[T] =
     val dao = daoFactory.newVideoDAO()
     val f   = dao.runTransaction(fn)
     f.onComplete(t => dao.close())
     f
-  }
 
-}

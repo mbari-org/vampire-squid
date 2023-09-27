@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Monterey Bay Aquarium Research Institute
+ * Copyright 2021 MBARI
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,8 @@ import org.mbari.vampiresquid.etc.jpa.ByteArrayConverter;
 import org.mbari.vampiresquid.etc.jpa.TransactionLogger;
 import org.mbari.vampiresquid.etc.jpa.URIConverter;
 import org.mbari.vampiresquid.etc.jpa.UUIDConverter;
-import org.mbari.vampiresquid.repository.PersistentObject;
-import scala.Option;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.net.URI;
 import java.sql.Timestamp;
 import java.util.UUID;
@@ -66,7 +64,7 @@ import java.util.UUID;
                 )
         }
 )
-public class VideoReferenceEntity implements PersistentObject {
+public class VideoReferenceEntity implements IPersistentObject {
 
 
     @Id
@@ -122,7 +120,7 @@ public class VideoReferenceEntity implements PersistentObject {
     @Convert(converter = ByteArrayConverter.class)
     byte[] sha512;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH}, optional = false)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH}, optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "video_uuid", nullable = false)
     VideoEntity video;
 
@@ -166,6 +164,7 @@ public class VideoReferenceEntity implements PersistentObject {
             this.audioCodec = audioCodec;
             this.width = width;
             this.height = height;
+            this.frameRate = frameRate;
             this.size = sizeBytes;
             this.description = description;
         }
@@ -186,21 +185,11 @@ public class VideoReferenceEntity implements PersistentObject {
             this.audioCodec = audioCodec;
             this.width = width;
             this.height = height;
+            this.frameRate = frameRate;
             this.size = sizeBytes;
             this.description = description;
             this.sha512 = sha512;
         }
-
-    @Override
-    public Option<UUID> primaryKey() {
-        return Option.apply(uuid);
-    }
-
-    @Override
-    public String toString() {
-        return "VideoReference(%s)".formatted(uri);
-    }
-
 
     public VideoEntity getVideo() {
         return video;
@@ -300,5 +289,13 @@ public class VideoReferenceEntity implements PersistentObject {
 
     public Timestamp getLastUpdatedTime() {
         return lastUpdatedTime;
+    }
+
+    @Override
+    public String toString() {
+        return "VideoReferenceEntity{" +
+                "uuid=" + uuid +
+                ", uri=" + uri +
+                '}';
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Monterey Bay Aquarium Research Institute
+ * Copyright 2021 MBARI
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.mbari.vampiresquid.repository
 
+import org.mbari.vampiresquid.repository.jpa.entity.IPersistentObject
+
 /**
   * OUr intent is to eventually support different backends. This factory provides an abstraction
   * to obtaining the appropriate DAO.
@@ -23,7 +25,7 @@ package org.mbari.vampiresquid.repository
   * @author Brian Schlining
   * @since 2016-05-06T15:39:00
   */
-trait DAOFactory[A <: PersistentObject, B <: PersistentObject, C <: PersistentObject] {
+trait DAOFactory[A <: IPersistentObject, B <: IPersistentObject, C <: IPersistentObject]:
 
   def newVideoSequenceDAO(): VideoSequenceDAO[A]
 
@@ -52,4 +54,3 @@ trait DAOFactory[A <: PersistentObject, B <: PersistentObject, C <: PersistentOb
     */
   def newVideoReferenceDAO(dao: DAO[_]): VideoReferenceDAO[C]
 
-}

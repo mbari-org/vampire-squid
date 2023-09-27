@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Monterey Bay Aquarium Research Institute
+ * Copyright 2021 MBARI
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,11 @@
 
 package org.mbari.vampiresquid.etc.jpa;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
-import javax.xml.bind.DatatypeConverter;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
+
+import java.util.HexFormat;
+
 
 /**
  * @author Brian Schlining
@@ -26,6 +28,8 @@ import javax.xml.bind.DatatypeConverter;
  */
 @Converter(autoApply = true)
 public class ByteArrayConverter implements AttributeConverter<byte[], String> {
+
+    private static final HexFormat hexFormat = HexFormat.of();
 
     @Override
     public String convertToDatabaseColumn(byte[] bs) {
@@ -38,11 +42,13 @@ public class ByteArrayConverter implements AttributeConverter<byte[], String> {
     }
 
     public static String encode(byte[] bs) {
-        return DatatypeConverter.printHexBinary(bs);
+        return hexFormat.formatHex(bs);
+//        return DatatypeConverter.printHexBinary(bs);
     }
 
     public static byte[] decode(String s) {
-        return DatatypeConverter.parseHexBinary(s);
+        return hexFormat.parseHex(s);
+//        return DatatypeConverter.parseHexBinary(s);
     }
 }
 

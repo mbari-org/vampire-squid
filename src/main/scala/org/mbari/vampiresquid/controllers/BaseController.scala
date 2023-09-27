@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Monterey Bay Aquarium Research Institute
+ * Copyright 2021 MBARI
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,11 @@
 
 package org.mbari.vampiresquid.controllers
 
+import io.circe.{Decoder, Encoder}
 import org.mbari.vampiresquid.Constants
 import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
+import org.mbari.vampiresquid.etc.circe.CirceCodecs.{*, given}
+import io.circe.parser.decode
 
 /**
   *
@@ -25,12 +28,12 @@ import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
   * @author Brian Schlining
   * @since 2016-05-23T13:51:00
   */
-trait BaseController {
-
-  private[this] val gson = Constants.GSON
+trait BaseController:
+  
 
   def daoFactory: JPADAOFactory
-  def toJson(obj: Any): String                         = gson.toJson(obj)
-  def fromJson[T](json: String, classOfT: Class[T]): T = gson.fromJson(json, classOfT)
+  def toJson[T: Encoder](obj: T): String = obj.stringify
+  def fromJson[T: Decoder](json: String): T = decode[T](json) match
+    case Left(e) => throw new RuntimeException(e)
+    case Right(value) => value
 
-}

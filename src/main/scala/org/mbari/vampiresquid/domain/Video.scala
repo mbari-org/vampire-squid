@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Monterey Bay Aquarium Research Institute
+ * Copyright 2021 MBARI
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,16 +29,15 @@ case class Video(uuid: UUID,
                  duration_millis: Option[Long] = None,
                  description: Option[String] = None,
                  last_updated_time: Option[Instant] = None,
-                 video_references: List[VideoReference] = Nil) {
+                 video_references: List[VideoReference] = Nil):
   def lastUpdatedTimestamp: Option[Instant] = last_updated_time
   def start: Instant = start_timestamp
   lazy val duration: Option[Duration] = duration_millis.map(Duration.ofMillis)
   def videoReferences: List[VideoReference] = video_references
-}
 
-object Video {
+object Video:
 
-  def from(v: VideoEntity): Video = {
+  def from(v: VideoEntity): Video =
     Video(v.getUuid,
       v.getName,
       v.getStart,
@@ -47,5 +46,3 @@ object Video {
       Option(v.getLastUpdatedTime).map(_.toInstant),
       v.getVideoReferences.asScala.map(VideoReference.from).toList
     )
-  }
-}

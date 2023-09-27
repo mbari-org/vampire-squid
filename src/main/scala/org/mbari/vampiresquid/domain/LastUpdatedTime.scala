@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Monterey Bay Aquarium Research Institute
+ * Copyright 2021 MBARI
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,9 @@ package org.mbari.vampiresquid.domain
 
 import java.time.Instant
 
-import com.google.gson.annotations.Expose
 
 /**
   * @author Brian Schlining
   * @since 2019-01-30T10:41:00
   */
-case class LastUpdatedTime(@Expose(serialize = true) timestamp: Instant)
+case class LastUpdatedTime(timestamp: Instant)

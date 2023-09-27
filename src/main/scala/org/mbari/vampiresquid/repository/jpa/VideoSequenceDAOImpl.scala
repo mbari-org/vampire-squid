@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Monterey Bay Aquarium Research Institute
+ * Copyright 2021 MBARI
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import org.mbari.vampiresquid.repository.VideoSequenceDAO
 
 import java.time.{Duration, Instant}
 import java.util.UUID
-import javax.persistence.{EntityManager, Transient}
+import jakarta.persistence.{EntityManager, Transient}
 import org.slf4j.LoggerFactory
 
 import scala.util.Try
@@ -36,7 +36,7 @@ import org.mbari.vampiresquid.repository.jpa.entity.VideoSequenceEntity
   */
 class VideoSequenceDAOImpl(entityManager: EntityManager)
     extends BaseDAO[VideoSequenceEntity](entityManager)
-    with VideoSequenceDAO[VideoSequenceEntity] {
+    with VideoSequenceDAO[VideoSequenceEntity]:
 
   @Transient
   private[this] val log = LoggerFactory.getLogger(getClass)
@@ -59,7 +59,7 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
   override def findByTimestamp(
       timestamp: Instant,
       window: Duration = Constants.DEFAULT_DURATION_WINDOW
-  ): Iterable[VideoSequenceEntity] = {
+  ): Iterable[VideoSequenceEntity] =
     val halfRange = window.dividedBy(2)
     val startDate = timestamp.minus(halfRange)
     val endDate   = timestamp.plus(halfRange)
@@ -69,7 +69,7 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
       Map("startDate" -> startDate, "endDate" -> endDate)
     )
 
-    if (log.isDebugEnabled) {
+    if (log.isDebugEnabled)
       val info = videoSequences
         .flatMap(_.getVideos().asScala)
         .map(v => s"\t${v.getName()} at ${v.getStart()} for ${v.getDuration()}")
@@ -80,19 +80,17 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
            | $info
          """.stripMargin
       log.debug(s)
-    }
 
     val hasTimestamp = containsTimestamp(_: VideoSequenceEntity, timestamp) // Partially apply the function to timestamp
 
     videoSequences.filter(hasTimestamp).toSet
 
-  }
 
   override def findByNameAndTimestamp(
       name: String,
       timestamp: Instant,
       window: Duration = Constants.DEFAULT_DURATION_WINDOW
-  ): Iterable[VideoSequenceEntity] = {
+  ): Iterable[VideoSequenceEntity] =
     val halfRange = window.dividedBy(2)
     val startDate = timestamp.minus(halfRange)
     val endDate   = timestamp.plus(halfRange)
@@ -104,13 +102,12 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
     val hasTimestamp = containsTimestamp(_: VideoSequenceEntity, timestamp) // Partially apply the function to timestamp
 
     videoSequences.filter(hasTimestamp).toSet
-  }
 
   override def findByCameraIDAndTimestamp(
       cameraID: String,
       timestamp: Instant,
       window: Duration = Constants.DEFAULT_DURATION_WINDOW
-  ): Iterable[VideoSequenceEntity] = {
+  ): Iterable[VideoSequenceEntity] =
     val halfRange = window.dividedBy(2)
     val startDate = timestamp.minus(halfRange)
     val endDate   = timestamp.plus(halfRange)
@@ -123,7 +120,6 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
     val hasTimestamp = containsTimestamp(_: VideoSequenceEntity, timestamp) // Partially apply the function to timestamp
 
     videoSequences.filter(hasTimestamp).toSet
-  }
 
   override def deleteByUUID(primaryKey: UUID): Unit =
     findByUUID(primaryKey).foreach(delete)
@@ -155,12 +151,10 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
       .asScala
       .map(_.toString)
 
-  override def findAllNamesByCameraID(cameraID: String): Iterable[String] = {
+  override def findAllNamesByCameraID(cameraID: String): Iterable[String] =
     val query = entityManager.createNamedQuery("VideoSequence.findNamesByCameraID")
     query.setParameter(1, cameraID)
     query
       .getResultList
       .asScala
       .map(_.toString)
-  }
-}

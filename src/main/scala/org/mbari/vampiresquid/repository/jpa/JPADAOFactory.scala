@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Monterey Bay Aquarium Research Institute
+ * Copyright 2021 MBARI
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package org.mbari.vampiresquid.repository.jpa
 
-import javax.persistence.EntityManagerFactory
+import jakarta.persistence.EntityManagerFactory
 import com.typesafe.config.ConfigFactory
 import org.mbari.vampiresquid.repository.{DAO, DAOFactory, VideoDAO, VideoReferenceDAO, VideoSequenceDAO}
 import org.mbari.vampiresquid.repository.jpa.entity.VideoSequenceEntity
@@ -29,7 +29,7 @@ import org.mbari.vampiresquid.repository.jpa.entity.VideoReferenceEntity
   * @author Brian Schlining
   * @since 2016-06-08T15:28:00
   */
-trait JPADAOFactory extends DAOFactory[VideoSequenceEntity, VideoEntity, VideoReferenceEntity] {
+trait JPADAOFactory extends DAOFactory[VideoSequenceEntity, VideoEntity, VideoReferenceEntity]:
 
   def entityManagerFactory: EntityManagerFactory
 
@@ -39,7 +39,7 @@ trait JPADAOFactory extends DAOFactory[VideoSequenceEntity, VideoEntity, VideoRe
   override def newVideoDAO(): VideoDAOImpl =
     new VideoDAOImpl(entityManagerFactory.createEntityManager())
 
-  override def newVideoReferenceDAO(): VideoReferenceDAO[VideoReferenceEntity] =
+  override def newVideoReferenceDAO(): VideoReferenceDAOImpl =
     new VideoReferenceDAOImpl(entityManagerFactory.createEntityManager())
 
   /**
@@ -69,19 +69,9 @@ trait JPADAOFactory extends DAOFactory[VideoSequenceEntity, VideoEntity, VideoRe
   override def newVideoReferenceDAO(dao: DAO[_]): VideoReferenceDAO[VideoReferenceEntity] =
     new VideoReferenceDAOImpl(dao.asInstanceOf[BaseDAO[_]].entityManager)
 
-}
 
 class JPADAOFactoryImpl(val entityManagerFactory: EntityManagerFactory) extends JPADAOFactory
 
-object JPADAOFactory extends JPADAOFactory {
+object JPADAOFactory extends JPADAOFactory:
 
-  lazy val entityManagerFactory = {
-    val config      = ConfigFactory.load()
-    val environment = config.getString("database.environment")
-    val nodeName =
-      if (environment.equalsIgnoreCase("production")) "org.mbari.vars.vam.database.production"
-      else "org.mbari.vars.vam.database.development"
-
-  EntityManagerFactories(nodeName)
-  }
-}
+  lazy val entityManagerFactory = EntityManagerFactories("database")

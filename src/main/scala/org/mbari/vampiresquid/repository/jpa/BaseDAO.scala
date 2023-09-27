@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Monterey Bay Aquarium Research Institute
+ * Copyright 2021 MBARI
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,16 @@
 
 package org.mbari.vampiresquid.repository.jpa
 
-import org.mbari.vampiresquid.repository.{DAO, PersistentObject}
+import org.mbari.vampiresquid.repository.jpa.entity.IPersistentObject
+import org.mbari.vampiresquid.repository.DAO
+import org.mbari.vampiresquid.domain.extensions.*
+import org.mbari.vampiresquid.repository.jpa.extensions.*
 
 import java.util.UUID
-import javax.persistence.EntityManager
+import jakarta.persistence.EntityManager
 import org.slf4j.LoggerFactory
 
-import scala.jdk.CollectionConverters._
+import scala.jdk.CollectionConverters.*
 import scala.concurrent.{ExecutionContext, Future}
 import scala.reflect.ClassTag
 import scala.reflect.classTag
@@ -33,31 +36,27 @@ import scala.reflect.classTag
   * @author Brian Schlining
   * @since 2016-05-06T11:18:00
   */
-abstract class BaseDAO[B <: PersistentObject: ClassTag](val entityManager: EntityManager)
-    extends DAO[B] {
+abstract class BaseDAO[B <: IPersistentObject: ClassTag](val entityManager: EntityManager)
+    extends DAO[B]:
   private[this] val log = LoggerFactory.getLogger(getClass)
 
-  if (log.isInfoEnabled) {
+  if (log.isInfoEnabled)
     val props = entityManager.getProperties
-    if (props.containsKey(BaseDAO.JDBC_URL_KEY)) {
+    if (props.containsKey(BaseDAO.JDBC_URL_KEY))
       log.debug(s"Wrapping EntityManager with DAO for database: ${props.get(BaseDAO.JDBC_URL_KEY)}")
-    }
-  }
 
   def find(obj: B): Option[B] =
     obj.primaryKey.flatMap(pk => Option(entityManager.find(obj.getClass, pk)))
 
-  def findByNamedQuery(name: String, namedParameters: Map[String, Any] = Map.empty): List[B] = {
+  def findByNamedQuery(name: String, namedParameters: Map[String, Any] = Map.empty): List[B] =
     val query = entityManager.createNamedQuery(name)
     namedParameters.foreach({ case (a, b) => query.setParameter(a, b) })
     query.getResultList.asScala.toList.map(_.asInstanceOf[B])
-  }
 
-  def executeNamedQuery(name: String, namedParameters: Map[String, Any] = Map.empty): Unit = {
+  def executeNamedQuery(name: String, namedParameters: Map[String, Any] = Map.empty): Unit =
     val query = entityManager.createNamedQuery(name)
     namedParameters.foreach({ case (a, b) => query.setParameter(a, b) })
     query.executeUpdate()
-  }
 
   /**
     * Lookup entity by primary key. A DAO will only return entities of their type.
@@ -69,11 +68,9 @@ abstract class BaseDAO[B <: PersistentObject: ClassTag](val entityManager: Entit
   override def findByUUID(primaryKey: UUID): Option[B] =
     Option(entityManager.find(classTag[B].runtimeClass, primaryKey).asInstanceOf[B])
 
-  override def runTransaction[R](fn: this.type => R)(implicit ec: ExecutionContext): Future[R] = {
-    import Implicits.RichEntityManager
+  override def runTransaction[R](fn: this.type => R)(implicit ec: ExecutionContext): Future[R] =
     def fn2(em: EntityManager): R = fn.apply(this)
     entityManager.runTransaction(fn2)
-  }
 
   override def create(entity: B): Unit = entityManager.persist(entity)
 
@@ -83,8 +80,6 @@ abstract class BaseDAO[B <: PersistentObject: ClassTag](val entityManager: Entit
 
   def close(): Unit = if (entityManager.isOpen) entityManager.close()
 
-}
 
-object BaseDAO {
+object BaseDAO:
   val JDBC_URL_KEY = "javax.persistence.jdbc.url"
-}

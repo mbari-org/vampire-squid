@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Monterey Bay Aquarium Research Institute
+ * Copyright 2021 MBARI
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,24 +16,27 @@
 
 package org.mbari.vampiresquid.etc.circe
 
-import io.circe._
-import io.circe.generic.semiauto._
-import io.circe.syntax._
+import io.circe.*
+import io.circe.generic.semiauto.*
+import io.circe.syntax.*
 import org.mbari.vampiresquid.domain.{HealthStatus, LastUpdatedTime, Video, VideoReference, VideoSequence}
-import org.mbari.vampiresquid.util.HexUtil
 
 import java.net.{URI, URL}
+import java.util.HexFormat
 import scala.util.Try
 
-object CirceCodecs {
+object CirceCodecs:
 
-  implicit val byteArrayEncoder: Encoder[Array[Byte]] = new Encoder[Array[Byte]] {
+  private val hex = HexFormat.of()
+
+  implicit val byteArrayEncoder: Encoder[Array[Byte]] = new Encoder[Array[Byte]]:
     final def apply(xs: Array[Byte]): Json =
-      Json.fromString(HexUtil.toHex(xs))
-  }
+      Json.fromString(hex.formatHex(xs))
+//      Json.fromString(HexUtil.toHex(xs))
   implicit val byteArrayDecoder: Decoder[Array[Byte]] = Decoder
     .decodeString
-    .emapTry(str => Try(HexUtil.fromHex(str)))
+    .emapTry(str => Try(hex.parseHex(str)))
+//    .emapTry(str => Try(HexUtil.fromHex(str)))
 
   implicit val urlDecoder: Decoder[URL] = Decoder
     .decodeString
@@ -66,8 +69,23 @@ object CirceCodecs {
 
   private val printer = Printer.noSpaces.copy(dropNullValues = true)
 
-  def print[T: Encoder](t: T): String = printer.print(t.asJson)
+
+  /**
+   * Convert a circe Json object to a JSON string
+   *
+   * @param value
+   * Any value with an implicit circe coder in scope
+   */
+  extension (json: Json) def stringify: String = printer.print(json)
+
+  /**
+   * Convert an object to a JSON string
+   *
+   * @param value
+   * Any value with an implicit circe coder in scope
+   */
+  extension[T: Encoder] (value: T) def stringify: String = Encoder[T].apply(value).stringify
 
 
 
-}
+

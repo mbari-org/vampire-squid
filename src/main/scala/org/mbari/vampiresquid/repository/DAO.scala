@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Monterey Bay Aquarium Research Institute
+ * Copyright 2021 MBARI
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,9 @@
 
 package org.mbari.vampiresquid.repository
 
-import java.util.UUID
+import org.mbari.vampiresquid.repository.jpa.entity.IPersistentObject
 
+import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
 /**
@@ -27,7 +28,7 @@ import scala.concurrent.{ExecutionContext, Future}
   * @since 2016-05-05T12:44:00
   * @tparam B The type of the entity
   */
-trait DAO[B <: PersistentObject] {
+trait DAO[B <: IPersistentObject]:
 
   def create(entity: B): Unit
   def update(entity: B): B
@@ -38,4 +39,3 @@ trait DAO[B <: PersistentObject] {
   def runTransaction[R](fn: this.type => R)(implicit ec: ExecutionContext): Future[R]
   def close(): Unit
 
-}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Monterey Bay Aquarium Research Institute
+ * Copyright 2021 MBARI
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@
 package org.mbari.vampiresquid.repository.jpa
 
 import java.util.concurrent.TimeUnit
-import javax.persistence.EntityManagerFactory
-
+import jakarta.persistence.EntityManagerFactory
 import com.typesafe.config.ConfigFactory
 import org.eclipse.persistence.config.TargetDatabase
+import org.mbari.vampiresquid.repository.jpa.DerbyTestDAOFactory.config
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
@@ -29,27 +29,24 @@ import scala.concurrent.duration.Duration
   * @author Brian Schlining
   * @since 2017-03-06T11:44:00
   */
-object TestDAOFactory {
+object TestDAOFactory:
 
   val TestProperties = Map(
     "eclipselink.logging.level"                                 -> "FINE",
-    "javax.persistence.schema-generation.scripts.action"        -> "drop-and-create",
-    "javax.persistence.schema-generation.scripts.create-target" -> "target/test-database-create.ddl",
-    "javax.persistence.schema-generation.scripts.drop-target"   -> "target/test-database-drop.ddl"
+    "jakarta.persistence.schema-generation.scripts.action"        -> "drop-and-create",
+    "jakarta.persistence.schema-generation.scripts.create-target" -> "target/test-database-create.ddl",
+    "jakarta.persistence.schema-generation.scripts.drop-target"   -> "target/test-database-drop.ddl"
   )
 
-  //val Instance: SpecDAOFactory = DerbyTestDAOFactory.asInstanceOf[SpecDAOFactory]
-  val Instance: SpecDAOFactory = DevelopmentTestDAOFactory.asInstanceOf[SpecDAOFactory]
+  Class.forName("org.apache.derby.jdbc.ClientDriver")
+  val Instance: SpecDAOFactory = DerbyTestDAOFactory
 
-  def cleanup(): Unit = Instance.cleanup()
 
-}
-
-trait SpecDAOFactory extends JPADAOFactory {
+trait SpecDAOFactory extends JPADAOFactory:
 
   lazy val config = ConfigFactory.load()
 
-  def cleanup(): Unit = {
+  def cleanup(): Unit =
 
     import scala.concurrent.ExecutionContext.Implicits.global
     val dao = newVideoSequenceDAO()
@@ -61,65 +58,37 @@ trait SpecDAOFactory extends JPADAOFactory {
     f.onComplete(t => dao.close())
     Await.result(f, Duration(4, TimeUnit.SECONDS))
 
-  }
-
   def testProps(): Map[String, String]
-}
 
-object DerbyTestDAOFactory extends SpecDAOFactory {
-
-  override def testProps(): Map[String, String] =
-    TestDAOFactory.TestProperties ++
-      Map(
-        "eclipselink.target-database"             -> TargetDatabase.Derby,
-        "javax.persistence.database-product-name" -> TargetDatabase.Derby
-      )
-
-  lazy val entityManagerFactory: EntityManagerFactory = {
-    val driver   = config.getString("org.mbari.vars.vam.database.derby.driver")
-    val url      = config.getString("org.mbari.vars.vam.database.derby.url")
-    val user     = config.getString("org.mbari.vars.vam.database.derby.user")
-    val password = config.getString("org.mbari.vars.vam.database.derby.password")
-    EntityManagerFactories(url, user, password, driver, testProps())
-  }
-
-}
-
-object H2TestDAOFactory extends SpecDAOFactory {
+object DerbyTestDAOFactory extends SpecDAOFactory:
 
   override def testProps(): Map[String, String] =
     TestDAOFactory.TestProperties ++
       Map(
         "eclipselink.target-database"             -> TargetDatabase.Derby,
-        "javax.persistence.database-product-name" -> TargetDatabase.Derby
+        "jakarta.persistence.database-product-name" -> TargetDatabase.Derby
       )
 
-  lazy val entityManagerFactory: EntityManagerFactory = {
-    val driver   = config.getString("org.mbari.vars.vam.database.h2.driver")
-    val url      = config.getString("org.mbari.vars.vam.database.h2.url")
-    val user     = config.getString("org.mbari.vars.vam.database.h2.user")
-    val password = config.getString("org.mbari.vars.vam.database.h2.password")
+  lazy val entityManagerFactory: EntityManagerFactory =
+    val driver   = config.getString("database.derby.driver")
+    Class.forName(config.getString("database.derby.driver"))
+    val url      = config.getString("database.derby.url")
+    val user     = config.getString("database.derby.user")
+    val password = config.getString("database.derby.password")
     EntityManagerFactories(url, user, password, driver, testProps())
-  }
 
-}
 
-object DevelopmentTestDAOFactory extends SpecDAOFactory {
+object H2TestDAOFactory extends SpecDAOFactory:
 
-  val productName = config.getString("org.mbari.vars.vam.database.development.name")
+  Class.forName(config.getString("database.h2.driver"))
 
-  override def testProps(): Map[String, String] =
-    TestDAOFactory.TestProperties ++
-      Map(
-        "eclipselink.target-database"             -> productName,
-        "javax.persistence.database-product-name" -> productName
-      )
+  override def testProps(): Map[String, String] = TestDAOFactory.TestProperties
 
-  lazy val entityManagerFactory: EntityManagerFactory = {
-    val driver   = config.getString("org.mbari.vars.vam.database.development.driver")
-    val url      = config.getString("org.mbari.vars.vam.database.development.url")
-    val user     = config.getString("org.mbari.vars.vam.database.development.user")
-    val password = config.getString("org.mbari.vars.vam.database.development.password")
+  lazy val entityManagerFactory: EntityManagerFactory =
+    val driver   = config.getString("database.h2.driver")
+    val url      = config.getString("database.h2.url")
+    val user     = config.getString("database.h2.user")
+    val password = config.getString("database.h2.password")
     EntityManagerFactories(url, user, password, driver, testProps())
-  }
-}
+
+

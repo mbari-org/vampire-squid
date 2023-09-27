@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Monterey Bay Aquarium Research Institute
+ * Copyright 2021 MBARI
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +25,7 @@ public class DatabaseProductName {
   public static String name() {
     if (name == null) {
       var config = ConfigFactory.load();
-      var environment = config.getString("database.environment");
-      var nodeName = environment.equalsIgnoreCase("production") ?
-        "org.mbari.vars.vam.database.production" :
-         "org.mbari.vars.vam.database.development";
-      name = config.getString(nodeName + ".name");
+      name = config.getString("database.name");
     }
     return name;
   }

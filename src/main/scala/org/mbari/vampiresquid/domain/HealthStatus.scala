@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Monterey Bay Aquarium Research Institute
+ * Copyright 2021 MBARI
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,9 +29,9 @@ final case class HealthStatus(
     description: String = AppConfig.Description
 )
 
-object HealthStatus {
+object HealthStatus:
 
-  def default: HealthStatus = {
+  def default: HealthStatus =
     val runtime = Runtime.getRuntime
     HealthStatus(
       jdkVersion = Runtime.version.toString,
@@ -40,6 +40,4 @@ object HealthStatus {
       maxMemory = runtime.maxMemory,
       totalMemory = runtime.totalMemory
     )
-  }
 
-}

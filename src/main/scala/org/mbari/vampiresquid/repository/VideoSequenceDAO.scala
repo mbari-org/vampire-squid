@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Monterey Bay Aquarium Research Institute
+ * Copyright 2021 MBARI
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.mbari.vampiresquid.repository
 
+import org.mbari.vampiresquid.repository.jpa.entity.IPersistentObject
+
 import java.time.{Duration, Instant}
 import java.util.UUID
 
@@ -25,7 +27,7 @@ import java.util.UUID
   * @author Brian Schlining
   * @since 2016-05-05T12:54:00
   */
-trait VideoSequenceDAO[T <: PersistentObject] extends DAO[T] {
+trait VideoSequenceDAO[T <: IPersistentObject] extends DAO[T]:
 
   def findByName(name: String): Option[T]
   def findByCameraID(cameraID: String): Iterable[T]
@@ -41,4 +43,3 @@ trait VideoSequenceDAO[T <: PersistentObject] extends DAO[T] {
   def findAllCameraIDs(): Iterable[String]
   def findAllNamesByCameraID(cameraID: String): Iterable[String]
 
-}

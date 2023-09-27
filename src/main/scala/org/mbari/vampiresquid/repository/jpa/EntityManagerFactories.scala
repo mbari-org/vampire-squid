@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Monterey Bay Aquarium Research Institute
+ * Copyright 2021 MBARI
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package org.mbari.vampiresquid.repository.jpa
 
-import javax.persistence.{EntityManagerFactory, Persistence}
+import jakarta.persistence.{EntityManagerFactory, Persistence}
 
 import com.typesafe.config.ConfigFactory
 import org.eclipse.persistence.config.PersistenceUnitProperties
@@ -33,7 +33,7 @@ import scala.jdk.CollectionConverters._
   * @author Brian Schlining
   * @since 2016-05-05T17:29:00
   */
-object EntityManagerFactories {
+object EntityManagerFactories:
 
   private lazy val config = ConfigFactory.load()
 
@@ -45,14 +45,13 @@ object EntityManagerFactories {
     "eclipselink.logging.session"                         -> "false",
     "eclipselink.logging.thread"                          -> "false",
     "eclipselink.logging.timestamp"                       -> "false",
-    "javax.persistence.schema-generation.database.action" -> "create",
+    "jakarta.persistence.schema-generation.database.action" -> "create",
     PersistenceUnitProperties.SESSION_CUSTOMIZER          -> "org.mbari.vampiresquid.etc.eclipselink.UUIDSequence"
   )
 
-  def apply(properties: Map[String, String]): EntityManagerFactory = {
+  def apply(properties: Map[String, String]): EntityManagerFactory =
     val props = properties ++ PRODUCTION_PROPS
     Persistence.createEntityManagerFactory("video-asset-manager", props.asJava)
-  }
 
   def apply(
       url: String,
@@ -60,20 +59,19 @@ object EntityManagerFactories {
       password: String,
       driverName: String,
       properties: Map[String, String] = Map.empty
-  ): EntityManagerFactory = {
+  ): EntityManagerFactory =
 
     val map = Map(
-      "javax.persistence.jdbc.url"      -> url,
-      "javax.persistence.jdbc.user"     -> username,
-      "javax.persistence.jdbc.password" -> password,
-      "javax.persistence.jdbc.driver"   -> driverName
+      "jakarta.persistence.jdbc.url"      -> url,
+      "jakarta.persistence.jdbc.user"     -> username,
+      "jakarta.persistence.jdbc.password" -> password,
+      "jakarta.persistence.jdbc.driver"   -> driverName
     )
     apply(map ++ properties)
-  }
 
-  def apply(configNode: String): EntityManagerFactory = {
+  def apply(configNode: String): EntityManagerFactory =
     val driver      = config.getString(configNode + ".driver")
-    val logLevel    = config.getString("database.loglevel")
+    val logLevel    = config.getString(".loglevel")
     val password    = config.getString(configNode + ".password")
     val productName = config.getString(configNode + ".name")
     val url         = config.getString(configNode + ".url")
@@ -81,12 +79,10 @@ object EntityManagerFactories {
     val props = Map(
       "eclipselink.logging.level"               -> logLevel,
       "eclipselink.target-database"             -> productName,
-      "javax.persistence.database-product-name" -> productName,
-      "javax.persistence.jdbc.driver"           -> driver,
-      "javax.persistence.jdbc.password"         -> password,
-      "javax.persistence.jdbc.url"              -> url,
-      "javax.persistence.jdbc.user"             -> user
+      "jakarta.persistence.database-product-name" -> productName,
+      "jakarta.persistence.jdbc.driver"           -> driver,
+      "jakarta.persistence.jdbc.password"         -> password,
+      "jakarta.persistence.jdbc.url"              -> url,
+      "jakarta.persistence.jdbc.user"             -> user
     )
     apply(props)
-  }
-}

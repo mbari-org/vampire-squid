@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Monterey Bay Aquarium Research Institute
+ * Copyright 2021 MBARI
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,8 @@ package org.mbari.vampiresquid.repository.jpa.entity;
 import org.mbari.vampiresquid.etc.jpa.TransactionLogger;
 import org.mbari.vampiresquid.etc.jpa.UUIDConverter;
 import org.mbari.vampiresquid.etc.jpa.InstantConverter;
-import org.mbari.vampiresquid.repository.PersistentObject;
-import scala.Option;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
@@ -76,7 +74,7 @@ import java.util.UUID;
                 )
         }
 )
-public class VideoEntity implements PersistentObject {
+public class VideoEntity implements IPersistentObject {
 
     @Id
     @GeneratedValue(generator = "system-uuid")
@@ -101,7 +99,7 @@ public class VideoEntity implements PersistentObject {
     @Column(name = "duration_millis", nullable = true)
     Duration duration;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH}, optional = false)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH}, optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "video_sequence_uuid", nullable = false)
     VideoSequenceEntity videoSequence;
 
@@ -116,7 +114,7 @@ public class VideoEntity implements PersistentObject {
     @OneToMany(
             targetEntity = VideoReferenceEntity.class,
             cascade = {CascadeType.ALL},
-            fetch = FetchType.EAGER,
+            fetch = FetchType.LAZY,
             mappedBy = "video",
             orphanRemoval = true
     )
@@ -179,11 +177,6 @@ public class VideoEntity implements PersistentObject {
         this.videoSequence = videoSequence;
     }
 
-    @Override
-    public Option<UUID> primaryKey() {
-        return Option.apply(uuid);
-    }
-
     public UUID getUuid() {
         return uuid;
     }
@@ -226,5 +219,15 @@ public class VideoEntity implements PersistentObject {
 
     public Timestamp getLastUpdatedTime() {
         return lastUpdatedTime;
+    }
+
+    @Override
+    public String toString() {
+        return "VideoEntity{" +
+                "uuid=" + uuid +
+                ", name='" + name + '\'' +
+                ", start=" + start +
+                ", duration=" + duration +
+                '}';
     }
 }

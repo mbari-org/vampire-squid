@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Monterey Bay Aquarium Research Institute
+ * Copyright 2021 MBARI
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,20 +28,18 @@ case class VideoSequence(uuid: UUID,
                          description: Option[String] = None,
                          last_updated_time: Option[Instant] = None,
                          videos: List[Video] = Nil
-                        ) {
+                        ):
 
   def cameraId: String = camera_id
   def lastUpdatedTimestamp: Option[Instant] = last_updated_time
   lazy val videoReferences: List[VideoReference] = videos.flatMap(_.video_references)
-}
 
 object VideoSequence {
-  def from(v: VideoSequenceEntity): VideoSequence = {
+  def from(v: VideoSequenceEntity): VideoSequence =
     VideoSequence(v.getUuid,
       v.getName,
       v.getCameraID,
       Option(v.getDescription),
       Option(v.getLastUpdatedTime).map(_.toInstant),
       v.getVideos.asScala.map(Video.from).toList)
-  }
 }
