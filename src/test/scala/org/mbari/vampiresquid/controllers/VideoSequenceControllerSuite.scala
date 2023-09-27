@@ -99,6 +99,23 @@ class VideoSequenceControllerSuite extends DAOSuite:
     assertEquals(x.camera_id, cameraID)
     assertEquals(x.description, description)
 
-  test("update") {}
+  test("update"):
+    val vs = TestUtils.create(1, 4, 1).head
+    val name = "foo"
+    val cameraID = "bar"
+    val description = Some("baz")
+    val x = exec(controller.update(vs.getUuid(), Some(name), Some(cameraID), description))
+    assertEquals(x.uuid, vs.getUuid())
+    assertEquals(x.name, name)
+    assertEquals(x.camera_id, cameraID)
+    assertEquals(x.description, description)
 
-  test("delete") {}
+  test("delete"):
+    val vs = TestUtils.create(1, 4, 1).head
+    val uuid = vs.getUuid()
+    val opt0 = exec(controller.findByUUID(uuid))
+    assert(opt0.isDefined)
+    val x = exec(controller.delete(uuid))
+    assert(x)
+    val opt = exec(controller.findByUUID(uuid))
+    assert(opt.isEmpty)
