@@ -17,6 +17,7 @@
 package org.mbari.vampiresquid
 
 import scala.util.Try
+import com.typesafe.config.ConfigFactory
 
 object AppConfig:
   val Name: String = "vampire-squid"
@@ -24,3 +25,19 @@ object AppConfig:
   val Version: String = Try(getClass.getPackage.getImplementationVersion).getOrElse("0.0.0")
 
   val Description: String = "Video Asset Manager"
+
+  private lazy val Config = ConfigFactory.load()
+
+  lazy val JwtParameters: JwtParams =
+    JwtParams(
+      clientSecret = Config.getString("basicjwt.client.secret"),
+      issuer = Config.getString("basicjwt.issuer"),
+      signingSecret = Config.getString("basicjwt.signing.secret")
+    )
+
+
+final case class JwtParams(
+    clientSecret: String,
+    issuer: String,
+    signingSecret: String
+)

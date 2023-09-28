@@ -40,25 +40,31 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController:
 
   private[this] val log = LoggerFactory.getLogger(getClass)
 
-  def createMedia(media: Media)(implicit ec: ExecutionContext): Future[Media] = create(
-    media.videoSequenceName,
-    media.cameraId,
-    media.videoName,
-    media.uri,
-    media.startTimestamp,
-    media.duration,
-    media.container,
-    media.videoCodec,
-    media.audioCodec,
-    media.width,
-    media.height,
-    media.frameRate,
-    media.sizeBytes,
-    media.description,
-    media.sha512,
-    media.videoSequenceDescription,
-    media.videoDescription
-  )
+  def createMedia(media: Media)(implicit ec: ExecutionContext): Future[Media] = 
+    require(media.video_sequence_name.isDefined, "videoSequenceName is required")
+    require(media.camera_id.isDefined, "cameraId is required")
+    require(media.video_name.isDefined, "videoName is required")
+    require(media.uri.isDefined, "uri is required")
+    require(media.start_timestamp.isDefined, "startTimestamp is required")
+    create(
+      media.videoSequenceName,
+      media.cameraId,
+      media.videoName,
+      media.uri.get,
+      media.startTimestamp,
+      media.duration,
+      media.container,
+      media.videoCodec,
+      media.audioCodec,
+      media.width,
+      media.height,
+      media.frameRate,
+      media.sizeBytes,
+      media.description,
+      media.sha512,
+      media.videoSequenceDescription,
+      media.videoDescription
+    )
 
   def create(
       videoSequenceName: String,
@@ -164,7 +170,7 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController:
       media.videoSequenceName,
       media.cameraId,
       media.videoName,
-      Option(media.uri),
+      media.uri,
       Option(media.startTimestamp),
       media.duration,
       media.container,
@@ -178,6 +184,29 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController:
       media.videoSequenceDescription,
       media.videoDescription
     )
+
+  def findAndUpdateMedia(findFn: VideoReferenceDAO[VideoReferenceEntity] => Option[VideoReferenceEntity], media: Media)
+    (implicit ec: ExecutionContext): Future[Option[Media]] = 
+      findAndUpdate(
+        findFn,
+        media.videoSequenceName,
+        media.cameraId,
+        media.videoName,
+        media.sha512,
+        media.uri,
+        media.start_timestamp,
+        media.duration,
+        media.container,
+        media.videoCodec,
+        media.audioCodec,
+        media.width,
+        media.height,
+        media.frameRate,
+        media.sizeBytes,
+        media.description,
+        media.videoSequenceDescription,
+        media.videoDescription
+      )
 
   /** @param findFn
     * @param videoSequenceName

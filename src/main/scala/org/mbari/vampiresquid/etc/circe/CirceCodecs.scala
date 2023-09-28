@@ -19,53 +19,100 @@ package org.mbari.vampiresquid.etc.circe
 import io.circe.*
 import io.circe.generic.semiauto.*
 import io.circe.syntax.*
-import org.mbari.vampiresquid.domain.{HealthStatus, LastUpdatedTime, Video, VideoReference, VideoSequence}
-
+import org.mbari.vampiresquid.domain.{
+  Authorization,
+  BadRequest,
+  ErrorMsg,
+  HealthStatus,
+  LastUpdatedTime,
+  Media,
+  NotFound,
+  ServerError,
+  ServiceStatus,
+  StatusMsg,
+  Unauthorized,
+  Video,
+  VideoReference,
+  VideoSequence
+}
 import java.net.{URI, URL}
 import java.util.HexFormat
 import scala.util.Try
+import java.time.Duration
 
 object CirceCodecs:
 
   private val hex = HexFormat.of()
 
-  implicit val byteArrayEncoder: Encoder[Array[Byte]] = new Encoder[Array[Byte]]:
+  given Encoder[Array[Byte]] = new Encoder[Array[Byte]]:
     final def apply(xs: Array[Byte]): Json =
       Json.fromString(hex.formatHex(xs))
-//      Json.fromString(HexUtil.toHex(xs))
-  implicit val byteArrayDecoder: Decoder[Array[Byte]] = Decoder
+  given Decoder[Array[Byte]] = Decoder
     .decodeString
     .emapTry(str => Try(hex.parseHex(str)))
-//    .emapTry(str => Try(HexUtil.fromHex(str)))
 
-  implicit val urlDecoder: Decoder[URL] = Decoder
+  given Decoder[URL] = Decoder
     .decodeString
     .emapTry(str => Try(URI.create(str).toURL()))
-  implicit val urlEncoder: Encoder[URL] = Encoder
+  given Encoder[URL] = Encoder
     .encodeString
     .contramap(_.toString)
 
-  implicit val uriDecoder: Decoder[URI] = Decoder
+  given uriDecoder: Decoder[URI] = Decoder
     .decodeString
     .emapTry(s => Try(URI.create(s)))
-  implicit val uriEncoder: Encoder[URI] = Encoder
+  given uriEncoder: Encoder[URI] = Encoder
     .encodeString
     .contramap[URI](_.toString)
 
-  implicit val lastUpdatedTimeDecoder: Decoder[LastUpdatedTime] = deriveDecoder
-  implicit val lastUpdatedTimeEncoder: Encoder[LastUpdatedTime] = deriveEncoder
+  given Decoder[Duration] = Decoder
+    .decodeLong
+    .emapTry(lng => Try(Duration.ofMillis(lng)))
+  given Encoder[Duration] = Encoder
+    .encodeLong
+    .contramap(_.toMillis)
 
-  implicit val healthStatusDecoder: Decoder[HealthStatus] = deriveDecoder
-  implicit val healthStatusEncoder: Encoder[HealthStatus] = deriveEncoder
+  given Decoder[Media] = deriveDecoder
+  given Encoder[Media] = deriveEncoder
 
-  implicit val videoReferenceDecoder: Decoder[VideoReference] = deriveDecoder
-  implicit val videoReferenceEncoder: Encoder[VideoReference] = deriveEncoder
+  given Decoder[Authorization] = deriveDecoder
+  given Encoder[Authorization] = deriveEncoder
 
-  implicit val videoDecoder: Decoder[Video] = deriveDecoder
-  implicit val videoEncoder: Encoder[Video] = deriveEncoder
+  given Decoder[ErrorMsg] = deriveDecoder
+  given Encoder[ErrorMsg] = deriveEncoder
 
-  implicit val videoSequenceDecoder: Decoder[VideoSequence] = deriveDecoder
-  implicit val videoSequenceEncoder: Encoder[VideoSequence] = deriveEncoder
+  given Decoder[BadRequest] = deriveDecoder
+  given Encoder[BadRequest] = deriveEncoder
+
+  given Decoder[HealthStatus] = deriveDecoder
+  given Encoder[HealthStatus] = deriveEncoder
+
+  given Decoder[ServiceStatus] = deriveDecoder
+  given Encoder[ServiceStatus] = deriveEncoder
+
+  given Decoder[StatusMsg] = deriveDecoder
+  given Encoder[StatusMsg] = deriveEncoder
+
+  given Decoder[NotFound] = deriveDecoder
+  given Encoder[NotFound] = deriveEncoder
+
+  given Decoder[ServerError] = deriveDecoder
+  given Encoder[ServerError] = deriveEncoder
+
+  given Decoder[Unauthorized] = deriveDecoder
+  given Encoder[Unauthorized] = deriveEncoder
+
+  given Decoder[LastUpdatedTime] = deriveDecoder
+  given Encoder[LastUpdatedTime] = deriveEncoder
+
+  given Decoder[VideoReference] = deriveDecoder
+  given Encoder[VideoReference] = deriveEncoder
+
+  given Decoder[Video] = deriveDecoder
+  given Encoder[Video] = deriveEncoder
+
+  given Decoder[VideoSequence] = deriveDecoder
+  given Encoder[VideoSequence] = deriveEncoder
 
   private val printer = Printer.noSpaces.copy(dropNullValues = true)
 
@@ -82,3 +129,11 @@ object CirceCodecs:
     *   Any value with an implicit circe coder in scope
     */
   extension [T: Encoder](value: T) def stringify: String = Encoder[T].apply(value).stringify
+
+  extension [T: Decoder](jsonString: String) def toJson: Either[ParsingFailure, Json] = parser.parse(jsonString);
+  extension [T: Decoder](jsonString: String)
+    def reify: Either[Error, T]                                                       =
+      for
+        json   <- jsonString.toJson
+        result <- Decoder[T].apply(json.hcursor)
+      yield result

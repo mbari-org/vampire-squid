@@ -21,16 +21,20 @@ import org.mbari.vampiresquid.repository.jpa.entity.VideoReferenceEntity
 import java.net.URI
 import java.time.{Duration, Instant}
 import java.util.UUID
+import scala.util.Try
+import java.util.HexFormat
+import org.mbari.vampiresquid.etc.sdk.FormTransform
+import org.mbari.vampiresquid.etc.sdk.ToStringTransforms
 
 case class Media(
-    video_sequence_uuid: UUID,
-    video_uuid: UUID,
-    video_reference_uuid: UUID,
-    video_sequence_name: String,
-    camera_id: String,
-    video_name: String,
-    uri: URI,
-    start_timestamp: Instant,
+    video_sequence_uuid: Option[UUID] = None,
+    video_uuid: Option[UUID] = None,
+    video_reference_uuid: Option[UUID] = None,
+    video_sequence_name: Option[String] = None,
+    camera_id: Option[String] = None,
+    video_name: Option[String] = None,
+    uri: Option[URI] = None,
+    start_timestamp: Option[Instant] = None,
     duration_millis: Option[Long] = None,
     container: Option[String] = None,
     video_codec: Option[String] = None,
@@ -45,13 +49,13 @@ case class Media(
     sha512: Option[Array[Byte]] = None
 ):
 
-  def videoSequenceUuid: UUID                  = video_sequence_uuid
-  def videoUuid: UUID                          = video_uuid
-  def videoReferenceUuid: UUID                 = video_reference_uuid
-  def videoSequenceName: String                = video_sequence_name
-  def cameraId: String                         = camera_id
-  def videoName: String                        = video_name
-  def startTimestamp: Instant                  = start_timestamp
+  def videoSequenceUuid: UUID                  = video_sequence_uuid.orNull
+  def videoUuid: UUID                          = video_uuid.orNull
+  def videoReferenceUuid: UUID                 = video_reference_uuid.orNull
+  def videoSequenceName: String                = video_sequence_name.orNull
+  def cameraId: String                         = camera_id.orNull
+  def videoName: String                        = video_name.orNull
+  def startTimestamp: Instant                  = start_timestamp.orNull
   def videoCodec: Option[String]               = video_codec
   def audioCodec: Option[String]               = audio_codec
   def frameRate: Option[Double]                = frame_rate
@@ -59,11 +63,13 @@ case class Media(
   def videoSequenceDescription: Option[String] = video_sequence_description
   def videoDescription: Option[String]         = video_description
   lazy val duration: Option[Duration]          = duration_millis.map(Duration.ofMillis)
-  lazy val endTimestamp: Option[Instant]       = duration.map(d => start_timestamp.plus(d))
-  def contains(ts: Instant): Boolean           = endTimestamp match
-    case None    => start_timestamp == ts
-    case Some(e) =>
-      start_timestamp == ts || e == ts || start_timestamp.isBefore(ts) && e.isAfter(ts)
+  lazy val endTimestamp: Option[Instant]       = duration.flatMap(d => start_timestamp.map(_.plus(d)))
+  def contains(ts: Instant): Boolean           = 
+    val opt = for 
+      e <- endTimestamp
+      s <- start_timestamp
+    yield s == ts || e == ts || (s.isBefore(ts) && e.isAfter(ts))
+    opt.getOrElse(false)
 
   def equalValues(that: Media): Boolean =
     video_sequence_name == that.video_sequence_name &&
@@ -85,6 +91,9 @@ case class Media(
       sha512 == that.sha512
 
 object Media:
+
+  private val hex = HexFormat.of()
+
   def from(videoReferenceEntity: VideoReferenceEntity): Media =
     // To avoid instantiating all the JPA lazy relations, we use
     // only the VideoReference case class as it does most conversions
@@ -93,14 +102,14 @@ object Media:
     val videoReference      = VideoReference.from(videoReferenceEntity)
     val videoSequenceEntity = videoEntity.getVideoSequence
     Media(
-      videoSequenceEntity.getUuid,
-      videoEntity.getUuid,
-      videoReferenceEntity.getUuid(),
-      videoSequenceEntity.getName,
-      videoSequenceEntity.getCameraID,
-      videoEntity.getName,
-      videoReference.uri,
-      videoEntity.getStart,
+      Option(videoSequenceEntity.getUuid),
+      Option(videoEntity.getUuid),
+      Option(videoReferenceEntity.getUuid()),
+      Option(videoSequenceEntity.getName),
+      Option(videoSequenceEntity.getCameraID),
+      Option(videoEntity.getName),
+      Option(videoReference.uri),
+      Option(videoEntity.getStart),
       Option(videoEntity.getDuration).map(_.toMillis),
       videoReference.container,
       videoReference.video_codec,
@@ -134,7 +143,7 @@ object Media:
       description = videoReference.description,
       sha512 = videoReference.sha512
     )
-    temp.copy(video_sequence_uuid = videoSequence.uuid, video_uuid = video.uuid, video_reference_uuid = videoReference.uuid)
+    temp.copy(video_sequence_uuid = Option(videoSequence.uuid), video_uuid = Option(video.uuid), video_reference_uuid = Option(videoReference.uuid))
 
   def build(
       videoSequenceName: Option[String] = None,
@@ -156,14 +165,14 @@ object Media:
       videoDescription: Option[String] = None
   ): Media =
     Media(
-      UUID.randomUUID(),
-      UUID.randomUUID(),
-      UUID.randomUUID(),
-      videoSequenceName.getOrElse(""),
-      cameraId.getOrElse(""),
-      videoName.getOrElse(""),
-      uri.getOrElse(new URI("")),
-      startTimestamp.getOrElse(Instant.EPOCH),
+      None,
+      None,
+      None,
+      videoSequenceName,
+      cameraId,
+      videoName,
+      uri,
+      startTimestamp,
       duration.map(_.toMillis),
       container,
       videoCodec,
@@ -177,3 +186,35 @@ object Media:
       videoDescription,
       sha512
     )
+
+  def fromFormMap(map: Map[String, String]): Media =
+    val durationMillis = Try(map.get("duration_millis").map(_.toLong)).toOption.flatten
+    Media(
+      map.get("video_sequence_uuid").map(UUID.fromString),
+      map.get("video_reference_uuid").map(UUID.fromString),
+      map.get("video_uuid").map(UUID.fromString),
+      map.get("video_sequence_name"),
+      map.get("camera_id"),
+      map.get("video_name"),
+      map.get("uri").map(URI.create),
+      map.get("start_timestamp").map(Instant.parse),
+      durationMillis, //Try(map.get("duration_millis").map(_.toLong)).getOrElse(None).tap(println),
+      map.get("container"),
+      map.get("video_codec"),
+      map.get("audio_codec"),
+      map.get("width").map(_.toInt),
+      map.get("height").map(_.toInt),
+      map.get("frame_rate").map(_.toDouble),
+      map.get("size_bytes").map(_.toLong),
+      map.get("description"),
+      map.get("video_sequence_description"),
+      map.get("video_description"),
+      map.get("sha512").map(hex.parseHex(_))
+    )
+
+  def toFormMap(m: Media): String = 
+
+    import ToStringTransforms.{transform, given}
+    import FormTransform.given 
+
+    transform(m)
