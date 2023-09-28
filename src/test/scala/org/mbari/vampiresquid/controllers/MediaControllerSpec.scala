@@ -160,8 +160,8 @@ class MediaControllerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterE
        description = Some("A test movie 2"),
        video_description = Some("Some great video"),
        video_sequence_description = Some("Our first deployment"),
-       video_name = "B20220829T000000",
-       start_timestamp = Instant.parse("2022-08-29T00:00:00Z"))
+       video_name = Some("B20220829T000000"),
+       start_timestamp = Some(Instant.parse("2022-08-29T00:00:00Z")))
     m2.videoUuid should be(m1.videoUuid)
 
     val f1  = controller.updateMedia(m2)
@@ -169,7 +169,7 @@ class MediaControllerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterE
     opt should not be (None)
     val m3 = opt.get
     m3.videoReferenceUuid should be(m1.videoReferenceUuid)
-    m3.videoSequenceUuid should be(m2.videoSequenceUuid)
+    m3.videoSequenceUuid.toString should be(m2.videoSequenceUuid.toString)
     m3.video_uuid should not be (null)
     m3.videoUuid should be(m2.videoUuid)
     m3.videoSequenceName should be(m1.videoSequenceName)

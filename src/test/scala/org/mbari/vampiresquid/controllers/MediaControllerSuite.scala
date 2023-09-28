@@ -69,11 +69,11 @@ class MediaControllerSuite extends DAOSuite:
     val m0 = buildMedia()
     val m1 = exec(
       controller.create(
-        m0.video_sequence_name,
-        m0.camera_id,
-        m0.video_name,
-        m0.uri,
-        m0.start_timestamp,
+        m0.video_sequence_name.get,
+        m0.camera_id.get,
+        m0.video_name.get,
+        m0.uri.get,
+        m0.start_timestamp.get,
         m0.duration,
         m0.container,
         m0.video_codec,
@@ -92,7 +92,9 @@ class MediaControllerSuite extends DAOSuite:
 
   test("updateMedia"):
     val m0 = createMedia()
-    val m1 = m0.copy(video_sequence_name = "foobarbaz", video_name = "foobarbazbim", video_codec = Some("video/magick"))
+    val m1 = m0.copy(video_sequence_name = Some("foobarbaz"), 
+                     video_name = Some("foobarbazbim"), 
+                     video_codec = Some("video/magick"))
     val opt = exec(controller.updateMedia(m1))
     assert(opt.isDefined)
     val m2 = opt.get
@@ -100,13 +102,15 @@ class MediaControllerSuite extends DAOSuite:
 
   test("findAndUpdate"):
     val m0 = createMedia()
-    val m1 = m0.copy(video_sequence_name = "foobarbaz", video_name = "foobarbazbim", video_codec = Some("video/magick"))
+    val m1 = m0.copy(video_sequence_name = Some("foobarbaz"), 
+                     video_name = Some("foobarbazbim"), 
+                     video_codec = Some("video/magick"))
     def find(dao: VideoReferenceDAO[VideoReferenceEntity]): Option[VideoReferenceEntity] = 
-      dao.findByUUID(m0.video_reference_uuid)
+      dao.findByUUID(m0.video_reference_uuid.get)
     val opt = exec(controller.findAndUpdate(findFn = find, 
-        videoSequenceName = m1.video_sequence_name,
-        cameraId = m1.camera_id,
-        videoName = m1.video_name,
+        videoSequenceName = m1.video_sequence_name.get,
+        cameraId = m1.camera_id.get,
+        videoName = m1.video_name.get,
         videoCodec = m1.video_codec))
     assert(opt.isDefined)
     val m2 = opt.get
@@ -114,10 +118,12 @@ class MediaControllerSuite extends DAOSuite:
 
   test("update"):
     val m0 = createMedia()
-    val m1 = m0.copy(video_sequence_name = "foobarbaz", video_name = "foobarbazbim", video_codec = Some("video/magick"))
+    val m1 = m0.copy(video_sequence_name = Some("foobarbaz"), 
+        video_name = Some("foobarbazbim"), 
+        video_codec = Some("video/magick"))
     val opt = exec(controller.update(m1.sha512.get,
       m1.videoSequenceName,
-      m1.camera_id,
+      m1.camera_id.get,
       m1.videoName,
       videoCodec = m1.videoCodec))
     assert(opt.isDefined)
@@ -128,7 +134,8 @@ class MediaControllerSuite extends DAOSuite:
     val m1 = createMedia()
 
     // move to existing
-    val opt = exec(controller.moveVideoReference(m0.video_reference_uuid, m1.video_name, m1.start_timestamp, m1.duration.get))
+    val opt = exec(controller.moveVideoReference(m0.video_reference_uuid.get, 
+      m1.video_name.get, m1.start_timestamp.get, m1.duration.get))
     assert(opt.isDefined)
     val m2 = opt.get
     assertEquals(m2.video_sequence_name, m1.video_sequence_name)
@@ -139,23 +146,23 @@ class MediaControllerSuite extends DAOSuite:
     // move to new
     val newName = "one more ref"
     val newDuration = Duration.ofSeconds(100)
-    val opt1 = exec(controller.moveVideoReference(m0.video_reference_uuid, newName, m1.start_timestamp, Duration.ofSeconds(100)))
+    val opt1 = exec(controller.moveVideoReference(m0.video_reference_uuid.get, newName, m1.start_timestamp.get, Duration.ofSeconds(100)))
     assert(opt1.isDefined)
     val m3 = opt1.get
     assertEquals(m2.video_sequence_name, m1.video_sequence_name)
-    assertEquals(m3.video_name, newName)
+    assertEquals(m3.video_name.get, newName)
     assertEquals(m3.start_timestamp, m2.start_timestamp)
     assertEquals(m3.duration.get, newDuration)
 
     // move bogus uuid
     val newUuid = UUID.randomUUID()
-    val opt2 = exec(controller.moveVideoReference(newUuid, newName, m1.start_timestamp, Duration.ofSeconds(100)))
+    val opt2 = exec(controller.moveVideoReference(newUuid, newName, m1.start_timestamp.get, Duration.ofSeconds(100)))
     assert(opt2.isEmpty)
     
 
   test("findByVideoReferenceUuid"):
     val m0 = createMedia()
-    val opt = exec(controller.findByVideoReferenceUuid(m0.video_reference_uuid))
+    val opt = exec(controller.findByVideoReferenceUuid(m0.video_reference_uuid.get))
     assert(opt.isDefined)
     assertSameValues(opt.get, m0)
 
@@ -167,50 +174,50 @@ class MediaControllerSuite extends DAOSuite:
 
   test("findByVideoSequenceName"):
     val m0 = createMedia()
-    val xs = exec(controller.findByVideoSequenceName(m0.video_sequence_name))
+    val xs = exec(controller.findByVideoSequenceName(m0.video_sequence_name.get))
     assertEquals(xs.size, 1)
     assertSameValues(xs.head, m0)
 
   test("findByVideoSequenceNameAndTimestamp"):
     val m0 = createMedia()
-    val xs = exec(controller.findByVideoSequenceNameAndTimestamp(m0.video_sequence_name, m0.start_timestamp.plus(m0.duration.get.dividedBy(2))))
+    val xs = exec(controller.findByVideoSequenceNameAndTimestamp(m0.video_sequence_name.get, m0.start_timestamp.get.plus(m0.duration.get.dividedBy(2))))
     assertEquals(xs.size, 1)
     assertSameValues(xs.head, m0)
 
   test("findByCameraIdAndTimestamp"):
     val m0 = createMedia()
-    val xs = exec(controller.findByCameraIdAndTimestamp(m0.camera_id, m0.start_timestamp.plus(m0.duration.get.dividedBy(2))))
+    val xs = exec(controller.findByCameraIdAndTimestamp(m0.camera_id.get, m0.start_timestamp.get.plus(m0.duration.get.dividedBy(2))))
     assertEquals(xs.size, 1)
     assertSameValues(xs.head, m0)
 
   test("findByCameraIdAndTimestamps"):
     val m0 = createMedia()
-    val xs = exec(controller.findByCameraIdAndTimestamps(m0.camera_id, m0.start_timestamp, m0.start_timestamp.plus(m0.duration.get)))
+    val xs = exec(controller.findByCameraIdAndTimestamps(m0.camera_id.get, m0.start_timestamp.get, m0.start_timestamp.get.plus(m0.duration.get)))
     assertEquals(xs.size, 1)
     assertSameValues(xs.head, m0)
 
   test("findConcurrent"):
     val m0 = createMedia()
-    val xs = exec(controller.findConcurrent(m0.video_reference_uuid))
+    val xs = exec(controller.findConcurrent(m0.video_reference_uuid.get))
     assertEquals(xs.size, 1)
     assertSameValues(xs.head, m0)
     // TODO create more than one concurrent video
 
   test("findByVideoName"):
     val m0 = createMedia()
-    val xs = exec(controller.findByVideoName(m0.video_name))
+    val xs = exec(controller.findByVideoName(m0.video_name.get))
     assertEquals(xs.size, 1)
     assertSameValues(xs.head, m0)
 
   test("findByURI"):
     val m0 = createMedia()
-    val xs = exec(controller.findByURI(m0.uri))
+    val xs = exec(controller.findByURI(m0.uri.get))
     assertEquals(xs.size, 1)
     assertSameValues(xs.head, m0)
 
   test("findByFileName"):
     val m0 = createMedia()
-    val filename = Uris.filename(m0.uri)
+    val filename = Uris.filename(m0.uri.get)
     val xs = exec(controller.findByFileName(filename))
     assertEquals(xs.size, 1)
     assertSameValues(xs.head, m0)

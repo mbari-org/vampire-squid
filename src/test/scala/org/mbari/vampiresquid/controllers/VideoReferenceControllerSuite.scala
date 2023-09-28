@@ -71,7 +71,7 @@ class VideoReferenceControllerSuite extends DAOSuite:
     val media = Media.from(vr)
     val videoReference = VideoReference.from(vr)
 
-    val x = exec(controller.findByVideoUUID(media.video_uuid))
+    val x = exec(controller.findByVideoUUID(media.video_uuid.get))
     assert(x.nonEmpty)
     assertEquals(x.size, 2)
 
