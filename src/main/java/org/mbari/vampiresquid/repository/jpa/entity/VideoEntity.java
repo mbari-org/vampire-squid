@@ -77,9 +77,10 @@ import java.util.UUID;
 public class VideoEntity implements IPersistentObject {
 
     @Id
-    @GeneratedValue(generator = "system-uuid")
+    // @GeneratedValue(generator = "system-uuid")
     @Column(name = "uuid", nullable = false, updatable = false, length = 36)
-    @Convert(converter = UUIDConverter.class)
+    // @Convert(converter = UUIDConverter.class)
+    @GeneratedValue(strategy = GenerationType.UUID)
     UUID uuid;
 
     @Basic(optional = false)

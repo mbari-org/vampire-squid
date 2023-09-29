@@ -27,4 +27,4 @@ class FormTransformSuite extends munit.FunSuite:
     val vs = TestUtils.build(1, 1, 1).head
     val media = Media.from(vs.getVideoReferences().get(0))
     val s = ToStringTransforms.transform(media)
-    println(s)
+    

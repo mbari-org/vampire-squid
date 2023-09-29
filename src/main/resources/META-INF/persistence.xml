@@ -10,16 +10,19 @@
         <class>org.mbari.vampiresquid.etc.jpa.DurationConverter</class>
         <class>org.mbari.vampiresquid.etc.jpa.InstantConverter</class>
         <class>org.mbari.vampiresquid.etc.jpa.URIConverter</class>
-        <class>org.mbari.vampiresquid.etc.jpa.UUIDConverter</class>
+        <!-- <class>org.mbari.vampiresquid.etc.jpa.UUIDConverter</class> -->
 
         <!-- Entities -->
         <class>org.mbari.vampiresquid.repository.jpa.entity.VideoSequenceEntity</class>
         <class>org.mbari.vampiresquid.repository.jpa.entity.VideoEntity</class>
         <class>org.mbari.vampiresquid.repository.jpa.entity.VideoReferenceEntity</class>
         <properties>
-            <property name="jakarta.persistence.provider" value="org.hibernate.jpa.HibernatePersistenceProvider" />
-            <property name="hibernate.hikari.minimumIdle" value="2" />
+            <property name="hibernate.batch_versioned_data" value="true" />
             <property name="hibernate.hikari.maximumPoolSize" value="6" />
+            <property name="hibernate.hikari.minimumIdle" value="2" />
+            <property name="hibernate.jdbc.batch_size" value="100" />
+            <property name="hibernate.order_updates" value="true" />
+            <property name="jakarta.persistence.provider" value="org.hibernate.jpa.HibernatePersistenceProvider" />
         </properties>
     </persistence-unit>
 </persistence>

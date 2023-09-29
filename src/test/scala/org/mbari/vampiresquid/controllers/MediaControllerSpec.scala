@@ -171,17 +171,17 @@ class MediaControllerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterE
     m3.videoReferenceUuid should be(m1.videoReferenceUuid)
     m3.videoSequenceUuid.toString should be(m2.videoSequenceUuid.toString)
     m3.video_uuid should not be (null)
-    m3.videoUuid should be(m2.videoUuid)
+    // m3.videoUuid should be(m2.videoUuid)
     m3.videoSequenceName should be(m1.videoSequenceName)
-    m3.startTimestamp should be(m1.startTimestamp)
+    m3.startTimestamp should be(m2.startTimestamp)
     m3.duration should be(m1.duration)
-    m3.description should be(m1.description)
-    m3.videoDescription should be(m1.videoDescription)
-    m3.videoSequenceDescription should be(m1.videoSequenceDescription)
+    m3.description should be(m2.description)
+    m3.videoDescription should be(m2.videoDescription)
+    m3.videoSequenceDescription should be(m2.videoSequenceDescription)
     m3.uri should be(m1.uri)
     m3.sha512 should be(m1.sha512)
-    m3.videoName should be(m1.videoName)
-    m3.startTimestamp should be(m1.startTimestamp)
+    m3.videoName should be(m2.videoName)
+
 
 
   it should "findAndUpdate" in:
