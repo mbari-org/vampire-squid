@@ -2,8 +2,9 @@
 <persistence version="1.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
     <persistence-unit name="video-asset-manager" transaction-type="RESOURCE_LOCAL">
         <description>VAM Data Model</description>
-        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-        <shared-cache-mode>NONE</shared-cache-mode>
+    
+        <!-- <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider> -->
+        <!-- <shared-cache-mode>NONE</shared-cache-mode> -->
         <!-- Converters -->
         <class>org.mbari.vampiresquid.etc.jpa.ByteArrayConverter</class>
         <class>org.mbari.vampiresquid.etc.jpa.DurationConverter</class>
@@ -16,10 +17,9 @@
         <class>org.mbari.vampiresquid.repository.jpa.entity.VideoEntity</class>
         <class>org.mbari.vampiresquid.repository.jpa.entity.VideoReferenceEntity</class>
         <properties>
-            <property name="eclipselink.logging.level" value="INFO" />
-            <property name="eclipselink.connection-pool.default.initial" value="2" />
-            <property name="eclipselink.connection-pool.default.max" value="6" />
-            <property name="eclipse.weaving" value="true" />
+            <property name="jakarta.persistence.provider" value="org.hibernate.jpa.HibernatePersistenceProvider" />
+            <property name="hibernate.hikari.minimumIdle" value="2" />
+            <property name="hibernate.hikari.maximumPoolSize" value="6" />
         </properties>
     </persistence-unit>
 </persistence>

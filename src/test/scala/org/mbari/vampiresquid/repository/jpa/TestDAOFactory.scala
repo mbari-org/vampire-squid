@@ -19,7 +19,6 @@ package org.mbari.vampiresquid.repository.jpa
 import java.util.concurrent.TimeUnit
 import jakarta.persistence.EntityManagerFactory
 import com.typesafe.config.ConfigFactory
-import org.eclipse.persistence.config.TargetDatabase
 import org.mbari.vampiresquid.repository.jpa.DerbyTestDAOFactory.config
 
 import scala.concurrent.Await
@@ -65,8 +64,7 @@ object DerbyTestDAOFactory extends SpecDAOFactory:
   override def testProps(): Map[String, String] =
     TestDAOFactory.TestProperties ++
       Map(
-        "eclipselink.target-database"             -> TargetDatabase.Derby,
-        "jakarta.persistence.database-product-name" -> TargetDatabase.Derby
+        "hibernate.dialect"             -> "org.hibernate.dialect.DerbyDialect",
       )
 
   lazy val entityManagerFactory: EntityManagerFactory =

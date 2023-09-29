@@ -20,7 +20,6 @@ lazy val rootProject = (project in file("."))
     GitBranchPrompt,
     GitVersioning,
     JavaAppPackaging,
-    EclipseLinkStaticWeaver
   )
   .settings(
     Seq(
@@ -48,8 +47,10 @@ lazy val rootProject = (project in file("."))
         "org.apache.derby"               % "derbyshared"                       % derbyVersion,
         "org.apache.derby"               % "derbytools"                        % derbyVersion,
         "org.scalameta"                 %% "munit"                             % "1.0.0-M10"  % Test,
-        "org.eclipse.persistence"        % "eclipselink"                       % eclipselinkVersion,
-        "org.eclipse.persistence"        % "org.eclipse.persistence.extension" % eclipselinkVersion,
+        "org.hibernate.orm"              % "hibernate-core"                    % "6.3.0.Final",
+        "org.hibernate.orm"              % "hibernate-hikaricp"                    % "6.3.0.Final",
+        // "org.eclipse.persistence"        % "eclipselink"                       % eclipselinkVersion,
+        // "org.eclipse.persistence"        % "org.eclipse.persistence.extension" % eclipselinkVersion,
         "org.scalatest"                 %% "scalatest"                         % "3.2.17"     % Test,
         "com.typesafe"                   % "config"                            % "1.4.2"
       ),

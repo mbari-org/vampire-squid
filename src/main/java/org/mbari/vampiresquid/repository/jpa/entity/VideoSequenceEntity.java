@@ -85,27 +85,18 @@ import java.util.UUID;
 public class VideoSequenceEntity implements IPersistentObject {
 
     @Id
-    @GeneratedValue(generator = "system-uuid")
-    @Column(name = "uuid", nullable = false, updatable = false, length = 36)
-    @Convert(converter = UUIDConverter.class)
+    @Column(name = "uuid", nullable = false, updatable = false)
+    @GeneratedValue(strategy = GenerationType.UUID)
     UUID uuid;
-
-//    def primaryKey: Option[UUID] = Option(uuid)
-
-//    def lastUpdated: Option[Instant] = Option(lastUpdatedTime).map(_.toInstant)
 
     @Basic(optional = false)
     @Column(name = "name", nullable = false, length = 512, unique = true)
     String name;
 
-//    @Expose(serialize = true)
-//    @SerializedName(value = "camera_id")
     @Basic(optional = false)
     @Column(name = "camera_id", nullable = false, length = 256)
     String cameraID;
 
-//    @Expose(serialize = true)
-//    @SerializedName(value = "videos")
     @OneToMany(
             targetEntity = VideoEntity.class,
             cascade = {CascadeType.ALL},

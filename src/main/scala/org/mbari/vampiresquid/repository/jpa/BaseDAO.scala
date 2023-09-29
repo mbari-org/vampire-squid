@@ -77,4 +77,4 @@ abstract class BaseDAO[B <: IPersistentObject: ClassTag](val entityManager: Enti
   def close(): Unit = if (entityManager.isOpen) entityManager.close()
 
 object BaseDAO:
-  val JDBC_URL_KEY = "javax.persistence.jdbc.url"
+  val JDBC_URL_KEY = "jakarta.persistence.jdbc.url"

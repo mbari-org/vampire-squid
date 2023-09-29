@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
     Logging Configuration.
 -->
@@ -10,13 +10,21 @@
 
   <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
     <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-      <pattern>%gray(%d{HH:mm:ss.SSS}) %highlight(%-5level) [%green(%-25thread)] %blue(%-40logger{40}) %gray(|) %msg%n</pattern>
+      <pattern>%gray(%d{HH:mm:ss.SSS}) %highlight(%-5level) [%green(%-25thread)]
+        %blue(%-40logger{40}) %gray(|) %msg%n</pattern>
     </encoder>
   </appender>
 
 
   <logger name="org.apache.http" level="WARN" />
   <logger name="org.eclipse.jetty" level="WARN" />
+  <!-- Hibernate after 6 DEBUG -->
+  <logger name="org.hibernate.SQL" level="debug" additivity="false" />
+  <logger name="org.hibernate.orm.jdbc.bind" level="trace" additivity="false" />
+  <logger name="org.hibernate.stat" level="debug" additivity="false" />
+  <logger name="org.hibernate.SQL_SLOW" level="info" additivity="false" />
+  <logger name="org.hibernate.cache" level="debug" additivity="false" />
+
 
   <root level="${LOGBACK_LEVEL}">
     <appender-ref ref="CONSOLE" />

@@ -19,7 +19,6 @@ package org.mbari.vampiresquid.repository.jpa
 import jakarta.persistence.{EntityManagerFactory, Persistence}
 
 import com.typesafe.config.ConfigFactory
-import org.eclipse.persistence.config.PersistenceUnitProperties
 
 import scala.jdk.CollectionConverters._
 
@@ -36,16 +35,14 @@ object EntityManagerFactories:
 
   private lazy val config = ConfigFactory.load()
 
+  // https://juliuskrah.com/tutorial/2017/02/16/getting-started-with-hikaricp-hibernate-and-jpa/
   val PRODUCTION_PROPS = Map(
-    "eclipselink.connection-pool.default.initial"           -> "2",
-    "eclipselink.connection-pool.default.max"               -> "16",
-    "eclipselink.connection-pool.default.min"               -> "2",
-    "eclipselink.logging.logger"                            -> "org.eclipse.persistence.logging.slf4j.SLF4JLogger",
-    "eclipselink.logging.session"                           -> "false",
-    "eclipselink.logging.thread"                            -> "false",
-    "eclipselink.logging.timestamp"                         -> "false",
-    "jakarta.persistence.schema-generation.database.action" -> "create",
-    PersistenceUnitProperties.SESSION_CUSTOMIZER            -> "org.mbari.vampiresquid.etc.eclipselink.UUIDSequence"
+    "hibernate.connection.provider_class"                   -> "org.hibernate.hikaricp.internal.HikariCPConnectionProvider",
+    "hibernate.hbm2ddl.auto"                                -> "create",
+    "hibernate.hikari.idleTimeout"                          -> "30000",
+    "hibernate.hikari.maximumPoolSize"                      -> "16",
+    "hibernate.hikari.minimumIdle"                          -> "2",
+    "jakarta.persistence.schema-generation.database.action" -> "create"
   )
 
   def apply(properties: Map[String, String]): EntityManagerFactory =
@@ -76,12 +73,10 @@ object EntityManagerFactories:
     val url         = config.getString(configNode + ".url")
     val user        = config.getString(configNode + ".user")
     val props       = Map(
-      "eclipselink.logging.level"                 -> logLevel,
-      "eclipselink.target-database"               -> productName,
-      "jakarta.persistence.database-product-name" -> productName,
-      "jakarta.persistence.jdbc.driver"           -> driver,
-      "jakarta.persistence.jdbc.password"         -> password,
-      "jakarta.persistence.jdbc.url"              -> url,
-      "jakarta.persistence.jdbc.user"             -> user
+      "hibernate.dialect"                 -> productName,
+      "jakarta.persistence.jdbc.driver"   -> driver,
+      "jakarta.persistence.jdbc.password" -> password,
+      "jakarta.persistence.jdbc.url"      -> url,
+      "jakarta.persistence.jdbc.user"     -> user
     )
     apply(props)
