@@ -41,14 +41,7 @@ class VideoReferenceDAOImpl(entityManager: EntityManager)
     findByNamedQuery("VideoReference.findByURI", Map("uri" -> uri)).headOption
 
   override def findByFileName(filename: String): Iterable[VideoReferenceEntity] =
-    val query = entityManager.createNamedQuery("VideoReference.findByFileName")
-    query.setParameter(1, s"%$filename")
-    query
-      .getResultList
-      .asScala
-      .map(_.toString)
-      .map(UUID.fromString)
-      .flatMap(findByUUID)
+    findByNamedQuery("VideoReference.findByFileName", Map("filename" -> s"%$filename"))
 
   override def findAll(): Iterable[VideoReferenceEntity] =
     findByNamedQuery("VideoReference.findAll")

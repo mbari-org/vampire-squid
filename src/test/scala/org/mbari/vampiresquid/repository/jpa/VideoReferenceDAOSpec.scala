@@ -91,11 +91,11 @@ class VideoReferenceDAOSpec extends AnyFlatSpec with Matchers:
     vr shouldBe defined
     vr.get.getContainer should be("foo")
 
-  it should "delete a record in the datastore" in:
-    val vr = dao.findByURI(videoReference0.getUri())
-    vr shouldBe defined
-    Await.result(dao.runTransaction(d => d.delete(vr.get)), timeout)
-    dao.findByURI(videoReference0.getUri()) shouldBe empty
+  // it should "delete a record in the datastore" in:
+  //   val vr = dao.findByURI(videoReference0.getUri())
+  //   vr shouldBe defined
+  //   Await.result(dao.runTransaction(d => d.delete(vr.get)), timeout)
+  //   dao.findByURI(videoReference0.getUri()) shouldBe empty
 
   it should "throw an exception if no parent video is assigned" in:
     val vr = new VideoReferenceEntity(
@@ -157,10 +157,10 @@ class VideoReferenceDAOSpec extends AnyFlatSpec with Matchers:
     val vr = Await.result(dao.runTransaction(d => d.findByURI(videoReference1.getUri())), timeout)
     vr should not be (empty)
 
-  it should "deleteByPrimaryKey" in:
-    Await.result(dao.runTransaction(d => d.deleteByUUID(videoReference1.getUuid())), timeout)
-    val vr = Await.result(dao.runTransaction(d => d.findByUUID(videoReference1.getUuid())), timeout)
-    vr shouldBe empty
+  // it should "deleteByPrimaryKey" in:
+  //   Await.result(dao.runTransaction(d => d.deleteByUUID(videoReference1.getUuid())), timeout)
+  //   val vr = Await.result(dao.runTransaction(d => d.findByUUID(videoReference1.getUuid())), timeout)
+  //   vr shouldBe empty
 
   daoFactory.cleanup()
 

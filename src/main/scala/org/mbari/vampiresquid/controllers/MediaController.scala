@@ -302,6 +302,8 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController:
           case None     =>
             val vv = new VideoEntity
             vv.setName(videoName)
+            if (start.isEmpty)
+              throw new RuntimeException("The update request is moving to a new Video, but no new startTimestamp was provided.")
             start.foreach(vv.setStart)
             duration.foreach(vv.setDuration)
             videoSequence.addVideo(vv)

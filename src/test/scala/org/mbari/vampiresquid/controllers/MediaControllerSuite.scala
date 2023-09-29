@@ -102,30 +102,38 @@ class MediaControllerSuite extends DAOSuite:
 
   test("findAndUpdate"):
     val m0 = createMedia()
-    val m1 = m0.copy(video_sequence_name = Some("foobarbaz"), 
-                     video_name = Some("foobarbazbim"), 
-                     video_codec = Some("video/magick"))
+    val m1 = m0.copy(video_codec = Some("video/magick"), 
+                     video_sequence_description = Some("foobarbaz"), 
+                     video_description = Some("foobarbazbim"), 
+                     description = Some("foobarbazbimboom"))
     def find(dao: VideoReferenceDAO[VideoReferenceEntity]): Option[VideoReferenceEntity] = 
       dao.findByUUID(m0.video_reference_uuid.get)
     val opt = exec(controller.findAndUpdate(findFn = find, 
-        videoSequenceName = m1.video_sequence_name.get,
-        cameraId = m1.camera_id.get,
-        videoName = m1.video_name.get,
-        videoCodec = m1.video_codec))
+        m1.video_sequence_name.get,
+        m1.camera_id.get,
+        m1.video_name.get,
+        videoCodec = m1.video_codec,
+        videoSequenceDescription = m1.video_sequence_description,
+        videoDescription = m1.video_description,
+        videoRefDescription = m1.description))
     assert(opt.isDefined)
     val m2 = opt.get
     assertSameValues(m2, m1)
 
   test("update"):
     val m0 = createMedia()
-    val m1 = m0.copy(video_sequence_name = Some("foobarbaz"), 
-        video_name = Some("foobarbazbim"), 
-        video_codec = Some("video/magick"))
+    val m1 = m0.copy(video_codec = Some("video/magick"), 
+                     video_sequence_description = Some("foobarbaz"), 
+                     video_description = Some("foobarbazbim"), 
+                     description = Some("foobarbazbimboom"))
     val opt = exec(controller.update(m1.sha512.get,
-      m1.videoSequenceName,
+      m1.video_sequence_name.get,
       m1.camera_id.get,
-      m1.videoName,
-      videoCodec = m1.videoCodec))
+      m1.video_name.get,
+      videoCodec = m1.video_codec,
+      videoSequenceDescription = m1.video_sequence_description,
+      videoDescription = m1.video_description,
+      videoRefDescription = m1.description))
     assert(opt.isDefined)
     assertSameValues(opt.get, m1)
 

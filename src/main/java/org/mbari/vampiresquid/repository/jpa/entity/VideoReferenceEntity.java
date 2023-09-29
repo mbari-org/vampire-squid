@@ -37,10 +37,10 @@ import java.util.UUID;
 @EntityListeners({TransactionLogger.class})
 @NamedNativeQueries(
         {
-                @NamedNativeQuery(
-                        name = "VideoReference.findByFileName",
-                        query = "SELECT uuid FROM video_references WHERE uri LIKE ?1"
-                ),
+                // @NamedNativeQuery(
+                //         name = "VideoReference.findByFileName",
+                //         query = "SELECT uuid FROM video_references WHERE uri LIKE ?1"
+                // ),
                 @NamedNativeQuery(
                         name = "VideoReference.findAllURIs",
                         query = "SELECT uri FROM video_references"
@@ -61,7 +61,11 @@ import java.util.UUID;
                 @NamedQuery(
                         name = "VideoReference.findByURI",
                         query = "SELECT v FROM VideoReference v WHERE v.uri = :uri"
-                )
+                ),
+                @NamedQuery(
+                        name = "VideoReference.findByFileName",
+                        query = "SELECT v FROM VideoReference v WHERE CAST(v.uri as string) LIKE :filename"
+                ),
         }
 )
 public class VideoReferenceEntity implements IPersistentObject {

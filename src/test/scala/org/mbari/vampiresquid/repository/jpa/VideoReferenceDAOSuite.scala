@@ -162,6 +162,7 @@ class VideoReferenceDAOSuite extends DAOSuite:
     val videoSequence = TestUtils.create(1, 3, 3).head
     val videoReference = videoSequence.getVideoReferences.get(0)
     val filename = Uris.filename(videoReference.getUri)
+    
     val xs = run(() => dao.findByFileName(filename))
     assertEquals(xs.size, 1)
     val entity = xs.head
