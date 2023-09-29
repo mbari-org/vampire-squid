@@ -27,7 +27,9 @@ import java.util.UUID
 import org.mbari.vampiresquid.etc.jdk.Uris
 import org.junit.Assert
 import java.util.Arrays
-
+import scala.jdk.CollectionConverters.*
+import java.time.Instant
+import org.mbari.vampiresquid.repository.jpa.VideoSequenceDAOImpl
 
 class MediaControllerSuite extends DAOSuite:
 
@@ -204,12 +206,34 @@ class MediaControllerSuite extends DAOSuite:
     assertEquals(xs.size, 1)
     assertSameValues(xs.head, m0)
 
-  test("findConcurrent"):
+  test("findConcurrent (simple case)"):
     val m0 = createMedia()
     val xs = exec(controller.findConcurrent(m0.video_reference_uuid.get))
     assertEquals(xs.size, 1)
     assertSameValues(xs.head, m0)
     // TODO create more than one concurrent video
+
+  test("findConcurrent (advanced)"):
+    val vs = TestUtils.build(1, 10, 1).head
+    val xs = vs.getVideoReferences.asScala
+    val now = Instant.now()
+    for 
+      (v, i) <- xs.zipWithIndex
+    do
+      val start = now.plus(Duration.ofSeconds(100 * i))
+      val duration = Duration.ofSeconds(500)
+      v.getVideo.setStart(start)
+      v.getVideo.setDuration(duration)
+  
+    given dao: VideoSequenceDAOImpl = daoFactory.newVideoSequenceDAO()
+    run(() => dao.create(vs))
+    val m0 = Media.from(xs.head)
+    dao.close()
+
+    val ys = exec(controller.findConcurrent(m0.video_reference_uuid.get))
+    val good = xs.filter(_.getVideo().getStart().isBefore(m0.endTimestamp.get))
+    assertEquals(ys.size, good.size)
+    assertSameValues(ys.head, m0)
 
   test("findByVideoName"):
     val m0 = createMedia()

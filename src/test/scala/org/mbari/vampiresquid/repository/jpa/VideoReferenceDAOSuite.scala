@@ -24,6 +24,7 @@ import org.mbari.vampiresquid.repository.jpa.entity.VideoReferenceEntity
 import java.time.{Duration, Instant}
 import scala.jdk.CollectionConverters.*
 import scala.concurrent.ExecutionContext.Implicits.global
+import org.mbari.vampiresquid.domain.Media
 
 class VideoReferenceDAOSuite extends DAOSuite:
 
@@ -108,43 +109,27 @@ class VideoReferenceDAOSuite extends DAOSuite:
     dao.close()
 
   test("findConcurrent"):
-    given dao: VideoReferenceDAO[VideoReferenceEntity] = daoFactory.newVideoReferenceDAO()
-    val videoSequence = TestUtils.create(1, 29, 1).head
-    val videoReferences = videoSequence.getVideos.asScala.flatMap(_.getVideoReferences.asScala)
-    val videos = videoSequence.getVideos.asScala
-    val master = videos.head.getVideoReferences.get(0)
-
-    // Set 5 start time durations that overlap. Set the rest to NOT overlap
-    val videoSequenceDao = daoFactory.newVideoSequenceDAO()
-    videoSequenceDao.runTransaction(d => {
-      val vs = d.update(videoSequence)
-      val startTime = Instant.now()
-      var seconds = 360
-      var n = 0
-      vs.getVideos
-        .stream()
-        .forEach(v => {
-          if (n <= 5) then
-            val duration = Duration.ofSeconds(seconds)
-            val newStart = startTime.plus(Duration.ofSeconds(n))
-            v.setStart(newStart)
-            v.setDuration(duration)
-          //        println(s"--- $newStart to ${newStart.plus(duration)}")
-          else
-            v.setStart(Instant.EPOCH)
-            v.setDuration(Duration.ofSeconds(seconds))
-
-          seconds = seconds * 2
-          n = n + 1
-        })
-    })
-//    videoSequenceDao.runTransaction(d => d.update(videoSequence))
-    videoSequenceDao.close()
+    given dao: VideoSequenceDAOImpl = daoFactory.newVideoSequenceDAO()
+    val vs = TestUtils.build(1, 29, 1).head
+    val xs = vs.getVideoReferences.asScala
+    val now = Instant.now()
+    for 
+      (v, i) <- xs.zipWithIndex
+    do
+      val start = now.plus(Duration.ofSeconds(100 * i))
+      val duration = Duration.ofSeconds(500)
+      v.getVideo.setStart(start)
+      v.getVideo.setDuration(duration)
+    run(() => dao.create(vs))(using dao)
+    val m0 = Media.from(xs.head)
+    dao.close()
 
 //    println(s"--- Searching using ${master.getVideo.getStart}" )
-    val xs = run(() => dao.findConcurrent(master.getUuid))
-    assertEquals(xs.size, 5)
-    dao.close()
+    given vDao: VideoReferenceDAOImpl = daoFactory.newVideoReferenceDAO()
+    val ys = run(() => vDao.findConcurrent(m0.video_reference_uuid.get))(using vDao)
+    val good = xs.filter(_.getVideo().getStart().isBefore(m0.endTimestamp.get))
+    assertEquals(ys.size, good.size)
+    vDao.close()
 
   test("findByURI"):
     given dao: VideoReferenceDAO[VideoReferenceEntity] = daoFactory.newVideoReferenceDAO()
