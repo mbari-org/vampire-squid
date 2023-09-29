@@ -315,7 +315,35 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
 
       
 
-  override def all: List[Endpoint[?, ?, ?, ?, ?]] = List(createEndpoint)
+  override def all: List[Endpoint[?, ?, ?, ?, ?]] = List(
+      createEndpoint,
+      updateEndpoint,
+      updateByVideoReferenceUuidEndpoint,
+      moveByVideoReferenceUuidEndpoint,
+      findBySha512,
+      findByVideoReferenceUuid,
+      findByFileName,
+      findByVideoSequenceName,
+      findByVideoName,
+      findByCameraIdAndTimestamps,
+      findConcurrentByVideoReferenceUuid,
+      findByCameraIdAndDatetime,
+      findByUri
+    )
 
-  override def allImpl: List[ServerEndpoint[Any, concurrent.Future]] = List(createEndpointImpl)
+  override def allImpl: List[ServerEndpoint[Any, concurrent.Future]] = List(
+      createEndpointImpl,
+      updateEndpointImpl,
+      updateByVideoReferenceUuidEndpointImpl,
+      moveByVideoReferenceUuidEndpointImpl,
+      findBySha512Impl,
+      findByVideoReferenceUuidImpl,
+      findByFileNameImpl,
+      findByVideoSequenceNameImpl,
+      findByVideoNameImpl,
+      findByCameraIdAndTimestampsImpl,
+      findConcurrentByVideoReferenceUuidImpl,
+      findByCameraIdAndDatetimeImpl,
+      findByUriImpl
+    )
 

@@ -55,7 +55,7 @@ object ToStringTransforms:
     def f(x: Long) = x.toString
 
   given Transformer[Double] with
-    def f(x: Double) = f"$x%.2f"
+    def f(x: Double) = f"$x%.6f"
 
   given Transformer[URL] with
     def f(x: URL) = x.toExternalForm
@@ -74,6 +74,9 @@ object ToStringTransforms:
 
   given Transformer[UUID] with
     def f(x: UUID) = x.toString
+
+  given Transformer[Any] with 
+    def f(x: Any)  = x.toString()
 
   given [T](using t: Transformer[T]): Transformer[Option[T]] =
     new Transformer[Option[T]]:

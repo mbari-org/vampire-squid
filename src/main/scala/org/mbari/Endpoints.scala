@@ -26,6 +26,14 @@ import sttp.tapir.json.circe.*
 import sttp.tapir.server.ServerEndpoint
 import sttp.tapir.server.metrics.prometheus.PrometheusMetrics
 import sttp.tapir.swagger.bundle.SwaggerInterpreter
+import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
+import org.mbari.vampiresquid.controllers.MediaController
+import org.mbari.vampiresquid.AppConfig
+import org.mbari.vampiresquid.etc.jwt.JwtService
+import org.mbari.vampiresquid.endpoints.MediaEndpoints
+import org.mbari.vampiresquid.endpoints.AuthorizationEndpoints
+import org.mbari.vampiresquid.endpoints.HealthEndpoints
+import scala.concurrent.ExecutionContext.Implicits.global
 
 object Endpoints:
   case class User(name: String) extends AnyVal
@@ -42,13 +50,29 @@ object Endpoints:
     .out(jsonBody[List[Book]])
   val booksListingServerEndpoint: ServerEndpoint[Any, Future]   = booksListing.serverLogicSuccess(_ => Future.successful(Library.books))
 
-  val apiEndpoints: List[ServerEndpoint[Any, Future]] = List(helloServerEndpoint, booksListingServerEndpoint)
+  // ---------------------------- 
+  val daoFactory = JPADAOFactory
+  val mediaController = new MediaController(daoFactory)
+
+  val jwtParams = AppConfig.JwtParameters
+  val jwtService = new JwtService(jwtParams.issuer, jwtParams.clientSecret, jwtParams.signingSecret)
+  val mediaEndpoints = new MediaEndpoints(mediaController, jwtService)
+  val authEndpoints = new AuthorizationEndpoints(jwtService)
+  val healthEndpoints = new HealthEndpoints
+
+  val apiEndpoints = mediaEndpoints.allImpl ++ authEndpoints.allImpl ++ healthEndpoints.allImpl
+
+
+
+  // val apiEndpoints: List[ServerEndpoint[Any, Future]] = List(helloServerEndpoint, booksListingServerEndpoint)
 
   val docEndpoints: List[ServerEndpoint[Any, Future]] = SwaggerInterpreter()
     .fromServerEndpoints[Future](apiEndpoints, "vampire-squid", "1.0.0")
 
   val prometheusMetrics: PrometheusMetrics[Future] = PrometheusMetrics.default[Future]()
   val metricsEndpoint: ServerEndpoint[Any, Future] = prometheusMetrics.metricsEndpoint
+
+
 
   val all: List[ServerEndpoint[Any, Future]] = apiEndpoints ++ docEndpoints ++ List(metricsEndpoint)
 

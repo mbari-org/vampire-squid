@@ -54,7 +54,8 @@ object TestUtils:
     v.setUri(new URI(
       s"http://www.mbari.org/video/${random.nextInt(100000)}/video_${random.nextInt(100000)}.mp4"
     ))
-    v.setSha512(Digest.digest(v.getUri.toString.getBytes(StandardCharsets.UTF_8)))
+    val sha256 = Array.fill(64)((scala.util.Random.nextInt(256) - 128).toByte)
+    v.setSha512(sha256)
     v.setContainer("video/mp4")
     v.setVideoCodec("h264")
     v.setAudioCodec("aac")
@@ -72,7 +73,8 @@ object TestUtils:
     for (i <- 0 until numVideoSeqs) yield
       val videoSequence =
         new VideoSequenceEntity(s"A${random.nextInt()} B${random.nextInt()}", s"AUV ${random.nextInt()}")
-
+      videoSequence.setDescription(s"Some description ${random.nextInt()}")
+      
       for (_ <- 0 until numVideos)
         val video = new VideoEntity(
           videoSequence.getName + s"_C${random.nextInt()}",

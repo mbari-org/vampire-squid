@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.mbari.vampiresquid.services
+package org.mbari.vampiresquid.etc.jwt
 
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.JWT

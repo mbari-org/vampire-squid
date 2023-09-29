@@ -18,6 +18,7 @@ package org.mbari.vampiresquid.etc.sdk
 
 import scala.reflect.ClassTag
 
+@deprecated("Use ToStringTransforms instead", "0.0.1")
 object Reflect:
   def toFormMap[T: ClassTag](t: T): Map[String, String] =
     val classTag = implicitly[ClassTag[T]]
