@@ -104,6 +104,7 @@ public class VideoSequenceEntity implements IPersistentObject {
             mappedBy = "videoSequence",
             orphanRemoval = true
     )
+    @OrderBy("start ASC")
     List<VideoEntity> videos = new ArrayList<>();
 
     @Column(name = "description", length = 2048)

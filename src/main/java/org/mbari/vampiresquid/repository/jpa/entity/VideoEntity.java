@@ -119,6 +119,7 @@ public class VideoEntity implements IPersistentObject {
             mappedBy = "video",
             orphanRemoval = true
     )
+    @OrderBy("uri ASC")
     protected List<VideoReferenceEntity> videoReferences = new ArrayList<>();
 
     public VideoEntity(String name, Instant start) {
