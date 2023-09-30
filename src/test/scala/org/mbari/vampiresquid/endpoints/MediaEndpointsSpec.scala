@@ -16,31 +16,35 @@
 
 package org.mbari.vampiresquid.endpoints
 
-import org.mbari.vampiresquid.controllers.MediaController
-import org.mbari.vampiresquid.repository.jpa.TestDAOFactory
-import org.mbari.vampiresquid.domain.Media
-import org.mbari.vampiresquid.etc.jwt.JwtService
-import org.mbari.vampiresquid.etc.sdk.Reflect
-import org.mbari.vampiresquid.etc.sdk.FutureUtil.*
 
-import scala.concurrent.{ExecutionContext, Future}
-import sttp.client3.*
-import sttp.client3.SttpBackend
-import sttp.client3.circe.*
-import sttp.client3.testing.SttpBackendStub
-import sttp.model.StatusCode
-import sttp.tapir.server.stub.TapirStubInterpreter
 
-import java.net.URI
-import java.time.{Duration, Instant}
-import java.nio.charset.StandardCharsets
-import org.mbari.vampiresquid.etc.jdk.Logging
-import org.mbari.vampiresquid.etc.jdk.Logging.given
-import sttp.tapir.server.interceptor.CustomiseInterceptors
 import io.circe.*
 import io.circe.parser.*
-import org.mbari.vampiresquid.etc.circe.CirceCodecs.{*, given}
+import java.net.URI
+import java.nio.charset.StandardCharsets
+import java.time.{Duration, Instant}
 import org.mbari.vampiresquid.AppConfig
+import org.mbari.vampiresquid.controllers.MediaController
+import org.mbari.vampiresquid.domain.{Media, MoveVideoParams}
+import org.mbari.vampiresquid.etc.circe.CirceCodecs.{*, given}
+import org.mbari.vampiresquid.etc.jdk.Logging
+import org.mbari.vampiresquid.etc.jdk.Logging.given
+import org.mbari.vampiresquid.etc.jwt.JwtService
+import org.mbari.vampiresquid.etc.sdk.FutureUtil.*
+import org.mbari.vampiresquid.etc.sdk.Reflect
+import org.mbari.vampiresquid.repository.jpa.TestDAOFactory
+import scala.concurrent.{ExecutionContext, Future}
+import sttp.client3.*
+import sttp.client3.circe.*
+import sttp.client3.SttpBackend
+import sttp.client3.testing.SttpBackendStub
+import sttp.model.StatusCode
+import sttp.tapir.server.interceptor.CustomiseInterceptors
+import sttp.tapir.server.stub.TapirStubInterpreter
+import org.mbari.vampiresquid.etc.sdk.FormTransform.given
+import org.mbari.vampiresquid.etc.sdk.ToStringTransforms.{*, given}
+import org.mbari.vampiresquid.repository.jpa.TestUtils
+import org.mbari.vampiresquid.etc.sdk.FutureUtil.given
 
 
 class MediaEndpointsSpec extends munit.FunSuite:
@@ -53,7 +57,7 @@ class MediaEndpointsSpec extends munit.FunSuite:
   private val controller   = new MediaController(daoFactory)
   private val mediaEndpoints = new MediaEndpoints(controller, jwtService)
 
-  test("POST v1/media - Create a new media"):
+  test("createEndpointImpl - Create a new media using form body"):
 
     val jwt = jwtService.authorize("foo").orNull
 
@@ -84,7 +88,7 @@ class MediaEndpointsSpec extends munit.FunSuite:
     }).join
 
 
-  test("PUT v1/media - Update an existing media using JSON body"):
+  test("updateEndpointImpl - Update an existing media using JSON body"):
     val jwt = jwtService.authorize("foo").orNull
 
     val now = Instant.now()
@@ -117,7 +121,7 @@ class MediaEndpointsSpec extends munit.FunSuite:
       assert(r.body.isRight)
     }).join
 
-  test("PUT v1/media/{videoReferenceUuid} - Update an existing media using form body"):
+  test("updateByVideoReferenceUuidEndpointImpl - Update an existing media using form body"):
     val jwt = jwtService.authorize("foo").orNull
     val now = Instant.now()
     val media0 = new Media(video_sequence_name = Some("Test Dive 03"),
@@ -160,5 +164,25 @@ class MediaEndpointsSpec extends munit.FunSuite:
           assertEquals(media2.uri.get, m.uri.get)
 
     }).join
+
+  
+  test("moveByVideoReferenceUuidEndpointImpl"):
+    val vs = TestUtils.create(1, 1, 1).head
+    val vr = vs.getVideoReferences().get(0)
+    val jwt = jwtService.authorize("foo").orNull
+    val mv = MoveVideoParams("boogar", Instant.now(), 30000)
+    val backendStub: SttpBackend[Future, Any] = TapirStubInterpreter(SttpBackendStub.asynchronousFuture)
+      .whenServerEndpointRunLogic(mediaEndpoints.moveByVideoReferenceUuidEndpointImpl)
+      .backend()
+    val request = basicRequest
+      .put(uri"http://test.com/v1/media/move/${vr.getUuid}")
+      .header("Authorization", s"Bearer $jwt")
+      .body(transform(mv))
+
+    val response = request.send(backendStub)
+    response.map(r => {
+      assertEquals(r.code, StatusCode.Ok)
+      assert(r.body.isRight)
+    })
 
   
