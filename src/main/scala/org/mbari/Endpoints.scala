@@ -50,19 +50,17 @@ object Endpoints:
     .out(jsonBody[List[Book]])
   val booksListingServerEndpoint: ServerEndpoint[Any, Future]   = booksListing.serverLogicSuccess(_ => Future.successful(Library.books))
 
-  // ---------------------------- 
-  val daoFactory = JPADAOFactory
+  // ----------------------------
+  val daoFactory      = JPADAOFactory
   val mediaController = new MediaController(daoFactory)
 
-  val jwtParams = AppConfig.JwtParameters
-  val jwtService = new JwtService(jwtParams.issuer, jwtParams.clientSecret, jwtParams.signingSecret)
-  val mediaEndpoints = new MediaEndpoints(mediaController, jwtService)
-  val authEndpoints = new AuthorizationEndpoints(jwtService)
+  val jwtParams       = AppConfig.JwtParameters
+  val jwtService      = new JwtService(jwtParams.issuer, jwtParams.clientSecret, jwtParams.signingSecret)
+  val mediaEndpoints  = new MediaEndpoints(mediaController, jwtService)
+  val authEndpoints   = new AuthorizationEndpoints(jwtService)
   val healthEndpoints = new HealthEndpoints
 
   val apiEndpoints = mediaEndpoints.allImpl ++ authEndpoints.allImpl ++ healthEndpoints.allImpl
-
-
 
   // val apiEndpoints: List[ServerEndpoint[Any, Future]] = List(helloServerEndpoint, booksListingServerEndpoint)
 
@@ -71,8 +69,6 @@ object Endpoints:
 
   val prometheusMetrics: PrometheusMetrics[Future] = PrometheusMetrics.default[Future]()
   val metricsEndpoint: ServerEndpoint[Any, Future] = prometheusMetrics.metricsEndpoint
-
-
 
   val all: List[ServerEndpoint[Any, Future]] = apiEndpoints ++ docEndpoints ++ List(metricsEndpoint)
 

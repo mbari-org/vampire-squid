@@ -20,8 +20,7 @@ import scala.deriving.*
 import scala.compiletime.summonAll
 import org.mbari.vampiresquid.etc.sdk.ToStringTransforms.Transformer
 
-/**
-  * Contains a ToStringTransform for converting a case class to HTTP form data.
+/** Contains a ToStringTransform for converting a case class to HTTP form data.
   */
 object FormTransform:
 
@@ -35,7 +34,8 @@ object FormTransform:
         val transformed = elems.zip(elemTransformers) map { (elem, transformer) =>
           transformer.f(elem)
         }
-        names.zip(transformed)
+        names
+          .zip(transformed)
           .filter((name, value) => value != null && !value.isBlank)
           .map((name, value) => s"$name=$value")
           .mkString("&")

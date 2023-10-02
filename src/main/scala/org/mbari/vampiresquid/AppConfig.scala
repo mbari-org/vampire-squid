@@ -35,7 +35,6 @@ object AppConfig:
       signingSecret = Config.getString("basicjwt.signing.secret")
     )
 
-
 final case class JwtParams(
     clientSecret: String,
     issuer: String,

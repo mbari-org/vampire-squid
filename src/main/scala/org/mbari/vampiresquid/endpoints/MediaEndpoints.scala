@@ -16,57 +16,52 @@
 
 package org.mbari.vampiresquid.endpoints
 
-
 import java.net.URI
+import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
+import java.time.Instant
+import java.util.HexFormat
+import java.util.UUID
 import org.glassfish.jaxb.core.api.impl.NameConverter.Standard
-import org.mbari.vampiresquid.domain.Authorization
-
 import org.mbari.vampiresquid.controllers.MediaController
 import org.mbari.vampiresquid.domain.{BadRequest, ErrorMsg, Media, NotFound, ServerError, Unauthorized}
+import org.mbari.vampiresquid.domain.Authorization
+import org.mbari.vampiresquid.domain.MoveVideoParams
+import org.mbari.vampiresquid.domain.MutableMedia
 import org.mbari.vampiresquid.etc.circe.CirceCodecs.given
+import org.mbari.vampiresquid.etc.jdk.Logging
+import org.mbari.vampiresquid.etc.jdk.Logging.given
 import org.mbari.vampiresquid.etc.jwt.JwtService
 import org.mbari.vampiresquid.etc.sdk.Reflect
-
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
+import scala.util.control.NonFatal
+import scala.util.Failure
+import scala.util.Success
+import scala.util.Try
 import sttp.model.headers.WWWAuthenticateChallenge
 import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 import sttp.tapir.server.ServerEndpoint
-import org.mbari.vampiresquid.etc.jdk.Logging
-import org.mbari.vampiresquid.etc.jdk.Logging.given
-
-import scala.util.control.NonFatal
-import java.util.UUID
-import org.mbari.vampiresquid.domain.MoveVideoParams
-import org.mbari.vampiresquid.domain.MutableMedia
-import scala.util.Success
-import scala.util.Failure
-import java.time.Instant
-import java.net.URLDecoder
-import scala.util.Try
-import java.util.HexFormat
-
 
 class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(using ec: ExecutionContext) extends Endpoints:
-  
-  given Schema[Option[URI]] = Schema.string
-  given Schema[Media] = Schema.derived[Media]
-  given Schema[MoveVideoParams] = Schema.derived[MoveVideoParams]
-  given givenJwtService: JwtService = jwtService
-  private val log = Logging(getClass)
-  private val hex = HexFormat.of()
 
-  private def handleMediaOption(f: Future[Option[Media]])(using ec: ExecutionContext): Future[Either[ErrorMsg, Media]] = 
+  given Schema[Option[URI]]         = Schema.string
+  given Schema[Media]               = Schema.derived[Media]
+  given Schema[MoveVideoParams]     = Schema.derived[MoveVideoParams]
+  given givenJwtService: JwtService = jwtService
+  private val log                   = Logging(getClass)
+  private val hex                   = HexFormat.of()
+
+  private def handleMediaOption(f: Future[Option[Media]])(using ec: ExecutionContext): Future[Either[ErrorMsg, Media]] =
     f.transform:
       case Success(Some(m)) => scala.util.Success(Right(m))
-      case Success(None) => scala.util.Success(Left(NotFound("Media not found")))
-      case Failure(e) => scala.util.Success(Left(ServerError(e.getMessage)))
+      case Success(None)    => scala.util.Success(Left(NotFound("Media not found")))
+      case Failure(e)       => scala.util.Success(Left(ServerError(e.getMessage)))
 
   // POST v1/media ----------------------------------------
-  val createEndpoint: Endpoint[Option[String], Map[String, String], ErrorMsg, Media, Any] = 
+  val createEndpoint: Endpoint[Option[String], Map[String, String], ErrorMsg, Media, Any] =
     secureEndpoint
       .post
       .in("v1" / "media")
@@ -76,19 +71,20 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
       .name("create")
       .description("Create a new media")
       .tag("media")
-      
 
   val createEndpointImpl: ServerEndpoint[Any, Future] =
     createEndpoint
       .serverSecurityLogic(jwtOpt => verify(jwtOpt))
-      .serverLogic(_ => formMap => {
-        val media = Media.fromFormMap(formMap)
-        log.atTrace.log("createEndpointImpl received " + media)
-        handleErrors(mediaController.createMedia(media))
-      })
+      .serverLogic(_ =>
+        formMap => {
+          val media = Media.fromFormMap(formMap)
+          log.atTrace.log("createEndpointImpl received " + media)
+          handleErrors(mediaController.createMedia(media))
+        }
+      )
 
   // PUT v1/media ----------------------------------------
-  val updateEndpoint: Endpoint[Option[String], Map[String, String], ErrorMsg, Media, Any] = 
+  val updateEndpoint: Endpoint[Option[String], Map[String, String], ErrorMsg, Media, Any] =
     secureEndpoint
       .put
       .in("v1" / "media")
@@ -99,36 +95,40 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
       .description("Update an existing media")
       .tag("media")
 
-  val updateEndpointImpl: ServerEndpoint[Any, Future] =
+  val updateEndpointImpl: ServerEndpoint[Any, Future]                                                                 =
     updateEndpoint
       .serverSecurityLogic(jwtOpt => verify(jwtOpt))
-      .serverLogic(_ => formMap => {
-        val media = Media.fromFormMap(formMap)
-        // val mutableMedia = Media.toMutableMedia(media)
-        log.atTrace.log("updateEndpointImpl received " + media)
-        handleMediaOption(mediaController.updateMedia(media))
-      })
+      .serverLogic(_ =>
+        formMap => {
+          val media = Media.fromFormMap(formMap)
+          // val mutableMedia = Media.toMutableMedia(media)
+          log.atTrace.log("updateEndpointImpl received " + media)
+          handleMediaOption(mediaController.updateMedia(media))
+        }
+      )
 
     // PUT v1/media/{videoReferenceUuid} ----------------------------------------
   val updateByVideoReferenceUuidEndpoint: Endpoint[Option[String], (UUID, Map[String, String]), ErrorMsg, Media, Any] =
-      secureEndpoint
-        .put
-        .in("v1" / "media" / path[UUID]("videoReferenceUuid"))
-        .securityIn(auth.bearer[Option[String]](WWWAuthenticateChallenge.bearer))
-        .in(formBody[Map[String, String]])
-        .out(jsonBody[Media])
-        .name("update by videoReferenceUuid")
-        .description("Update an existing media by videoReferenceUuid and form data")
-        .tag("media")
+    secureEndpoint
+      .put
+      .in("v1" / "media" / path[UUID]("videoReferenceUuid"))
+      .securityIn(auth.bearer[Option[String]](WWWAuthenticateChallenge.bearer))
+      .in(formBody[Map[String, String]])
+      .out(jsonBody[Media])
+      .name("update by videoReferenceUuid")
+      .description("Update an existing media by videoReferenceUuid and form data")
+      .tag("media")
 
   val updateByVideoReferenceUuidEndpointImpl: ServerEndpoint[Any, Future] =
     updateByVideoReferenceUuidEndpoint
       .serverSecurityLogic(jwtOpt => verify(jwtOpt))
-      .serverLogic(_ => (videoReferenceUuid, formMap) => {
-        val media = Media.fromFormMap(formMap)
-        log.atTrace.log("updateEndpointImpl received " + media)
-        handleMediaOption(mediaController.findAndUpdateMedia(d => d.findByUUID(videoReferenceUuid), media))
-      })
+      .serverLogic(_ =>
+        (videoReferenceUuid, formMap) => {
+          val media = Media.fromFormMap(formMap)
+          log.atTrace.log("updateEndpointImpl received " + media)
+          handleMediaOption(mediaController.findAndUpdateMedia(d => d.findByUUID(videoReferenceUuid), media))
+        }
+      )
 
   // PUT v1/media/move/{videoReferenceUuid} w/ Form Body --------------------------
   val moveByVideoReferenceUuidEndpoint: Endpoint[Option[String], (UUID, MoveVideoParams), ErrorMsg, Media, Any] =
@@ -142,14 +142,18 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
       .description("Move an existing media by videoReferenceUuid and form data")
       .tag("media")
 
-
   val moveByVideoReferenceUuidEndpointImpl: ServerEndpoint[Any, Future] =
     moveByVideoReferenceUuidEndpoint
       .serverSecurityLogic(jwtOpt => verify(jwtOpt))
-      .serverLogic(_ => (videoReferenceUuid, moveVideoParams) => {
-        log.atTrace.log("moveByVideoReferenceUuidEndpoint received " + moveVideoParams)
-        handleMediaOption(mediaController.moveVideoReference(videoReferenceUuid, moveVideoParams.video_name, moveVideoParams.start_timestamp, moveVideoParams.duration))
-      })
+      .serverLogic(_ =>
+        (videoReferenceUuid, moveVideoParams) => {
+          log.atTrace.log("moveByVideoReferenceUuidEndpoint received " + moveVideoParams)
+          handleMediaOption(
+            mediaController
+              .moveVideoReference(videoReferenceUuid, moveVideoParams.video_name, moveVideoParams.start_timestamp, moveVideoParams.duration)
+          )
+        }
+      )
 
   // GET v1/media/sha512/{hex encoded sha512} ------------------------------------
   val findBySha512: Endpoint[Unit, String, ErrorMsg, Media, Any] =
@@ -187,7 +191,7 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
       })
 
   // GET v1/media/videoreference/filename/{filename} ---------------------------------
-  val findByFileName: Endpoint[Unit, String, ErrorMsg, List[Media], Any] = 
+  val findByFileName: Endpoint[Unit, String, ErrorMsg, List[Media], Any] =
     openEndpoint
       .get
       .in("v1" / "media" / "videoreference" / "filename" / path[String]("filename"))
@@ -204,10 +208,10 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
       })
 
   // GET v1/media/videoreference/videosequence/{name} -----------------------
-  val findByVideoSequenceName: Endpoint[Unit, String, ErrorMsg, List[Media], Any] = 
+  val findByVideoSequenceName: Endpoint[Unit, String, ErrorMsg, List[Media], Any] =
     openEndpoint
       .get
-      .in("v1" / "media" / "videoreference" / "videosequence" / path[String]("name"))
+      .in("v1" / "media" / "videosequence" / path[String]("name"))
       .out(jsonBody[List[Media]])
       .name("findByVideoSequenceName")
       .description("Find media by video sequence name")
@@ -217,11 +221,11 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
     findByVideoSequenceName
       .serverLogic((videoSequenceName: String) => {
         log.atTrace.log("findByVideoSequenceName received " + videoSequenceName)
-        handleErrors(mediaController.findByVideoSequenceName(videoSequenceName).map(_.toList))      
+        handleErrors(mediaController.findByVideoSequenceName(videoSequenceName).map(_.toList))
       })
 
   // GET v1/media/video/{name} ---------------------------------------------
-  val findByVideoName: Endpoint[Unit, String, ErrorMsg, List[Media], Any] = 
+  val findByVideoName: Endpoint[Unit, String, ErrorMsg, List[Media], Any] =
     openEndpoint
       .get
       .in("v1" / "media" / "video" / path[String]("name"))
@@ -238,7 +242,7 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
       })
 
   // GET v1/media/camera/{cameraId}/{startTimestamp}/{endTimestamp} ----------------
-  val findByCameraIdAndTimestamps: Endpoint[Unit, (String, Instant, Instant), ErrorMsg, List[Media], Any] = 
+  val findByCameraIdAndTimestamps: Endpoint[Unit, (String, Instant, Instant), ErrorMsg, List[Media], Any] =
     openEndpoint
       .get
       .in("v1" / "media" / "camera" / path[String]("cameraId") / path[Instant]("startTimestamp") / path[Instant]("endTimestamp"))
@@ -251,12 +255,15 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
     findByCameraIdAndTimestamps
       .serverLogic((cameraId: String, startTimestamp: Instant, endTimestamp: Instant) => {
         log.atTrace.log("findByCameraIdAndTimestamps received " + cameraId + " " + startTimestamp + " " + endTimestamp)
-        handleErrors(mediaController.findByCameraIdAndTimestamps(cameraId, startTimestamp, endTimestamp)
-          .map(_.toList))
+        handleErrors(
+          mediaController
+            .findByCameraIdAndTimestamps(cameraId, startTimestamp, endTimestamp)
+            .map(_.toList)
+        )
       })
 
   // GET v1/media/concurrent/{videoReferenceUuid} -----------------------------------
-  val findConcurrentByVideoReferenceUuid: Endpoint[Unit, UUID, ErrorMsg, List[Media], Any] = 
+  val findConcurrentByVideoReferenceUuid: Endpoint[Unit, UUID, ErrorMsg, List[Media], Any] =
     openEndpoint
       .get
       .in("v1" / "media" / "concurrent" / path[UUID]("videoReferenceUuid"))
@@ -269,12 +276,15 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
     findConcurrentByVideoReferenceUuid
       .serverLogic((videoReferenceUuid: UUID) => {
         log.atTrace.log("findConcurrentByVideoReferenceUuid received " + videoReferenceUuid)
-        handleErrors(mediaController.findConcurrent(videoReferenceUuid)
-          .map(_.toList))
+        handleErrors(
+          mediaController
+            .findConcurrent(videoReferenceUuid)
+            .map(_.toList)
+        )
       })
 
   // GET v1/media/camera/{cameraId}/{datetime} --------------------------------------
-  val findByCameraIdAndDatetime: Endpoint[Unit, (String, Instant), ErrorMsg, List[Media], Any] = 
+  val findByCameraIdAndDatetime: Endpoint[Unit, (String, Instant), ErrorMsg, List[Media], Any] =
     openEndpoint
       .get
       .in("v1" / "media" / "camera" / path[String]("cameraId") / path[Instant]("datetime"))
@@ -287,12 +297,15 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
     findByCameraIdAndDatetime
       .serverLogic((cameraId: String, datetime: Instant) => {
         log.atTrace.log("findByCameraIdAndDatetime received " + cameraId + " " + datetime)
-        handleErrors(mediaController.findByCameraIdAndTimestamp(cameraId, datetime)
-          .map(_.toList))
+        handleErrors(
+          mediaController
+            .findByCameraIdAndTimestamp(cameraId, datetime)
+            .map(_.toList)
+        )
       })
 
   // GET v1/media/uri/{uri} ---------------------------------------------------------
-  val findByUri: Endpoint[Unit, String, ErrorMsg, List[Media], Any] = 
+  val findByUri: Endpoint[Unit, String, ErrorMsg, List[Media], Any] =
     openEndpoint
       .get
       .in("v1" / "media" / "uri" / path[String]("uri"))
@@ -308,42 +321,43 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
         Try(URLDecoder.decode(uri, "UTF-8"))
           .map(URI.create)
           .toEither match
-            case Left(_) => Future.successful(Left(BadRequest(s"Invalid URI: $uri")))
-            case Right(validUri) => handleErrors(mediaController.findByURI(validUri)
-              .map(_.toList))
+          case Left(_)         => Future.successful(Left(BadRequest(s"Invalid URI: $uri")))
+          case Right(validUri) =>
+            handleErrors(
+              mediaController
+                .findByURI(validUri)
+                .map(_.toList)
+            )
       })
 
-      
-
   override def all: List[Endpoint[?, ?, ?, ?, ?]] = List(
-      createEndpoint,
-      updateEndpoint,
-      updateByVideoReferenceUuidEndpoint,
-      moveByVideoReferenceUuidEndpoint,
-      findBySha512,
-      findByVideoReferenceUuid,
-      findByFileName,
-      findByVideoSequenceName,
-      findByVideoName,
-      findByCameraIdAndTimestamps,
-      findConcurrentByVideoReferenceUuid,
-      findByCameraIdAndDatetime,
-      findByUri
-    )
+    createEndpoint,
+    updateEndpoint,
+    updateByVideoReferenceUuidEndpoint,
+    moveByVideoReferenceUuidEndpoint,
+    findBySha512,
+    findByVideoReferenceUuid,
+    findByFileName,
+    findByVideoSequenceName,
+    findByVideoName,
+    findByCameraIdAndTimestamps,
+    findConcurrentByVideoReferenceUuid,
+    findByCameraIdAndDatetime,
+    findByUri
+  )
 
   override def allImpl: List[ServerEndpoint[Any, concurrent.Future]] = List(
-      createEndpointImpl,
-      updateEndpointImpl,
-      updateByVideoReferenceUuidEndpointImpl,
-      moveByVideoReferenceUuidEndpointImpl,
-      findBySha512Impl,
-      findByVideoReferenceUuidImpl,
-      findByFileNameImpl,
-      findByVideoSequenceNameImpl,
-      findByVideoNameImpl,
-      findByCameraIdAndTimestampsImpl,
-      findConcurrentByVideoReferenceUuidImpl,
-      findByCameraIdAndDatetimeImpl,
-      findByUriImpl
-    )
-
+    createEndpointImpl,
+    updateEndpointImpl,
+    updateByVideoReferenceUuidEndpointImpl,
+    moveByVideoReferenceUuidEndpointImpl,
+    findBySha512Impl,
+    findByVideoReferenceUuidImpl,
+    findByFileNameImpl,
+    findByVideoSequenceNameImpl,
+    findByVideoNameImpl,
+    findByCameraIdAndTimestampsImpl,
+    findConcurrentByVideoReferenceUuidImpl,
+    findByCameraIdAndDatetimeImpl,
+    findByUriImpl
+  )

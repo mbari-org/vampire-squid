@@ -24,7 +24,7 @@ import java.util.Date
 
 class JwtService(issuer: String, apiKey: String, signingSecret: String):
 
-  private val algorithm     = Algorithm.HMAC512(signingSecret)
+  private val algorithm = Algorithm.HMAC512(signingSecret)
 
   private val verifier = JWT
     .require(algorithm)
@@ -35,11 +35,10 @@ class JwtService(issuer: String, apiKey: String, signingSecret: String):
     try
       verifier.verify(jwt)
       true
-    catch
-      case e: Exception => false
+    catch case e: Exception => false
 
-  def authorize(providedApiKey: String): Option[String] = 
-    if (providedApiKey == apiKey) 
+  def authorize(providedApiKey: String): Option[String] =
+    if (providedApiKey == apiKey)
       val now      = Instant.now()
       val tomorrow = now.plus(1, ChronoUnit.DAYS)
       val iat      = Date.from(now)
@@ -53,4 +52,3 @@ class JwtService(issuer: String, apiKey: String, signingSecret: String):
         .sign(algorithm)
       Some(jwt)
     else None
-  

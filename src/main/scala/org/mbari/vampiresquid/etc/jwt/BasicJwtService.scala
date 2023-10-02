@@ -26,12 +26,9 @@ import scala.util.control.NonFatal
 import org.mbari.vampiresquid.JwtParams
 import org.mbari.vampiresquid.domain.Authorization
 
-
-/**
-  * To use this authentication. The client and server should both have a shared
-  * secret (aka client secret). The client sends this to the server in a
-  * authorization header. If the secret is correct, the server will send back
-  * a JWT token that can be used to validate subsequent requests.
+/** To use this authentication. The client and server should both have a shared secret (aka client secret). The client sends this to the
+  * server in a authorization header. If the secret is correct, the server will send back a JWT token that can be used to validate
+  * subsequent requests.
   *
   * {{{
   *   Client                                                                Server
@@ -44,32 +41,31 @@ import org.mbari.vampiresquid.domain.Authorization
   *     |                                                                      |
   *     |<------- 200                                                   <------|
   * }}}
-  * @author Brian Schlining
+  * @author
+  *   Brian Schlining
   * @since 2017-01-18T16:42:00
   */
 class BasicJwtService(apiKey: String, issuer: String, signingSecret: String):
 
   def this(params: JwtParams) = this(params.clientSecret, params.issuer, params.signingSecret)
 
-  private[this] val algorithm     = Algorithm.HMAC512(signingSecret)
+  private[this] val algorithm = Algorithm.HMAC512(signingSecret)
 
   private[this] val verifier = JWT
     .require(algorithm)
     .withIssuer(issuer)
     .build()
 
-
   private def isValid(auth: Option[Authorization]): Boolean =
     try
       auth match
-        case None => false
+        case None    => false
         case Some(a) =>
           if (a.tokenType.equalsIgnoreCase("BEARER"))
             val _ = verifier.verify(a.accessToken)
             true
           else false
-    catch
-      case NonFatal(e) => false
+    catch case NonFatal(e) => false
 
   private def parseAuthHeader(header: String): Authorization =
     val parts       = header.split("\\s")
@@ -79,12 +75,11 @@ class BasicJwtService(apiKey: String, issuer: String, signingSecret: String):
 
   def validate(auth: Authorization): Boolean = isValid(Some(auth))
 
-
-  def requestAuthorization(providedApiKey: String): Option[Authorization] = 
+  def requestAuthorization(providedApiKey: String): Option[Authorization] =
     authorize(providedApiKey).map(jwt => Authorization("Bearer", jwt))
 
   def authorize(providedApiKey: String): Option[String] =
-    if (apiKey == providedApiKey) 
+    if (apiKey == providedApiKey)
       val now      = Instant.now()
       val tomorrow = now.plus(1, ChronoUnit.DAYS)
       val iat      = Date.from(now)
@@ -99,8 +94,3 @@ class BasicJwtService(apiKey: String, issuer: String, signingSecret: String):
 
       Some(jwt)
     else None
-
-  
-      
-
-  

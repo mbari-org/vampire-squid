@@ -23,18 +23,16 @@ import java.util.UUID
 import java.net.URI
 import java.util.HexFormat
 
-/**
-  * This object contains type classes used to convert types to Strings.
+/** This object contains type classes used to convert types to Strings.
   */
 object ToStringTransforms:
 
   private val hex = HexFormat.of()
 
-  /**
-   * Base function we use to convert case classes to CSV
-   * @param a
-   *   The object to convert
-   */
+  /** Base function we use to convert case classes to CSV
+    * @param a
+    *   The object to convert
+    */
   def transform[A: Transformer](a: A) = summon[Transformer[A]].f(a)
 
   // Base trait
@@ -75,8 +73,8 @@ object ToStringTransforms:
   given Transformer[UUID] with
     def f(x: UUID) = x.toString
 
-  given Transformer[Any] with 
-    def f(x: Any)  = x.toString()
+  given Transformer[Any] with
+    def f(x: Any) = x.toString()
 
   given [T](using t: Transformer[T]): Transformer[Option[T]] =
     new Transformer[Option[T]]:

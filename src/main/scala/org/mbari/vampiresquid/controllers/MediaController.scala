@@ -40,7 +40,7 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController:
 
   private[this] val log = LoggerFactory.getLogger(getClass)
 
-  def createMedia(media: Media)(implicit ec: ExecutionContext): Future[Media] = 
+  def createMedia(media: Media)(implicit ec: ExecutionContext): Future[Media] =
     require(media.video_sequence_name.isDefined, "videoSequenceName is required")
     require(media.camera_id.isDefined, "cameraId is required")
     require(media.video_name.isDefined, "videoName is required")
@@ -185,28 +185,29 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController:
       media.videoDescription
     )
 
-  def findAndUpdateMedia(findFn: VideoReferenceDAO[VideoReferenceEntity] => Option[VideoReferenceEntity], media: Media)
-    (implicit ec: ExecutionContext): Future[Option[Media]] = 
-      findAndUpdate(
-        findFn,
-        media.videoSequenceName,
-        media.cameraId,
-        media.videoName,
-        media.sha512,
-        media.uri,
-        media.start_timestamp,
-        media.duration,
-        media.container,
-        media.videoCodec,
-        media.audioCodec,
-        media.width,
-        media.height,
-        media.frameRate,
-        media.sizeBytes,
-        media.description,
-        media.videoSequenceDescription,
-        media.videoDescription
-      )
+  def findAndUpdateMedia(findFn: VideoReferenceDAO[VideoReferenceEntity] => Option[VideoReferenceEntity], media: Media)(implicit
+      ec: ExecutionContext
+  ): Future[Option[Media]] =
+    findAndUpdate(
+      findFn,
+      media.videoSequenceName,
+      media.cameraId,
+      media.videoName,
+      media.sha512,
+      media.uri,
+      media.start_timestamp,
+      media.duration,
+      media.container,
+      media.videoCodec,
+      media.audioCodec,
+      media.width,
+      media.height,
+      media.frameRate,
+      media.sizeBytes,
+      media.description,
+      media.videoSequenceDescription,
+      media.videoDescription
+    )
 
   /** @param findFn
     * @param videoSequenceName

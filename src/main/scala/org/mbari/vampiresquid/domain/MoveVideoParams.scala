@@ -21,4 +21,3 @@ import java.time.Instant
 
 final case class MoveVideoParams(video_name: String, start_timestamp: Instant, duration_millis: Long):
   def duration: Duration = Duration.ofMillis(duration_millis)
-  

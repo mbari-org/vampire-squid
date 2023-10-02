@@ -18,9 +18,8 @@ package org.mbari.vampiresquid.domain
 
 final case class Authorization(token_type: String, access_token: String):
 
-  def tokenType: String = token_type
+  def tokenType: String   = token_type
   def accessToken: String = access_token
-
 
 object Authorization:
   val TokenTypeBearer: String = "Bearer"

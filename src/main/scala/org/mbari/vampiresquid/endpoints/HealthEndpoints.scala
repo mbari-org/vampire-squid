@@ -18,7 +18,7 @@ package org.mbari.vampiresquid.endpoints
 
 import scala.concurrent.ExecutionContext
 import sttp.tapir.{Endpoint, PublicEndpoint}
-import sttp.tapir.server.{ServerEndpoint}
+import sttp.tapir.server.ServerEndpoint
 import scala.concurrent.Future
 import org.mbari.vampiresquid.domain.HealthStatus
 import sttp.tapir.*
@@ -28,7 +28,7 @@ import org.mbari.vampiresquid.etc.circe.CirceCodecs.given
 
 class HealthEndpoints(using ec: ExecutionContext) extends Endpoints:
 
-  val healthEndpoint: PublicEndpoint[Unit, Unit, HealthStatus, Any] = 
+  val healthEndpoint: PublicEndpoint[Unit, Unit, HealthStatus, Any] =
     endpoint
       .get
       .in("v1" / "health")
@@ -38,10 +38,9 @@ class HealthEndpoints(using ec: ExecutionContext) extends Endpoints:
       .tag("health")
 
   val healthEndpointImpl: ServerEndpoint[Any, Future] =
-    healthEndpoint .serverLogic(a => 
-      Future(Right(HealthStatus.default)))
+    healthEndpoint.serverLogic(a => Future(Right(HealthStatus.default)))
 
-  override def all: List[Endpoint[?, ?, ?, ?, ?]] = 
-        List(healthEndpoint)
+  override def all: List[Endpoint[?, ?, ?, ?, ?]] =
+    List(healthEndpoint)
 
   override def allImpl: List[ServerEndpoint[Any, Future]] = List(healthEndpointImpl)

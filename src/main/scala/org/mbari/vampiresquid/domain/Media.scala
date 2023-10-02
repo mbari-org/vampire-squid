@@ -64,8 +64,8 @@ case class Media(
   def videoDescription: Option[String]         = video_description
   lazy val duration: Option[Duration]          = duration_millis.map(Duration.ofMillis)
   lazy val endTimestamp: Option[Instant]       = duration.flatMap(d => start_timestamp.map(_.plus(d)))
-  def contains(ts: Instant): Boolean           = 
-    val opt = for 
+  def contains(ts: Instant): Boolean           =
+    val opt = for
       e <- endTimestamp
       s <- start_timestamp
     yield s == ts || e == ts || (s.isBefore(ts) && e.isAfter(ts))
@@ -143,7 +143,11 @@ object Media:
       description = videoReference.description,
       sha512 = videoReference.sha512
     )
-    temp.copy(video_sequence_uuid = Option(videoSequence.uuid), video_uuid = Option(video.uuid), video_reference_uuid = Option(videoReference.uuid))
+    temp.copy(
+      video_sequence_uuid = Option(videoSequence.uuid),
+      video_uuid = Option(video.uuid),
+      video_reference_uuid = Option(videoReference.uuid)
+    )
 
   def build(
       videoSequenceName: Option[String] = None,
@@ -198,7 +202,7 @@ object Media:
       map.get("video_name"),
       map.get("uri").map(URI.create),
       map.get("start_timestamp").map(Instant.parse),
-      durationMillis, //Try(map.get("duration_millis").map(_.toLong)).getOrElse(None).tap(println),
+      durationMillis, // Try(map.get("duration_millis").map(_.toLong)).getOrElse(None).tap(println),
       map.get("container"),
       map.get("video_codec"),
       map.get("audio_codec"),
@@ -212,9 +216,9 @@ object Media:
       map.get("sha512").map(hex.parseHex(_))
     )
 
-  def toFormMap(m: Media): String = 
+  def toFormMap(m: Media): String =
 
     import ToStringTransforms.{transform, given}
-    import FormTransform.given 
+    import FormTransform.given
 
     transform(m)

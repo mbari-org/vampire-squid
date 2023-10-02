@@ -25,7 +25,7 @@ object Reflect:
     val fields   = classTag.runtimeClass.getDeclaredFields
     fields.flatMap { field =>
       field.setAccessible(true)
-      field.get(t) match 
+      field.get(t) match
         case Some(value) => Some(field.getName -> value.toString)
         case None        => None
         case value       => if (value == null) None else Some(field.getName -> value.toString)

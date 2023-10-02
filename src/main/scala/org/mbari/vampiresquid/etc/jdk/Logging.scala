@@ -20,19 +20,18 @@ import java.lang.System.Logger
 import java.lang.System.Logger.Level
 import java.util.function.Supplier
 
-/**
- * Add fluent logging to System.Logger. Usage:
- * {{{
- * import org.fathomnet.support.etc.jdk.Logging.{given, *}
- * given log: Logger = Sytem.getLogger("my.logger")
- *
- * log.atInfo.log("Hello World")
- * log.atInfo.withCause(new RuntimeException("Oops")).log("Hello World")
- *
- * 3.tapLog.atInfo.log(i => s"Hello World $i")
- * }}}
- * * @author Brian Schlining
- */
+/** Add fluent logging to System.Logger. Usage:
+  * {{{
+  * import org.fathomnet.support.etc.jdk.Logging.{given, *}
+  * given log: Logger = Sytem.getLogger("my.logger")
+  *
+  * log.atInfo.log("Hello World")
+  * log.atInfo.withCause(new RuntimeException("Oops")).log("Hello World")
+  *
+  * 3.tapLog.atInfo.log(i => s"Hello World $i")
+  * }}}
+  * * @author Brian Schlining
+  */
 object Logging:
 
   trait Builder:
@@ -69,6 +68,5 @@ object Logging:
   given Conversion[Logger, LoggerBuilder] with
     def apply(logger: Logger): LoggerBuilder = LoggerBuilder(logger)
 
-  def apply(name: String) = System.getLogger(name)
+  def apply(name: String)    = System.getLogger(name)
   def apply(clazz: Class[_]) = System.getLogger(clazz.getName)
-

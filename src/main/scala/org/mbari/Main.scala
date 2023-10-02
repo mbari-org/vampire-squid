@@ -28,7 +28,6 @@ import scala.io.StdIn
 import org.mbari.vampiresquid.controllers.MediaController
 import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
 
-
 @main def run(): Unit =
 
   val serverOptions = VertxFutureServerOptions
@@ -42,7 +41,6 @@ import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
   val server = vertx.createHttpServer()
   val router = Router.router(vertx)
 
-  
   Endpoints
     .all
     .foreach(endpoint => {

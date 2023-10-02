@@ -22,13 +22,7 @@ import scala.concurrent.Future
 import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
-import org.mbari.vampiresquid.domain.{
-    BadRequest,
-    ErrorMsg,
-    NotFound,
-    ServerError,
-    Unauthorized
-}
+import org.mbari.vampiresquid.domain.{BadRequest, ErrorMsg, NotFound, ServerError, Unauthorized}
 import sttp.model.StatusCode
 import org.mbari.vampiresquid.etc.circe.CirceCodecs.given
 import org.mbari.vampiresquid.etc.jwt.JwtService
@@ -44,15 +38,14 @@ trait Endpoints:
 
   def handleErrors[T](f: Future[T])(using ec: ExecutionContext): Future[Either[ErrorMsg, T]] =
     f.transform:
-      case Success(value) => Success(Right(value))
+      case Success(value)     => Success(Right(value))
       case Failure(exception) => Success(Left(ServerError(exception.getMessage)))
 
   def handleOption[T](f: Future[Option[T]])(using ec: ExecutionContext): Future[Either[ErrorMsg, T]] =
     f.transform:
       case Success(Some(value)) => Success(Right(value))
-      case Success(None) => Success(Left(NotFound("Not found")))
-      case Failure(exception) => Success(Left(ServerError(exception.getMessage)))
-    
+      case Success(None)        => Success(Left(NotFound("Not found")))
+      case Failure(exception)   => Success(Left(ServerError(exception.getMessage)))
 
   val secureEndpoint = endpoint.errorOut(
     oneOf[ErrorMsg](
@@ -73,5 +66,5 @@ trait Endpoints:
 
   def verify(jwtOpt: Option[String])(using jwtService: JwtService, ec: ExecutionContext): Future[Either[Unauthorized, Unit]] =
     jwtOpt match
-      case None => Future(Left(Unauthorized("Missing token")))
+      case None      => Future(Left(Unauthorized("Missing token")))
       case Some(jwt) => Future(if (jwtService.verify(jwt)) Right(()) else Left(Unauthorized("Invalid token")))

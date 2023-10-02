@@ -14,16 +14,30 @@
  * limitations under the License.
  */
 
-package org.mbari.vampiresquid.etc.sdk
+package org.mbari.vampiresquid.endpoints
 
-import scala.concurrent.{Await, Future}
-import scala.concurrent.duration.Duration
+class VideoSequenceEndpoints {
 
-object FutureUtil:
+  // GET v1/videosequences
 
-  /** Join a future. (i.e. Await.result(future, Duration.Inf)
-    *
-    * @return
-    *   The result of the future
-    */
-  extension [T](t: Future[T]) def join: T = Await.result(t, Duration.Inf)
+  // GET v1/videosequences/lastudpate/:uuid
+
+  // GET v1/videosequences/name/:name
+
+  // GET v1/videosequences/names
+
+  // GET v1/videosequences/camera/:cameraid
+
+  // GET v1/videosequences/cameras
+
+  // GET v1/videosequences/camera/:cameraid
+
+  // GET v1/videosequences/camera/:cameraid/:timestamp
+
+  // POST v1/videosequences (form body)
+
+  // PUT v1/videosequences/:uuid (form body)
+
+  // DELETE v1/videosequences/:uuid
+
+}
