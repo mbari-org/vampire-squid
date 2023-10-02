@@ -1,6 +1,6 @@
 import java.net.URI
 
-val tapirVersion       = "1.7.4"
+val tapirVersion       = "1.7.5"
 val eclipselinkVersion = "4.0.2"
 val derbyVersion       = "10.16.1.1"
 
@@ -58,7 +58,7 @@ lazy val rootProject = (project in file("."))
         "-deprecation", // Emit warning and location for usages of deprecated APIs.
         "-encoding",
         "UTF-8",        // yes, this is 2 args. Specify character encoding used by source files.
-        // "-explain",     // Explain errors in more detail.
+        "-explain",     // Explain errors in more detail.
         "-feature",     // Emit warning and location for usages of features that should be imported explicitly.
         "-language:existentials",
         "-language:higherKinds",

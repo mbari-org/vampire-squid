@@ -22,23 +22,33 @@ import org.mbari.vampiresquid.etc.jdk.Logging.given
 import org.mbari.vampiresquid.etc.jwt.JwtService
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
+import sttp.model.StatusCode
 import sttp.tapir.*
 import sttp.tapir.Endpoint
 import sttp.tapir.EndpointIO.annotations.apikey
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 import sttp.tapir.server.ServerEndpoint
+import org.mbari.vampiresquid.domain.{BadRequest, ErrorMsg, NotFound, ServerError, Unauthorized}
 
 class AuthorizationEndpoints(jwtService: JwtService)(using ec: ExecutionContext) extends Endpoints:
 
   private val log = System.getLogger(getClass().getName())
 
   val authEndpoint: Endpoint[String, Unit, ErrorMsg, Authorization, Any] =
-    secureEndpoint
+    endpoint
       .post
       .in("v1" / "auth")
       .securityIn(header[String]("APIKEY"))
       .out(jsonBody[Authorization])
+      .errorOut(
+        oneOf[ErrorMsg](
+          oneOfVariant(statusCode(StatusCode.BadRequest).and(jsonBody[BadRequest])),
+          oneOfVariant(statusCode(StatusCode.NotFound).and(jsonBody[NotFound])),
+          oneOfVariant(statusCode(StatusCode.InternalServerError).and(jsonBody[ServerError])),
+          oneOfVariant(statusCode(StatusCode.Unauthorized).and(jsonBody[Unauthorized]))
+        )
+      )
       .name("authenticate")
       .description("Exchange an API key for a JWT")
       .tag("auth")

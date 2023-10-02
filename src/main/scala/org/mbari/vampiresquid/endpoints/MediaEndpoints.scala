@@ -22,7 +22,6 @@ import java.nio.charset.StandardCharsets
 import java.time.Instant
 import java.util.HexFormat
 import java.util.UUID
-import org.glassfish.jaxb.core.api.impl.NameConverter.Standard
 import org.mbari.vampiresquid.controllers.MediaController
 import org.mbari.vampiresquid.domain.{BadRequest, ErrorMsg, Media, NotFound, ServerError, Unauthorized}
 import org.mbari.vampiresquid.domain.Authorization
@@ -47,9 +46,6 @@ import sttp.tapir.server.ServerEndpoint
 
 class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(using ec: ExecutionContext) extends Endpoints:
 
-  given Schema[Option[URI]]         = Schema.string
-  given Schema[Media]               = Schema.derived[Media]
-  given Schema[MoveVideoParams]     = Schema.derived[MoveVideoParams]
   given givenJwtService: JwtService = jwtService
   private val log                   = Logging(getClass)
   private val hex                   = HexFormat.of()
@@ -65,7 +61,6 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
     secureEndpoint
       .post
       .in("v1" / "media")
-      .securityIn(auth.bearer[Option[String]](WWWAuthenticateChallenge.bearer))
       .in(formBody[Map[String, String]])
       .out(jsonBody[Media])
       .name("create")
@@ -88,7 +83,6 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
     secureEndpoint
       .put
       .in("v1" / "media")
-      .securityIn(auth.bearer[Option[String]](WWWAuthenticateChallenge.bearer))
       .in(formBody[Map[String, String]])
       .out(jsonBody[Media])
       .name("update")
@@ -112,7 +106,6 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
     secureEndpoint
       .put
       .in("v1" / "media" / path[UUID]("videoReferenceUuid"))
-      .securityIn(auth.bearer[Option[String]](WWWAuthenticateChallenge.bearer))
       .in(formBody[Map[String, String]])
       .out(jsonBody[Media])
       .name("update by videoReferenceUuid")
@@ -135,7 +128,6 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
     secureEndpoint
       .put
       .in("v1" / "media" / "move" / path[UUID]("videoReferenceUuid"))
-      .securityIn(auth.bearer[Option[String]](WWWAuthenticateChallenge.bearer))
       .in(formBody[MoveVideoParams])
       .out(jsonBody[Media])
       .name("move by videoReferenceUuid")

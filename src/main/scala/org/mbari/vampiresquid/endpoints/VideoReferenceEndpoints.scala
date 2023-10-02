@@ -37,13 +37,9 @@ import org.mbari.vampiresquid.etc.tapir.TapirCodecs.given
 import sttp.model.StatusCode
 import scala.concurrent.Future
 
-class VideoReferenceEndpoints(controller: VideoReferenceController, jwtService: JwtService)(using ec: ExecutionContext) extends Endpoints:
+class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: ExecutionContext,
+    jwtService: JwtService) extends Endpoints:
 
-  given Schema[URI]                 = Schema.string
-  given Schema[Option[URI]]         = Schema.string
-  given Schema[VideoReference]      = Schema.derived[VideoReference]
-  given givenJwtService: JwtService = jwtService
-  private val log                   = Logging(getClass)
   private val hex                   = HexFormat.of()
 
   // GET "v1/videoreferences"
@@ -56,6 +52,11 @@ class VideoReferenceEndpoints(controller: VideoReferenceController, jwtService: 
       .description("Find all video references")
       .tag("video references")
 
+  val findAllEndpointImpl: ServerEndpoint[Any, Future] =
+    findAllEndpoint.serverLogic { _ =>
+      handleErrors(controller.findAll().map(_.toList))
+    }
+
   // GET "v1/videoreferences/:uuid"
   val findOneEndpoint: Endpoint[Unit, UUID, ErrorMsg, VideoReference, Any] =
     openEndpoint
@@ -65,6 +66,11 @@ class VideoReferenceEndpoints(controller: VideoReferenceController, jwtService: 
       .name("findOne")
       .description("Find a video reference by UUID")
       .tag("video references")
+
+  val findOneEndpointImpl: ServerEndpoint[Any, Future] =
+    findOneEndpoint.serverLogic { uuid =>
+      handleOption(controller.findByUUID(uuid))
+    }
 
   // GET "v1/videoreferences/lastupdate/:uuid"
   val findLastUpdateEndpoint: Endpoint[Unit, UUID, ErrorMsg, LastUpdatedTime, Any] =
@@ -76,6 +82,12 @@ class VideoReferenceEndpoints(controller: VideoReferenceController, jwtService: 
       .description("Find the last update time for a video reference by UUID")
       .tag("video references")
 
+  val findLastUpdateEndpointImpl: ServerEndpoint[Any, Future] =
+    findLastUpdateEndpoint.serverLogic { uuid =>
+      handleOption(controller.findByUUID(uuid).map(opt => opt.flatMap(v => v.last_updated_time.map(LastUpdatedTime(_)))))
+    }
+
+
   // GET "v1/videoreferences/uri/:uri"
   val findByUriEndpoint: Endpoint[Unit, URI, ErrorMsg, VideoReference, Any] =
     openEndpoint
@@ -85,6 +97,11 @@ class VideoReferenceEndpoints(controller: VideoReferenceController, jwtService: 
       .name("findByUri")
       .description("Find a video reference by URI")
       .tag("video references")
+
+  val findByUriEndpointImpl: ServerEndpoint[Any, Future] =
+    findByUriEndpoint.serverLogic { uri =>
+      handleOption(controller.findByURI(uri))
+    }
 
   // GET "v1/videoreferences/uris"
   val findAllUrisEndpoint: Endpoint[Unit, Unit, ErrorMsg, List[URI], Any] =
@@ -96,6 +113,11 @@ class VideoReferenceEndpoints(controller: VideoReferenceController, jwtService: 
       .description("Find video references by URIs")
       .tag("video references")
 
+  val findAllUrisEndpointImpl: ServerEndpoint[Any, Future] =
+    findAllUrisEndpoint.serverLogic { _ =>
+      handleErrors(controller.findAllURIs().map(_.toList))
+    }
+
   // GET v1/videoreferences/sha512/:sha512
   val findBySha512Endpoint: Endpoint[Unit, String, ErrorMsg, VideoReference, Any] =
     openEndpoint
@@ -105,13 +127,16 @@ class VideoReferenceEndpoints(controller: VideoReferenceController, jwtService: 
       .name("findBySha512")
       .description("Find a video reference by SHA512")
       .tag("video references")
+  val findBySha512EndpointImpl: ServerEndpoint[Any, Future] =
+    findBySha512Endpoint.serverLogic { sha512 =>
+      handleOption(controller.findBySha512(hex.parseHex(sha512)))
+    }
 
   // DELETE "v1/videoreferences/:uuid"
   val deleteEndpoint: Endpoint[Option[String], UUID, ErrorMsg, Unit, Any] =
     secureEndpoint
       .delete
       .in("v1" / "videoreferences" / path[UUID]("uuid"))
-      .securityIn(auth.bearer[Option[String]](WWWAuthenticateChallenge.bearer))
       .out(statusCode(StatusCode.NoContent))
       .name("delete")
       .description("Delete a video reference by UUID")
@@ -122,7 +147,6 @@ class VideoReferenceEndpoints(controller: VideoReferenceController, jwtService: 
     secureEndpoint
       .post
       .in("v1" / "videoreferences")
-      .securityIn(auth.bearer[Option[String]](WWWAuthenticateChallenge.bearer))
       .in(formBody[Map[String, String]])
       .out(jsonBody[VideoReference])
       .name("create")
@@ -134,7 +158,6 @@ class VideoReferenceEndpoints(controller: VideoReferenceController, jwtService: 
     secureEndpoint
       .put
       .in("v1" / "videoreferences" / path[UUID]("uuid"))
-      .securityIn(auth.bearer[Option[String]](WWWAuthenticateChallenge.bearer))
       .in(formBody[Map[String, String]])
       .out(jsonBody[VideoReference])
       .name("update")
