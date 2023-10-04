@@ -125,7 +125,7 @@ public class VideoReferenceEntity implements IPersistentObject {
     @Convert(converter = ByteArrayConverter.class)
     byte[] sha512;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH}, optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH}, optional = false)
     @JoinColumn(name = "video_uuid", nullable = false)
     VideoEntity video;
 

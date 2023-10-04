@@ -36,6 +36,8 @@ import org.mbari.vampiresquid.domain.LastUpdatedTime
 import org.mbari.vampiresquid.etc.tapir.TapirCodecs.given
 import sttp.model.StatusCode
 import scala.concurrent.Future
+import org.mbari.vampiresquid.domain.BadRequest
+import sttp.tapir.EndpointIO.annotations.description
 
 class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: ExecutionContext,
     jwtService: JwtService) extends Endpoints:
@@ -142,6 +144,13 @@ class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: Ex
       .description("Delete a video reference by UUID")
       .tag("video references")
 
+  val deleteEndpointImpl: ServerEndpoint[Any, Future] =
+    deleteEndpoint
+      .serverSecurityLogic(jwtOpt => verify(jwtOpt))
+      .serverLogic { _ => uuid =>
+        handleErrors(controller.delete(uuid).map(b => if b then () else throw new Exception("Not found")))
+      }
+
   // POST "v1/videoreferences" (form body)
   val createEndpoint: Endpoint[Option[String], Map[String, String], ErrorMsg, VideoReference, Any] =
     secureEndpoint
@@ -153,6 +162,36 @@ class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: Ex
       .description("Create a video reference")
       .tag("video references")
 
+  val createEndpointImpl: ServerEndpoint[Any, Future] =
+    createEndpoint
+      .serverSecurityLogic(jwtOpt => verify(jwtOpt))
+      .serverLogic { _ => form =>
+        val videoUuid = form.get("description").map(UUID.fromString)
+        val uri = form.get("uri").map(URI.create)
+        if (videoUuid.isEmpty || uri.isEmpty) Future(Left(BadRequest("Missing required parameters: video_uuid, uri ")))
+        else 
+          val description = form.get("description")
+          val container= form.get("container")
+          val videoCodec = form.get("video_codec")
+          val audioCodec = form.get("audio_codec")
+          val width = form.get("width").map(_.toInt)
+          val height = form.get("height").map(_.toInt)
+          val frameRate = form.get("frame_rate").map(_.toDouble)
+          val sizeBytes = form.get("size_bytes").map(_.toLong)
+          val sha512 = form.get("sha512").map(hex.parseHex)
+          handleErrors(controller.create(videoUuid.get,
+            uri.get,
+            container, 
+            videoCodec,
+            audioCodec,
+            width,
+            height,
+            frameRate,
+            sizeBytes,
+            description,
+            sha512))
+      }
+
   // PUT "v1/videoreferences/:uuid" (form body)
   val updateEndpoint: Endpoint[Option[String], (UUID, Map[String, String]), ErrorMsg, VideoReference, Any] =
     secureEndpoint
@@ -163,6 +202,37 @@ class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: Ex
       .name("update")
       .description("Update a video reference by UUID")
       .tag("video references")
+
+  val updateEndpointImpl: ServerEndpoint[Any, Future] = 
+    updateEndpoint
+      .serverSecurityLogic(jwtOpt => verify(jwtOpt))
+      .serverLogic { _ => (uuid, form) =>
+        val videoUuid = form.get("description").map(UUID.fromString)
+        val uri = form.get("uri").map(URI.create)
+        val description = form.get("description")
+        val container= form.get("container")
+        val videoCodec = form.get("video_codec")
+        val audioCodec = form.get("audio_codec")
+        val width = form.get("width").map(_.toInt)
+        val height = form.get("height").map(_.toInt)
+        val frameRate = form.get("frame_rate").map(_.toDouble)
+        val sizeBytes = form.get("size_bytes").map(_.toLong)
+        val sha512 = form.get("sha512").map(hex.parseHex)
+        handleErrors(controller.update(uuid,
+          videoUuid,
+          uri,
+          container, 
+          videoCodec,
+          audioCodec,
+          width,
+          height,
+          frameRate,
+          sizeBytes,
+          description,
+          sha512))
+      }
+
+      
 
   override val all: List[Endpoint[_, _, _, _, _]] = List(
     findAllEndpoint,
@@ -176,4 +246,14 @@ class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: Ex
     updateEndpoint
   )
 
-  override def allImpl: List[ServerEndpoint[Any, Future]] = ???
+  override def allImpl: List[ServerEndpoint[Any, Future]] = List(
+    findAllEndpointImpl,
+    findOneEndpointImpl,
+    findLastUpdateEndpointImpl,
+    findByUriEndpointImpl,
+    findAllUrisEndpointImpl,
+    findBySha512EndpointImpl,
+    deleteEndpointImpl,
+    createEndpointImpl,
+    updateEndpointImpl
+  )

@@ -265,6 +265,32 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
         }
       )
 
-  override def all: List[Endpoint[?, ?, ?, ?, ?]] = ???
+  override def all: List[Endpoint[?, ?, ?, ?, ?]] = List(
+    findAllEndpoint,
+    findOneEndpoint,
+    findVideoByVideoSequenceUuid,
+    findVideoByVideoReferenceUuid,
+    findLastUpdateEndpoint,
+    findVideoByName,
+    findVideoByVideoSequenceName,
+    findVideoByTimestamp,
+    findVideoByTimestampRange,
+    createOneEndpoint,
+    deleteByUuidEndpoint,
+    updateEndpoint
+  )
 
-  override def allImpl: List[ServerEndpoint[Any, Future]] = ???
+  override def allImpl: List[ServerEndpoint[Any, Future]] = List(
+    findAllEndpointImpl,
+    findOneEndpointImpl,
+    findVideoByVideoSequenceUuidImpl,
+    findVideoByVideoReferenceUuidImpl,
+    findLastUpdateEndpointImpl,
+    findVideoByNameImpl,
+    findVideoByVideoSequenceByNameImpl,
+    findVideoByTimestampImpl,
+    findVideoByTimestampRangeImpl,
+    createOneEndpointImpl,
+    deleteByUuidEndpointImpl,
+    updateEndpointImpl
+  )

@@ -23,9 +23,9 @@ import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.Duration as SDuration
 import scala.concurrent.ExecutionContext.Implicits.global
 
-trait DAOSuite extends munit.FunSuite:
+trait BaseDAOSuite extends munit.FunSuite:
 
-  val daoFactory = TestDAOFactory.Instance
+  def daoFactory: SpecDAOFactory
   private val timeout = SDuration(2, TimeUnit.SECONDS)
 
   def exec[T](future: Future[T]): T = Await.result(future, timeout)
@@ -36,4 +36,9 @@ trait DAOSuite extends munit.FunSuite:
   override def afterEach(context: AfterEach): Unit =
     super.afterEach(context)
     daoFactory.cleanup()
+
+trait DAOSuite extends BaseDAOSuite:
+
+  val daoFactory = TestDAOFactory.Instance
+
 

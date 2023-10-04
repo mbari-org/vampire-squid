@@ -23,6 +23,10 @@ import org.mbari.vampiresquid.repository.jpa.DerbyTestDAOFactory.config
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
+import org.testcontainers.containers.PostgreSQLContainer
+import org.testcontainers.containers.OracleContainer
+import org.testcontainers.utility.DockerImageName
+import org.testcontainers.containers.MSSQLServerContainer
 
 /**
   * @author Brian Schlining
@@ -37,13 +41,15 @@ object TestDAOFactory:
     "jakarta.persistence.schema-generation.scripts.drop-target"   -> "target/test-database-drop.ddl"
   )
 
-  Class.forName("org.apache.derby.jdbc.ClientDriver")
   val Instance: SpecDAOFactory = DerbyTestDAOFactory
 
 
 trait SpecDAOFactory extends JPADAOFactory:
 
   lazy val config = ConfigFactory.load()
+
+  def beforeAll(): Unit = ()
+  def afterAll(): Unit = ()
 
   def cleanup(): Unit =
 
@@ -58,6 +64,76 @@ trait SpecDAOFactory extends JPADAOFactory:
     Await.result(f, Duration(4, TimeUnit.SECONDS))
 
   def testProps(): Map[String, String]
+
+object PostgresqlDAOFactory extends SpecDAOFactory:
+
+  val container         = new PostgreSQLContainer("postgres:16")
+
+  override def beforeAll(): Unit = container.start()
+  override def afterAll(): Unit  = container.stop()
+
+  override def testProps(): Map[String, String] =
+    TestDAOFactory.TestProperties ++
+      Map(
+        "hibernate.dialect"             -> "org.hibernate.dialect.PostgreSQLDialect",
+      )
+
+  lazy val entityManagerFactory: EntityManagerFactory =
+    val driver   = "org.postgresql.Driver"
+    Class.forName(container.getDriverClassName)
+    EntityManagerFactories(container.getJdbcUrl(), 
+      container.getUsername(), 
+      container.getPassword(), 
+      container.getDriverClassName(), 
+      testProps())
+
+object OracleDAOFactory extends SpecDAOFactory:
+
+  val container =  new OracleContainer(DockerImageName.parse("gvenzl/oracle-xe:21-slim-faststart"));
+
+  override def beforeAll(): Unit = container.start()
+  override def afterAll(): Unit  = container.stop()
+
+  override def testProps(): Map[String, String] =
+    TestDAOFactory.TestProperties ++
+      Map(
+        "hibernate.dialect"             -> "org.hibernate.dialect.Oracle12cDialect",
+      )
+
+  lazy val entityManagerFactory: EntityManagerFactory =
+    // val driver   = "org.postgresql.Driver"
+    // Class.forName(container.getDriverClassName)
+    EntityManagerFactories(container.getJdbcUrl(), 
+      container.getUsername(), 
+      container.getPassword(), 
+      container.getDriverClassName(), 
+      testProps())
+
+
+object SqlServerDAOFactory extends SpecDAOFactory:
+
+  // THe image name must match the one in src/test/resources/container-license-acceptance.txt
+  val container =  new MSSQLServerContainer(DockerImageName.parse("mcr.microsoft.com/mssql/server:2017-CU12"))
+        
+
+  override def beforeAll(): Unit = container.start()
+  override def afterAll(): Unit  = container.stop()
+
+  
+  override def testProps(): Map[String, String] =
+    TestDAOFactory.TestProperties ++
+      Map(
+        "hibernate.dialect"             -> "org.hibernate.dialect.SQLServerDialect",
+      )
+
+  lazy val entityManagerFactory: EntityManagerFactory =
+    val driver   = "com.microsoft.sqlserver.jdbc.SQLServerDriver"
+    Class.forName(driver)
+    EntityManagerFactories(container.getJdbcUrl(), 
+      container.getUsername(), 
+      container.getPassword(), 
+      container.getDriverClassName(), 
+      testProps())
 
 object DerbyTestDAOFactory extends SpecDAOFactory:
 

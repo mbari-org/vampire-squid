@@ -19,6 +19,9 @@ package org.mbari.vampiresquid.repository.jpa
 import jakarta.persistence.EntityManager
 
 import scala.concurrent.{ExecutionContext, Future}
+import org.mbari.vampiresquid.etc.jdk.Logging.given
+import scala.util.control.NonFatal
+import org.slf4j.LoggerFactory
 
 /** Implicits used in this package
   *
@@ -27,6 +30,8 @@ import scala.concurrent.{ExecutionContext, Future}
   * @since 2016-05-06T13:34:00
   */
 object extensions:
+
+  private val log = LoggerFactory.getLogger(getClass)
 
   extension (entityManager: EntityManager)
     def runTransaction[R](fn: EntityManager => R)(implicit ec: ExecutionContext): Future[R] =
@@ -37,6 +42,10 @@ object extensions:
           val n = fn.apply(entityManager)
           transaction.commit()
           n
+        catch
+          case NonFatal(e) => 
+            log.atError.setCause(e).log("Error running transaction")
+            throw e
         finally
           if (transaction.isActive)
             transaction.rollback()
