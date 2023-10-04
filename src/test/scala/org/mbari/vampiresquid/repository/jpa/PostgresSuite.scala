@@ -20,6 +20,7 @@ import org.testcontainers.utility.DockerImageName
 import java.sql.DriverManager
 import org.testcontainers.containers.PostgreSQLContainer
 import scala.util.Random
+import scala.jdk.CollectionConverters.*
 
 class PostgresSuite extends munit.FunSuite:
 
@@ -34,4 +35,11 @@ class PostgresSuite extends munit.FunSuite:
     val all = dao.findAll()
     assert(all.isEmpty)
     dao.close()
+
+  test("Postgres init script should have been run"):
+    val em = daoFactory.entityManagerFactory.createEntityManager()
+    val q  = em.createNativeQuery("SELECT COUNT(*) FROM unique_videos")
+    val r = q.getResultList().asScala.toList.head.asInstanceOf[Long]
+    println("---------------------" + r)
+    assert(r == 0)
     

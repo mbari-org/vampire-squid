@@ -69,6 +69,7 @@ object PostgresqlDAOFactory extends SpecDAOFactory:
 
   // TODO - intialize the container with SQL so UUID type gets correctly created
   val container         = new PostgreSQLContainer("postgres:16")
+  container.withInitScript("sql/postgresql/02_m3_video_assets.sql")
 
   override def beforeAll(): Unit = container.start()
   override def afterAll(): Unit  = container.stop()
