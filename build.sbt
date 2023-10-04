@@ -1,8 +1,10 @@
 import java.net.URI
+import Dependencies._
 
 val tapirVersion       = "1.7.5"
 val eclipselinkVersion = "4.0.2"
 val derbyVersion       = "10.16.1.1"
+val testcontainersVersion = "0.41.0"
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
@@ -33,27 +35,33 @@ lazy val rootProject = (project in file("."))
       javacOptions ++= Seq("-target", "17", "-source", "17"),
       licenses += ("Apache-2.0", URI.create("https://www.apache.org/licenses/LICENSE-2.0.txt").toURL),
       libraryDependencies ++= Seq(
-        "ch.qos.logback"                 % "logback-classic"                   % "1.4.11",
-        "com.auth0" % "java-jwt" % "4.4.0",
-        "com.softwaremill.sttp.client3" %% "circe"                             % "3.9.0"      % Test,
-        "com.softwaremill.sttp.tapir"   %% "tapir-json-circe"                  % tapirVersion,
-        "com.softwaremill.sttp.tapir"   %% "tapir-prometheus-metrics"          % tapirVersion,
-        "com.softwaremill.sttp.tapir"   %% "tapir-sttp-stub-server"            % tapirVersion % Test,
-        "com.softwaremill.sttp.tapir"   %% "tapir-swagger-ui-bundle"           % tapirVersion,
-        "com.softwaremill.sttp.tapir"   %% "tapir-vertx-server"                % tapirVersion,
-        "org.apache.derby"               % "derby"                             % derbyVersion % "test",
-        "org.apache.derby"               % "derbyclient"                       % derbyVersion % "test",
-        "org.apache.derby"               % "derbynet"                          % derbyVersion % "test",
-        "org.apache.derby"               % "derbyshared"                       % derbyVersion,
-        "org.apache.derby"               % "derbytools"                        % derbyVersion,
-        "org.scalameta"                 %% "munit"                             % "1.0.0-M10"  % Test,
-        "org.hibernate.orm"              % "hibernate-core"                    % "6.3.0.Final",
-        "org.hibernate.orm"              % "hibernate-hikaricp"                    % "6.3.0.Final",
-        // "org.eclipse.persistence"        % "eclipselink"                       % eclipselinkVersion,
-        // "org.eclipse.persistence"        % "org.eclipse.persistence.extension" % eclipselinkVersion,
-        "org.scalatest"                 %% "scalatest"                         % "3.2.17"     % Test,
-        "com.typesafe"                   % "config"                            % "1.4.2"
-      ),
+        derby % Test,
+        derbyClient % Test,
+        derbyNet % Test,
+        derbyShared % Test,
+        derbyTools % Test,
+        hibernateCore,
+        hibernateHikari,
+        javaJwt,
+        logbackClassic,
+        slf4jSystem,
+        mssqlJdbc,
+        munit % Test,
+        oracleJdbc,
+        postgresql,
+        scalatest % Test,
+        tapirCirce,
+        tapirPrometheus,
+        tapirServerStub % Test,
+        tapirSttpCirce,
+        tapirSwagger,
+        tapirVertex,
+        testcontainersCore % Test,
+        testcontainersOracle % Test,
+        testcontainersPostgres % Test,
+        testcontainersSqlserver% Test,
+        typesafeConfig,
+       ),
       scalacOptions ++= Seq(
         "-deprecation", // Emit warning and location for usages of deprecated APIs.
         "-encoding",

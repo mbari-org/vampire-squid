@@ -67,6 +67,7 @@ trait SpecDAOFactory extends JPADAOFactory:
 
 object PostgresqlDAOFactory extends SpecDAOFactory:
 
+  // TODO - intialize the container with SQL so UUID type gets correctly created
   val container         = new PostgreSQLContainer("postgres:16")
 
   override def beforeAll(): Unit = container.start()
