@@ -131,8 +131,9 @@ object CirceCodecs:
   extension [T: Encoder](value: T) def stringify: String = Encoder[T].apply(value).stringify
 
   extension [T: Decoder](jsonString: String) def toJson: Either[ParsingFailure, Json] = parser.parse(jsonString);
-  extension [T: Decoder](jsonString: String)
-    def reify: Either[Error, T]                                                       =
+
+  extension (jsonString: String)
+    def reify[T: Decoder]: Either[Error, T]                                                       =
       for
         json   <- jsonString.toJson
         result <- Decoder[T].apply(json.hcursor)

@@ -25,10 +25,12 @@ import sttp.client3.testing.SttpBackendStub
 import sttp.model.StatusCode
 import scala.concurrent.Future
 import sttp.tapir.server.stub.TapirStubInterpreter
+import scala.util.Failure
+import scala.util.Success
 
 class HealthEndpointsSuite extends munit.FunSuite:
   given ExecutionContext = ExecutionContext.global
-  val healthEndpoints = new HealthEndpoints
+  val healthEndpoints = new  HealthEndpoints
 
   test("health"):
     val backendStub: SttpBackend[Future, Any] = TapirStubInterpreter(SttpBackendStub.asynchronousFuture)
@@ -37,9 +39,15 @@ class HealthEndpointsSuite extends munit.FunSuite:
 
     val request = basicRequest.get(uri"http://test.com/v1/health")
     val response = request.send(backendStub)
-    response.map(r => {
-      assertEquals(r.code, StatusCode.Ok)
-    }).join
+    response.andThen(r => r match 
+      case Failure(e) => fail(e.getMessage)
+      case Success(r) => assertEquals(r.code, StatusCode.Ok)
+    )
+
+
+    // response.map(r => {
+    //   assertEquals(r.code, StatusCode.Ok)
+    // }).join
     // val body = response.body
     // assert(body.isRight)
     // println(body)

@@ -18,12 +18,15 @@ package org.mbari.vampiresquid.etc.sdk
 
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.Duration
+import java.util.concurrent.TimeUnit
 
 object FutureUtil:
+
+  private val Timeout = Duration.apply(10, TimeUnit.SECONDS)
 
   /** Join a future. (i.e. Await.result(future, Duration.Inf)
     *
     * @return
     *   The result of the future
     */
-  extension [T](t: Future[T]) def join: T = Await.result(t, Duration.Inf)
+  extension [T](t: Future[T]) def join: T = Await.result(t, Timeout)

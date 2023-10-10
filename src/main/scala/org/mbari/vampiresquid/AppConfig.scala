@@ -18,6 +18,7 @@ package org.mbari.vampiresquid
 
 import scala.util.Try
 import com.typesafe.config.ConfigFactory
+import org.mbari.vampiresquid.etc.jwt.JwtService
 
 object AppConfig:
   val Name: String = "vampire-squid"
@@ -34,6 +35,12 @@ object AppConfig:
       issuer = Config.getString("basicjwt.issuer"),
       signingSecret = Config.getString("basicjwt.signing.secret")
     )
+
+  lazy val DefaultJwtService = new JwtService(
+    issuer = JwtParameters.issuer,
+    apiKey = JwtParameters.clientSecret,
+    signingSecret = JwtParameters.signingSecret
+  )
 
 final case class JwtParams(
     clientSecret: String,
