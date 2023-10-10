@@ -47,7 +47,7 @@ import org.mbari.vampiresquid.repository.jpa.TestUtils
 import org.mbari.vampiresquid.etc.sdk.FutureUtil.given
 
 
-class MediaEndpointsSpec extends munit.FunSuite:
+class MediaEndpointsSuite extends munit.FunSuite:
 
   private val log = Logging(getClass)
 

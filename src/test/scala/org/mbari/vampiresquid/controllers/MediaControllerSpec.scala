@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.mbari.vampiresquid.controller
+package org.mbari.vampiresquid.controllers
 
 import org.mbari.vampiresquid.Constants
 import org.mbari.vampiresquid.controllers.{MediaController, VideoReferenceController, VideoSequenceController}

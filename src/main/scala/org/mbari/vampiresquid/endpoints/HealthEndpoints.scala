@@ -25,11 +25,16 @@ import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 import org.mbari.vampiresquid.etc.circe.CirceCodecs.given
+import sttp.tapir.model.StatusCodeRange.Success
+import scala.util.Failure
+import scala.util.Try
+import scala.util.Success
+import org.mbari.vampiresquid.domain.ErrorMsg
 
 class HealthEndpoints(using ec: ExecutionContext) extends Endpoints:
 
-  val healthEndpoint: PublicEndpoint[Unit, Unit, HealthStatus, Any] =
-    endpoint
+  val healthEndpoint: Endpoint[Unit, Unit, ErrorMsg, HealthStatus, Any] =
+    openEndpoint
       .get
       .in("v1" / "health")
       .out(jsonBody[HealthStatus])
@@ -38,7 +43,7 @@ class HealthEndpoints(using ec: ExecutionContext) extends Endpoints:
       .tag("health")
 
   val healthEndpointImpl: ServerEndpoint[Any, Future] =
-    healthEndpoint.serverLogic(a => Future(Right(HealthStatus.default)))
+    healthEndpoint.serverLogic(_ => handleErrors(Future(HealthStatus.default)))
 
   override def all: List[Endpoint[?, ?, ?, ?, ?]] =
     List(healthEndpoint)
