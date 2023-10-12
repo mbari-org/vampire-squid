@@ -49,8 +49,6 @@ trait Endpoints:
   given Schema[MoveVideoParams]     = Schema.derived[MoveVideoParams]
   
 
-  
-
   def all: List[Endpoint[?, ?, ?, ?, ?]]
   def allImpl: List[ServerEndpoint[Any, Future]]
 

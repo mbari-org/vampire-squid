@@ -45,6 +45,12 @@ import org.mbari.vampiresquid.etc.sdk.FormTransform.given
 import org.mbari.vampiresquid.etc.sdk.ToStringTransforms.{*, given}
 import org.mbari.vampiresquid.repository.jpa.TestUtils
 import org.mbari.vampiresquid.etc.sdk.FutureUtil.given
+import java.util.HexFormat
+import org.mbari.vampiresquid.repository.jpa.AssertUtil.assertSameMedia
+import sttp.tapir.server.ServerEndpoint
+import org.mbari.vampiresquid.etc.jdk.Uris
+import scala.jdk.CollectionConverters.*
+
 
 
 class MediaEndpointsSuite extends munit.FunSuite:
@@ -183,6 +189,197 @@ class MediaEndpointsSuite extends munit.FunSuite:
     response.map(r => {
       assertEquals(r.code, StatusCode.Ok)
       assert(r.body.isRight)
+      // TODO verify move happened
     })
+
+    // TODO verify move to existing and move to new
+
+  def checkResponse[T: Decoder](responseBody: Either[String, String]): T =
+    responseBody match
+      case Left(e) => fail(e)
+      case Right(json) => 
+        decode[T](json) match
+          case Left(error) => fail(error.getLocalizedMessage())
+          case Right(value) => value
+
+  def runGet(ep: ServerEndpoint[Any, Future], 
+    uri: String,
+    assertions: Response[Either[String, String]] => Unit): Unit = 
+    val backendStub: SttpBackend[Future, Any] = TapirStubInterpreter(SttpBackendStub.asynchronousFuture)
+      .whenServerEndpointRunLogic(ep)
+      .backend()
+    val request = basicRequest.get(uri"$uri")
+    val response = request.send(backendStub).join
+    assertions(response)
+    
+
+  test("findBySha512"):
+    val videoSequence = TestUtils.create(1, 1, 1).head
+    val hex = HexFormat.of()
+    val videoReference = videoSequence.getVideoReferences().get(0)
+    val media0 = Media.from(videoReference)
+    val sha512 = hex.formatHex(videoReference.getSha512())
+
+    runGet(mediaEndpoints.findBySha512Impl, 
+      s"http://test.com/v1/media/sha512/${sha512}", 
+      response => {
+        assertEquals(response.code, StatusCode.Ok)
+        val media = checkResponse[Media](response.body)
+        assertSameMedia(media, media0)
+      }
+    )
+
+  test("findByVideoReferenceUuid"):
+    val videoSequence = TestUtils.create(1, 1, 1).head
+    val videoReference = videoSequence.getVideoReferences().get(0)
+    val media0 = Media.from(videoReference)
+    assert(videoReference.getUuid() != null)
+
+    runGet(mediaEndpoints.findByVideoReferenceUuidImpl, 
+      s"http://test.com/v1/media/videoreference/${videoReference.getUuid()}", 
+      response => {
+        assertEquals(response.code, StatusCode.Ok)
+        val media = checkResponse[Media](response.body)
+        assertSameMedia(media, media0)
+      }
+    )
+
+  test("findByFileName"):
+    val videoSequence = TestUtils.create(1, 1, 1).head
+    val videoReference = videoSequence.getVideoReferences().get(0)
+    val media0 = Media.from(videoReference)
+    assert(media0.uri.isDefined)
+    val filename = Uris.filename(media0.uri.get)
+
+    runGet(mediaEndpoints.findByFileNameImpl, 
+      s"http://test.com/v1/media/videoreference/filename/${filename}", 
+      response => {
+        assertEquals(response.code, StatusCode.Ok)
+        val xs = checkResponse[List[Media]](response.body)
+        assert(xs.size == 1)
+        assertSameMedia(xs.head, media0)
+      }
+    )
+
+  test("findByVideoSequenceName"):
+    val videoSequence = TestUtils.create(1, 1, 1).head
+    val videoReference = videoSequence.getVideoReferences().get(0)
+    val media0 = Media.from(videoReference)
+
+    runGet(mediaEndpoints.findByVideoSequenceNameImpl, 
+      s"http://test.com/v1/media/videosequence/${videoSequence.getName()}", 
+      response => {
+        assertEquals(response.code, StatusCode.Ok)
+        val xs = checkResponse[List[Media]](response.body)
+        assert(xs.size == 1)
+        assertSameMedia(xs.head, media0)
+      }
+    )
+
+  test("findByVideoName"):
+    val videoSequence = TestUtils.create(1, 1, 1).head
+    val videoReference = videoSequence.getVideoReferences().get(0)
+    val media0 = Media.from(videoReference)
+
+    runGet(mediaEndpoints.findByVideoNameImpl, 
+      s"http://test.com/v1/media/video/${videoReference.getVideo().getName()}", 
+      response => {
+        assertEquals(response.code, StatusCode.Ok)
+        val xs = checkResponse[List[Media]](response.body)
+        assert(xs.size == 1)
+        assertSameMedia(xs.head, media0)
+      }
+    )
+
+  test("findByCameraIdAndTimestamps"):
+    val videoSequence = TestUtils.create(1, 1, 1).head
+    val videoReference = videoSequence.getVideoReferences().get(0)
+    val media0 = Media.from(videoReference)
+    assert(media0.start_timestamp.isDefined)
+    assert(media0.duration_millis.isDefined)
+    val startTimestamp = media0.startTimestamp
+    val endTimestamp = startTimestamp.plus(media0.duration.get)
+
+    runGet(mediaEndpoints.findByCameraIdAndTimestampsImpl, 
+      s"http://test.com/v1/media/camera/${videoSequence.getCameraID}/${startTimestamp}/${endTimestamp}", 
+      response => {
+        assertEquals(response.code, StatusCode.Ok)
+        val xs = checkResponse[List[Media]](response.body)
+        assert(xs.size == 1)
+        assertSameMedia(xs.head, media0)
+      }
+    )
+
+  test("findConcurrentByVideoReferenceUuid"):
+    val videoSequence = TestUtils.build(1, 10, 2).head
+    var n = 0 
+    val t0 = Instant.parse("1968-09-22T00:00:00Z")
+    val t1 = Instant.parse("2002-08-27T00:00:00Z")
+    for 
+      vr <- videoSequence.getVideos().asScala
+    do
+      if (n < 5) then
+        vr.setStart(t0.plus(Duration.ofSeconds(n * 100)))
+        vr.setDuration(Duration.ofSeconds(1000))
+      else
+        vr.setStart(t1.plus(Duration.ofSeconds(n * 100)))
+        vr.setDuration(Duration.ofSeconds(100))
+      n = n + 1
+    TestUtils.save(videoSequence)
+
+    val befores = videoSequence.getVideoReferences().asScala.filter(_.getVideo().getStart().isBefore(t1))
+    assertEquals(videoSequence.getVideoReferences().size(), 20)
+    assertEquals(befores.size, 10)
+
+    runGet(mediaEndpoints.findConcurrentByVideoReferenceUuidImpl, 
+      s"http://test.com/v1/media/concurrent/${videoSequence.getVideoReferences().get(0).getUuid()}", 
+      response => {
+        assertEquals(response.code, StatusCode.Ok)
+        val xs = checkResponse[List[Media]](response.body)
+        assertEquals(xs.size, befores.size)
+      }
+    )
+
+  test("findByCameraIdAndDatetime"):
+    val videoSequence = TestUtils.create(1, 1, 1).head
+    val videoReference = videoSequence.getVideoReferences().get(0)
+    val media0 = Media.from(videoReference)
+    assert(media0.start_timestamp.isDefined)
+    assert(media0.duration_millis.isDefined)
+    val startTimestamp = media0.startTimestamp
+    val dateTime = startTimestamp.plus(media0.duration.get.dividedBy(2))
+
+    runGet(mediaEndpoints.findByCameraIdAndDatetimeImpl, 
+      s"http://test.com/v1/media/camera/${videoSequence.getCameraID}/${dateTime}", 
+      response => {
+        assertEquals(response.code, StatusCode.Ok)
+        val xs = checkResponse[List[Media]](response.body)
+        assert(xs.size == 1)
+        assertSameMedia(xs.head, media0)
+      }
+    )
+
+  test("findByUri"):
+    val videoSequence = TestUtils.create(1, 1, 1).head
+    val videoReference = videoSequence.getVideoReferences().get(0)
+    val media0 = Media.from(videoReference)
+    assert(media0.uri.isDefined)
+    val uri = Uris.encode(media0.uri.get)
+
+    runGet(mediaEndpoints.findByUriImpl, 
+      s"http://test.com/v1/media/uri/${uri}", 
+      response => {
+        assertEquals(response.code, StatusCode.Ok)
+        val xs = checkResponse[List[Media]](response.body)
+        assert(xs.size == 1)
+        assertSameMedia(xs.head, media0)
+      }
+    )
+
+  
+
+
+
+    
 
   

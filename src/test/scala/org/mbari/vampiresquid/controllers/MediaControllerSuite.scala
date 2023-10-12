@@ -30,6 +30,7 @@ import java.util.Arrays
 import scala.jdk.CollectionConverters.*
 import java.time.Instant
 import org.mbari.vampiresquid.repository.jpa.VideoSequenceDAOImpl
+import org.mbari.vampiresquid.repository.jpa.AssertUtil.*
 
 class MediaControllerSuite extends DAOSuite:
 
@@ -43,29 +44,10 @@ class MediaControllerSuite extends DAOSuite:
   def createMedia(): Media =
     exec(controller.createMedia(buildMedia()))
 
-  def assertSameValues(m0: Media, m1: Media): Unit =
-    Assert.assertArrayEquals(m0.sha512.orNull, m1.sha512.orNull)
-    assertEquals(m0.video_sequence_name, m1.video_sequence_name)
-    assertEquals(m0.video_name, m1.video_name)
-    assertEquals(m0.camera_id, m1.camera_id)
-    assertEquals(m0.start_timestamp, m1.start_timestamp)
-    assertEquals(m0.duration, m1.duration)
-    assertEquals(m0.uri, m1.uri)
-    assertEquals(m0.container, m1.container)
-    assertEquals(m0.video_codec, m1.video_codec)
-    assertEquals(m0.audio_codec, m1.audio_codec)
-    assertEquals(m0.width, m1.width)
-    assertEquals(m0.height, m1.height)
-    assertEquals(m0.frame_rate, m1.frame_rate)
-    assertEquals(m0.size_bytes, m1.size_bytes)
-    assertEquals(m0.description, m1.description)
-    assertEquals(m0.video_description, m1.video_description)
-    assertEquals(m0.video_sequence_description, m1.video_sequence_description)
-
   test("createMedia"):
     val m0 = buildMedia()
     val m1 = exec(controller.createMedia(m0))
-    assertSameValues(m1, m0)
+    assertSameMedia(m1, m0)
 
   test("create"):
     val m0 = buildMedia()
@@ -90,7 +72,7 @@ class MediaControllerSuite extends DAOSuite:
         m0.video_description
       )
     )
-    assertSameValues(m1, m0)
+    assertSameMedia(m1, m0)
 
   test("updateMedia"):
     val m0 = createMedia()
@@ -100,7 +82,7 @@ class MediaControllerSuite extends DAOSuite:
     val opt = exec(controller.updateMedia(m1))
     assert(opt.isDefined)
     val m2 = opt.get
-    assertSameValues(m2, m1)
+    assertSameMedia(m2, m1)
 
   test("findAndUpdate"):
     val m0 = createMedia()
@@ -120,7 +102,7 @@ class MediaControllerSuite extends DAOSuite:
         videoRefDescription = m1.description))
     assert(opt.isDefined)
     val m2 = opt.get
-    assertSameValues(m2, m1)
+    assertSameMedia(m2, m1)
 
   test("update"):
     val m0 = createMedia()
@@ -137,7 +119,7 @@ class MediaControllerSuite extends DAOSuite:
       videoDescription = m1.video_description,
       videoRefDescription = m1.description))
     assert(opt.isDefined)
-    assertSameValues(opt.get, m1)
+    assertSameMedia(opt.get, m1)
 
   test("moveVideoReference"):
     val m0 = createMedia()
@@ -174,43 +156,43 @@ class MediaControllerSuite extends DAOSuite:
     val m0 = createMedia()
     val opt = exec(controller.findByVideoReferenceUuid(m0.video_reference_uuid.get))
     assert(opt.isDefined)
-    assertSameValues(opt.get, m0)
+    assertSameMedia(opt.get, m0)
 
   test("findBySha512"):
     val m0 = createMedia()
     val opt = exec(controller.findBySha512(m0.sha512.get))
     assert(opt.isDefined)
-    assertSameValues(opt.get, m0)
+    assertSameMedia(opt.get, m0)
 
   test("findByVideoSequenceName"):
     val m0 = createMedia()
     val xs = exec(controller.findByVideoSequenceName(m0.video_sequence_name.get))
     assertEquals(xs.size, 1)
-    assertSameValues(xs.head, m0)
+    assertSameMedia(xs.head, m0)
 
   test("findByVideoSequenceNameAndTimestamp"):
     val m0 = createMedia()
     val xs = exec(controller.findByVideoSequenceNameAndTimestamp(m0.video_sequence_name.get, m0.start_timestamp.get.plus(m0.duration.get.dividedBy(2))))
     assertEquals(xs.size, 1)
-    assertSameValues(xs.head, m0)
+    assertSameMedia(xs.head, m0)
 
   test("findByCameraIdAndTimestamp"):
     val m0 = createMedia()
     val xs = exec(controller.findByCameraIdAndTimestamp(m0.camera_id.get, m0.start_timestamp.get.plus(m0.duration.get.dividedBy(2))))
     assertEquals(xs.size, 1)
-    assertSameValues(xs.head, m0)
+    assertSameMedia(xs.head, m0)
 
   test("findByCameraIdAndTimestamps"):
     val m0 = createMedia()
     val xs = exec(controller.findByCameraIdAndTimestamps(m0.camera_id.get, m0.start_timestamp.get, m0.start_timestamp.get.plus(m0.duration.get)))
     assertEquals(xs.size, 1)
-    assertSameValues(xs.head, m0)
+    assertSameMedia(xs.head, m0)
 
   test("findConcurrent (simple case)"):
     val m0 = createMedia()
     val xs = exec(controller.findConcurrent(m0.video_reference_uuid.get))
     assertEquals(xs.size, 1)
-    assertSameValues(xs.head, m0)
+    assertSameMedia(xs.head, m0)
     // TODO create more than one concurrent video
 
   test("findConcurrent (advanced)"):
@@ -233,23 +215,23 @@ class MediaControllerSuite extends DAOSuite:
     val ys = exec(controller.findConcurrent(m0.video_reference_uuid.get))
     val good = xs.filter(_.getVideo().getStart().isBefore(m0.endTimestamp.get))
     assertEquals(ys.size, good.size)
-    assertSameValues(ys.head, m0)
+    assertSameMedia(ys.head, m0)
 
   test("findByVideoName"):
     val m0 = createMedia()
     val xs = exec(controller.findByVideoName(m0.video_name.get))
     assertEquals(xs.size, 1)
-    assertSameValues(xs.head, m0)
+    assertSameMedia(xs.head, m0)
 
   test("findByURI"):
     val m0 = createMedia()
     val xs = exec(controller.findByURI(m0.uri.get))
     assertEquals(xs.size, 1)
-    assertSameValues(xs.head, m0)
+    assertSameMedia(xs.head, m0)
 
   test("findByFileName"):
     val m0 = createMedia()
     val filename = Uris.filename(m0.uri.get)
     val xs = exec(controller.findByFileName(filename))
     assertEquals(xs.size, 1)
-    assertSameValues(xs.head, m0)
+    assertSameMedia(xs.head, m0)

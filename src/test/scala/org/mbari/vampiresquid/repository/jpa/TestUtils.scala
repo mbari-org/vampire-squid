@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit
 import scala.collection.BitSet
 import scala.concurrent.{Await, ExecutionContext, duration}
 import scala.util.Random
+import org.mbari.vampiresquid.domain.VideoSequence
 
 /**
   * @author Brian Schlining
@@ -102,5 +103,11 @@ object TestUtils:
       Await.result(f, longTimeout)
     dao.close()
     videoSequences
+
+  def save(videoSequence: VideoSequenceEntity): Unit = 
+    val dao = DaoFactory.newVideoSequenceDAO()
+    val f   = dao.runTransaction(d => d.create(videoSequence))
+    Await.result(f, Timeout)
+    dao.close()
 
 
