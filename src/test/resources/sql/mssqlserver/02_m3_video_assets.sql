@@ -7,7 +7,7 @@ CREATE TABLE "dbo"."video_references"  (
 	"height"           	int NULL,
 	"last_updated_time"	datetime2 NULL,
 	"sha512"           	varchar(128) NULL,
-	"size_bytes"       	numeric(19,0) NULL,
+	"size_bytes"       	bigint NULL,
 	"uri"              	varchar(1024) NOT NULL,
 	"video_codec"      	varchar(128) NULL,
 	"width"            	int NULL,
@@ -25,10 +25,10 @@ CREATE TABLE "dbo"."video_sequences"  (
 CREATE TABLE "dbo"."videos"  ( 
 	"uuid"               	uniqueidentifier NOT NULL,
 	"description"        	varchar(2048) NULL,
-	"duration_millis"    	numeric(19,0) NULL,
+	"duration_millis"    	bigint NULL,
 	"last_updated_time"  	datetime2 NULL,
 	"name"               	varchar(512) NOT NULL,
-	"start_time"         	datetime2 NOT NULL,
+	"start_time"         	datetimeoffset(6) NOT NULL,
 	"video_sequence_uuid"	uniqueidentifier NOT NULL,
 	CONSTRAINT "PK__videos__7F427930696ABA50" PRIMARY KEY CLUSTERED("uuid")
  ON [PRIMARY]);

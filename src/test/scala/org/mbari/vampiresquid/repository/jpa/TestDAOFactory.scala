@@ -69,6 +69,7 @@ object PostgresqlDAOFactory extends SpecDAOFactory:
   // TODO - intialize the container with SQL so UUID type gets correctly created
   val container         = new PostgreSQLContainer("postgres:16")
   container.withInitScript("sql/postgresql/02_m3_video_assets.sql")
+  container.withReuse(true)
 
   override def beforeAll(): Unit = container.start()
   override def afterAll(): Unit  = container.stop()
@@ -92,6 +93,7 @@ object OracleDAOFactory extends SpecDAOFactory:
 
   val container =  new OracleContainer(DockerImageName.parse("gvenzl/oracle-xe:21-slim-faststart"))
   container.withInitScript("sql/oracle/02_m3_video_assets.sql")
+  container.withReuse(true)
 
   override def beforeAll(): Unit = container.start()
   override def afterAll(): Unit  = container.stop()
@@ -115,10 +117,11 @@ object OracleDAOFactory extends SpecDAOFactory:
 object SqlServerDAOFactory extends SpecDAOFactory:
 
   // THe image name must match the one in src/test/resources/container-license-acceptance.txt
-  val container =  new MSSQLServerContainer(DockerImageName.parse("mcr.microsoft.com/mssql/server:2017-CU12"))
+  val container =  new MSSQLServerContainer(DockerImageName.parse("mcr.microsoft.com/mssql/server:2019-latest"))
+  container.acceptLicense()
   container.withInitScript("sql/mssqlserver/02_m3_video_assets.sql")
+  container.withReuse(true)
         
-
   override def beforeAll(): Unit = container.start()
   override def afterAll(): Unit  = container.stop()
 

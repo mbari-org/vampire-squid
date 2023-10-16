@@ -19,7 +19,7 @@ CREATE TABLE videos  (
 	"uuid"               	uuid PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4(),
 	"video_sequence_uuid"	uuid NOT NULL,
 	"description"        	varchar(2048) NULL,
-	"duration_millis"    	numeric(19,0) NULL,
+	"duration_millis"    	bigint NULL,
 	"name"               	varchar(512) NOT NULL,
 	"start_time"         	timestamp NOT NULL,	/* start_time is the start time of the video */	
 	"last_updated_time"  	timestamp NOT NULL DEFAULT now(),
@@ -37,7 +37,7 @@ CREATE TABLE video_references  (
 	"frame_rate"       	DOUBLE PRECISION NULL,
 	"height"           	integer NULL,
 	"sha512"           	varchar(128) NULL,
-	"size_bytes"       	numeric(19,0) NULL,
+	"size_bytes"       	bigint NULL,
 	"uri"              	varchar(1024) NOT NULL,
 	"video_codec"      	varchar(128) NULL,
 	"width"            	integer NULL,
