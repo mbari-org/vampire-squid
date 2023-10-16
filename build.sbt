@@ -15,6 +15,7 @@ ThisBuild / organizationName := "MBARI"
 ThisBuild / startYear        := Some(2021)
 ThisBuild / versionScheme    := Some("semver-spec")
 Test / parallelExecution     := false
+Test / testOptions += Tests.Argument(TestFrameworks.MUnit, "-b")
 
 lazy val rootProject = (project in file("."))
   .enablePlugins(
