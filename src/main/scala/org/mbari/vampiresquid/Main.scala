@@ -27,9 +27,9 @@ import ExecutionContext.Implicits.global
 import scala.io.StdIn
 import org.mbari.vampiresquid.controllers.MediaController
 import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
-import Endpoints
 
-@main def run(): Unit =
+@main 
+def run(): Unit =
 
   val serverOptions = VertxFutureServerOptions
     .customiseInterceptors

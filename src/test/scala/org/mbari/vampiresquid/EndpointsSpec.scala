@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.mbari
+package org.mbari.vampiresquid
 
 import org.mbari.vampiresquid.Endpoints.{*, given}
 import org.scalatest.EitherValues
@@ -31,7 +31,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration.Duration
 import sttp.client3.circe.*
-import vampiresquid.Library
+
 
 class EndpointsSpec extends AnyFlatSpec with Matchers with EitherValues:
 

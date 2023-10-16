@@ -1,3 +1,19 @@
+/*
+ * Copyright 2021 MBARI
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.mbari.vampiresquid.repository.jpa
 
 import org.testcontainers.utility.DockerImageName
@@ -6,7 +22,7 @@ import org.testcontainers.containers.PostgreSQLContainer
 import scala.util.Random
 import scala.jdk.CollectionConverters.*
 
-class SqlServersSuite extends munit.FunSuite:
+class SqlServerSuite extends munit.FunSuite:
 
   val daoFactory = SqlServerDAOFactory
 
@@ -23,7 +39,7 @@ class SqlServersSuite extends munit.FunSuite:
   test("SqlServer init script should have been run"):
     val em = daoFactory.entityManagerFactory.createEntityManager()
     val q  = em.createNativeQuery("SELECT COUNT(*) FROM unique_videos")
-    val r = q.getResultList().asScala.toList.head.asInstanceOf[Long]
+    val r = q.getResultList().asScala.toList.head.asInstanceOf[Int]
     println("---------------------" + r)
     assert(r == 0)
     
