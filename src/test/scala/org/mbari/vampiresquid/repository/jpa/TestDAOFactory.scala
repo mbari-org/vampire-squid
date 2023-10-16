@@ -36,7 +36,6 @@ object TestDAOFactory:
 
   val TestProperties = Map(
     "eclipselink.logging.level"                                 -> "FINE",
-    "jakarta.persistence.schema-generation.scripts.action"        -> "drop-and-create",
     "jakarta.persistence.schema-generation.scripts.create-target" -> "target/test-database-create.ddl",
     "jakarta.persistence.schema-generation.scripts.drop-target"   -> "target/test-database-drop.ddl"
   )
@@ -91,7 +90,8 @@ object PostgresqlDAOFactory extends SpecDAOFactory:
 
 object OracleDAOFactory extends SpecDAOFactory:
 
-  val container =  new OracleContainer(DockerImageName.parse("gvenzl/oracle-xe:21-slim-faststart"));
+  val container =  new OracleContainer(DockerImageName.parse("gvenzl/oracle-xe:21-slim-faststart"))
+  container.withInitScript("sql/oracle/02_m3_video_assets.sql")
 
   override def beforeAll(): Unit = container.start()
   override def afterAll(): Unit  = container.stop()
@@ -144,6 +144,7 @@ object DerbyTestDAOFactory extends SpecDAOFactory:
     TestDAOFactory.TestProperties ++
       Map(
         "hibernate.dialect"             -> "org.hibernate.dialect.DerbyDialect",
+        "jakarta.persistence.schema-generation.scripts.action"        -> "drop-and-create"
       )
 
   lazy val entityManagerFactory: EntityManagerFactory =
@@ -159,7 +160,10 @@ object H2TestDAOFactory extends SpecDAOFactory:
 
   Class.forName(config.getString("database.h2.driver"))
 
-  override def testProps(): Map[String, String] = TestDAOFactory.TestProperties
+  override def testProps(): Map[String, String] = TestDAOFactory.TestProperties ++
+    Map(
+      "jakarta.persistence.schema-generation.scripts.action"        -> "drop-and-create"
+    )
 
   lazy val entityManagerFactory: EntityManagerFactory =
     val driver   = config.getString("database.h2.driver")

@@ -38,11 +38,10 @@ object EntityManagerFactories:
   // https://juliuskrah.com/tutorial/2017/02/16/getting-started-with-hikaricp-hibernate-and-jpa/
   val PRODUCTION_PROPS = Map(
     "hibernate.connection.provider_class"                   -> "org.hibernate.hikaricp.internal.HikariCPConnectionProvider",
-    "hibernate.hbm2ddl.auto"                                -> "create",
+    "hibernate.hbm2ddl.auto"                                -> "validate",
     "hibernate.hikari.idleTimeout"                          -> "30000",
     "hibernate.hikari.maximumPoolSize"                      -> "16",
     "hibernate.hikari.minimumIdle"                          -> "2",
-    "jakarta.persistence.schema-generation.database.action" -> "create"
   )
 
   def apply(properties: Map[String, String]): EntityManagerFactory =
