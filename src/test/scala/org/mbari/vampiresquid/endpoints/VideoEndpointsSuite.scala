@@ -28,7 +28,7 @@ import scala.concurrent.Future
 import scala.concurrent.duration.Duration
 import io.circe.generic.auto._
 import sttp.client3.circe._
-import org.mbari.Endpoints.{*, given}
+import org.mbari.vampiresquid.Endpoints.{*, given}
 import org.mbari.vampiresquid.controllers.VideoController
 import junit.extensions.TestDecorator
 import org.mbari.vampiresquid.repository.jpa.DAOSuite

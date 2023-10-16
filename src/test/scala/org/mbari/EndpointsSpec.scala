@@ -16,7 +16,7 @@
 
 package org.mbari
 
-import org.mbari.Endpoints.{*, given}
+import org.mbari.vampiresquid.Endpoints.{*, given}
 import org.scalatest.EitherValues
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -31,6 +31,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration.Duration
 import sttp.client3.circe.*
+import vampiresquid.Library
 
 class EndpointsSpec extends AnyFlatSpec with Matchers with EitherValues:
 

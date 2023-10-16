@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.mbari
+package org.mbari.vampiresquid
 
 import sttp.tapir.*
 

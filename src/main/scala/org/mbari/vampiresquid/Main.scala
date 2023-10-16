@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.mbari
+package org.mbari.vampiresquid
 
 import io.vertx.core.Vertx
 import io.vertx.ext.web.Router
@@ -27,6 +27,7 @@ import ExecutionContext.Implicits.global
 import scala.io.StdIn
 import org.mbari.vampiresquid.controllers.MediaController
 import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
+import Endpoints
 
 @main def run(): Unit =
 
