@@ -45,7 +45,7 @@ object EntityManagerFactories:
   )
 
   def apply(properties: Map[String, String]): EntityManagerFactory =
-    val props = properties ++ PRODUCTION_PROPS
+    val props = PRODUCTION_PROPS ++ properties
     Persistence.createEntityManagerFactory("video-asset-manager", props.asJava)
 
   def apply(

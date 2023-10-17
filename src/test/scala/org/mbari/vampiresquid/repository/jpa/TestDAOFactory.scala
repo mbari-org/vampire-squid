@@ -28,27 +28,26 @@ import org.testcontainers.containers.OracleContainer
 import org.testcontainers.utility.DockerImageName
 import org.testcontainers.containers.MSSQLServerContainer
 
-/**
-  * @author Brian Schlining
+/** @author
+  *   Brian Schlining
   * @since 2017-03-06T11:44:00
   */
 object TestDAOFactory:
 
-  val TestProperties = Map(
-    "eclipselink.logging.level"                                 -> "FINE",
+  val TestProperties = EntityManagerFactories.PRODUCTION_PROPS ++ Map(
+    "eclipselink.logging.level"                                   -> "FINE",
     "jakarta.persistence.schema-generation.scripts.create-target" -> "target/test-database-create.ddl",
     "jakarta.persistence.schema-generation.scripts.drop-target"   -> "target/test-database-drop.ddl"
   )
 
   val Instance: SpecDAOFactory = DerbyTestDAOFactory
 
-
 trait SpecDAOFactory extends JPADAOFactory:
 
   lazy val config = ConfigFactory.load()
 
   def beforeAll(): Unit = ()
-  def afterAll(): Unit = ()
+  def afterAll(): Unit  = ()
 
   def cleanup(): Unit =
 
@@ -67,7 +66,7 @@ trait SpecDAOFactory extends JPADAOFactory:
 object PostgresqlDAOFactory extends SpecDAOFactory:
 
   // TODO - intialize the container with SQL so UUID type gets correctly created
-  val container         = new PostgreSQLContainer("postgres:16")
+  val container = new PostgreSQLContainer("postgres:16")
   container.withInitScript("sql/postgresql/02_m3_video_assets.sql")
   container.withReuse(true)
 
@@ -77,21 +76,23 @@ object PostgresqlDAOFactory extends SpecDAOFactory:
   override def testProps(): Map[String, String] =
     TestDAOFactory.TestProperties ++
       Map(
-        "hibernate.dialect"             -> "org.hibernate.dialect.PostgreSQLDialect",
+        "hibernate.dialect" -> "org.hibernate.dialect.PostgreSQLDialect"
       )
 
   lazy val entityManagerFactory: EntityManagerFactory =
-    val driver   = "org.postgresql.Driver"
+    val driver = "org.postgresql.Driver"
     Class.forName(container.getDriverClassName)
-    EntityManagerFactories(container.getJdbcUrl(), 
-      container.getUsername(), 
-      container.getPassword(), 
-      container.getDriverClassName(), 
-      testProps())
+    EntityManagerFactories(
+      container.getJdbcUrl(),
+      container.getUsername(),
+      container.getPassword(),
+      container.getDriverClassName(),
+      testProps()
+    )
 
 object OracleDAOFactory extends SpecDAOFactory:
 
-  val container =  new OracleContainer(DockerImageName.parse("gvenzl/oracle-xe:21-slim-faststart"))
+  val container = new OracleContainer(DockerImageName.parse("gvenzl/oracle-xe:21-slim-faststart"))
   container.withInitScript("sql/oracle/02_m3_video_assets.sql")
   container.withReuse(true)
 
@@ -101,53 +102,56 @@ object OracleDAOFactory extends SpecDAOFactory:
   override def testProps(): Map[String, String] =
     TestDAOFactory.TestProperties ++
       Map(
-        "hibernate.dialect"             -> "org.hibernate.dialect.Oracle12cDialect",
+        "hibernate.dialect" -> "org.hibernate.dialect.Oracle12cDialect"
       )
 
   lazy val entityManagerFactory: EntityManagerFactory =
     // val driver   = "org.postgresql.Driver"
     // Class.forName(container.getDriverClassName)
-    EntityManagerFactories(container.getJdbcUrl(), 
-      container.getUsername(), 
-      container.getPassword(), 
-      container.getDriverClassName(), 
-      testProps())
-
+    EntityManagerFactories(
+      container.getJdbcUrl(),
+      container.getUsername(),
+      container.getPassword(),
+      container.getDriverClassName(),
+      testProps()
+    )
 
 object SqlServerDAOFactory extends SpecDAOFactory:
 
   // THe image name must match the one in src/test/resources/container-license-acceptance.txt
-  val container =  new MSSQLServerContainer(DockerImageName.parse("mcr.microsoft.com/mssql/server:2019-latest"))
+  val container = new MSSQLServerContainer(DockerImageName.parse("mcr.microsoft.com/mssql/server:2019-latest"))
   container.acceptLicense()
   container.withInitScript("sql/mssqlserver/02_m3_video_assets.sql")
   container.withReuse(true)
-        
+
   override def beforeAll(): Unit = container.start()
   override def afterAll(): Unit  = container.stop()
 
-  
   override def testProps(): Map[String, String] =
     TestDAOFactory.TestProperties ++
       Map(
-        "hibernate.dialect"             -> "org.hibernate.dialect.SQLServerDialect",
+        "hibernate.dialect" -> "org.hibernate.dialect.SQLServerDialect"
       )
 
   lazy val entityManagerFactory: EntityManagerFactory =
-    val driver   = "com.microsoft.sqlserver.jdbc.SQLServerDriver"
+    val driver = "com.microsoft.sqlserver.jdbc.SQLServerDriver"
     Class.forName(driver)
-    EntityManagerFactories(container.getJdbcUrl(), 
-      container.getUsername(), 
-      container.getPassword(), 
-      container.getDriverClassName(), 
-      testProps())
+    EntityManagerFactories(
+      container.getJdbcUrl(),
+      container.getUsername(),
+      container.getPassword(),
+      container.getDriverClassName(),
+      testProps()
+    )
 
 object DerbyTestDAOFactory extends SpecDAOFactory:
 
   override def testProps(): Map[String, String] =
     TestDAOFactory.TestProperties ++
       Map(
-        "hibernate.dialect"             -> "org.hibernate.dialect.DerbyDialect",
-        "jakarta.persistence.schema-generation.scripts.action"        -> "drop-and-create"
+        "hibernate.dialect"                                     -> "org.hibernate.dialect.DerbyDialect",
+        "hibernate.hbm2ddl.auto"                                -> "create",
+        "jakarta.persistence.schema-generation.database.action" -> "create"
       )
 
   lazy val entityManagerFactory: EntityManagerFactory =
@@ -158,14 +162,13 @@ object DerbyTestDAOFactory extends SpecDAOFactory:
     val password = config.getString("database.derby.password")
     EntityManagerFactories(url, user, password, driver, testProps())
 
-
 object H2TestDAOFactory extends SpecDAOFactory:
 
   Class.forName(config.getString("database.h2.driver"))
 
   override def testProps(): Map[String, String] = TestDAOFactory.TestProperties ++
     Map(
-      "jakarta.persistence.schema-generation.scripts.action"        -> "drop-and-create"
+      "jakarta.persistence.schema-generation.scripts.action" -> "drop-and-create"
     )
 
   lazy val entityManagerFactory: EntityManagerFactory =
@@ -174,5 +177,3 @@ object H2TestDAOFactory extends SpecDAOFactory:
     val user     = config.getString("database.h2.user")
     val password = config.getString("database.h2.password")
     EntityManagerFactories(url, user, password, driver, testProps())
-
-
