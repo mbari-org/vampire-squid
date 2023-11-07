@@ -17,7 +17,7 @@ ThisBuild / versionScheme    := Some("semver-spec")
 Test / parallelExecution     := false
 Test / testOptions += Tests.Argument(TestFrameworks.MUnit, "-b")
 
-lazy val rootProject = (project in file("."))
+lazy val rootProject = (project in file("vampire-squid"))
   .enablePlugins(
     AutomateHeaderPlugin,
     GitBranchPrompt,
@@ -27,6 +27,17 @@ lazy val rootProject = (project in file("."))
   .settings(
     Seq(
       name                      := "vampire-squid",
+      // https://stackoverflow.com/questions/22772812/using-sbt-native-packager-how-can-i-simply-prepend-a-directory-to-my-bash-scrip
+      bashScriptExtraDefines ++= Seq(
+        """addJava "-Dconfig.file=${app_home}/../conf/application.conf"""",
+        """addJava "-Dlogback.configurationFile=${app_home}/../conf/logback.xml"""",
+        """addJava "-Djava.util.logging.config.file=${app_home}/../conf/logging.properties""""
+      ),
+      batScriptExtraDefines ++= Seq(
+        """call :add_java "-Dconfig.file=%APP_HOME%\conf\application.conf"""",
+        """call :add_java "-Dlogback.configurationFile=%APP_HOME%\conf\logback.xml"""",
+        """call :add_java "-Djava.util.logging.config.file=%APP_HOME%\conf\logging.properties""""
+      ),
       git.gitTagToVersionNumber := {
         tag: String =>
           if (tag matches "[0-9]+\\..*") Some(tag)
@@ -81,14 +92,46 @@ lazy val rootProject = (project in file("."))
     )
   )
 
-// https://stackoverflow.com/questions/22772812/using-sbt-native-packager-how-can-i-simply-prepend-a-directory-to-my-bash-scrip
-bashScriptExtraDefines ++= Seq(
-  """addJava "-Dconfig.file=${app_home}/../conf/application.conf"""",
-  """addJava "-Dlogback.configurationFile=${app_home}/../conf/logback.xml"""",
-  """addJava "-Djava.util.logging.config.file=${app_home}/../conf/logging.properties""""
-)
-batScriptExtraDefines ++= Seq(
-  """call :add_java "-Dconfig.file=%APP_HOME%\conf\application.conf"""",
-  """call :add_java "-Dlogback.configurationFile=%APP_HOME%\conf\logback.xml"""",
-  """call :add_java "-Djava.util.logging.config.file=%APP_HOME%\conf\logging.properties""""
-)
+lazy val itProject = (project in file("it"))
+  .dependsOn(rootProject)
+  .settings(
+    libraryDependencies ++= Seq(
+        derby,
+        derbyClient,
+        derbyNet,
+        derbyShared,
+        derbyTools,
+        munit,
+        scalatest,
+        tapirServerStub,
+        testcontainersCore,
+       )
+  )
+
+lazy val itOracleProject = (project in file("it-oracle"))
+  .dependsOn(itProject)
+  .settings(
+    libraryDependencies ++= Seq(
+        testcontainersOracle
+    )
+  )
+  
+
+
+lazy val itPostgresProject = (project in file("it-postgres"))
+  .dependsOn(itProject)
+  .settings(
+    libraryDependencies ++= Seq(
+        testcontainersPostgres
+    )
+  )
+
+lazy val itSqlserverProject = (project in file("it-sqlserver"))
+  .dependsOn(itProject)
+  .settings(
+    libraryDependencies ++= Seq(
+        testcontainersSqlserver
+    )
+  )
+
+
