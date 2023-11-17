@@ -24,10 +24,14 @@ import org.mbari.vampiresquid.domain.Media
 import org.mbari.vampiresquid.domain.VideoReference
 import org.junit.Assert
 import java.net.URI
+import org.mbari.vampiresquid.repository.jpa.BaseDAOSuite
 
-class VideoReferenceControllerSuite extends DAOSuite:
+trait VideoReferenceControllerITSuite extends BaseDAOSuite:
 
-  private val controller = new VideoReferenceController(daoFactory) 
+  override def beforeAll(): Unit = daoFactory.beforeAll()
+  override def afterAll(): Unit  = daoFactory.afterAll()
+
+  lazy val controller = new VideoReferenceController(daoFactory)
 
   def assertSameValues(a: VideoReference, b: VideoReference): Unit =
     assertEquals(a.uri, b.uri)

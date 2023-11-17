@@ -50,18 +50,17 @@ import org.mbari.vampiresquid.repository.jpa.AssertUtil.assertSameMedia
 import sttp.tapir.server.ServerEndpoint
 import org.mbari.vampiresquid.etc.jdk.Uris
 import scala.jdk.CollectionConverters.*
+import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
+import org.mbari.vampiresquid.repository.jpa.BaseDAOSuite
+import scala.concurrent.ExecutionContext.Implicits.global
 
-
-
-class MediaEndpointsSuite extends munit.FunSuite:
+trait MediaEndpointsITSuite extends BaseDAOSuite  :
 
   private val log = Logging(getClass)
 
-  given ExecutionContext = ExecutionContext.global
   private val jwtService = new JwtService("mbari", "foo", "bar")
-  private val daoFactory   = TestDAOFactory.Instance
-  private val controller   = new MediaController(daoFactory)
-  private val mediaEndpoints = new MediaEndpoints(controller, jwtService)
+  private lazy val controller   = new MediaController(daoFactory)
+  private lazy val mediaEndpoints = new MediaEndpoints(controller, jwtService)
 
   test("createEndpointImpl - Create a new media using form body"):
 

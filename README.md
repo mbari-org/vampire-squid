@@ -25,3 +25,20 @@ sbt run # run the application (Main)
 * [tapir github](https://github.com/softwaremill/tapir)
 * [bootzooka: template microservice using tapir](https://softwaremill.github.io/bootzooka/)
 * [sbtx wrapper](https://github.com/dwijnand/sbt-extras#installation)
+
+## Debugging tests
+
+### Add munit tag
+
+```scala
+val todoTag = new munit.Tag("todo")
+test("delete".tag(todoTag)):
+  assert(true)
+```
+
+Run in sbt as:
+
+```sh
+testOnly org.mbari.vampiresquid.repository.jpa.DerbyVideoDAOSuite -- --include-tags=todo
+```
+

@@ -65,9 +65,12 @@ trait VideoDAOSuite extends BaseDAOSuite:
     val videoSequence = TestUtils.create(1, 1, 1).head
     val video = videoSequence.getVideos.get(0)
     run(() => {
-      val entity = dao.update(video) // Have to merge into persistent context before deleting
+      val opt = dao.findByUUID(video.getUuid()) // Have to merge into persistent context before deleting
+      assert(opt.isDefined)
+      val entity = opt.get
       dao.delete(entity)
     })
+
     val opt = run(() => dao.findByUUID(video.getUuid))
     assert(opt.isEmpty)
     dao.close()

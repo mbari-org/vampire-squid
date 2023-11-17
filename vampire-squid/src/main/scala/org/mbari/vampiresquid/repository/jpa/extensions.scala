@@ -50,21 +50,3 @@ object extensions:
           if (transaction.isActive)
             transaction.rollback()
 
-//  implicit class RichEntityManager(entityManager: EntityManager) {
-//    def runTransaction[R](fn: EntityManager => R)(implicit ec: ExecutionContext): Future[R] = {
-//      Future {
-//        val transaction = entityManager.getTransaction
-//        transaction.begin()
-//        try {
-//          val n = fn.apply(entityManager)
-//          transaction.commit()
-//          n
-//        }
-//        finally {
-//          if (transaction.isActive) {
-//            transaction.rollback()
-//          }
-//        }
-//      }
-//    }
-//  }

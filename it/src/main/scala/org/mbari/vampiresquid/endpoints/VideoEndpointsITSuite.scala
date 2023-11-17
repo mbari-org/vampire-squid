@@ -44,19 +44,23 @@ import org.mbari.vampiresquid.etc.circe.CirceCodecs.{given, *}
 import org.mbari.vampiresquid.domain.Video
 import org.mbari.vampiresquid.etc.sdk.FutureUtil.join
 import org.mbari.vampiresquid.repository.jpa.TestUtils
+import org.mbari.vampiresquid.repository.jpa.BaseDAOSuite
+import org.mbari.vampiresquid.repository.jpa.TestDAOFactory
 
 
-class VideoEndpointsSuite extends DAOSuite:
+trait VideoEndpointsITSuite extends BaseDAOSuite:
 
   given ExecutionContext = ExecutionContext.global
-  given JwtService = AppConfig.DefaultJwtService
-  val videoController = new VideoController(daoFactory)
-  val videoSequenceController = new VideoSequenceController(daoFactory)
-  val videoEndpoints = new VideoEndpoints(videoController, videoSequenceController)
+  given jwtService: JwtService = new JwtService("mbari", "foo", "bar")
+  lazy val videoController = new VideoController(daoFactory)
+  lazy val videoSequenceController = new VideoSequenceController(daoFactory)
+  lazy val videoEndpoints = new VideoEndpoints(videoController, videoSequenceController)
 
   test("create"):
 
     val videoSequence = TestUtils.create(1, 1, 1).head
+    val jwt = jwtService.authorize("foo").orNull
+    assert(jwt != null)
 
     // given
     val backendStub = TapirStubInterpreter(SttpBackendStub.asynchronousFuture)
@@ -66,6 +70,7 @@ class VideoEndpointsSuite extends DAOSuite:
     // when
     val response = basicRequest
       .post(uri"http://test.com/v1/videos")
+      .header("Authorization", s"Bearer $jwt")
       .body(Map(
         "name" -> "test video",
         "video_sequence_uuid" -> videoSequence.getUuid().toString,

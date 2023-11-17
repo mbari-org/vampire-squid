@@ -14,10 +14,12 @@ ThisBuild / organization     := "org.mbari"
 ThisBuild / organizationName := "MBARI"
 ThisBuild / startYear        := Some(2021)
 ThisBuild / versionScheme    := Some("semver-spec")
-Test / parallelExecution     := false
-Test / testOptions += Tests.Argument(TestFrameworks.MUnit, "-b")
 
-lazy val rootProject = (project in file("vampire-squid"))
+// ThisBuild / Test / fork := true
+ThisBuild / Test / parallelExecution     := false
+ThisBuild / Test / testOptions += Tests.Argument(TestFrameworks.MUnit, "-b")
+
+lazy val vampireSquid = (project in file("vampire-squid"))
   .enablePlugins(
     AutomateHeaderPlugin,
     GitBranchPrompt,
@@ -68,10 +70,6 @@ lazy val rootProject = (project in file("vampire-squid"))
         tapirSttpCirce,
         tapirSwagger,
         tapirVertex,
-        testcontainersCore % Test,
-        testcontainersOracle % Test,
-        testcontainersPostgres % Test,
-        testcontainersSqlserver% Test,
         typesafeConfig,
        ),
       scalacOptions ++= Seq(
@@ -92,8 +90,8 @@ lazy val rootProject = (project in file("vampire-squid"))
     )
   )
 
-lazy val itProject = (project in file("it"))
-  .dependsOn(rootProject)
+lazy val integrationTests = (project in file("it"))
+  .dependsOn(vampireSquid)
   .settings(
     libraryDependencies ++= Seq(
         derby,
@@ -108,8 +106,8 @@ lazy val itProject = (project in file("it"))
        )
   )
 
-lazy val itOracleProject = (project in file("it-oracle"))
-  .dependsOn(itProject)
+lazy val itOracle = (project in file("it-oracle"))
+  .dependsOn(integrationTests)
   .settings(
     libraryDependencies ++= Seq(
         testcontainersOracle
@@ -118,16 +116,16 @@ lazy val itOracleProject = (project in file("it-oracle"))
   
 
 
-lazy val itPostgresProject = (project in file("it-postgres"))
-  .dependsOn(itProject)
+lazy val itPostgres = (project in file("it-postgres"))
+  .dependsOn(integrationTests)
   .settings(
     libraryDependencies ++= Seq(
         testcontainersPostgres
     )
   )
 
-lazy val itSqlserverProject = (project in file("it-sqlserver"))
-  .dependsOn(itProject)
+lazy val itSqlserver = (project in file("it-sqlserver"))
+  .dependsOn(integrationTests)
   .settings(
     libraryDependencies ++= Seq(
         testcontainersSqlserver
