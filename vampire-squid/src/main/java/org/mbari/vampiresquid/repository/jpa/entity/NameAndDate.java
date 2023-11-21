@@ -14,7 +14,15 @@
  * limitations under the License.
  */
 
-package org.mbari.vampiresquid.repository.jpa
+package org.mbari.vampiresquid.repository.jpa.entity;
 
-class DerbyVideoDAOSuite extends VideoDAOITSuite:
-  override val daoFactory = DerbyTestDAOFactory
+import java.time.Instant;
+
+/**
+ * This is a DTO projection used by a named query in VideoEntity. It really shouldnt' be used outside of VideoEntity and
+ * VideoDAOImpl (where it's an internal detail and not exposed via any API)
+ * @param name
+ * @param date
+ */
+public record NameAndDate(String name, Instant date) {
+}

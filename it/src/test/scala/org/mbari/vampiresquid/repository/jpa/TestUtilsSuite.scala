@@ -17,18 +17,13 @@
 package org.mbari.vampiresquid.repository.jpa
 
 import scala.util.Random
+import scala.concurrent.ExecutionContext
 
 class TestUtilsSuite extends munit.FunSuite:
 
-  test("createVideoSequence"):
-    val n = new Random().nextLong(10000000)
-    val name = s"VideoSequence-$n}"
-    val videoName = s"Video-$n-1"
-    val videoSequence = TestUtils.createVideoSequence(name, videoName)
-    assertEquals(videoSequence.getName, name)
-    val videos = videoSequence.getVideos
-    assertEquals(videos.size(), 1)
-    assertEquals(videos.get(0).getName, videoName)
+  given JPADAOFactory = TestDAOFactory.Instance
+  given ExecutionContext = ExecutionContext.global
+
 
   test("randomVideoReference"):
     val videoReference = TestUtils.randomVideoReference()

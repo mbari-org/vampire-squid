@@ -2,5 +2,5 @@ package org.mbari.vampiresquid.controllers
 
 import org.mbari.vampiresquid.repository.jpa.SqlServerDAOFactory
 
-class SqlServerMediaControllerITSuite extends MediaControllerITSuite:
+class SqlServerVideoControllerSuite extends VideoControllerITSuite:
   override def daoFactory = SqlServerDAOFactory

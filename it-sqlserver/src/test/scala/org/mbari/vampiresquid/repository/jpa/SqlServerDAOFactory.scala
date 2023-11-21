@@ -17,12 +17,17 @@ object SqlServerDAOFactory extends SpecDAOFactory:
   container.withReuse(true)
 
   override def beforeAll(): Unit = container.start()
-  override def afterAll(): Unit  = container.stop()
+  // NOTE: calling container.stop() after each test causes the tests to lose the connection to the database.
+  // I'm using a shutdown hook to close the container at the end of the tests.
+  //  override def afterAll(): Unit  = container.stop()
+  Runtime.getRuntime.addShutdownHook(new Thread(() => container.stop()))
 
   override def testProps(): Map[String, String] =
     TestDAOFactory.TestProperties ++
       Map(
-        "hibernate.dialect" -> "org.hibernate.dialect.SQLServerDialect"
+        "hibernate.dialect" -> "org.hibernate.dialect.SQLServerDialect",
+        "hibernate.hikari.idleTimeout" -> "1000",
+        "hibernate.hikari.maxLifetime" -> "3000",
       )
 
   lazy val entityManagerFactory: EntityManagerFactory =

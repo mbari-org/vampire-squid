@@ -28,6 +28,7 @@ CREATE TABLE "dbo"."videos"  (
 	"duration_millis"    	bigint NULL,
 	"last_updated_time"  	datetime2 NULL,
 	"name"               	varchar(512) NOT NULL,
+	-- "start_time"         	datetime2(6) NOT NULL,
 	"start_time"         	datetimeoffset(6) NOT NULL,
 	"video_sequence_uuid"	uniqueidentifier NOT NULL,
 	CONSTRAINT "PK__videos__7F427930696ABA50" PRIMARY KEY CLUSTERED("uuid")

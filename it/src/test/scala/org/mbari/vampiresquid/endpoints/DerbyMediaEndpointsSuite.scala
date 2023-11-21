@@ -2,7 +2,7 @@ package org.mbari.vampiresquid.endpoints
 
 import org.mbari.vampiresquid.repository.jpa.DerbyTestDAOFactory
 
-class DerbyVideoEndpointsITSuite extends VideoEndpointsITSuite {
+class DerbyMediaEndpointsSuite extends MediaEndpointsITSuite {
   override val daoFactory = DerbyTestDAOFactory
   
 }

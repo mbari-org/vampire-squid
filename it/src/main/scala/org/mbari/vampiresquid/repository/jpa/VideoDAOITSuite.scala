@@ -17,8 +17,11 @@
 package org.mbari.vampiresquid.repository.jpa
 
 import scala.jdk.CollectionConverters.*
+import scala.concurrent.ExecutionContext.Implicits.global
 
-trait VideoDAOSuite extends BaseDAOSuite:
+trait VideoDAOITSuite extends BaseDAOSuite:
+
+  given JPADAOFactory = daoFactory
 
   override def beforeAll(): Unit = daoFactory.beforeAll()
   override def afterAll(): Unit  = daoFactory.afterAll()

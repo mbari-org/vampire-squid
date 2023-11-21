@@ -58,6 +58,7 @@ trait MediaEndpointsITSuite extends BaseDAOSuite  :
 
   private val log = Logging(getClass)
 
+  given JPADAOFactory = daoFactory
   private val jwtService = new JwtService("mbari", "foo", "bar")
   private lazy val controller   = new MediaController(daoFactory)
   private lazy val mediaEndpoints = new MediaEndpoints(controller, jwtService)

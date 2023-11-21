@@ -1,7 +1,7 @@
 import java.net.URI
 import Dependencies._
 
-val tapirVersion       = "1.7.5"
+val tapirVersion       = "1.9.1"
 val eclipselinkVersion = "4.0.2"
 val derbyVersion       = "10.16.1.1"
 val testcontainersVersion = "0.41.0"
@@ -15,9 +15,13 @@ ThisBuild / organizationName := "MBARI"
 ThisBuild / startYear        := Some(2021)
 ThisBuild / versionScheme    := Some("semver-spec")
 
-// ThisBuild / Test / fork := true
+ThisBuild / Test / fork := true
 ThisBuild / Test / parallelExecution     := false
 ThisBuild / Test / testOptions += Tests.Argument(TestFrameworks.MUnit, "-b")
+ThisBuild / Test / javaOptions     ++= Seq(
+  "-Duser.timeszone=UTC"
+)
+
 
 lazy val vampireSquid = (project in file("vampire-squid"))
   .enablePlugins(

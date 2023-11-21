@@ -21,9 +21,14 @@ import org.mbari.vampiresquid.repository.jpa.entity.{VideoReferenceEntity, Video
 
 import java.util.UUID
 import scala.jdk.CollectionConverters.*
+import scala.concurrent.ExecutionContext.Implicits.global
+import org.mbari.vampiresquid.repository.jpa.entity.VideoEntity
+import java.time.Duration
 
 
-class VideoSequenceDAOSuite extends DAOSuite:
+trait VideoSequenceDAOITSuite extends BaseDAOSuite:
+
+  given JPADAOFactory = daoFactory
 
   test("create"):
     given dao: VideoSequenceDAOImpl = daoFactory.newVideoSequenceDAO()
@@ -44,6 +49,18 @@ class VideoSequenceDAOSuite extends DAOSuite:
     val entity = opt.get
     assertEquals(entity.getName, newName)
     dao.close()
+
+  test("update inserts child videos"):
+    given dao: VideoSequenceDAOImpl = daoFactory.newVideoSequenceDAO()
+    val videoSequence = TestUtils.create(1, 1, 1).head
+    val video = videoSequence.getVideos.asScala.minBy(_.getStart)
+    val newStart = video.getStart.plusSeconds(1000)
+    val newVideo = new VideoEntity("another video", newStart, Duration.ofSeconds(1000))
+    videoSequence.addVideo(newVideo)
+    run(() => dao.update(videoSequence))
+    val opt = run(() => dao.findByUUID(videoSequence.getUuid))
+    assert(opt.isDefined)
+    assertEquals(opt.get.getVideos().size(), 2)
 
   test("update cascades to videos"):
 

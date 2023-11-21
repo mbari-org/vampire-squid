@@ -28,6 +28,8 @@ import scala.collection.BitSet
 import scala.concurrent.{Await, ExecutionContext, duration}
 import scala.util.Random
 import org.mbari.vampiresquid.domain.VideoSequence
+import org.mbari.vampiresquid.repository.DAOFactory
+import org.mbari.vampiresquid.Endpoints.daoFactory
 
 /**
   * @author Brian Schlining
@@ -35,20 +37,10 @@ import org.mbari.vampiresquid.domain.VideoSequence
   */
 object TestUtils:
 
-  val DaoFactory                                  = TestDAOFactory.Instance
-  implicit val executionContext: ExecutionContext = ExecutionContext.global
   val Timeout                                     = duration.Duration(3, TimeUnit.SECONDS)
   val Digest                                      = MessageDigest.getInstance("SHA-512")
   private val random                        = Random
 
-  def createVideoSequence(name: String, videoName: String): VideoSequenceEntity =
-    val video         = new VideoEntity(videoName, Instant.now, Duration.ofMinutes(random.nextInt(15) + 5))
-    val videoSequence = new VideoSequenceEntity(name, "Tiburon", "", ju.List.of(video))
-    val dao           = DaoFactory.newVideoSequenceDAO()
-    val f             = dao.runTransaction(d => d.create(videoSequence))
-    f.onComplete(t => dao.close())
-    Await.result(f, Timeout)
-    videoSequence
 
   def randomVideoReference(): VideoReferenceEntity =
     val v = new VideoReferenceEntity
@@ -91,11 +83,11 @@ object TestUtils:
 
       videoSequence
 
-  def create(numVideoSeqs: Int, numVideos: Int, numVideoRef: Int): Seq[VideoSequenceEntity] =
+  def create(numVideoSeqs: Int, numVideos: Int, numVideoRef: Int)(using daoFactory: JPADAOFactory, ec: ExecutionContext): Seq[VideoSequenceEntity] =
     val longTimeout = duration.Duration(numVideoSeqs * 2, TimeUnit.SECONDS)
     val videoSequences = build(numVideoSeqs, numVideos, numVideoRef)
 
-    val dao = DaoFactory.newVideoSequenceDAO()
+    val dao = daoFactory.newVideoSequenceDAO()
     for
       v <- videoSequences
     do
@@ -104,8 +96,8 @@ object TestUtils:
     dao.close()
     videoSequences
 
-  def save(videoSequence: VideoSequenceEntity): Unit = 
-    val dao = DaoFactory.newVideoSequenceDAO()
+  def save(videoSequence: VideoSequenceEntity)(using daoFactory: JPADAOFactory, ec: ExecutionContext): Unit = 
+    val dao = daoFactory.newVideoSequenceDAO()
     val f   = dao.runTransaction(d => d.create(videoSequence))
     Await.result(f, Timeout)
     dao.close()

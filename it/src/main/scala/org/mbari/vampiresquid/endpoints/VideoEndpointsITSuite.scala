@@ -23,7 +23,6 @@ import org.scalatest.matchers.should.Matchers
 import sttp.client3.testing.SttpBackendStub
 import sttp.client3.{UriContext, basicRequest}
 import sttp.tapir.server.stub.TapirStubInterpreter
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration.Duration
 import io.circe.generic.auto._
@@ -46,15 +45,18 @@ import org.mbari.vampiresquid.etc.sdk.FutureUtil.join
 import org.mbari.vampiresquid.repository.jpa.TestUtils
 import org.mbari.vampiresquid.repository.jpa.BaseDAOSuite
 import org.mbari.vampiresquid.repository.jpa.TestDAOFactory
+import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
 
 
 trait VideoEndpointsITSuite extends BaseDAOSuite:
 
+  given JPADAOFactory = daoFactory
   given ExecutionContext = ExecutionContext.global
   given jwtService: JwtService = new JwtService("mbari", "foo", "bar")
   lazy val videoController = new VideoController(daoFactory)
   lazy val videoSequenceController = new VideoSequenceController(daoFactory)
   lazy val videoEndpoints = new VideoEndpoints(videoController, videoSequenceController)
+  
 
   test("create"):
 

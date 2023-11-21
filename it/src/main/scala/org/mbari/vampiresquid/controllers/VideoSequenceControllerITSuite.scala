@@ -20,8 +20,11 @@ import org.mbari.vampiresquid.repository.jpa.TestUtils
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.mbari.vampiresquid.domain.VideoSequence
 import org.mbari.vampiresquid.repository.jpa.BaseDAOSuite
+import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
 
 trait  VideoSequenceControllerITSuite extends BaseDAOSuite:
+
+  given JPADAOFactory = daoFactory
 
   override def beforeAll(): Unit = daoFactory.beforeAll()
   override def afterAll(): Unit  = daoFactory.afterAll()

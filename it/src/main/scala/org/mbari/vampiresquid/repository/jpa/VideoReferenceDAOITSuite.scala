@@ -25,9 +25,14 @@ import java.time.{Duration, Instant}
 import scala.jdk.CollectionConverters.*
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.mbari.vampiresquid.domain.Media
+import scala.util.Random
+import java.net.URI
+import scala.concurrent.Await
 
 
-class VideoReferenceDAOSuite extends DAOSuite:
+trait VideoReferenceDAOITSuite extends BaseDAOSuite:
+
+  given JPADAOFactory = daoFactory
 
   test("create"):
     given dao: VideoReferenceDAO[VideoReferenceEntity] = daoFactory.newVideoReferenceDAO()
@@ -37,6 +42,23 @@ class VideoReferenceDAOSuite extends DAOSuite:
     val videoEntity = run(() => dao.findByUUID(videoReference.getUuid))
     assert(videoEntity.isDefined)
     dao.close()
+
+  test("create should throw an exception if no parent video is assigned"):
+    val vr = new VideoReferenceEntity(
+      URI.create("http://foo.bar/someothervideo.mp4"),
+      "video/mp4",
+      "hevc",
+      "pcm_s24le",
+      1920,
+      1080,
+      30,
+      Random.between(10000, 100000),
+      "some description",
+    )
+    intercept[Exception] {
+      given dao: VideoReferenceDAO[VideoReferenceEntity] = daoFactory.newVideoReferenceDAO()
+      run(() => dao.create(vr))
+    }
 
   test("update"):
     given dao: VideoReferenceDAO[VideoReferenceEntity] = daoFactory.newVideoReferenceDAO()

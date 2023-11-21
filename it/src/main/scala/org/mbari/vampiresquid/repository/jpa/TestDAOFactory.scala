@@ -56,3 +56,4 @@ trait SpecDAOFactory extends JPADAOFactory:
     Await.result(f, Duration(4, TimeUnit.SECONDS))
 
   def testProps(): Map[String, String]
+

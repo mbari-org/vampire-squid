@@ -39,6 +39,6 @@ trait BaseDAOSuite extends munit.FunSuite:
 
 trait DAOSuite extends BaseDAOSuite:
 
-  val daoFactory = TestDAOFactory.Instance
+  given daoFactory: SpecDAOFactory = TestDAOFactory.Instance
 
 

@@ -25,8 +25,11 @@ import org.mbari.vampiresquid.domain.VideoReference
 import org.junit.Assert
 import java.net.URI
 import org.mbari.vampiresquid.repository.jpa.BaseDAOSuite
+import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
 
 trait VideoReferenceControllerITSuite extends BaseDAOSuite:
+
+  given JPADAOFactory = daoFactory
 
   override def beforeAll(): Unit = daoFactory.beforeAll()
   override def afterAll(): Unit  = daoFactory.afterAll()

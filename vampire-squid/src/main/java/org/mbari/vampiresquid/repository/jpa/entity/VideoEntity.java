@@ -48,11 +48,11 @@ import java.util.UUID;
                         name = "Video.findNamesByVideoSequenceName",
                         query =
                                 "SELECT v.name FROM videos v LEFT JOIN video_sequences vs ON v.video_sequence_uuid = vs.uuid WHERE vs.name = ?1 ORDER BY v.name ASC"
-                ),
-                @NamedNativeQuery(
-                        name = "Video.findAllNamesAndStartDates",
-                        query = "SELECT name, start_time FROM videos ORDER BY start_time"
                 )
+//                @NamedNativeQuery(
+//                        name = "Video.findAllNamesAndStartDates",
+//                        query = "SELECT name, start_time FROM videos ORDER BY start_time"
+//                )
         }
 )
 @NamedQueries(
@@ -71,6 +71,10 @@ import java.util.UUID;
                 @NamedQuery(
                         name = "Video.findBetweenDates",
                         query = "SELECT v FROM Video v WHERE v.start >= :startDate AND v.start <= :endDate"
+                ),
+                @NamedQuery(
+                        name = "Video.findAllNamesAndStartDates",
+                        query = "SELECT new org.mbari.vampiresquid.repository.jpa.entity.NameAndDate(v.name, v.start) FROM Video v ORDER BY v.start"
                 )
         }
 )

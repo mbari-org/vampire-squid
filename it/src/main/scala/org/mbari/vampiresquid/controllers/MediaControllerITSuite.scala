@@ -28,8 +28,13 @@ import org.mbari.vampiresquid.repository.jpa.{TestUtils, VideoSequenceDAOImpl}
 import org.mbari.vampiresquid.repository.VideoReferenceDAO
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.jdk.CollectionConverters.*
+import java.net.URI
+import junit.framework.Test
+import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
 
 trait MediaControllerITSuite extends BaseDAOSuite:
+
+  given JPADAOFactory = daoFactory
 
   override def beforeAll(): Unit = daoFactory.beforeAll()
   override def afterAll(): Unit  = daoFactory.afterAll()
@@ -251,6 +256,7 @@ trait MediaControllerITSuite extends BaseDAOSuite:
     val xs = exec(controller.findByVideoName(m0.video_name.get))
     assertEquals(xs.size, 1)
     assertSameValues(xs.head, m0)
+    
 
   test("findByURI"):
     val m0 = createMedia()
@@ -265,3 +271,78 @@ trait MediaControllerITSuite extends BaseDAOSuite:
     assertEquals(xs.size, 1)
     assertSameValues(xs.head, m0)
 
+  test("create with minimal arguments"):
+
+    val videoSequenceName = getClass.getSimpleName() + "-1"
+
+    val x = exec(controller.create(
+      videoSequenceName,
+      "Ventana",
+      "V20160711T012345",
+      URI.create("http://www.mbari.org/movies/airship.mp4"),
+      Instant.parse("2016-07-11T01:23:45Z")
+    ))
+
+    val y = exec(controller.findByVideoSequenceName(videoSequenceName))
+    assertEquals(y.size, 1)
+
+  test("create when existing video sequence name is found"):
+    val videoSequenceName = getClass.getSimpleName() + "-2"
+    exec(controller.create(
+      videoSequenceName,
+      "Ventana",
+      "V20160811T012345",
+      URI.create("http://www.mbari.org/movies/airship-1.mp4"),
+      Instant.parse("2016-08-11T01:23:45Z")
+    ))
+    exec(controller.create(
+      videoSequenceName,
+      "Ventana",
+      "V20160812T012345",
+      URI.create("http://www.mbari.org/movies/airship-2.mp4"),
+      Instant.parse("2016-08-12T01:23:45Z")
+    ))
+    val y = exec(controller.findByVideoSequenceName(videoSequenceName))
+    assertEquals(y.size, 2)
+
+  test("create when existing video name is not found"):
+    val videoSequenceName = getClass.getSimpleName() + "-3"
+    exec(controller.create(
+      videoSequenceName,
+      "Ventana",
+      "V20160811T012345",
+      URI.create("http://www.mbari.org/movies/airship-3.mp4"),
+      Instant.parse("2016-08-11T01:23:45Z")
+    ))
+    exec(controller.create(
+      videoSequenceName,
+      "Ventana",
+      "V20160811T012345",
+      URI.create("http://www.mbari.org/movies/airship-3-mezzanine.mp4"),
+      Instant.parse("2016-08-11T01:23:45Z")
+    ))
+
+  test("create with all parameters provided"):
+    val videoSequenceName = getClass.getSimpleName() + "-4"
+    val x = exec(controller.create(
+      videoSequenceName,
+      "Ventana",
+      "V20170911T012345",
+      new URI("http://www.mbari.org/movies/airship_another.mp4"),
+      Instant.parse("2017-08-11T01:23:45Z"),
+      Some(Duration.ofMinutes(25)),
+      Some("video/mp4"),
+      Some("h264"),
+      Some("aac"),
+      Some(1920),
+      Some(1080),
+      Some(30),
+      Some(12345678),
+      Some("A test movie"),
+      Some(TestUtils.randomSha512())
+    ))
+    val y = exec(controller.findByVideoSequenceName(videoSequenceName))
+    assertEquals(y.size, 1)
+    assertSameValues(y.head, x)
+
+  

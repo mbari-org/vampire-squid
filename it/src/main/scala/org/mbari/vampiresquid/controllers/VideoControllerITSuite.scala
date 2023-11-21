@@ -23,8 +23,11 @@ import org.mbari.vampiresquid.domain.Video
 import java.time.Instant
 import java.time.Duration
 import org.mbari.vampiresquid.repository.jpa.BaseDAOSuite
+import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
 
 trait  VideoControllerITSuite extends BaseDAOSuite:
+
+  given JPADAOFactory = daoFactory
 
   override def beforeAll(): Unit = daoFactory.beforeAll()
   override def afterAll(): Unit  = daoFactory.afterAll()

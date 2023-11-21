@@ -24,9 +24,11 @@ import java.util.UUID
 import jakarta.persistence.EntityManager
 
 import scala.jdk.CollectionConverters.*
-import org.mbari.vampiresquid.repository.jpa.entity.VideoEntity
+import org.mbari.vampiresquid.repository.jpa.entity.{NameAndDate, VideoEntity}
 
+import scala.util.chaining.*
 import java.sql.Timestamp
+
 
 /** @author
   *   Brian Schlining
@@ -86,8 +88,9 @@ class VideoDAOImpl(entityManager: EntityManager) extends BaseDAO[VideoEntity](en
       .createNamedQuery("Video.findAllNamesAndStartDates")
       .getResultList
       .asScala
-      .map(r => r.asInstanceOf[Array[Any]])
-      .map(r => r(0).toString -> r(1).asInstanceOf[Timestamp].toInstant)
+      .map(r => r.asInstanceOf[NameAndDate])
+      .map(r => (r.name, r.date))
+
 
   def findNamesByVideoSequenceName(videoSequenceName: String): Iterable[String] =
     val query = entityManager.createNamedQuery("Video.findNamesByVideoSequenceName")
