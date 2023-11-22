@@ -110,13 +110,13 @@ lazy val integrationTests = (project in file("it"))
        )
   )
 
-lazy val itOracle = (project in file("it-oracle"))
-  .dependsOn(integrationTests)
-  .settings(
-    libraryDependencies ++= Seq(
-        testcontainersOracle
-    )
-  )
+// lazy val itOracle = (project in file("it-oracle"))
+//   .dependsOn(integrationTests)
+//   .settings(
+//     libraryDependencies ++= Seq(
+//         testcontainersOracle
+//     )
+//   )
   
 
 
