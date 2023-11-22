@@ -23,30 +23,28 @@ import org.mbari.vampiresquid.etc.jdk.Logging.given
 import scala.util.control.NonFatal
 import org.slf4j.LoggerFactory
 
-/** Implicits used in this package
-  *
-  * @author
-  *   Brian Schlining
-  * @since 2016-05-06T13:34:00
-  */
+/**
+ * Implicits used in this package
+ *
+ * @author
+ *   Brian Schlining
+ * @since 2016-05-06T13:34:00
+ */
 object extensions:
 
-  private val log = LoggerFactory.getLogger(getClass)
+    private val log = LoggerFactory.getLogger(getClass)
 
-  extension (entityManager: EntityManager)
-    def runTransaction[R](fn: EntityManager => R)(implicit ec: ExecutionContext): Future[R] =
-      Future:
-        val transaction = entityManager.getTransaction
-        transaction.begin()
-        try
-          val n = fn.apply(entityManager)
-          transaction.commit()
-          n
-        catch
-          case NonFatal(e) => 
-            log.atError.setCause(e).log("Error running transaction")
-            throw e
-        finally
-          if (transaction.isActive)
-            transaction.rollback()
-
+    extension (entityManager: EntityManager)
+        def runTransaction[R](fn: EntityManager => R)(implicit ec: ExecutionContext): Future[R] =
+            Future:
+                val transaction = entityManager.getTransaction
+                transaction.begin()
+                try
+                    val n = fn.apply(entityManager)
+                    transaction.commit()
+                    n
+                catch
+                    case NonFatal(e) =>
+                        log.atError.setCause(e).log("Error running transaction")
+                        throw e
+                finally if transaction.isActive then transaction.rollback()

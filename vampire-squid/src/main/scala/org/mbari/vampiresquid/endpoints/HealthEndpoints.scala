@@ -33,19 +33,19 @@ import org.mbari.vampiresquid.domain.ErrorMsg
 
 class HealthEndpoints(using ec: ExecutionContext) extends Endpoints:
 
-  val healthEndpoint: Endpoint[Unit, Unit, ErrorMsg, HealthStatus, Any] =
-    openEndpoint
-      .get
-      .in("v1" / "health")
-      .out(jsonBody[HealthStatus])
-      .name("health")
-      .description("Health check")
-      .tag("health")
+    val healthEndpoint: Endpoint[Unit, Unit, ErrorMsg, HealthStatus, Any] =
+        openEndpoint
+            .get
+            .in("v1" / "health")
+            .out(jsonBody[HealthStatus])
+            .name("health")
+            .description("Health check")
+            .tag("health")
 
-  val healthEndpointImpl: ServerEndpoint[Any, Future] =
-    healthEndpoint.serverLogic(_ => handleErrors(Future(HealthStatus.default)))
+    val healthEndpointImpl: ServerEndpoint[Any, Future] =
+        healthEndpoint.serverLogic(_ => handleErrors(Future(HealthStatus.default)))
 
-  override def all: List[Endpoint[?, ?, ?, ?, ?]] =
-    List(healthEndpoint)
+    override def all: List[Endpoint[?, ?, ?, ?, ?]] =
+        List(healthEndpoint)
 
-  override def allImpl: List[ServerEndpoint[Any, Future]] = List(healthEndpointImpl)
+    override def allImpl: List[ServerEndpoint[Any, Future]] = List(healthEndpointImpl)

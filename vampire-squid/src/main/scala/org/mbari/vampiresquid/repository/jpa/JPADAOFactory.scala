@@ -23,51 +23,55 @@ import org.mbari.vampiresquid.repository.jpa.entity.VideoSequenceEntity
 import org.mbari.vampiresquid.repository.jpa.entity.VideoEntity
 import org.mbari.vampiresquid.repository.jpa.entity.VideoReferenceEntity
 
-/** Self-explanatory. THis class creates DAOs for the JPA implementation.
-  *
-  * @author
-  *   Brian Schlining
-  * @since 2016-06-08T15:28:00
-  */
+/**
+ * Self-explanatory. THis class creates DAOs for the JPA implementation.
+ *
+ * @author
+ *   Brian Schlining
+ * @since 2016-06-08T15:28:00
+ */
 trait JPADAOFactory extends DAOFactory[VideoSequenceEntity, VideoEntity, VideoReferenceEntity]:
 
-  def entityManagerFactory: EntityManagerFactory
+    def entityManagerFactory: EntityManagerFactory
 
-  override def newVideoSequenceDAO(): VideoSequenceDAOImpl =
-    new VideoSequenceDAOImpl(entityManagerFactory.createEntityManager())
+    override def newVideoSequenceDAO(): VideoSequenceDAOImpl =
+        new VideoSequenceDAOImpl(entityManagerFactory.createEntityManager())
 
-  override def newVideoDAO(): VideoDAOImpl =
-    new VideoDAOImpl(entityManagerFactory.createEntityManager())
+    override def newVideoDAO(): VideoDAOImpl =
+        new VideoDAOImpl(entityManagerFactory.createEntityManager())
 
-  override def newVideoReferenceDAO(): VideoReferenceDAOImpl =
-    new VideoReferenceDAOImpl(entityManagerFactory.createEntityManager())
+    override def newVideoReferenceDAO(): VideoReferenceDAOImpl =
+        new VideoReferenceDAOImpl(entityManagerFactory.createEntityManager())
 
-  /** Create a new DAO that share the underlying connection (e.g. EntityManager)
-    *
-    * @param dao
-    * @return
-    */
-  override def newVideoDAO(dao: DAO[_]): VideoDAO[VideoEntity] =
-    new VideoDAOImpl(dao.asInstanceOf[BaseDAO[_]].entityManager)
+    /**
+     * Create a new DAO that share the underlying connection (e.g. EntityManager)
+     *
+     * @param dao
+     * @return
+     */
+    override def newVideoDAO(dao: DAO[?]): VideoDAO[VideoEntity] =
+        new VideoDAOImpl(dao.asInstanceOf[BaseDAO[_]].entityManager)
 
-  /** Create a new DAO that share the underlying connection (e.g. EntityManager)
-    *
-    * @param dao
-    * @return
-    */
-  override def newVideoSequenceDAO(dao: DAO[_]): VideoSequenceDAO[VideoSequenceEntity] =
-    new VideoSequenceDAOImpl(dao.asInstanceOf[BaseDAO[_]].entityManager)
+    /**
+     * Create a new DAO that share the underlying connection (e.g. EntityManager)
+     *
+     * @param dao
+     * @return
+     */
+    override def newVideoSequenceDAO(dao: DAO[?]): VideoSequenceDAO[VideoSequenceEntity] =
+        new VideoSequenceDAOImpl(dao.asInstanceOf[BaseDAO[_]].entityManager)
 
-  /** Create a new DAO that share the underlying connection (e.g. EntityManager)
-    *
-    * @param dao
-    * @return
-    */
-  override def newVideoReferenceDAO(dao: DAO[_]): VideoReferenceDAO[VideoReferenceEntity] =
-    new VideoReferenceDAOImpl(dao.asInstanceOf[BaseDAO[_]].entityManager)
+    /**
+     * Create a new DAO that share the underlying connection (e.g. EntityManager)
+     *
+     * @param dao
+     * @return
+     */
+    override def newVideoReferenceDAO(dao: DAO[?]): VideoReferenceDAO[VideoReferenceEntity] =
+        new VideoReferenceDAOImpl(dao.asInstanceOf[BaseDAO[_]].entityManager)
 
 class JPADAOFactoryImpl(val entityManagerFactory: EntityManagerFactory) extends JPADAOFactory
 
 object JPADAOFactory extends JPADAOFactory:
 
-  lazy val entityManagerFactory = EntityManagerFactories("database")
+    lazy val entityManagerFactory = EntityManagerFactories("database")

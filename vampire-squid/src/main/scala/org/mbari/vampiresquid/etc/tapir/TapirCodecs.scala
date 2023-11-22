@@ -24,12 +24,9 @@ import scala.util.{Failure, Success, Try}
 
 object TapirCodecs:
 
-  private def decodeUri(s: String): DecodeResult[URI] =
-    Try(URI.create(s)) match
-      case Success(uri) => DecodeResult.Value(uri)
-      case Failure(e) => DecodeResult.Error(s"Failed to decode s to a URI", e)
-  private def encodeUri(u: URI): String = u.toString
-  given uriCodec: Codec[String, URI, TextPlain] = Codec.string.mapDecode(decodeUri)(encodeUri)
-
-
-  
+    private def decodeUri(s: String): DecodeResult[URI] =
+        Try(URI.create(s)) match
+            case Success(uri) => DecodeResult.Value(uri)
+            case Failure(e)   => DecodeResult.Error(s"Failed to decode s to a URI", e)
+    private def encodeUri(u: URI): String               = u.toString
+    given uriCodec: Codec[String, URI, TextPlain]       = Codec.string.mapDecode(decodeUri)(encodeUri)

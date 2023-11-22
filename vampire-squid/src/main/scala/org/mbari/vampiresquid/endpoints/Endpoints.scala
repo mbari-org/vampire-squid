@@ -39,55 +39,56 @@ import org.mbari.vampiresquid.domain.MoveVideoParams
 case class Paging(from: Option[Int], limit: Option[Int])
 
 trait Endpoints:
-  val log = System.getLogger(getClass.getName)
+    val log = System.getLogger(getClass.getName)
 
-  given Schema[URI]            = Schema.string
-  given Schema[Option[URI]]         = Schema.string
-  given Schema[VideoReference] = Schema.derived[VideoReference]
-  given Schema[Video] = Schema.derived[Video]
-  given Schema[Media]               = Schema.derived[Media]
-  given Schema[MoveVideoParams]     = Schema.derived[MoveVideoParams]
-  
+    given Schema[URI]             = Schema.string
+    given Schema[Option[URI]]     = Schema.string
+    given Schema[VideoReference]  = Schema.derived[VideoReference]
+    given Schema[Video]           = Schema.derived[Video]
+    given Schema[Media]           = Schema.derived[Media]
+    given Schema[MoveVideoParams] = Schema.derived[MoveVideoParams]
 
-  def all: List[Endpoint[?, ?, ?, ?, ?]]
-  def allImpl: List[ServerEndpoint[Any, Future]]
+    def all: List[Endpoint[?, ?, ?, ?, ?]]
+    def allImpl: List[ServerEndpoint[Any, Future]]
 
-  def handleErrors[T](f: Future[T])(using ec: ExecutionContext): Future[Either[ErrorMsg, T]] =
-    f.transform:
-      case Success(value)     => Success(Right(value))
-      case Failure(exception) => Success(Left(ServerError(exception.getMessage)))
+    def handleErrors[T](f: Future[T])(using ec: ExecutionContext): Future[Either[ErrorMsg, T]] =
+        f.transform:
+            case Success(value)     => Success(Right(value))
+            case Failure(exception) => Success(Left(ServerError(exception.getMessage)))
 
-  def handleOption[T](f: Future[Option[T]])(using ec: ExecutionContext): Future[Either[ErrorMsg, T]] =
-    f.transform:
-      case Success(Some(value)) => Success(Right(value))
-      case Success(None)        => Success(Left(NotFound("Not found")))
-      case Failure(exception)   => Success(Left(ServerError(exception.getMessage)))
+    def handleOption[T](f: Future[Option[T]])(using ec: ExecutionContext): Future[Either[ErrorMsg, T]] =
+        f.transform:
+            case Success(Some(value)) => Success(Right(value))
+            case Success(None)        => Success(Left(NotFound("Not found")))
+            case Failure(exception)   => Success(Left(ServerError(exception.getMessage)))
 
-  val secureEndpoint: Endpoint[Option[String], Unit, ErrorMsg, Unit, Any] = endpoint
-    .securityIn(auth.bearer[Option[String]](WWWAuthenticateChallenge.bearer))
-    .errorOut(
-      oneOf[ErrorMsg](
-        oneOfVariant(statusCode(StatusCode.BadRequest).and(jsonBody[BadRequest])),
-        oneOfVariant(statusCode(StatusCode.NotFound).and(jsonBody[NotFound])),
-        oneOfVariant(statusCode(StatusCode.InternalServerError).and(jsonBody[ServerError])),
-        oneOfVariant(statusCode(StatusCode.Unauthorized).and(jsonBody[Unauthorized]))
-      )
+    val secureEndpoint: Endpoint[Option[String], Unit, ErrorMsg, Unit, Any] = endpoint
+        .securityIn(auth.bearer[Option[String]](WWWAuthenticateChallenge.bearer))
+        .errorOut(
+            oneOf[ErrorMsg](
+                oneOfVariant(statusCode(StatusCode.BadRequest).and(jsonBody[BadRequest])),
+                oneOfVariant(statusCode(StatusCode.NotFound).and(jsonBody[NotFound])),
+                oneOfVariant(statusCode(StatusCode.InternalServerError).and(jsonBody[ServerError])),
+                oneOfVariant(statusCode(StatusCode.Unauthorized).and(jsonBody[Unauthorized]))
+            )
+        )
+
+    val paging: EndpointInput[Paging] =
+        query[Option[Int]]("start")
+            .and(query[Option[Int]]("limit"))
+            .mapTo[Paging]
+
+    val openEndpoint: Endpoint[Unit, Unit, ErrorMsg, Unit, Any] = endpoint.errorOut(
+        oneOf[ErrorMsg](
+            oneOfVariant(statusCode(StatusCode.BadRequest).and(jsonBody[BadRequest])),
+            oneOfVariant(statusCode(StatusCode.NotFound).and(jsonBody[NotFound])),
+            oneOfVariant(statusCode(StatusCode.InternalServerError).and(jsonBody[ServerError]))
+        )
     )
 
-  val paging: EndpointInput[Paging] = 
-    query[Option[Int]]("start")
-      .and(query[Option[Int]]("limit"))
-      .mapTo[Paging]
-
-  val openEndpoint: Endpoint[Unit, Unit, ErrorMsg, Unit, Any] = endpoint.errorOut(
-    oneOf[ErrorMsg](
-      oneOfVariant(statusCode(StatusCode.BadRequest).and(jsonBody[BadRequest])),
-      oneOfVariant(statusCode(StatusCode.NotFound).and(jsonBody[NotFound])),
-      oneOfVariant(statusCode(StatusCode.InternalServerError).and(jsonBody[ServerError]))
-    )
-  )
-
-  def verify(jwtOpt: Option[String])(using jwtService: JwtService, ec: ExecutionContext): Future[Either[Unauthorized, Unit]] =
-    jwtOpt match
-      case None      => Future(Left(Unauthorized("Missing token")))
-      case Some(jwt) => Future(if (jwtService.verify(jwt)) Right(()) else Left(Unauthorized("Invalid token")))
+    def verify(
+        jwtOpt: Option[String]
+    )(using jwtService: JwtService, ec: ExecutionContext): Future[Either[Unauthorized, Unit]] =
+        jwtOpt match
+            case None      => Future(Left(Unauthorized("Missing token")))
+            case Some(jwt) => Future(if jwtService.verify(jwt) then Right(()) else Left(Unauthorized("Invalid token")))

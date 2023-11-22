@@ -20,27 +20,29 @@ import scala.reflect.ClassTag
 
 @deprecated("Use ToStringTransforms instead", "0.0.1")
 object Reflect:
-  def toFormMap[T: ClassTag](t: T): Map[String, String] =
-    val classTag = implicitly[ClassTag[T]]
-    val fields   = classTag.runtimeClass.getDeclaredFields
-    fields.flatMap { field =>
-      field.setAccessible(true)
-      field.get(t) match
-        case Some(value) => Some(field.getName -> value.toString)
-        case None        => None
-        case value       => if (value == null) None else Some(field.getName -> value.toString)
-    }.toMap
+    def toFormMap[T: ClassTag](t: T): Map[String, String] =
+        val classTag = implicitly[ClassTag[T]]
+        val fields   = classTag.runtimeClass.getDeclaredFields
+        fields.flatMap { field =>
+            field.setAccessible(true)
+            field.get(t) match
+                case Some(value) => Some(field.getName -> value.toString)
+                case None        => None
+                case value       => if value == null then None else Some(field.getName -> value.toString)
+        }.toMap
 
-  def fromFormMap[T: ClassTag](m: Map[String, ?]): T =
-    val classTag        = implicitly[ClassTag[T]]
-    val constructor     = classTag.runtimeClass.getDeclaredConstructors.head
-    val constructorArgs = constructor
-      .getParameters()
-      .map { param =>
-        val paramName = param.getName
-        if (param.getType == classOf[Option[?]])
-          m.get(paramName)
-        else
-          m.getOrElse(paramName, throw new IllegalArgumentException(s"Missing required parameter: $paramName"))
-      }
-    constructor.newInstance(constructorArgs: _*).asInstanceOf[T]
+    def fromFormMap[T: ClassTag](m: Map[String, ?]): T =
+        val classTag        = implicitly[ClassTag[T]]
+        val constructor     = classTag.runtimeClass.getDeclaredConstructors.head
+        val constructorArgs = constructor
+            .getParameters()
+            .map { param =>
+                val paramName = param.getName
+                if param.getType == classOf[Option[?]] then m.get(paramName)
+                else
+                    m.getOrElse(
+                        paramName,
+                        throw new IllegalArgumentException(s"Missing required parameter: $paramName")
+                    )
+            }
+        constructor.newInstance(constructorArgs*).asInstanceOf[T]

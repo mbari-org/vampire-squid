@@ -28,34 +28,36 @@ import scala.io.StdIn
 import org.mbari.vampiresquid.controllers.MediaController
 import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
 
-@main 
+@main
 def run(): Unit =
 
-  val serverOptions = VertxFutureServerOptions
-    .customiseInterceptors
-    .metricsInterceptor(Endpoints.prometheusMetrics.metricsInterceptor())
-    .options
+    val serverOptions = VertxFutureServerOptions
+        .customiseInterceptors
+        .metricsInterceptor(Endpoints.prometheusMetrics.metricsInterceptor())
+        .options
 
-  val port = sys.env.get("HTTP_PORT").flatMap(_.toIntOption).getOrElse(8080)
+    val port = sys.env.get("HTTP_PORT").flatMap(_.toIntOption).getOrElse(8080)
 
-  val vertx  = Vertx.vertx()
-  val server = vertx.createHttpServer()
-  val router = Router.router(vertx)
+    val vertx  = Vertx.vertx()
+    val server = vertx.createHttpServer()
+    val router = Router.router(vertx)
 
-  Endpoints
-    .all
-    .foreach(endpoint => {
-      VertxFutureServerInterpreter(serverOptions)
-        .route(endpoint)
-        .apply(router)
-    })
+    Endpoints
+        .all
+        .foreach(endpoint =>
+            VertxFutureServerInterpreter(serverOptions)
+                .route(endpoint)
+                .apply(router)
+        )
 
-  val program = for {
-    binding <- server.requestHandler(router).listen(port).asScala
-    _       <- Future:
-                 println(s"Go to http://localhost:${binding.actualPort()}/docs to open SwaggerUI. Press ENTER key to exit.")
-                 StdIn.readLine()
-    stop    <- binding.close().asScala
-  } yield stop
+    val program = for
+        binding <- server.requestHandler(router).listen(port).asScala
+        _       <- Future:
+                       println(
+                           s"Go to http://localhost:${binding.actualPort()}/docs to open SwaggerUI. Press ENTER key to exit."
+                       )
+                       StdIn.readLine()
+        stop    <- binding.close().asScala
+    yield stop
 
-  Await.result(program, Duration.Inf)
+    Await.result(program, Duration.Inf)

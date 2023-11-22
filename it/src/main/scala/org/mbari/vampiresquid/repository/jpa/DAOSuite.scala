@@ -25,20 +25,18 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 trait BaseDAOSuite extends munit.FunSuite:
 
-  def daoFactory: SpecDAOFactory
-  private val timeout = SDuration(2, TimeUnit.SECONDS)
+    def daoFactory: SpecDAOFactory
+    private val timeout = SDuration(2, TimeUnit.SECONDS)
 
-  def exec[T](future: Future[T]): T = Await.result(future, timeout)
+    def exec[T](future: Future[T]): T = Await.result(future, timeout)
 
-  def run[T](thunk: () => T)(using dao: DAO[?]): T =
-    exec(dao.runTransaction(_ => thunk.apply()))
+    def run[T](thunk: () => T)(using dao: DAO[?]): T =
+        exec(dao.runTransaction(_ => thunk.apply()))
 
-  override def afterEach(context: AfterEach): Unit =
-    super.afterEach(context)
-    daoFactory.cleanup()
+    override def afterEach(context: AfterEach): Unit =
+        super.afterEach(context)
+        daoFactory.cleanup()
 
 trait DAOSuite extends BaseDAOSuite:
 
-  given daoFactory: SpecDAOFactory = TestDAOFactory.Instance
-
-
+    given daoFactory: SpecDAOFactory = TestDAOFactory.Instance

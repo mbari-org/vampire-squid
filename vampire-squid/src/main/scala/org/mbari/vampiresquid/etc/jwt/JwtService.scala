@@ -24,31 +24,31 @@ import java.util.Date
 
 class JwtService(issuer: String, apiKey: String, signingSecret: String):
 
-  private val algorithm = Algorithm.HMAC512(signingSecret)
+    private val algorithm = Algorithm.HMAC512(signingSecret)
 
-  private val verifier = JWT
-    .require(algorithm)
-    .withIssuer(issuer)
-    .build()
-
-  def verify(jwt: String): Boolean =
-    try
-      verifier.verify(jwt)
-      true
-    catch case e: Exception => false
-
-  def authorize(providedApiKey: String): Option[String] =
-    if (providedApiKey == apiKey)
-      val now      = Instant.now()
-      val tomorrow = now.plus(1, ChronoUnit.DAYS)
-      val iat      = Date.from(now)
-      val exp      = Date.from(tomorrow)
-
-      val jwt = JWT
-        .create()
+    private val verifier = JWT
+        .require(algorithm)
         .withIssuer(issuer)
-        .withIssuedAt(iat)
-        .withExpiresAt(exp)
-        .sign(algorithm)
-      Some(jwt)
-    else None
+        .build()
+
+    def verify(jwt: String): Boolean =
+        try
+            verifier.verify(jwt)
+            true
+        catch case e: Exception => false
+
+    def authorize(providedApiKey: String): Option[String] =
+        if providedApiKey == apiKey then
+            val now      = Instant.now()
+            val tomorrow = now.plus(1, ChronoUnit.DAYS)
+            val iat      = Date.from(now)
+            val exp      = Date.from(tomorrow)
+
+            val jwt = JWT
+                .create()
+                .withIssuer(issuer)
+                .withIssuedAt(iat)
+                .withExpiresAt(exp)
+                .sign(algorithm)
+            Some(jwt)
+        else None

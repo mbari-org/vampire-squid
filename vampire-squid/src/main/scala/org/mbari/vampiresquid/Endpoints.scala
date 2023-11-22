@@ -36,23 +36,22 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 object Endpoints:
 
-  // ----------------------------
-  val daoFactory      = JPADAOFactory
-  val mediaController = new MediaController(daoFactory)
+    // ----------------------------
+    val daoFactory      = JPADAOFactory
+    val mediaController = new MediaController(daoFactory)
 
-  val jwtParams       = AppConfig.JwtParameters
-  val jwtService      = new JwtService(jwtParams.issuer, jwtParams.clientSecret, jwtParams.signingSecret)
-  val mediaEndpoints  = new MediaEndpoints(mediaController, jwtService)
-  val authEndpoints   = new AuthorizationEndpoints(jwtService)
-  val healthEndpoints = new HealthEndpoints
+    val jwtParams       = AppConfig.JwtParameters
+    val jwtService      = new JwtService(jwtParams.issuer, jwtParams.clientSecret, jwtParams.signingSecret)
+    val mediaEndpoints  = new MediaEndpoints(mediaController, jwtService)
+    val authEndpoints   = new AuthorizationEndpoints(jwtService)
+    val healthEndpoints = new HealthEndpoints
 
-  val apiEndpoints = mediaEndpoints.allImpl ++ authEndpoints.allImpl ++ healthEndpoints.allImpl
+    val apiEndpoints = mediaEndpoints.allImpl ++ authEndpoints.allImpl ++ healthEndpoints.allImpl
 
-  val docEndpoints: List[ServerEndpoint[Any, Future]] = SwaggerInterpreter()
-    .fromServerEndpoints[Future](apiEndpoints, "vampire-squid", "1.0.0")
+    val docEndpoints: List[ServerEndpoint[Any, Future]] = SwaggerInterpreter()
+        .fromServerEndpoints[Future](apiEndpoints, "vampire-squid", "1.0.0")
 
-  val prometheusMetrics: PrometheusMetrics[Future] = PrometheusMetrics.default[Future]()
-  val metricsEndpoint: ServerEndpoint[Any, Future] = prometheusMetrics.metricsEndpoint
+    val prometheusMetrics: PrometheusMetrics[Future] = PrometheusMetrics.default[Future]()
+    val metricsEndpoint: ServerEndpoint[Any, Future] = prometheusMetrics.metricsEndpoint
 
-  val all: List[ServerEndpoint[Any, Future]] = apiEndpoints ++ docEndpoints ++ List(metricsEndpoint)
-
+    val all: List[ServerEndpoint[Any, Future]] = apiEndpoints ++ docEndpoints ++ List(metricsEndpoint)

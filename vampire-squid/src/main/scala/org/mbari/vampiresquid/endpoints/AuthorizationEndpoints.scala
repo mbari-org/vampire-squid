@@ -33,35 +33,35 @@ import org.mbari.vampiresquid.domain.{BadRequest, ErrorMsg, NotFound, ServerErro
 
 class AuthorizationEndpoints(jwtService: JwtService)(using ec: ExecutionContext) extends Endpoints:
 
-  private val log = System.getLogger(getClass().getName())
+    private val log = System.getLogger(getClass().getName())
 
-  val authEndpoint: Endpoint[String, Unit, ErrorMsg, Authorization, Any] =
-    endpoint
-      .post
-      .in("v1" / "auth")
-      .securityIn(header[String]("APIKEY"))
-      .out(jsonBody[Authorization])
-      .errorOut(
-        oneOf[ErrorMsg](
-          oneOfVariant(statusCode(StatusCode.BadRequest).and(jsonBody[BadRequest])),
-          oneOfVariant(statusCode(StatusCode.NotFound).and(jsonBody[NotFound])),
-          oneOfVariant(statusCode(StatusCode.InternalServerError).and(jsonBody[ServerError])),
-          oneOfVariant(statusCode(StatusCode.Unauthorized).and(jsonBody[Unauthorized]))
-        )
-      )
-      .name("authenticate")
-      .description("Exchange an API key for a JWT")
-      .tag("auth")
+    val authEndpoint: Endpoint[String, Unit, ErrorMsg, Authorization, Any] =
+        endpoint
+            .post
+            .in("v1" / "auth")
+            .securityIn(header[String]("APIKEY"))
+            .out(jsonBody[Authorization])
+            .errorOut(
+                oneOf[ErrorMsg](
+                    oneOfVariant(statusCode(StatusCode.BadRequest).and(jsonBody[BadRequest])),
+                    oneOfVariant(statusCode(StatusCode.NotFound).and(jsonBody[NotFound])),
+                    oneOfVariant(statusCode(StatusCode.InternalServerError).and(jsonBody[ServerError])),
+                    oneOfVariant(statusCode(StatusCode.Unauthorized).and(jsonBody[Unauthorized]))
+                )
+            )
+            .name("authenticate")
+            .description("Exchange an API key for a JWT")
+            .tag("auth")
 
-  val authEndpointImpl: ServerEndpoint[Any, Future] =
-    authEndpoint
-      .serverSecurityLogic(apiKey =>
-        jwtService.authorize(apiKey) match
-          case None      => Future(Left(Unauthorized("Invalid API key")))
-          case Some(jwt) => Future(Right(Authorization.bearer(jwt)))
-      )
-      .serverLogic(bearerAuth => Unit => Future(Right(bearerAuth)))
+    val authEndpointImpl: ServerEndpoint[Any, Future] =
+        authEndpoint
+            .serverSecurityLogic(apiKey =>
+                jwtService.authorize(apiKey) match
+                    case None      => Future(Left(Unauthorized("Invalid API key")))
+                    case Some(jwt) => Future(Right(Authorization.bearer(jwt)))
+            )
+            .serverLogic(bearerAuth => Unit => Future(Right(bearerAuth)))
 
-  override val all: List[Endpoint[?, ?, ?, ?, ?]]         = List(authEndpoint)
-  override val allImpl: List[ServerEndpoint[Any, Future]] =
-    List(authEndpointImpl)
+    override val all: List[Endpoint[?, ?, ?, ?, ?]]         = List(authEndpoint)
+    override val allImpl: List[ServerEndpoint[Any, Future]] =
+        List(authEndpointImpl)

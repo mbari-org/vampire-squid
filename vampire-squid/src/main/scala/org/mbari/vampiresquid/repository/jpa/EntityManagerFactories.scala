@@ -20,62 +20,63 @@ import jakarta.persistence.{EntityManagerFactory, Persistence}
 
 import com.typesafe.config.ConfigFactory
 
-import scala.jdk.CollectionConverters._
+import scala.jdk.CollectionConverters.*
 
-/** https://stackoverflow.com/questions/4106078/dynamic-jpa-connection
-  *
-  * THis factory allows us to instantiate an javax.persistence.EntityManager from the basic parameters (url, driver, password, username).
-  * You can pass in a map of additional properties to customize the EntityManager.
-  *
-  * @author
-  *   Brian Schlining
-  * @since 2016-05-05T17:29:00
-  */
+/**
+ * https://stackoverflow.com/questions/4106078/dynamic-jpa-connection
+ *
+ * THis factory allows us to instantiate an javax.persistence.EntityManager from the basic parameters (url, driver,
+ * password, username). You can pass in a map of additional properties to customize the EntityManager.
+ *
+ * @author
+ *   Brian Schlining
+ * @since 2016-05-05T17:29:00
+ */
 object EntityManagerFactories:
 
-  private lazy val config = ConfigFactory.load()
+    private lazy val config = ConfigFactory.load()
 
-  // https://juliuskrah.com/tutorial/2017/02/16/getting-started-with-hikaricp-hibernate-and-jpa/
-  val PRODUCTION_PROPS = Map(
-    "hibernate.connection.provider_class"                   -> "org.hibernate.hikaricp.internal.HikariCPConnectionProvider",
-    "hibernate.hbm2ddl.auto"                                -> "validate",
-    "hibernate.hikari.idleTimeout"                          -> "30000",
-    "hibernate.hikari.maximumPoolSize"                      -> "16",
-    "hibernate.hikari.minimumIdle"                          -> "2",
-  )
-
-  def apply(properties: Map[String, String]): EntityManagerFactory =
-    val props = PRODUCTION_PROPS ++ properties
-    Persistence.createEntityManagerFactory("video-asset-manager", props.asJava)
-
-  def apply(
-      url: String,
-      username: String,
-      password: String,
-      driverName: String,
-      properties: Map[String, String] = Map.empty
-  ): EntityManagerFactory =
-
-    val map = Map(
-      "jakarta.persistence.jdbc.url"      -> url,
-      "jakarta.persistence.jdbc.user"     -> username,
-      "jakarta.persistence.jdbc.password" -> password,
-      "jakarta.persistence.jdbc.driver"   -> driverName
+    // https://juliuskrah.com/tutorial/2017/02/16/getting-started-with-hikaricp-hibernate-and-jpa/
+    val PRODUCTION_PROPS = Map(
+        "hibernate.connection.provider_class" -> "org.hibernate.hikaricp.internal.HikariCPConnectionProvider",
+        "hibernate.hbm2ddl.auto"              -> "validate",
+        "hibernate.hikari.idleTimeout"        -> "30000",
+        "hibernate.hikari.maximumPoolSize"    -> "16",
+        "hibernate.hikari.minimumIdle"        -> "2"
     )
-    apply(map ++ properties)
 
-  def apply(configNode: String): EntityManagerFactory =
-    val driver      = config.getString(configNode + ".driver")
-    val logLevel    = config.getString(".loglevel")
-    val password    = config.getString(configNode + ".password")
-    val productName = config.getString(configNode + ".name")
-    val url         = config.getString(configNode + ".url")
-    val user        = config.getString(configNode + ".user")
-    val props       = Map(
-      "hibernate.dialect"                 -> productName,
-      "jakarta.persistence.jdbc.driver"   -> driver,
-      "jakarta.persistence.jdbc.password" -> password,
-      "jakarta.persistence.jdbc.url"      -> url,
-      "jakarta.persistence.jdbc.user"     -> user
-    )
-    apply(props)
+    def apply(properties: Map[String, String]): EntityManagerFactory =
+        val props = PRODUCTION_PROPS ++ properties
+        Persistence.createEntityManagerFactory("video-asset-manager", props.asJava)
+
+    def apply(
+        url: String,
+        username: String,
+        password: String,
+        driverName: String,
+        properties: Map[String, String] = Map.empty
+    ): EntityManagerFactory =
+
+        val map = Map(
+            "jakarta.persistence.jdbc.url"      -> url,
+            "jakarta.persistence.jdbc.user"     -> username,
+            "jakarta.persistence.jdbc.password" -> password,
+            "jakarta.persistence.jdbc.driver"   -> driverName
+        )
+        apply(map ++ properties)
+
+    def apply(configNode: String): EntityManagerFactory =
+        val driver      = config.getString(configNode + ".driver")
+        val logLevel    = config.getString(".loglevel")
+        val password    = config.getString(configNode + ".password")
+        val productName = config.getString(configNode + ".name")
+        val url         = config.getString(configNode + ".url")
+        val user        = config.getString(configNode + ".user")
+        val props       = Map(
+            "hibernate.dialect"                 -> productName,
+            "jakarta.persistence.jdbc.driver"   -> driver,
+            "jakarta.persistence.jdbc.password" -> password,
+            "jakarta.persistence.jdbc.url"      -> url,
+            "jakarta.persistence.jdbc.user"     -> user
+        )
+        apply(props)

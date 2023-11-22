@@ -21,26 +21,26 @@ import com.typesafe.config.ConfigFactory
 import org.mbari.vampiresquid.etc.jwt.JwtService
 
 object AppConfig:
-  val Name: String = "vampire-squid"
+    val Name: String = "vampire-squid"
 
-  val Version: String = Try(getClass.getPackage.getImplementationVersion).getOrElse("0.0.0")
+    val Version: String = Try(getClass.getPackage.getImplementationVersion).getOrElse("0.0.0")
 
-  val Description: String = "Video Asset Manager"
+    val Description: String = "Video Asset Manager"
 
-  private lazy val Config = ConfigFactory.load()
+    private lazy val Config = ConfigFactory.load()
 
-  lazy val JwtParameters: JwtParams =
-    JwtParams(
-      clientSecret = Config.getString("basicjwt.client.secret"),
-      issuer = Config.getString("basicjwt.issuer"),
-      signingSecret = Config.getString("basicjwt.signing.secret")
+    lazy val JwtParameters: JwtParams =
+        JwtParams(
+            clientSecret = Config.getString("basicjwt.client.secret"),
+            issuer = Config.getString("basicjwt.issuer"),
+            signingSecret = Config.getString("basicjwt.signing.secret")
+        )
+
+    lazy val DefaultJwtService = new JwtService(
+        issuer = JwtParameters.issuer,
+        apiKey = JwtParameters.clientSecret,
+        signingSecret = JwtParameters.signingSecret
     )
-
-  lazy val DefaultJwtService = new JwtService(
-    issuer = JwtParameters.issuer,
-    apiKey = JwtParameters.clientSecret,
-    signingSecret = JwtParameters.signingSecret
-  )
 
 final case class JwtParams(
     clientSecret: String,

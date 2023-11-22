@@ -45,252 +45,263 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
     jwtService: JwtService
 ) extends Endpoints:
 
-  // GET v1/videos
-  val findAllEndpoint: Endpoint[Unit, Unit, ErrorMsg, List[Video], Any] =
-    openEndpoint
-      .get
-      .in("v1" / "videos")
-      .out(jsonBody[List[Video]])
-      .name("findAll")
-      .description("Find all videos")
-      .tag("videos")
+    // GET v1/videos
+    val findAllEndpoint: Endpoint[Unit, Unit, ErrorMsg, List[Video], Any] =
+        openEndpoint
+            .get
+            .in("v1" / "videos")
+            .out(jsonBody[List[Video]])
+            .name("findAll")
+            .description("Find all videos")
+            .tag("videos")
 
-  val findAllEndpointImpl: ServerEndpoint[Any, Future] =
-    findAllEndpoint
-      .serverLogic(_ => handleErrors(controller.findAll().map(_.toList)))
+    val findAllEndpointImpl: ServerEndpoint[Any, Future] =
+        findAllEndpoint
+            .serverLogic(_ => handleErrors(controller.findAll().map(_.toList)))
 
-  // GET v1/videos/:uuid
-  val findOneEndpoint: Endpoint[Unit, UUID, ErrorMsg, Video, Any] =
-    openEndpoint
-      .get
-      .in("v1" / "videos" / path[UUID]("uuid"))
-      .out(jsonBody[Video])
-      .name("findOne")
-      .description("Find a video by UUID")
-      .tag("videos")
+    // GET v1/videos/:uuid
+    val findOneEndpoint: Endpoint[Unit, UUID, ErrorMsg, Video, Any] =
+        openEndpoint
+            .get
+            .in("v1" / "videos" / path[UUID]("uuid"))
+            .out(jsonBody[Video])
+            .name("findOne")
+            .description("Find a video by UUID")
+            .tag("videos")
 
-  val findOneEndpointImpl: ServerEndpoint[Any, Future] =
-    findOneEndpoint
-      .serverLogic(req => handleOption(controller.findByUUID(req)))
+    val findOneEndpointImpl: ServerEndpoint[Any, Future] =
+        findOneEndpoint
+            .serverLogic(req => handleOption(controller.findByUUID(req)))
 
-  // GET v1/videos/videosequence/:uuid
-  val findVideoByVideoSequenceUuid: Endpoint[Unit, UUID, ErrorMsg, List[Video], Any] =
-    openEndpoint
-      .get
-      .in("v1" / "videos" / "videosequence" / path[UUID]("videoSequenceUuid"))
-      .out(jsonBody[List[Video]])
-      .name("findVideoByVideoSequenceUuid")
-      .description("Find a videos by its video sequence UUID")
-      .tag("videos")
+    // GET v1/videos/videosequence/:uuid
+    val findVideoByVideoSequenceUuid: Endpoint[Unit, UUID, ErrorMsg, List[Video], Any] =
+        openEndpoint
+            .get
+            .in("v1" / "videos" / "videosequence" / path[UUID]("videoSequenceUuid"))
+            .out(jsonBody[List[Video]])
+            .name("findVideoByVideoSequenceUuid")
+            .description("Find a videos by its video sequence UUID")
+            .tag("videos")
 
-  val findVideoByVideoSequenceUuidImpl: ServerEndpoint[Any, Future] =
-    findVideoByVideoSequenceUuid
-      .serverLogic(req => handleErrors(controller.findByVideoSequenceUUID(req).map(_.toList)))
+    val findVideoByVideoSequenceUuidImpl: ServerEndpoint[Any, Future] =
+        findVideoByVideoSequenceUuid
+            .serverLogic(req => handleErrors(controller.findByVideoSequenceUUID(req).map(_.toList)))
 
-  // GET v1/videos/videoreference/:uuid/
-  val findVideoByVideoReferenceUuid: Endpoint[Unit, UUID, ErrorMsg, List[Video], Any] =
-    openEndpoint
-      .get
-      .in("v1" / "videos" / "videoreference" / path[UUID]("videoReferenceUuid"))
-      .out(jsonBody[List[Video]])
-      .name("findVideoByVideoReferenceUuid")
-      .description("Find a videos by its video reference UUID")
-      .tag("videos")
+    // GET v1/videos/videoreference/:uuid/
+    val findVideoByVideoReferenceUuid: Endpoint[Unit, UUID, ErrorMsg, List[Video], Any] =
+        openEndpoint
+            .get
+            .in("v1" / "videos" / "videoreference" / path[UUID]("videoReferenceUuid"))
+            .out(jsonBody[List[Video]])
+            .name("findVideoByVideoReferenceUuid")
+            .description("Find a videos by its video reference UUID")
+            .tag("videos")
 
-  val findVideoByVideoReferenceUuidImpl: ServerEndpoint[Any, Future] =
-    findVideoByVideoReferenceUuid
-      .serverLogic(req => handleErrors(controller.findByVideoReferenceUUID(req).map(_.toList)))
+    val findVideoByVideoReferenceUuidImpl: ServerEndpoint[Any, Future] =
+        findVideoByVideoReferenceUuid
+            .serverLogic(req => handleErrors(controller.findByVideoReferenceUUID(req).map(_.toList)))
 
-  // get v1/videos/lastupdate/:uuid
-  val findLastUpdateEndpoint: Endpoint[Unit, UUID, ErrorMsg, LastUpdatedTime, Any] =
-    openEndpoint
-      .get
-      .in("v1" / "videos" / "lastupdate" / path[UUID]("uuid"))
-      .out(jsonBody[LastUpdatedTime])
-      .name("findLastUpdate")
-      .description("Find the last update time for a video by UUID")
-      .tag("videos")
+    // get v1/videos/lastupdate/:uuid
+    val findLastUpdateEndpoint: Endpoint[Unit, UUID, ErrorMsg, LastUpdatedTime, Any] =
+        openEndpoint
+            .get
+            .in("v1" / "videos" / "lastupdate" / path[UUID]("uuid"))
+            .out(jsonBody[LastUpdatedTime])
+            .name("findLastUpdate")
+            .description("Find the last update time for a video by UUID")
+            .tag("videos")
 
-  val findLastUpdateEndpointImpl: ServerEndpoint[Any, Future] =
-    findLastUpdateEndpoint
-      .serverLogic(req =>
-        handleOption(
-          controller
-            .findByUUID(req)
-            .map(opt => {
-              for
-                video <- opt
-                lut   <- video.last_updated_time
-              yield LastUpdatedTime(lut)
-            })
-        )
-      )
+    val findLastUpdateEndpointImpl: ServerEndpoint[Any, Future] =
+        findLastUpdateEndpoint
+            .serverLogic(req =>
+                handleOption(
+                    controller
+                        .findByUUID(req)
+                        .map(opt =>
+                            for
+                                video <- opt
+                                lut   <- video.last_updated_time
+                            yield LastUpdatedTime(lut)
+                        )
+                )
+            )
 
-  // GET v1/videos/name/:name
-  val findVideoByName: Endpoint[Unit, String, ErrorMsg, List[Video], Any] =
-    openEndpoint
-      .get
-      .in("v1" / "videos" / "name" / path[String]("name"))
-      .out(jsonBody[List[Video]])
-      .name("findVideoByName")
-      .description("Find a videos by its name")
-      .tag("videos")
+    // GET v1/videos/name/:name
+    val findVideoByName: Endpoint[Unit, String, ErrorMsg, List[Video], Any] =
+        openEndpoint
+            .get
+            .in("v1" / "videos" / "name" / path[String]("name"))
+            .out(jsonBody[List[Video]])
+            .name("findVideoByName")
+            .description("Find a videos by its name")
+            .tag("videos")
 
-  val findVideoByNameImpl: ServerEndpoint[Any, Future] =
-    findVideoByName
-      .serverLogic(req => handleErrors(controller.findByName(req).map(_.toList)))
+    val findVideoByNameImpl: ServerEndpoint[Any, Future] =
+        findVideoByName
+            .serverLogic(req => handleErrors(controller.findByName(req).map(_.toList)))
 
-  // GET v1/videosequence/:name
-  val findVideoByVideoSequenceName: Endpoint[Unit, String, ErrorMsg, List[Video], Any] =
-    openEndpoint
-      .get
-      .in("v1" / "videos" / "videosequence" / "name" / path[String]("videoSequenceName"))
-      .out(jsonBody[List[Video]])
-      .name("findVideoByVideoSequenceByName")
-      .description("Find videos by its video sequence name")
-      .tag("videos")
+    // GET v1/videosequence/:name
+    val findVideoByVideoSequenceName: Endpoint[Unit, String, ErrorMsg, List[Video], Any] =
+        openEndpoint
+            .get
+            .in("v1" / "videos" / "videosequence" / "name" / path[String]("videoSequenceName"))
+            .out(jsonBody[List[Video]])
+            .name("findVideoByVideoSequenceByName")
+            .description("Find videos by its video sequence name")
+            .tag("videos")
 
-  val findVideoByVideoSequenceByNameImpl: ServerEndpoint[Any, Future] =
-    findVideoByVideoSequenceName
-      .serverLogic(req =>
-        val future = for
-          vs <- videoSequenceController.findByName(req)
-          if vs.isDefined
-          xx <- controller.findByVideoSequenceUUID(vs.get.uuid)
-        yield xx.toList
+    val findVideoByVideoSequenceByNameImpl: ServerEndpoint[Any, Future] =
+        findVideoByVideoSequenceName
+            .serverLogic(req =>
+                val future = for
+                    vs <- videoSequenceController.findByName(req)
+                    if vs.isDefined
+                    xx <- controller.findByVideoSequenceUUID(vs.get.uuid)
+                yield xx.toList
 
-        handleErrors(future)
-      )
+                handleErrors(future)
+            )
 
-  // GET v1/videos/timestamp/:timestamp
-  val findVideoByTimestamp: Endpoint[Unit, Instant, ErrorMsg, List[Video], Any] =
-    openEndpoint
-      .get
-      .in("v1" / "videos" / "timestamp" / path[Instant]("timestamp"))
-      .out(jsonBody[List[Video]])
-      .name("findVideoByTimestamp")
-      .description("Find videos by its timestamp")
-      .tag("videos")
+    // GET v1/videos/timestamp/:timestamp
+    val findVideoByTimestamp: Endpoint[Unit, Instant, ErrorMsg, List[Video], Any] =
+        openEndpoint
+            .get
+            .in("v1" / "videos" / "timestamp" / path[Instant]("timestamp"))
+            .out(jsonBody[List[Video]])
+            .name("findVideoByTimestamp")
+            .description("Find videos by its timestamp")
+            .tag("videos")
 
-  val findVideoByTimestampImpl: ServerEndpoint[Any, Future] =
-    findVideoByTimestamp
-      .serverLogic(req => handleErrors(controller.findByTimestamp(req).map(_.toList)))
+    val findVideoByTimestampImpl: ServerEndpoint[Any, Future] =
+        findVideoByTimestamp
+            .serverLogic(req => handleErrors(controller.findByTimestamp(req).map(_.toList)))
 
-  // GET v1/videos/timestamp/:starthttps://tapir.softwaremill.com/en/latest/examples.html/:end
-  val findVideoByTimestampRange: Endpoint[Unit, (Instant, Instant), ErrorMsg, List[Video], Any] =
-    openEndpoint
-      .get
-      .in("v1" / "videos" / "timestamp" / path[Instant]("start") / path[Instant]("end"))
-      .out(jsonBody[List[Video]])
-      .name("findVideoByTimestampRange")
-      .description("Find videos by its timestamp range")
-      .tag("videos")
+    // GET v1/videos/timestamp/:starthttps://tapir.softwaremill.com/en/latest/examples.html/:end
+    val findVideoByTimestampRange: Endpoint[Unit, (Instant, Instant), ErrorMsg, List[Video], Any] =
+        openEndpoint
+            .get
+            .in("v1" / "videos" / "timestamp" / path[Instant]("start") / path[Instant]("end"))
+            .out(jsonBody[List[Video]])
+            .name("findVideoByTimestampRange")
+            .description("Find videos by its timestamp range")
+            .tag("videos")
 
-  val findVideoByTimestampRangeImpl: ServerEndpoint[Any, Future]                             =
-    findVideoByTimestampRange
-      .serverLogic((startTime, endTime) => handleErrors(controller.findBetweenTimestamps(startTime, endTime).map(_.toList)))
+    val findVideoByTimestampRangeImpl: ServerEndpoint[Any, Future]                             =
+        findVideoByTimestampRange
+            .serverLogic((startTime, endTime) =>
+                handleErrors(controller.findBetweenTimestamps(startTime, endTime).map(_.toList))
+            )
 
-    // POST v1/videos (form body)
-  val createOneEndpoint: Endpoint[Option[String], Map[String, String], ErrorMsg, Video, Any] =
-    secureEndpoint
-      .post
-      .in("v1" / "videos")
-      .in(formBody[Map[String, String]])
-      .out(jsonBody[Video])
-      .name("createOne")
-      .description("Create a video")
-      .tag("videos")
+        // POST v1/videos (form body)
+    val createOneEndpoint: Endpoint[Option[String], Map[String, String], ErrorMsg, Video, Any] =
+        secureEndpoint
+            .post
+            .in("v1" / "videos")
+            .in(formBody[Map[String, String]])
+            .out(jsonBody[Video])
+            .name("createOne")
+            .description("Create a video")
+            .tag("videos")
 
-  val createOneEndpointImpl: ServerEndpoint[Any, Future] =
-    createOneEndpoint
-      .serverSecurityLogic(jwtOpt => verify(jwtOpt))
-      .serverLogic(_ =>
-        req => {
-          val videoName         = req.get("name")
-          val videoSequenceUuid = req.get("video_sequence_uuid").map(UUID.fromString)
-          val start             = req.get("start").orElse(req.get("start_timestamp")).map(Instant.parse)
-          val duration          = req
-            .get("duration_millis")
-            .map(_.toLong)
-            .map(Duration.ofMillis)
-          val description       = req.get("description")
+    val createOneEndpointImpl: ServerEndpoint[Any, Future] =
+        createOneEndpoint
+            .serverSecurityLogic(jwtOpt => verify(jwtOpt))
+            .serverLogic(_ =>
+                req =>
+                    val videoName         = req.get("name")
+                    val videoSequenceUuid = req.get("video_sequence_uuid").map(UUID.fromString)
+                    val start             = req.get("start").orElse(req.get("start_timestamp")).map(Instant.parse)
+                    val duration          = req
+                        .get("duration_millis")
+                        .map(_.toLong)
+                        .map(Duration.ofMillis)
+                    val description       = req.get("description")
 
-          if videoName.isEmpty || videoSequenceUuid.isEmpty || start.isEmpty then
-            Future(Left(BadRequest("Missing one or more required parameters: name, video_sequence_name, start_timestamp, duration_millis")))
-          else handleErrors(controller.create(videoSequenceUuid.get, videoName.get, start.get, duration, description))
-        }
-      )
+                    if videoName.isEmpty || videoSequenceUuid.isEmpty || start.isEmpty then
+                        Future(
+                            Left(
+                                BadRequest(
+                                    "Missing one or more required parameters: name, video_sequence_name, start_timestamp, duration_millis"
+                                )
+                            )
+                        )
+                    else
+                        handleErrors(
+                            controller.create(videoSequenceUuid.get, videoName.get, start.get, duration, description)
+                        )
+            )
 
-  // DELETE v1/videos/:uuid
-  val deleteByUuidEndpoint: Endpoint[Option[String], UUID, ErrorMsg, Unit, Any] =
-    secureEndpoint
-      .delete
-      .in("v1" / "videos" / path[UUID]("uuid"))
-      .out(statusCode(StatusCode.NoContent).and(emptyOutput))
-      .name("deleteByUuid")
-      .description("Delete a video by UUID")
-      .tag("video CRUD")
+    // DELETE v1/videos/:uuid
+    val deleteByUuidEndpoint: Endpoint[Option[String], UUID, ErrorMsg, Unit, Any] =
+        secureEndpoint
+            .delete
+            .in("v1" / "videos" / path[UUID]("uuid"))
+            .out(statusCode(StatusCode.NoContent).and(emptyOutput))
+            .name("deleteByUuid")
+            .description("Delete a video by UUID")
+            .tag("video CRUD")
 
-  val deleteByUuidEndpointImpl: ServerEndpoint[Any, Future]                                       =
-    deleteByUuidEndpoint
-      .serverSecurityLogic(jwtOpt => verify(jwtOpt))
-      .serverLogic(_ => req => handleErrors(controller.delete(req).map(b => if (b) Right(()) else Left(()))))
+    val deleteByUuidEndpointImpl: ServerEndpoint[Any, Future]                                       =
+        deleteByUuidEndpoint
+            .serverSecurityLogic(jwtOpt => verify(jwtOpt))
+            .serverLogic(_ => req => handleErrors(controller.delete(req).map(b => if b then Right(()) else Left(()))))
 
-    // PUT v1/videos/:uuid (form body)
-  val updateEndpoint: Endpoint[Option[String], (UUID, Map[String, String]), ErrorMsg, Video, Any] =
-    secureEndpoint
-      .put
-      .in("v1" / "videos" / path[UUID]("uuid"))
-      .in(formBody[Map[String, String]])
-      .out(jsonBody[Video])
-      .name("update")
-      .description("Update a video by UUID")
-      .tag("videos")
+        // PUT v1/videos/:uuid (form body)
+    val updateEndpoint: Endpoint[Option[String], (UUID, Map[String, String]), ErrorMsg, Video, Any] =
+        secureEndpoint
+            .put
+            .in("v1" / "videos" / path[UUID]("uuid"))
+            .in(formBody[Map[String, String]])
+            .out(jsonBody[Video])
+            .name("update")
+            .description("Update a video by UUID")
+            .tag("videos")
 
-  val updateEndpointImpl: ServerEndpoint[Any, Future] =
-    updateEndpoint
-      .serverSecurityLogic(jwtOpt => verify(jwtOpt))
-      .serverLogic(_ => 
-        (videoUuid, formData) => {
-          val videoName         = formData.get("name")
-          val videoSequenceUuid = formData.get("video_sequence_uuid").map(UUID.fromString)
-          val start             = formData.get("start").orElse(formData.get("start_timestamp")).map(Instant.parse)
-          val duration          = formData
-            .get("duration_millis")
-            .map(_.toLong)
-            .map(Duration.ofMillis)
-          val description       = formData.get("description")
+    val updateEndpointImpl: ServerEndpoint[Any, Future] =
+        updateEndpoint
+            .serverSecurityLogic(jwtOpt => verify(jwtOpt))
+            .serverLogic(_ =>
+                (videoUuid, formData) =>
+                    val videoName         = formData.get("name")
+                    val videoSequenceUuid = formData.get("video_sequence_uuid").map(UUID.fromString)
+                    val start             = formData.get("start").orElse(formData.get("start_timestamp")).map(Instant.parse)
+                    val duration          = formData
+                        .get("duration_millis")
+                        .map(_.toLong)
+                        .map(Duration.ofMillis)
+                    val description       = formData.get("description")
 
-          handleErrors(controller.update(videoUuid, videoName, start, duration, description, videoSequenceUuid))
-        }
-      )
+                    handleErrors(
+                        controller.update(videoUuid, videoName, start, duration, description, videoSequenceUuid)
+                    )
+            )
 
-  override def all: List[Endpoint[?, ?, ?, ?, ?]] = List(
-    findAllEndpoint,
-    findOneEndpoint,
-    findVideoByVideoSequenceUuid,
-    findVideoByVideoReferenceUuid,
-    findLastUpdateEndpoint,
-    findVideoByName,
-    findVideoByVideoSequenceName,
-    findVideoByTimestamp,
-    findVideoByTimestampRange,
-    createOneEndpoint,
-    deleteByUuidEndpoint,
-    updateEndpoint
-  )
+    override def all: List[Endpoint[?, ?, ?, ?, ?]] = List(
+        findAllEndpoint,
+        findOneEndpoint,
+        findVideoByVideoSequenceUuid,
+        findVideoByVideoReferenceUuid,
+        findLastUpdateEndpoint,
+        findVideoByName,
+        findVideoByVideoSequenceName,
+        findVideoByTimestamp,
+        findVideoByTimestampRange,
+        createOneEndpoint,
+        deleteByUuidEndpoint,
+        updateEndpoint
+    )
 
-  override def allImpl: List[ServerEndpoint[Any, Future]] = List(
-    findAllEndpointImpl,
-    findOneEndpointImpl,
-    findVideoByVideoSequenceUuidImpl,
-    findVideoByVideoReferenceUuidImpl,
-    findLastUpdateEndpointImpl,
-    findVideoByNameImpl,
-    findVideoByVideoSequenceByNameImpl,
-    findVideoByTimestampImpl,
-    findVideoByTimestampRangeImpl,
-    createOneEndpointImpl,
-    deleteByUuidEndpointImpl,
-    updateEndpointImpl
-  )
+    override def allImpl: List[ServerEndpoint[Any, Future]] = List(
+        findAllEndpointImpl,
+        findOneEndpointImpl,
+        findVideoByVideoSequenceUuidImpl,
+        findVideoByVideoReferenceUuidImpl,
+        findLastUpdateEndpointImpl,
+        findVideoByNameImpl,
+        findVideoByVideoSequenceByNameImpl,
+        findVideoByTimestampImpl,
+        findVideoByTimestampRangeImpl,
+        createOneEndpointImpl,
+        deleteByUuidEndpointImpl,
+        updateEndpointImpl
+    )

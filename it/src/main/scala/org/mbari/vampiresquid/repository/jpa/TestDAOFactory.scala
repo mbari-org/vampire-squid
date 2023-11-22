@@ -22,38 +22,39 @@ import com.typesafe.config.ConfigFactory
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
-/** @author
-  *   Brian Schlining
-  * @since 2017-03-06T11:44:00
-  */
+
+/**
+ * @author
+ *   Brian Schlining
+ * @since 2017-03-06T11:44:00
+ */
 object TestDAOFactory:
 
-  val TestProperties = EntityManagerFactories.PRODUCTION_PROPS ++ Map(
-    "eclipselink.logging.level"                                   -> "FINE",
-    "jakarta.persistence.schema-generation.scripts.create-target" -> "target/test-database-create.ddl",
-    "jakarta.persistence.schema-generation.scripts.drop-target"   -> "target/test-database-drop.ddl"
-  )
+    val TestProperties = EntityManagerFactories.PRODUCTION_PROPS ++ Map(
+        "eclipselink.logging.level"                                   -> "FINE",
+        "jakarta.persistence.schema-generation.scripts.create-target" -> "target/test-database-create.ddl",
+        "jakarta.persistence.schema-generation.scripts.drop-target"   -> "target/test-database-drop.ddl"
+    )
 
-  val Instance: SpecDAOFactory = DerbyTestDAOFactory
+    val Instance: SpecDAOFactory = DerbyTestDAOFactory
 
 trait SpecDAOFactory extends JPADAOFactory:
 
-  lazy val config = ConfigFactory.load()
+    lazy val config = ConfigFactory.load()
 
-  def beforeAll(): Unit = ()
-  def afterAll(): Unit  = ()
+    def beforeAll(): Unit = ()
+    def afterAll(): Unit  = ()
 
-  def cleanup(): Unit =
+    def cleanup(): Unit =
 
-    import scala.concurrent.ExecutionContext.Implicits.global
-    val dao = newVideoSequenceDAO()
+        import scala.concurrent.ExecutionContext.Implicits.global
+        val dao = newVideoSequenceDAO()
 
-    val f = dao.runTransaction(d => {
-      val all = dao.findAll()
-      all.foreach(dao.delete)
-    })
-    f.onComplete(t => dao.close())
-    Await.result(f, Duration(4, TimeUnit.SECONDS))
+        val f = dao.runTransaction(d =>
+            val all = dao.findAll()
+            all.foreach(dao.delete)
+        )
+        f.onComplete(t => dao.close())
+        Await.result(f, Duration(4, TimeUnit.SECONDS))
 
-  def testProps(): Map[String, String]
-
+    def testProps(): Map[String, String]
