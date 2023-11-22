@@ -78,8 +78,10 @@ trait VideoReferenceDAOITSuite extends BaseDAOSuite:
     val videoSequence = TestUtils.create(1, 1, 1).head
     val videoReference = videoSequence.getVideos.get(0).getVideoReferences.get(0)
     run(() => {
-      val entity = dao.update(videoReference) // Have to merge into persistent context before deleting
-      dao.delete(entity)
+//      val entity = dao.update(videoReference) // Have to merge into persistent context before deleting
+      dao.findByUUID(videoReference.getUuid) match
+        case None => fail("Failed to find videoReference with UUID = " + videoReference.getUuid)
+        case Some(entity) => dao.delete(entity)
     })
     val opt = run(() => dao.findByUUID(videoReference.getUuid))
     assert(opt.isEmpty)

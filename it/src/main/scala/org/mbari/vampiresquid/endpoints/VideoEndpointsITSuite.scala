@@ -16,47 +16,53 @@
 
 package org.mbari.vampiresquid.endpoints
 
+import io.circe.generic.auto._
 import java.time.{Duration, Instant}
 import java.util.UUID
-import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.matchers.should.Matchers
-import sttp.client3.testing.SttpBackendStub
-import sttp.client3.{UriContext, basicRequest}
-import sttp.tapir.server.stub.TapirStubInterpreter
-import scala.concurrent.Future
-import scala.concurrent.duration.Duration
-import io.circe.generic.auto._
-import sttp.client3.circe._
+import junit.extensions.TestDecorator
+import org.mbari.vampiresquid.AppConfig
 import org.mbari.vampiresquid.Endpoints.{*, given}
 import org.mbari.vampiresquid.controllers.VideoController
-import junit.extensions.TestDecorator
-import org.mbari.vampiresquid.repository.jpa.DAOSuite
-import scala.concurrent.ExecutionContext
 import org.mbari.vampiresquid.controllers.VideoSequenceController
-import org.mbari.vampiresquid.AppConfig
-import org.mbari.vampiresquid.etc.jwt.JwtService
-import scala.util.Failure
-import sttp.tapir.model.StatusCodeRange.Success
-import scala.util.Success
-import sttp.model.StatusCode
-import org.mbari.vampiresquid.etc.circe.CirceCodecs.{given, *}
 import org.mbari.vampiresquid.domain.Video
+import org.mbari.vampiresquid.etc.circe.CirceCodecs.{given, *}
+import org.mbari.vampiresquid.etc.jwt.JwtService
 import org.mbari.vampiresquid.etc.sdk.FutureUtil.join
-import org.mbari.vampiresquid.repository.jpa.TestUtils
 import org.mbari.vampiresquid.repository.jpa.BaseDAOSuite
-import org.mbari.vampiresquid.repository.jpa.TestDAOFactory
+import org.mbari.vampiresquid.repository.jpa.DAOSuite
 import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
+import org.mbari.vampiresquid.repository.jpa.TestDAOFactory
+import org.mbari.vampiresquid.repository.jpa.TestUtils
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
+import scala.jdk.CollectionConverters.*
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
+import scala.concurrent.duration.Duration
+import scala.util.Failure
+import scala.util.Success
+import sttp.client3.circe._
+import sttp.client3.testing.SttpBackendStub
+import sttp.client3.{UriContext, basicRequest}
+import sttp.model.StatusCode
+import sttp.tapir.model.StatusCodeRange.Success
+import sttp.tapir.server.stub.TapirStubInterpreter
 
 
 trait VideoEndpointsITSuite extends BaseDAOSuite:
 
   given JPADAOFactory = daoFactory
+
   given ExecutionContext = ExecutionContext.global
+
   given jwtService: JwtService = new JwtService("mbari", "foo", "bar")
+
   lazy val videoController = new VideoController(daoFactory)
   lazy val videoSequenceController = new VideoSequenceController(daoFactory)
   lazy val videoEndpoints = new VideoEndpoints(videoController, videoSequenceController)
+
   
+
 
   test("create"):
 
@@ -85,56 +91,71 @@ trait VideoEndpointsITSuite extends BaseDAOSuite:
 
     assertEquals(response.code, StatusCode.Ok)
 
-    // response match {
-    //   case Left(e) => fail(e.getMessage)
-    //   case Right(r) => 
-    //     assertEquals(r.code, StatusCode.Ok)
-    //     r.body match 
-    //       case Left(e) => fail(e)
-    //       case Right(b) => 
-    //         b.reify[Video] match
-    //           case Left(value) => fail(value.getLocalizedMessage())
-    //           case Right(video) =>
-    //             assertEquals(video.name, "test video")
-    //             assert(video.description.isDefined)
-    //             assertEquals(video.description.get, "test description")
-    // } 
-      
-
-
-  // it should "delete a video by UUID" in {
-  //   // given
-  //   val backendStub = TapirStubInterpreter(SttpBackendStub.asynchronousFuture)
-  //     .whenServerEndpointRunLogic(deleteByUuidEndpointImpl)
-  //     .backend()
-
-  //   // when
-  //   val response = basicRequest
-  //     .delete(uri"http://test.com/videos/${UUID.randomUUID()}")
-  //     .send(backendStub)
-
-  //   // then
-  //   response.map(_.code.code shouldBe 204).unwrap
+  // response match {
+  //   case Left(e) => fail(e.getMessage)
+  //   case Right(r) =>
+  //     assertEquals(r.code, StatusCode.Ok)
+  //     r.body match
+  //       case Left(e) => fail(e)
+  //       case Right(b) =>
+  //         b.reify[Video] match
+  //           case Left(value) => fail(value.getLocalizedMessage())
+  //           case Right(video) =>
+  //             assertEquals(video.name, "test video")
+  //             assert(video.description.isDefined)
+  //             assertEquals(video.description.get, "test description")
   // }
 
-  // it should "update a video by UUID" in {
-  //   // given
-  //   val backendStub = TapirStubInterpreter(SttpBackendStub.asynchronousFuture)
-  //     .whenServerEndpointRunLogic(updateEndpointImpl)
-  //     .backend()
 
-  //   // when
-  //   val response = basicRequest
-  //     .put(uri"http://test.com/videos/${UUID.randomUUID()}")
-  //     .body(Map(
-  //       "name" -> "updated video",
-  //       "description" -> "updated description"
-  //     ))
-  //     .response(asJson[Video])
-  //     .send(backendStub)
 
-  //   // then
-  //   response.map(_.body.value.name shouldBe "updated video").unwrap
-  //   response.map(_.body.value.description shouldBe "updated description").unwrap
-  // }
+  test("delete a video by UUID"):
+    // given
+    val videoSequence = TestUtils.create(1, 1, 1).head
+    val jwt = jwtService.authorize("foo").orNull
+    assert(jwt != null)
+
+    val backendStub = TapirStubInterpreter(SttpBackendStub.asynchronousFuture)
+      .whenServerEndpointRunLogic(videoEndpoints.deleteByUuidEndpointImpl)
+      .backend()
+
+    // when
+    val video = videoSequence.getVideos.asScala.head
+    val response = basicRequest
+      .delete(uri"http://test.com/v1/videos/${video.getUuid}")
+      .header("Authorization", s"Bearer $jwt")
+      .send(backendStub)
+      .join
+
+    // then
+    assertEquals(response.code, StatusCode.NoContent)
+
+
+  test("update a video by UUID") {
+    // given
+    val videoSequence = TestUtils.create(1, 1, 1).head
+    val jwt = jwtService.authorize("foo").orNull
+    assert(jwt != null)
+
+    val backendStub = TapirStubInterpreter(SttpBackendStub.asynchronousFuture)
+      .whenServerEndpointRunLogic(videoEndpoints.updateEndpointImpl)
+      .backend()
+
+    // when
+    val video = videoSequence.getVideos.asScala.head
+    val response = basicRequest
+      .put(uri"http://test.com/v1/videos/${video.getUuid}")
+      .header("Authorization", s"Bearer $jwt")
+      .body(Map(
+        "name" -> "updated video",
+        "description" -> "updated description"
+      ))
+      .response(asJson[Video])
+      .send(backendStub)
+      .join
+
+    // then
+    assertEquals(response.code, StatusCode.Ok)
+    //     response.map(_.body.value.name shouldBe "updated video").unwrap
+    //     response.map(_.body.value.description shouldBe "updated description").unwrap
+  }
 
