@@ -20,7 +20,6 @@ import org.mbari.vampiresquid.controllers.VideoReferenceController
 import org.mbari.vampiresquid.etc.jwt.JwtService
 import scala.concurrent.ExecutionContext
 import org.mbari.vampiresquid.domain.VideoReference
-import sttp.model.headers.WWWAuthenticateChallenge
 import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
@@ -37,7 +36,6 @@ import org.mbari.vampiresquid.etc.tapir.TapirCodecs.given
 import sttp.model.StatusCode
 import scala.concurrent.Future
 import org.mbari.vampiresquid.domain.BadRequest
-import sttp.tapir.EndpointIO.annotations.description
 
 class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: ExecutionContext, jwtService: JwtService)
     extends Endpoints:
@@ -45,7 +43,7 @@ class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: Ex
     private val hex = HexFormat.of()
 
     // GET "v1/videoreferences"
-    val findAllEndpoint: Endpoint[Unit, Unit, ErrorMsg, List[VideoReference], Any] =
+    val findAllVideoReferences: Endpoint[Unit, Unit, ErrorMsg, List[VideoReference], Any] =
         openEndpoint
             .get
             .in("v1" / "videoreferences")
@@ -54,13 +52,13 @@ class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: Ex
             .description("Find all video references")
             .tag("video references")
 
-    val findAllEndpointImpl: ServerEndpoint[Any, Future] =
-        findAllEndpoint.serverLogic { _ =>
+    val findAllVideoReferencesImpl: ServerEndpoint[Any, Future] =
+        findAllVideoReferences.serverLogic { _ =>
             handleErrors(controller.findAll().map(_.toList))
         }
 
     // GET "v1/videoreferences/:uuid"
-    val findOneEndpoint: Endpoint[Unit, UUID, ErrorMsg, VideoReference, Any] =
+    val findOneVideoReference: Endpoint[Unit, UUID, ErrorMsg, VideoReference, Any] =
         openEndpoint
             .get
             .in("v1" / "videoreferences" / path[UUID]("uuid"))
@@ -69,13 +67,13 @@ class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: Ex
             .description("Find a video reference by UUID")
             .tag("video references")
 
-    val findOneEndpointImpl: ServerEndpoint[Any, Future] =
-        findOneEndpoint.serverLogic { uuid =>
+    val findOneVideoReferenceImpl: ServerEndpoint[Any, Future] =
+        findOneVideoReference.serverLogic { uuid =>
             handleOption(controller.findByUUID(uuid))
         }
 
     // GET "v1/videoreferences/lastupdate/:uuid"
-    val findLastUpdateEndpoint: Endpoint[Unit, UUID, ErrorMsg, LastUpdatedTime, Any] =
+    val findLastUpdateForVideoReference: Endpoint[Unit, UUID, ErrorMsg, LastUpdatedTime, Any] =
         openEndpoint
             .get
             .in("v1" / "videoreferences" / "lastupdate" / path[UUID]("uuid"))
@@ -84,15 +82,15 @@ class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: Ex
             .description("Find the last update time for a video reference by UUID")
             .tag("video references")
 
-    val findLastUpdateEndpointImpl: ServerEndpoint[Any, Future] =
-        findLastUpdateEndpoint.serverLogic { uuid =>
+    val findLastUpdateForVideoReferenceImpl: ServerEndpoint[Any, Future] =
+        findLastUpdateForVideoReference.serverLogic { uuid =>
             handleOption(
                 controller.findByUUID(uuid).map(opt => opt.flatMap(v => v.last_updated_time.map(LastUpdatedTime(_))))
             )
         }
 
     // GET "v1/videoreferences/uri/:uri"
-    val findByUriEndpoint: Endpoint[Unit, URI, ErrorMsg, VideoReference, Any] =
+    val findVideoReferenceByUri: Endpoint[Unit, URI, ErrorMsg, VideoReference, Any] =
         openEndpoint
             .get
             .in("v1" / "videoreferences" / "uri" / path[URI]("uri"))
@@ -101,13 +99,13 @@ class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: Ex
             .description("Find a video reference by URI")
             .tag("video references")
 
-    val findByUriEndpointImpl: ServerEndpoint[Any, Future] =
-        findByUriEndpoint.serverLogic { uri =>
+    val findVideoReferenceByUriImpl: ServerEndpoint[Any, Future] =
+        findVideoReferenceByUri.serverLogic { uri =>
             handleOption(controller.findByURI(uri))
         }
 
     // GET "v1/videoreferences/uris"
-    val findAllUrisEndpoint: Endpoint[Unit, Unit, ErrorMsg, List[URI], Any] =
+    val findAllUris: Endpoint[Unit, Unit, ErrorMsg, List[URI], Any] =
         openEndpoint
             .get
             .in("v1" / "videoreferences" / "uris")
@@ -116,13 +114,13 @@ class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: Ex
             .description("Find video references by URIs")
             .tag("video references")
 
-    val findAllUrisEndpointImpl: ServerEndpoint[Any, Future] =
-        findAllUrisEndpoint.serverLogic { _ =>
+    val findAllUrisImpl: ServerEndpoint[Any, Future] =
+        findAllUris.serverLogic { _ =>
             handleErrors(controller.findAllURIs().map(_.toList))
         }
 
     // GET v1/videoreferences/sha512/:sha512
-    val findBySha512Endpoint: Endpoint[Unit, String, ErrorMsg, VideoReference, Any] =
+    val findVideoReferenceBySha512: Endpoint[Unit, String, ErrorMsg, VideoReference, Any] =
         openEndpoint
             .get
             .in("v1" / "videoreferences" / "sha512" / path[String]("sha512"))
@@ -130,13 +128,13 @@ class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: Ex
             .name("findBySha512")
             .description("Find a video reference by SHA512")
             .tag("video references")
-    val findBySha512EndpointImpl: ServerEndpoint[Any, Future]                       =
-        findBySha512Endpoint.serverLogic { sha512 =>
+    val findVideoReferenceBySha512Impl: ServerEndpoint[Any, Future]                       =
+        findVideoReferenceBySha512.serverLogic { sha512 =>
             handleOption(controller.findBySha512(hex.parseHex(sha512)))
         }
 
     // DELETE "v1/videoreferences/:uuid"
-    val deleteEndpoint: Endpoint[Option[String], UUID, ErrorMsg, Unit, Any] =
+    val deleteOneVideoReference: Endpoint[Option[String], UUID, ErrorMsg, Unit, Any] =
         secureEndpoint
             .delete
             .in("v1" / "videoreferences" / path[UUID]("uuid"))
@@ -145,15 +143,15 @@ class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: Ex
             .description("Delete a video reference by UUID")
             .tag("video references")
 
-    val deleteEndpointImpl: ServerEndpoint[Any, Future] =
-        deleteEndpoint
+    val deleteOneVideoReferenceImpl: ServerEndpoint[Any, Future] =
+        deleteOneVideoReference
             .serverSecurityLogic(jwtOpt => verify(jwtOpt))
             .serverLogic { _ => uuid =>
                 handleErrors(controller.delete(uuid).map(b => if b then () else throw new Exception("Not found")))
             }
 
     // POST "v1/videoreferences" (form body)
-    val createEndpoint: Endpoint[Option[String], Map[String, String], ErrorMsg, VideoReference, Any] =
+    val createOneVideoReference: Endpoint[Option[String], Map[String, String], ErrorMsg, VideoReference, Any] =
         secureEndpoint
             .post
             .in("v1" / "videoreferences")
@@ -163,8 +161,8 @@ class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: Ex
             .description("Create a video reference")
             .tag("video references")
 
-    val createEndpointImpl: ServerEndpoint[Any, Future] =
-        createEndpoint
+    val createOneVideoReferenceImpl: ServerEndpoint[Any, Future] =
+        createOneVideoReference
             .serverSecurityLogic(jwtOpt => verify(jwtOpt))
             .serverLogic { _ => form =>
                 val videoUuid = form.get("description").map(UUID.fromString)
@@ -199,7 +197,7 @@ class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: Ex
             }
 
     // PUT "v1/videoreferences/:uuid" (form body)
-    val updateEndpoint: Endpoint[Option[String], (UUID, Map[String, String]), ErrorMsg, VideoReference, Any] =
+    val updateOneVideoReference: Endpoint[Option[String], (UUID, Map[String, String]), ErrorMsg, VideoReference, Any] =
         secureEndpoint
             .put
             .in("v1" / "videoreferences" / path[UUID]("uuid"))
@@ -209,8 +207,8 @@ class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: Ex
             .description("Update a video reference by UUID")
             .tag("video references")
 
-    val updateEndpointImpl: ServerEndpoint[Any, Future] =
-        updateEndpoint
+    val updateOneVideoReferenceImpl: ServerEndpoint[Any, Future] =
+        updateOneVideoReference
             .serverSecurityLogic(jwtOpt => verify(jwtOpt))
             .serverLogic { _ => (uuid, form) =>
                 val videoUuid   = form.get("description").map(UUID.fromString)
@@ -243,25 +241,25 @@ class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: Ex
             }
 
     override val all: List[Endpoint[_, _, _, _, _]] = List(
-        findAllEndpoint,
-        findOneEndpoint,
-        findLastUpdateEndpoint,
-        findByUriEndpoint,
-        findAllUrisEndpoint,
-        findBySha512Endpoint,
-        deleteEndpoint,
-        createEndpoint,
-        updateEndpoint
+        findAllVideoReferences,
+        findOneVideoReference,
+        findLastUpdateForVideoReference,
+        findVideoReferenceByUri,
+        findAllUris,
+        findVideoReferenceBySha512,
+        deleteOneVideoReference,
+        createOneVideoReference,
+        updateOneVideoReference
     )
 
     override def allImpl: List[ServerEndpoint[Any, Future]] = List(
-        findAllEndpointImpl,
-        findOneEndpointImpl,
-        findLastUpdateEndpointImpl,
-        findByUriEndpointImpl,
-        findAllUrisEndpointImpl,
-        findBySha512EndpointImpl,
-        deleteEndpointImpl,
-        createEndpointImpl,
-        updateEndpointImpl
+        findAllVideoReferencesImpl,
+        findOneVideoReferenceImpl,
+        findLastUpdateForVideoReferenceImpl,
+        findVideoReferenceByUriImpl,
+        findAllUrisImpl,
+        findVideoReferenceBySha512Impl,
+        deleteOneVideoReferenceImpl,
+        createOneVideoReferenceImpl,
+        updateOneVideoReferenceImpl
     )

@@ -25,8 +25,6 @@ import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.concurrent.duration.Duration
 import ExecutionContext.Implicits.global
 import scala.io.StdIn
-import org.mbari.vampiresquid.controllers.MediaController
-import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
 
 @main
 def run(): Unit =

@@ -16,16 +16,15 @@
 
 package org.mbari.vampiresquid.controllers
 
-import org.mbari.vampiresquid.repository.jpa.DAOSuite
+import java.net.URI
+import org.junit.Assert
+import org.mbari.vampiresquid.domain.Media
+import org.mbari.vampiresquid.domain.VideoReference
+import org.mbari.vampiresquid.repository.jpa.BaseDAOSuite
+import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
 import org.mbari.vampiresquid.repository.jpa.TestUtils
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.jdk.CollectionConverters.*
-import org.mbari.vampiresquid.domain.Media
-import org.mbari.vampiresquid.domain.VideoReference
-import org.junit.Assert
-import java.net.URI
-import org.mbari.vampiresquid.repository.jpa.BaseDAOSuite
-import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
 
 trait VideoReferenceControllerITSuite extends BaseDAOSuite:
 

@@ -17,7 +17,6 @@
 package org.mbari.vampiresquid.controllers
 
 import io.circe.{Decoder, Encoder}
-import org.mbari.vampiresquid.Constants
 import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
 import org.mbari.vampiresquid.etc.circe.CirceCodecs.{*, given}
 import io.circe.parser.decode

@@ -16,29 +16,26 @@
 
 package org.mbari.vampiresquid.endpoints
 
-import java.net.URI
 import java.time.Duration
 import java.time.Instant
 import java.util.UUID
-import org.mbari.vampiresquid.domain.{BadRequest, ErrorMsg, Media, NotFound, ServerError, Unauthorized}
 import org.mbari.vampiresquid.controllers.VideoController
 import org.mbari.vampiresquid.controllers.VideoSequenceController
 import org.mbari.vampiresquid.domain.BadRequest
 import org.mbari.vampiresquid.domain.ErrorMsg
 import org.mbari.vampiresquid.domain.LastUpdatedTime
 import org.mbari.vampiresquid.domain.Video
-import org.mbari.vampiresquid.domain.VideoReference
 import org.mbari.vampiresquid.etc.circe.CirceCodecs.given
 import org.mbari.vampiresquid.etc.jwt.JwtService
+import org.mbari.vampiresquid.etc.tapir.TapirCodecs
+
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
-import sttp.model.headers.WWWAuthenticateChallenge
 import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 import sttp.tapir.server.ServerEndpoint
 import sttp.model.StatusCode
-import sttp.tapir.EndpointOutput.FixedStatusCode
 
 class VideoEndpoints(controller: VideoController, videoSequenceController: VideoSequenceController)(using
     ec: ExecutionContext,
@@ -46,7 +43,7 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
 ) extends Endpoints:
 
     // GET v1/videos
-    val findAllEndpoint: Endpoint[Unit, Unit, ErrorMsg, List[Video], Any] =
+    val findAllVideos: Endpoint[Unit, Unit, ErrorMsg, List[Video], Any] =
         openEndpoint
             .get
             .in("v1" / "videos")
@@ -54,13 +51,14 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
             .name("findAll")
             .description("Find all videos")
             .tag("videos")
+    // TODO add limit and offset params
 
-    val findAllEndpointImpl: ServerEndpoint[Any, Future] =
-        findAllEndpoint
+    val findAllVideosImpl: ServerEndpoint[Any, Future] =
+        findAllVideos
             .serverLogic(_ => handleErrors(controller.findAll().map(_.toList)))
 
     // GET v1/videos/:uuid
-    val findOneEndpoint: Endpoint[Unit, UUID, ErrorMsg, Video, Any] =
+    val findOneVideo: Endpoint[Unit, UUID, ErrorMsg, Video, Any] =
         openEndpoint
             .get
             .in("v1" / "videos" / path[UUID]("uuid"))
@@ -69,8 +67,8 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
             .description("Find a video by UUID")
             .tag("videos")
 
-    val findOneEndpointImpl: ServerEndpoint[Any, Future] =
-        findOneEndpoint
+    val findOneVideoImpl: ServerEndpoint[Any, Future] =
+        findOneVideo
             .serverLogic(req => handleOption(controller.findByUUID(req)))
 
     // GET v1/videos/videosequence/:uuid
@@ -102,7 +100,7 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
             .serverLogic(req => handleErrors(controller.findByVideoReferenceUUID(req).map(_.toList)))
 
     // get v1/videos/lastupdate/:uuid
-    val findLastUpdateEndpoint: Endpoint[Unit, UUID, ErrorMsg, LastUpdatedTime, Any] =
+    val findLastUpdateForVideo: Endpoint[Unit, UUID, ErrorMsg, LastUpdatedTime, Any] =
         openEndpoint
             .get
             .in("v1" / "videos" / "lastupdate" / path[UUID]("uuid"))
@@ -111,8 +109,8 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
             .description("Find the last update time for a video by UUID")
             .tag("videos")
 
-    val findLastUpdateEndpointImpl: ServerEndpoint[Any, Future] =
-        findLastUpdateEndpoint
+    val findLastUpdateForVideoImpl: ServerEndpoint[Any, Future] =
+        findLastUpdateForVideo
             .serverLogic(req =>
                 handleOption(
                     controller
@@ -166,7 +164,7 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
     val findVideoByTimestamp: Endpoint[Unit, Instant, ErrorMsg, List[Video], Any] =
         openEndpoint
             .get
-            .in("v1" / "videos" / "timestamp" / path[Instant]("timestamp"))
+            .in("v1" / "videos" / "timestamp" / path[Instant]("timestamp")(TapirCodecs.instantCodec))
             .out(jsonBody[List[Video]])
             .name("findVideoByTimestamp")
             .description("Find videos by its timestamp")
@@ -180,20 +178,24 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
     val findVideoByTimestampRange: Endpoint[Unit, (Instant, Instant), ErrorMsg, List[Video], Any] =
         openEndpoint
             .get
-            .in("v1" / "videos" / "timestamp" / path[Instant]("start") / path[Instant]("end"))
+            .in(
+                "v1" / "videos" / "timestamp" / path[Instant]("start")(TapirCodecs.instantCodec) / path[Instant]("end")(
+                    TapirCodecs.instantCodec
+                )
+            )
             .out(jsonBody[List[Video]])
             .name("findVideoByTimestampRange")
             .description("Find videos by its timestamp range")
             .tag("videos")
 
-    val findVideoByTimestampRangeImpl: ServerEndpoint[Any, Future]                             =
+    val findVideoByTimestampRangeImpl: ServerEndpoint[Any, Future]                          =
         findVideoByTimestampRange
             .serverLogic((startTime, endTime) =>
                 handleErrors(controller.findBetweenTimestamps(startTime, endTime).map(_.toList))
             )
 
         // POST v1/videos (form body)
-    val createOneEndpoint: Endpoint[Option[String], Map[String, String], ErrorMsg, Video, Any] =
+    val createOneVideo: Endpoint[Option[String], Map[String, String], ErrorMsg, Video, Any] =
         secureEndpoint
             .post
             .in("v1" / "videos")
@@ -203,8 +205,8 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
             .description("Create a video")
             .tag("videos")
 
-    val createOneEndpointImpl: ServerEndpoint[Any, Future] =
-        createOneEndpoint
+    val createOneVideoImpl: ServerEndpoint[Any, Future] =
+        createOneVideo
             .serverSecurityLogic(jwtOpt => verify(jwtOpt))
             .serverLogic(_ =>
                 req =>
@@ -232,7 +234,7 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
             )
 
     // DELETE v1/videos/:uuid
-    val deleteByUuidEndpoint: Endpoint[Option[String], UUID, ErrorMsg, Unit, Any] =
+    val deleteVideoByUuid: Endpoint[Option[String], UUID, ErrorMsg, Unit, Any] =
         secureEndpoint
             .delete
             .in("v1" / "videos" / path[UUID]("uuid"))
@@ -241,13 +243,13 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
             .description("Delete a video by UUID")
             .tag("video CRUD")
 
-    val deleteByUuidEndpointImpl: ServerEndpoint[Any, Future]                                       =
-        deleteByUuidEndpoint
+    val deleteVideoByUuidImpl: ServerEndpoint[Any, Future]                                       =
+        deleteVideoByUuid
             .serverSecurityLogic(jwtOpt => verify(jwtOpt))
             .serverLogic(_ => req => handleErrors(controller.delete(req).map(b => if b then Right(()) else Left(()))))
 
         // PUT v1/videos/:uuid (form body)
-    val updateEndpoint: Endpoint[Option[String], (UUID, Map[String, String]), ErrorMsg, Video, Any] =
+    val updateVideo: Endpoint[Option[String], (UUID, Map[String, String]), ErrorMsg, Video, Any] =
         secureEndpoint
             .put
             .in("v1" / "videos" / path[UUID]("uuid"))
@@ -257,8 +259,8 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
             .description("Update a video by UUID")
             .tag("videos")
 
-    val updateEndpointImpl: ServerEndpoint[Any, Future] =
-        updateEndpoint
+    val updateVideoImpl: ServerEndpoint[Any, Future] =
+        updateVideo
             .serverSecurityLogic(jwtOpt => verify(jwtOpt))
             .serverLogic(_ =>
                 (videoUuid, formData) =>
@@ -277,31 +279,31 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
             )
 
     override def all: List[Endpoint[?, ?, ?, ?, ?]] = List(
-        findAllEndpoint,
-        findOneEndpoint,
+        findAllVideos,
+        findOneVideo,
         findVideoByVideoSequenceUuid,
         findVideoByVideoReferenceUuid,
-        findLastUpdateEndpoint,
+        findLastUpdateForVideo,
         findVideoByName,
         findVideoByVideoSequenceName,
         findVideoByTimestamp,
         findVideoByTimestampRange,
-        createOneEndpoint,
-        deleteByUuidEndpoint,
-        updateEndpoint
+        createOneVideo,
+        deleteVideoByUuid,
+        updateVideo
     )
 
     override def allImpl: List[ServerEndpoint[Any, Future]] = List(
-        findAllEndpointImpl,
-        findOneEndpointImpl,
+        findAllVideosImpl,
+        findOneVideoImpl,
         findVideoByVideoSequenceUuidImpl,
         findVideoByVideoReferenceUuidImpl,
-        findLastUpdateEndpointImpl,
+        findLastUpdateForVideoImpl,
         findVideoByNameImpl,
         findVideoByVideoSequenceByNameImpl,
         findVideoByTimestampImpl,
         findVideoByTimestampRangeImpl,
-        createOneEndpointImpl,
-        deleteByUuidEndpointImpl,
-        updateEndpointImpl
+        createOneVideoImpl,
+        deleteVideoByUuidImpl,
+        updateVideoImpl
     )

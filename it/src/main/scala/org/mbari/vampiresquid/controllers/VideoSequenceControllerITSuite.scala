@@ -15,12 +15,11 @@
  */
 package org.mbari.vampiresquid.controllers
 
-import org.mbari.vampiresquid.repository.jpa.DAOSuite
-import org.mbari.vampiresquid.repository.jpa.TestUtils
-import scala.concurrent.ExecutionContext.Implicits.global
 import org.mbari.vampiresquid.domain.VideoSequence
 import org.mbari.vampiresquid.repository.jpa.BaseDAOSuite
 import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
+import org.mbari.vampiresquid.repository.jpa.TestUtils
+import scala.concurrent.ExecutionContext.Implicits.global
 
 trait VideoSequenceControllerITSuite extends BaseDAOSuite:
 
@@ -40,7 +39,7 @@ trait VideoSequenceControllerITSuite extends BaseDAOSuite:
     test("findAll"):
         val vss = TestUtils.create(2, 4, 1)
         val xs  = exec(controller.findAll())
-        assertEquals(xs.size, vss.size)
+        assert(xs.size >= vss.size) // some may be created in other tests
 
     test("findAllNames"):
         val vss   = TestUtils.create(2, 4, 1)

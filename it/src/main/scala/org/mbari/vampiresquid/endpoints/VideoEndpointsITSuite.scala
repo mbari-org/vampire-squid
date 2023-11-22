@@ -17,38 +17,28 @@
 package org.mbari.vampiresquid.endpoints
 
 import io.circe.generic.auto.*
-import java.time.{Duration, Instant}
-import java.util.UUID
-import junit.extensions.TestDecorator
-import org.mbari.vampiresquid.AppConfig
-import org.mbari.vampiresquid.Endpoints.{*, given}
+
+import java.time.Instant
+
 import org.mbari.vampiresquid.controllers.VideoController
 import org.mbari.vampiresquid.controllers.VideoSequenceController
-import org.mbari.vampiresquid.domain.Video
-import org.mbari.vampiresquid.etc.circe.CirceCodecs.{*, given}
+import org.mbari.vampiresquid.domain.{LastUpdatedTime, Video}
+import org.mbari.vampiresquid.etc.jdk.Instants
 import org.mbari.vampiresquid.etc.jwt.JwtService
 import org.mbari.vampiresquid.etc.sdk.FutureUtil.join
-import org.mbari.vampiresquid.repository.jpa.BaseDAOSuite
-import org.mbari.vampiresquid.repository.jpa.DAOSuite
-import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
-import org.mbari.vampiresquid.repository.jpa.TestDAOFactory
-import org.mbari.vampiresquid.repository.jpa.TestUtils
-import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.matchers.should.Matchers
+import org.mbari.vampiresquid.repository.jpa.{AssertUtil, JPADAOFactory, TestUtils}
+import org.mbari.vampiresquid.etc.circe.CirceCodecs.{*, given}
+
 import scala.jdk.CollectionConverters.*
 import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
-import scala.concurrent.duration.Duration
-import scala.util.Failure
-import scala.util.Success
+
 import sttp.client3.circe.*
 import sttp.client3.testing.SttpBackendStub
 import sttp.client3.{basicRequest, UriContext}
 import sttp.model.StatusCode
-import sttp.tapir.model.StatusCodeRange.Success
 import sttp.tapir.server.stub.TapirStubInterpreter
 
-trait VideoEndpointsITSuite extends BaseDAOSuite:
+trait VideoEndpointsITSuite extends EndpointsSuite:
 
     given JPADAOFactory = daoFactory
 
@@ -60,7 +50,136 @@ trait VideoEndpointsITSuite extends BaseDAOSuite:
     lazy val videoSequenceController = new VideoSequenceController(daoFactory)
     lazy val videoEndpoints          = new VideoEndpoints(videoController, videoSequenceController)
 
-    test("create"):
+    test("findAllVideos"):
+        val videoSequence = TestUtils.create(1, 1, 1).head
+        val video         = videoSequence.getVideos.get(0)
+        runGet(
+            videoEndpoints.findAllVideosImpl,
+            "http://test.com/v1/videos",
+            response =>
+                assertEquals(response.code, StatusCode.Ok)
+                val videos = checkResponse[List[Video]](response.body)
+                assert(videos.nonEmpty)
+        )
+
+    test("findOne"):
+        val videoSequence = TestUtils.create(1, 1, 1).head
+        val video         = Video.from(videoSequence.getVideos.asScala.head)
+
+        runGet(
+            videoEndpoints.findOneVideoImpl,
+            s"http://test.com/v1/videos/${video.uuid}",
+            response =>
+                assertEquals(response.code, StatusCode.Ok)
+                val video1 = checkResponse[Video](response.body)
+                AssertUtil.assertSameVideo(video1, video)
+        )
+
+    test("findVideoByVideoSequenceUuid"):
+        val videoSequence = TestUtils.create(1, 1, 1).head
+        val video         = Video.from(videoSequence.getVideos.asScala.head)
+        runGet(
+            videoEndpoints.findVideoByVideoSequenceUuidImpl,
+            s"http://test.com/v1/videos/videosequence/${videoSequence.getUuid}",
+            response =>
+                assertEquals(response.code, StatusCode.Ok)
+                val video1 = checkResponse[List[Video]](response.body).head
+                AssertUtil.assertSameVideo(video1, video)
+        )
+
+    test("findVideoByVideoReferenceUuid"):
+        val videoSequence  = TestUtils.create(1, 1, 1).head
+        val video          = Video.from(videoSequence.getVideos.get(0))
+        val videoReference = video.videoReferences.head
+        runGet(
+            videoEndpoints.findVideoByVideoReferenceUuidImpl,
+            s"http://test.com/v1/videos/videoreference/${videoReference.uuid}",
+            response =>
+                assertEquals(response.code, StatusCode.Ok)
+                val video1 = checkResponse[List[Video]](response.body).head
+                AssertUtil.assertSameVideo(video1, video)
+        )
+
+    test("findLastUpdateForVideo"):
+        val videoSequence = TestUtils.create(1, 1, 1).head
+        val video         = Video.from(videoSequence.getVideos.get(0))
+        runGet(
+            videoEndpoints.findLastUpdateForVideoImpl,
+            s"http://test.com/v1/videos/lastupdate/${video.uuid}",
+            response =>
+                assertEquals(response.code, StatusCode.Ok)
+                val lut = checkResponse[LastUpdatedTime](response.body)
+                assertEquals(video.last_updated_time.getOrElse(Instant.EPOCH), lut.timestamp)
+        )
+
+    test("findVideoByName"):
+        val videoSequence = TestUtils.create(1, 1, 1).head
+        val video         = Video.from(videoSequence.getVideos.get(0))
+        runGet(
+            videoEndpoints.findVideoByNameImpl,
+            s"http://test.com/v1/videos/name/${video.name}",
+            response =>
+                assertEquals(response.code, StatusCode.Ok)
+                val video1 = checkResponse[List[Video]](response.body).head
+                AssertUtil.assertSameVideo(video1, video)
+        )
+
+    test("findVideoByVideoSequenceName"):
+        val videoSequence = TestUtils.create(1, 1, 1).head
+        val video         = Video.from(videoSequence.getVideos.get(0))
+        runGet(
+            videoEndpoints.findVideoByVideoSequenceByNameImpl,
+            s"http://test.com/v1/videos/videosequence/name/${videoSequence.getName}",
+            response =>
+                assertEquals(response.code, StatusCode.Ok)
+                val video1 = checkResponse[List[Video]](response.body).head
+                AssertUtil.assertSameVideo(video1, video)
+        )
+
+    test("findVideoByTimestamp"):
+        val videoSequence = TestUtils.create(1, 1, 1).head
+        val video         = Video.from(videoSequence.getVideos.get(0))
+        val ts            = video.start_timestamp
+        val xs            = List(
+            Instants.TimeFormatter.format(ts),
+            Instants.CompactTimeFormatter.format(ts),
+            Instants.CompactTimeFormatterMs.format(ts),
+            Instants.CompactTimeFormatterNs.format(ts)
+        )
+        for x <- xs
+        do
+            runGet(
+                videoEndpoints.findVideoByTimestampImpl,
+                s"http://test.com/v1/videos/timestamp/${x}",
+                response =>
+                    assertEquals(response.code, StatusCode.Ok)
+                    val video1 = checkResponse[List[Video]](response.body).head
+                    AssertUtil.assertSameVideo(video1, video)
+            )
+
+    test("findVideoByTimestampRange"):
+        val videoSequence = TestUtils.create(1, 4, 1).head
+        val minVideo      = videoSequence.getVideos.asScala.minBy(_.getStart.toEpochMilli)
+        val maxVideo      = videoSequence.getVideos.asScala.maxBy(_.getStart.toEpochMilli)
+        val ts            = List(minVideo.getStart, maxVideo.getStart)
+        val xs            = List(
+            ts.map(Instants.TimeFormatter.format),
+            ts.map(Instants.CompactTimeFormatter.format),
+            ts.map(Instants.CompactTimeFormatterMs.format),
+            ts.map(Instants.CompactTimeFormatterNs.format)
+        )
+        for x <- xs
+        do
+            runGet(
+                videoEndpoints.findVideoByTimestampRangeImpl,
+                s"http://test.com/v1/videos/timestamp/${x(0)}/${x(1)}",
+                response =>
+                    assertEquals(response.code, StatusCode.Ok)
+                    val videos = checkResponse[List[Video]](response.body)
+                    assertEquals(videos.size, 4)
+            )
+
+    test("createOne"):
 
         val videoSequence = TestUtils.create(1, 1, 1).head
         val jwt           = jwtService.authorize("foo").orNull
@@ -68,7 +187,7 @@ trait VideoEndpointsITSuite extends BaseDAOSuite:
 
         // given
         val backendStub = TapirStubInterpreter(SttpBackendStub.asynchronousFuture)
-            .whenServerEndpointRunLogic(videoEndpoints.createOneEndpointImpl)
+            .whenServerEndpointRunLogic(videoEndpoints.createOneVideoImpl)
             .backend()
 
         // when
@@ -104,14 +223,14 @@ trait VideoEndpointsITSuite extends BaseDAOSuite:
     //             assertEquals(video.description.get, "test description")
     // }
 
-    test("delete a video by UUID"):
+    test("deleteVideoByUuid"):
         // given
         val videoSequence = TestUtils.create(1, 1, 1).head
         val jwt           = jwtService.authorize("foo").orNull
         assert(jwt != null)
 
         val backendStub = TapirStubInterpreter(SttpBackendStub.asynchronousFuture)
-            .whenServerEndpointRunLogic(videoEndpoints.deleteByUuidEndpointImpl)
+            .whenServerEndpointRunLogic(videoEndpoints.deleteVideoByUuidImpl)
             .backend()
 
         // when
@@ -125,14 +244,14 @@ trait VideoEndpointsITSuite extends BaseDAOSuite:
         // then
         assertEquals(response.code, StatusCode.NoContent)
 
-    test("update a video by UUID") {
+    test("updateVideo") {
         // given
         val videoSequence = TestUtils.create(1, 1, 1).head
         val jwt           = jwtService.authorize("foo").orNull
         assert(jwt != null)
 
         val backendStub = TapirStubInterpreter(SttpBackendStub.asynchronousFuture)
-            .whenServerEndpointRunLogic(videoEndpoints.updateEndpointImpl)
+            .whenServerEndpointRunLogic(videoEndpoints.updateVideoImpl)
             .backend()
 
         // when

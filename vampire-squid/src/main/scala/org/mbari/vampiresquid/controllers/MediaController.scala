@@ -19,13 +19,12 @@ package org.mbari.vampiresquid.controllers
 import java.net.URI
 import java.time.{Duration, Instant}
 import java.util.{Arrays as JArrays, UUID}
-import java.{util as ju}
-import org.mbari.vampiresquid.Constants
-import org.mbari.vampiresquid.domain.{Media, MutableMedia}
+import java.util as ju
+import org.mbari.vampiresquid.domain.Media
 import org.mbari.vampiresquid.etc.circe.CirceCodecs.{*, given}
 import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
 import org.mbari.vampiresquid.repository.jpa.entity.{VideoEntity, VideoReferenceEntity, VideoSequenceEntity}
-import org.mbari.vampiresquid.repository.{DAO, VideoReferenceDAO}
+import org.mbari.vampiresquid.repository.VideoReferenceDAO
 import org.slf4j.LoggerFactory
 import scala.concurrent.{ExecutionContext, Future}
 import scala.jdk.CollectionConverters.*
@@ -453,12 +452,11 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController:
                                     videoReference.getVideo.removeVideoReference(videoReference)
                                     video.addVideoReference(videoReference)
                                     Some(Media.from(videoReference))
-                                else {
+                                else
                                     log.warn(
                                         s"moveVideoReference: videoReference.uuid = $videoReferenceUuid has different start or duration than an existing video.name = $videoName"
                                     )
                                     None
-                                }
         )
         f.onComplete(_ => vrDao.close())
         f

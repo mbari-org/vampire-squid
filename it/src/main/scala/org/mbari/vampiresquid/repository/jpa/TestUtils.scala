@@ -19,17 +19,12 @@ package org.mbari.vampiresquid.repository.jpa
 import org.mbari.vampiresquid.repository.jpa.entity.{VideoEntity, VideoReferenceEntity, VideoSequenceEntity}
 
 import java.net.URI
-import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.time.{Duration, Instant}
 import java.util as ju
 import java.util.concurrent.TimeUnit
-import scala.collection.BitSet
 import scala.concurrent.{duration, Await, ExecutionContext}
 import scala.util.Random
-import org.mbari.vampiresquid.domain.VideoSequence
-import org.mbari.vampiresquid.repository.DAOFactory
-import org.mbari.vampiresquid.Endpoints.daoFactory
 
 /**
  * @author

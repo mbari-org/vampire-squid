@@ -15,15 +15,14 @@
  */
 package org.mbari.vampiresquid.controllers
 
-import org.mbari.vampiresquid.repository.jpa.DAOSuite
+import java.time.Duration
+import java.time.Instant
+import org.mbari.vampiresquid.domain.Video
+import org.mbari.vampiresquid.repository.jpa.BaseDAOSuite
+import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
 import org.mbari.vampiresquid.repository.jpa.TestUtils
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.jdk.CollectionConverters.*
-import org.mbari.vampiresquid.domain.Video
-import java.time.Instant
-import java.time.Duration
-import org.mbari.vampiresquid.repository.jpa.BaseDAOSuite
-import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
 
 trait VideoControllerITSuite extends BaseDAOSuite:
 

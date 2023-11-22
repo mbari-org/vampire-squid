@@ -19,40 +19,31 @@ package org.mbari.vampiresquid.endpoints
 import io.circe.*
 import io.circe.parser.*
 import java.net.URI
-import java.nio.charset.StandardCharsets
 import java.time.{Duration, Instant}
-import org.mbari.vampiresquid.AppConfig
+import java.util.HexFormat
 import org.mbari.vampiresquid.controllers.MediaController
 import org.mbari.vampiresquid.domain.{Media, MoveVideoParams}
 import org.mbari.vampiresquid.etc.circe.CirceCodecs.{*, given}
 import org.mbari.vampiresquid.etc.jdk.Logging
 import org.mbari.vampiresquid.etc.jdk.Logging.given
+import org.mbari.vampiresquid.etc.jdk.Uris
 import org.mbari.vampiresquid.etc.jwt.JwtService
+import org.mbari.vampiresquid.etc.sdk.FormTransform.given
 import org.mbari.vampiresquid.etc.sdk.FutureUtil.*
-import org.mbari.vampiresquid.etc.sdk.Reflect
-import org.mbari.vampiresquid.repository.jpa.TestDAOFactory
+import org.mbari.vampiresquid.etc.sdk.ToStringTransforms.{*, given}
+import org.mbari.vampiresquid.repository.jpa.AssertUtil.assertSameMedia
+import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
+import org.mbari.vampiresquid.repository.jpa.TestUtils
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
+import scala.jdk.CollectionConverters.*
 import sttp.client3.*
-import sttp.client3.circe.*
 import sttp.client3.SttpBackend
 import sttp.client3.testing.SttpBackendStub
 import sttp.model.StatusCode
-import sttp.tapir.server.interceptor.CustomiseInterceptors
 import sttp.tapir.server.stub.TapirStubInterpreter
-import org.mbari.vampiresquid.etc.sdk.FormTransform.given
-import org.mbari.vampiresquid.etc.sdk.ToStringTransforms.{*, given}
-import org.mbari.vampiresquid.repository.jpa.TestUtils
-import org.mbari.vampiresquid.etc.sdk.FutureUtil.given
-import java.util.HexFormat
-import org.mbari.vampiresquid.repository.jpa.AssertUtil.assertSameMedia
-import sttp.tapir.server.ServerEndpoint
-import org.mbari.vampiresquid.etc.jdk.Uris
-import scala.jdk.CollectionConverters.*
-import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
-import org.mbari.vampiresquid.repository.jpa.BaseDAOSuite
-import scala.concurrent.ExecutionContext.Implicits.global
 
-trait MediaEndpointsITSuite extends BaseDAOSuite:
+trait MediaEndpointsITSuite extends EndpointsSuite:
 
     private val log = Logging(getClass)
 
@@ -61,12 +52,12 @@ trait MediaEndpointsITSuite extends BaseDAOSuite:
     private lazy val controller     = new MediaController(daoFactory)
     private lazy val mediaEndpoints = new MediaEndpoints(controller, jwtService)
 
-    test("createEndpointImpl - Create a new media using form body"):
+    test("createMedia - Create a new media using form body"):
 
         val jwt = jwtService.authorize("foo").orNull
 
         val backendStub: SttpBackend[Future, Any] = TapirStubInterpreter(SttpBackendStub.asynchronousFuture)
-            .whenServerEndpointRunLogic(mediaEndpoints.createEndpointImpl)
+            .whenServerEndpointRunLogic(mediaEndpoints.createMediaImpl)
             .backend()
 
         val now   = Instant.now()
@@ -89,13 +80,12 @@ trait MediaEndpointsITSuite extends BaseDAOSuite:
 
         response
             .map(r =>
-                println(s"--- ${r.body}")
                 assertEquals(r.code, StatusCode.Ok)
                 assert(r.body.isRight)
             )
             .join
 
-    test("updateEndpointImpl - Update an existing media using JSON body"):
+    test("updateMedia - Update an existing media using JSON body"):
         val jwt = jwtService.authorize("foo").orNull
 
         val now    = Instant.now()
@@ -112,7 +102,7 @@ trait MediaEndpointsITSuite extends BaseDAOSuite:
         val media2 = media1.copy(uri = Some(URI.create("http://test.me/movie02_changed.mp4")))
 
         val backendStub: SttpBackend[Future, Any] = TapirStubInterpreter(SttpBackendStub.asynchronousFuture)
-            .whenServerEndpointRunLogic(mediaEndpoints.updateEndpointImpl)
+            .whenServerEndpointRunLogic(mediaEndpoints.updateMediaImpl)
             .backend()
 
         val request = basicRequest
@@ -131,7 +121,7 @@ trait MediaEndpointsITSuite extends BaseDAOSuite:
             )
             .join
 
-    test("updateByVideoReferenceUuidEndpointImpl - Update an existing media using form body"):
+    test("updateMediaByVideoReferenceUuid - Update an existing media using form body"):
         val jwt    = jwtService.authorize("foo").orNull
         val now    = Instant.now()
         val media0 = new Media(
@@ -146,10 +136,10 @@ trait MediaEndpointsITSuite extends BaseDAOSuite:
 
         val media1 = controller.createMedia(media0).join
         val media2 = media1.copy(uri = Some(URI.create("http://test.me/movie03_changed.mp4")))
-        println(media2.stringify)
+//        println(media2.stringify)
 
         val backendStub: SttpBackend[Future, Any] = TapirStubInterpreter(SttpBackendStub.asynchronousFuture)
-            .whenServerEndpointRunLogic(mediaEndpoints.updateByVideoReferenceUuidEndpointImpl)
+            .whenServerEndpointRunLogic(mediaEndpoints.updateMediaByVideoReferenceUuidImpl)
             .backend()
 
         val request = basicRequest
@@ -178,13 +168,13 @@ trait MediaEndpointsITSuite extends BaseDAOSuite:
             )
             .join
 
-    test("moveByVideoReferenceUuidEndpointImpl"):
+    test("moveMediaByVideoReferenceUuidImpl"):
         val vs                                    = TestUtils.create(1, 1, 1).head
         val vr                                    = vs.getVideoReferences().get(0)
         val jwt                                   = jwtService.authorize("foo").orNull
         val mv                                    = MoveVideoParams("boogar", Instant.now(), 30000)
         val backendStub: SttpBackend[Future, Any] = TapirStubInterpreter(SttpBackendStub.asynchronousFuture)
-            .whenServerEndpointRunLogic(mediaEndpoints.moveByVideoReferenceUuidEndpointImpl)
+            .whenServerEndpointRunLogic(mediaEndpoints.moveMediaByVideoReferenceUuidImpl)
             .backend()
         val request                               = basicRequest
             .put(uri"http://test.com/v1/media/move/${vr.getUuid}")
@@ -200,27 +190,7 @@ trait MediaEndpointsITSuite extends BaseDAOSuite:
 
         // TODO verify move to existing and move to new
 
-    def checkResponse[T: Decoder](responseBody: Either[String, String]): T =
-        responseBody match
-            case Left(e)     => fail(e)
-            case Right(json) =>
-                decode[T](json) match
-                    case Left(error)  => fail(error.getLocalizedMessage())
-                    case Right(value) => value
-
-    def runGet(
-        ep: ServerEndpoint[Any, Future],
-        uri: String,
-        assertions: Response[Either[String, String]] => Unit
-    ): Unit =
-        val backendStub: SttpBackend[Future, Any] = TapirStubInterpreter(SttpBackendStub.asynchronousFuture)
-            .whenServerEndpointRunLogic(ep)
-            .backend()
-        val request                               = basicRequest.get(uri"$uri")
-        val response                              = request.send(backendStub).join
-        assertions(response)
-
-    test("findBySha512"):
+    test("findMediaBySha512"):
         val videoSequence  = TestUtils.create(1, 1, 1).head
         val hex            = HexFormat.of()
         val videoReference = videoSequence.getVideoReferences().get(0)
@@ -228,7 +198,7 @@ trait MediaEndpointsITSuite extends BaseDAOSuite:
         val sha512         = hex.formatHex(videoReference.getSha512())
 
         runGet(
-            mediaEndpoints.findBySha512Impl,
+            mediaEndpoints.findMediaBySha512Impl,
             s"http://test.com/v1/media/sha512/${sha512}",
             response =>
                 assertEquals(response.code, StatusCode.Ok)
@@ -236,14 +206,14 @@ trait MediaEndpointsITSuite extends BaseDAOSuite:
                 assertSameMedia(media, media0)
         )
 
-    test("findByVideoReferenceUuid"):
+    test("findMediaByVideoReferenceUuid"):
         val videoSequence  = TestUtils.create(1, 1, 1).head
         val videoReference = videoSequence.getVideoReferences().get(0)
         val media0         = Media.from(videoReference)
         assert(videoReference.getUuid() != null)
 
         runGet(
-            mediaEndpoints.findByVideoReferenceUuidImpl,
+            mediaEndpoints.findMediaByVideoReferenceUuidImpl,
             s"http://test.com/v1/media/videoreference/${videoReference.getUuid()}",
             response =>
                 assertEquals(response.code, StatusCode.Ok)
@@ -251,7 +221,7 @@ trait MediaEndpointsITSuite extends BaseDAOSuite:
                 assertSameMedia(media, media0)
         )
 
-    test("findByFileName"):
+    test("findMediaByFileName"):
         val videoSequence  = TestUtils.create(1, 1, 1).head
         val videoReference = videoSequence.getVideoReferences().get(0)
         val media0         = Media.from(videoReference)
@@ -259,7 +229,7 @@ trait MediaEndpointsITSuite extends BaseDAOSuite:
         val filename       = Uris.filename(media0.uri.get)
 
         runGet(
-            mediaEndpoints.findByFileNameImpl,
+            mediaEndpoints.findMediaByFileNameImpl,
             s"http://test.com/v1/media/videoreference/filename/${filename}",
             response =>
                 assertEquals(response.code, StatusCode.Ok)
@@ -268,13 +238,13 @@ trait MediaEndpointsITSuite extends BaseDAOSuite:
                 assertSameMedia(xs.head, media0)
         )
 
-    test("findByVideoSequenceName"):
+    test("findMediaByVideoSequenceName"):
         val videoSequence  = TestUtils.create(1, 1, 1).head
         val videoReference = videoSequence.getVideoReferences().get(0)
         val media0         = Media.from(videoReference)
 
         runGet(
-            mediaEndpoints.findByVideoSequenceNameImpl,
+            mediaEndpoints.findMediaByVideoSequenceNameImpl,
             s"http://test.com/v1/media/videosequence/${videoSequence.getName()}",
             response =>
                 assertEquals(response.code, StatusCode.Ok)
@@ -283,13 +253,13 @@ trait MediaEndpointsITSuite extends BaseDAOSuite:
                 assertSameMedia(xs.head, media0)
         )
 
-    test("findByVideoName"):
+    test("findMediaByVideoName"):
         val videoSequence  = TestUtils.create(1, 1, 1).head
         val videoReference = videoSequence.getVideoReferences().get(0)
         val media0         = Media.from(videoReference)
 
         runGet(
-            mediaEndpoints.findByVideoNameImpl,
+            mediaEndpoints.findMediaByVideoNameImpl,
             s"http://test.com/v1/media/video/${videoReference.getVideo().getName()}",
             response =>
                 assertEquals(response.code, StatusCode.Ok)
@@ -298,7 +268,7 @@ trait MediaEndpointsITSuite extends BaseDAOSuite:
                 assertSameMedia(xs.head, media0)
         )
 
-    test("findByCameraIdAndTimestamps"):
+    test("findMediaByCameraIdAndTimestamps"):
         val videoSequence  = TestUtils.create(1, 1, 1).head
         val videoReference = videoSequence.getVideoReferences().get(0)
         val media0         = Media.from(videoReference)
@@ -308,7 +278,7 @@ trait MediaEndpointsITSuite extends BaseDAOSuite:
         val endTimestamp   = startTimestamp.plus(media0.duration.get)
 
         runGet(
-            mediaEndpoints.findByCameraIdAndTimestampsImpl,
+            mediaEndpoints.findMediaByCameraIdAndTimestampsImpl,
             s"http://test.com/v1/media/camera/${videoSequence.getCameraID}/${startTimestamp}/${endTimestamp}",
             response =>
                 assertEquals(response.code, StatusCode.Ok)
@@ -317,7 +287,7 @@ trait MediaEndpointsITSuite extends BaseDAOSuite:
                 assertSameMedia(xs.head, media0)
         )
 
-    test("findConcurrentByVideoReferenceUuid"):
+    test("findConcurrentMediaByVideoReferenceUuid"):
         val videoSequence = TestUtils.build(1, 10, 2).head
         var n             = 0
         val t0            = Instant.parse("1968-09-22T00:00:00Z")
@@ -338,7 +308,7 @@ trait MediaEndpointsITSuite extends BaseDAOSuite:
         assertEquals(befores.size, 10)
 
         runGet(
-            mediaEndpoints.findConcurrentByVideoReferenceUuidImpl,
+            mediaEndpoints.findConcurrentMediaByVideoReferenceUuidImpl,
             s"http://test.com/v1/media/concurrent/${videoSequence.getVideoReferences().get(0).getUuid()}",
             response =>
                 assertEquals(response.code, StatusCode.Ok)
@@ -346,7 +316,7 @@ trait MediaEndpointsITSuite extends BaseDAOSuite:
                 assertEquals(xs.size, befores.size)
         )
 
-    test("findByCameraIdAndDatetime"):
+    test("findMediaByCameraIdAndDatetime"):
         val videoSequence  = TestUtils.create(1, 1, 1).head
         val videoReference = videoSequence.getVideoReferences().get(0)
         val media0         = Media.from(videoReference)
@@ -356,7 +326,7 @@ trait MediaEndpointsITSuite extends BaseDAOSuite:
         val dateTime       = startTimestamp.plus(media0.duration.get.dividedBy(2))
 
         runGet(
-            mediaEndpoints.findByCameraIdAndDatetimeImpl,
+            mediaEndpoints.findMediaByCameraIdAndDatetimeImpl,
             s"http://test.com/v1/media/camera/${videoSequence.getCameraID}/${dateTime}",
             response =>
                 assertEquals(response.code, StatusCode.Ok)
@@ -365,7 +335,7 @@ trait MediaEndpointsITSuite extends BaseDAOSuite:
                 assertSameMedia(xs.head, media0)
         )
 
-    test("findByUri"):
+    test("findMediaByUri"):
         val videoSequence  = TestUtils.create(1, 1, 1).head
         val videoReference = videoSequence.getVideoReferences().get(0)
         val media0         = Media.from(videoReference)
@@ -373,7 +343,7 @@ trait MediaEndpointsITSuite extends BaseDAOSuite:
         val uri            = Uris.encode(media0.uri.get)
 
         runGet(
-            mediaEndpoints.findByUriImpl,
+            mediaEndpoints.findMediaByUriImpl,
             s"http://test.com/v1/media/uri/${uri}",
             response =>
                 assertEquals(response.code, StatusCode.Ok)

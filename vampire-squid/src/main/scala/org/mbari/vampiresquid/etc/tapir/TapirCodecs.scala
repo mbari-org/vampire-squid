@@ -16,10 +16,12 @@
 
 package org.mbari.vampiresquid.etc.tapir
 
+import org.mbari.vampiresquid.etc.jdk.Instants
 import sttp.tapir.{Codec, DecodeResult}
 import sttp.tapir.CodecFormat.TextPlain
 
 import java.net.URI
+import java.time.Instant
 import scala.util.{Failure, Success, Try}
 
 object TapirCodecs:
@@ -27,6 +29,13 @@ object TapirCodecs:
     private def decodeUri(s: String): DecodeResult[URI] =
         Try(URI.create(s)) match
             case Success(uri) => DecodeResult.Value(uri)
-            case Failure(e)   => DecodeResult.Error(s"Failed to decode s to a URI", e)
+            case Failure(e)   => DecodeResult.Error(s"Failed to decode $s to a URI", e)
     private def encodeUri(u: URI): String               = u.toString
     given uriCodec: Codec[String, URI, TextPlain]       = Codec.string.mapDecode(decodeUri)(encodeUri)
+
+    private def decodeInstant(s: String): DecodeResult[Instant] =
+        Instants.parseIso8601(s) match
+            case Right(i) => DecodeResult.Value(i)
+            case Left(e)  => DecodeResult.Error("Failed to decode $s to an Instant", e)
+    private def encodeInstant(i: Instant): String               = i.toString
+    given instantCodec: Codec[String, Instant, TextPlain]       = Codec.string.mapDecode(decodeInstant)(encodeInstant)

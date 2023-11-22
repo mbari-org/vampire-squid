@@ -20,7 +20,7 @@
   <logger name="org.eclipse.jetty" level="WARN" />
   <logger name="com.zaxxer.hikari.pool" level="WARN" />
   <!-- Hibernate after 6 DEBUG -->
-  <logger name="org.hibernate.SQL" level="debug" />
+  <logger name="org.hibernate.SQL" level="INFO" />
   <!-- <logger name="org.hibernate.orm.jdbc.bind" level="trace" /> -->
   <!-- <logger name="org.hibernate.stat" level="debug" /> -->
   <logger name="org.hibernate.SQL_SLOW" level="info" />

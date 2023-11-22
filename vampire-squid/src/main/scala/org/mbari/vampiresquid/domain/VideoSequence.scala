@@ -16,6 +16,8 @@
 
 package org.mbari.vampiresquid.domain
 
+import org.mbari.vampiresquid.etc.sdk.{FormTransform, ToStringTransforms}
+import org.mbari.vampiresquid.etc.sdk.ToStringTransforms.transform
 import org.mbari.vampiresquid.repository.jpa.entity.VideoSequenceEntity
 
 import java.time.Instant
@@ -36,6 +38,7 @@ case class VideoSequence(
     lazy val videoReferences: List[VideoReference] = videos.flatMap(_.video_references)
 
 object VideoSequence:
+
     def from(v: VideoSequenceEntity): VideoSequence =
         VideoSequence(
             v.getUuid,
@@ -45,3 +48,7 @@ object VideoSequence:
             Option(v.getLastUpdatedTime).map(_.toInstant),
             v.getVideos.asScala.map(Video.from).toList
         )
+
+    def toFormMap(v: VideoSequence): String =
+        s"uuid=${v.uuid}&name=${v.name}&camera_id=${v.camera_id}" +
+            v.description.map(s => s"&description=$s").getOrElse("")

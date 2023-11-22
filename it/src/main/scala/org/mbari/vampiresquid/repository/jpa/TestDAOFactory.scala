@@ -17,7 +17,6 @@
 package org.mbari.vampiresquid.repository.jpa
 
 import java.util.concurrent.TimeUnit
-import jakarta.persistence.EntityManagerFactory
 import com.typesafe.config.ConfigFactory
 
 import scala.concurrent.Await

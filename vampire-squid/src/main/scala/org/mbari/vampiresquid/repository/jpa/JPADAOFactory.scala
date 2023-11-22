@@ -17,7 +17,6 @@
 package org.mbari.vampiresquid.repository.jpa
 
 import jakarta.persistence.EntityManagerFactory
-import com.typesafe.config.ConfigFactory
 import org.mbari.vampiresquid.repository.{DAO, DAOFactory, VideoDAO, VideoReferenceDAO, VideoSequenceDAO}
 import org.mbari.vampiresquid.repository.jpa.entity.VideoSequenceEntity
 import org.mbari.vampiresquid.repository.jpa.entity.VideoEntity

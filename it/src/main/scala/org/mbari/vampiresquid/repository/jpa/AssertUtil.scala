@@ -16,8 +16,8 @@
 
 package org.mbari.vampiresquid.repository.jpa
 
-import org.mbari.vampiresquid.domain.Media
-import org.junit.Assert.{assertArrayEquals, assertEquals}
+import org.mbari.vampiresquid.domain.{Media, Video, VideoReference, VideoSequence}
+import org.junit.Assert.{assertArrayEquals, assertEquals, fail}
 
 object AssertUtil:
 
@@ -39,3 +39,48 @@ object AssertUtil:
         assertEquals(m0.description, m1.description)
         assertEquals(m0.video_description, m1.video_description)
         assertEquals(m0.video_sequence_description, m1.video_sequence_description)
+
+    def assertSameVideo(v0: Video, v1: Video): Unit =
+        assertEquals(v0.description, v1.description)
+        assertEquals(v0.duration, v1.duration)
+        assertEquals(v0.name, v1.name)
+        assertEquals(v0.start_timestamp, v1.start_timestamp)
+
+    def assertSameVideoSequence(v0: VideoSequence, v1: VideoSequence): Unit =
+        assertEquals(v0.name, v1.name)
+        assertEquals(v0.description, v1.description)
+        assertEquals(v0.camera_id, v1.camera_id)
+
+    def assertSameVideoReference(v0: VideoReference, v1: VideoReference): Unit =
+        assertEquals(v0.audio_codec, v1.audio_codec)
+        assertEquals(v0.container, v1.container)
+        assertEquals(v0.description, v1.description)
+        assertEquals(v0.frame_rate, v1.frame_rate)
+        assertEquals(v0.height, v1.height)
+        assertEquals(v0.height, v1.height)
+        if v0.sha512.isEmpty && v0.sha512.isEmpty then {
+            // ok. do nothing
+        }
+        else if v0.sha512.nonEmpty && v0.sha512.nonEmpty then assertArrayEquals(v0.sha512.get, v1.sha512.get)
+        else fail("Only one video reference has a checksum")
+        assertEquals(v0.uri, v1.uri)
+        assertEquals(v0.video_codec, v1.video_codec)
+        assertEquals(v0.width, v1.width)
+
+    def deepAssertSameVideo(v0: Video, v1: Video): Unit =
+        assertSameVideo(v0, v1)
+//        assert(v0.videoReferences.diff(v1.videoReferences).isEmpty)
+        for w0 <- v0.videoReferences
+        do
+            v1.videoReferences.find(_.uuid == w0.uuid) match
+                case None     => fail(s"VideoReference with uuid = ${w0.uuid} was not found in both videos")
+                case Some(w1) => assertSameVideoReference(w0, w1)
+
+    def deepAssertSameVideoSequence(v0: VideoSequence, v1: VideoSequence): Unit =
+        assertSameVideoSequence(v0, v1)
+//        assert(v0.videos.diff(v1.videos).isEmpty)
+        for w0 <- v0.videos
+        do
+            v1.videos.find(_.uuid == w0.uuid) match
+                case None     => fail(s"Video with uuid = ${w0.uuid} not found in both video sequences")
+                case Some(w1) => deepAssertSameVideo(w0, w1)

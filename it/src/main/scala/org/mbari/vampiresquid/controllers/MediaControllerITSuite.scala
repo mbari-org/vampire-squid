@@ -15,22 +15,20 @@
  */
 package org.mbari.vampiresquid.controllers
 
+import java.net.URI
 import java.time.Duration
 import java.time.Instant
-import java.util.Arrays
 import java.util.UUID
 import org.junit.Assert
 import org.mbari.vampiresquid.domain.Media
 import org.mbari.vampiresquid.etc.jdk.Uris
-import org.mbari.vampiresquid.repository.jpa.{BaseDAOSuite, DAOSuite, DerbyTestDAOFactory}
+import org.mbari.vampiresquid.repository.VideoReferenceDAO
+import org.mbari.vampiresquid.repository.jpa.BaseDAOSuite
+import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
 import org.mbari.vampiresquid.repository.jpa.entity.VideoReferenceEntity
 import org.mbari.vampiresquid.repository.jpa.{TestUtils, VideoSequenceDAOImpl}
-import org.mbari.vampiresquid.repository.VideoReferenceDAO
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.jdk.CollectionConverters.*
-import java.net.URI
-import junit.framework.Test
-import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
 
 trait MediaControllerITSuite extends BaseDAOSuite:
 

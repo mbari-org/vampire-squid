@@ -27,7 +27,6 @@ import scala.jdk.CollectionConverters.*
 import org.mbari.vampiresquid.repository.jpa.entity.{NameAndDate, VideoEntity}
 
 import scala.util.chaining.*
-import java.sql.Timestamp
 
 /**
  * @author

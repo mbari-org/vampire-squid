@@ -19,9 +19,7 @@ package org.mbari.vampiresquid
 import com.typesafe.config.ConfigFactory
 import org.slf4j.LoggerFactory
 
-import java.lang.reflect.Type
 import java.time.Duration
-import scala.util.control.NonFatal
 import scala.util.{Failure, Success, Try}
 
 /**

@@ -16,7 +16,6 @@
 
 package org.mbari.vampiresquid.controllers
 
-import org.mbari.vampiresquid.Constants
 import org.mbari.vampiresquid.repository.VideoReferenceDAO
 import org.mbari.vampiresquid.repository.jpa.{JPADAOFactory, NotFoundInDatastoreException}
 

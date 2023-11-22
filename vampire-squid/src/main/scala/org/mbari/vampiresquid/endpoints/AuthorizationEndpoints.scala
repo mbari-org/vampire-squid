@@ -25,7 +25,6 @@ import scala.concurrent.Future
 import sttp.model.StatusCode
 import sttp.tapir.*
 import sttp.tapir.Endpoint
-import sttp.tapir.EndpointIO.annotations.apikey
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 import sttp.tapir.server.ServerEndpoint

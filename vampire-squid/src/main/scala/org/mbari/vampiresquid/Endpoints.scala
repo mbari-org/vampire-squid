@@ -18,16 +18,12 @@ package org.mbari.vampiresquid
 
 import sttp.tapir.*
 
-import io.circe.generic.auto.*
 import scala.concurrent.Future
-import sttp.tapir.generic.auto.*
-import sttp.tapir.json.circe.*
 import sttp.tapir.server.ServerEndpoint
 import sttp.tapir.server.metrics.prometheus.PrometheusMetrics
 import sttp.tapir.swagger.bundle.SwaggerInterpreter
 import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
 import org.mbari.vampiresquid.controllers.MediaController
-import org.mbari.vampiresquid.AppConfig
 import org.mbari.vampiresquid.etc.jwt.JwtService
 import org.mbari.vampiresquid.endpoints.MediaEndpoints
 import org.mbari.vampiresquid.endpoints.AuthorizationEndpoints
