@@ -241,7 +241,7 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
             .out(statusCode(StatusCode.NoContent).and(emptyOutput))
             .name("deleteByUuid")
             .description("Delete a video by UUID")
-            .tag("video CRUD")
+            .tag("videos")
 
     val deleteVideoByUuidImpl: ServerEndpoint[Any, Future]                                       =
         deleteVideoByUuid

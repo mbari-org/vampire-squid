@@ -16,15 +16,14 @@
 
 package org.mbari.vampiresquid.etc.sdk
 
-import ToStringTransforms.{given}
+import ToStringTransforms.given
 import FormTransform.given
 import org.mbari.vampiresquid.repository.jpa.TestUtils
 import org.mbari.vampiresquid.domain.Media
 
 class FormTransformSuite extends munit.FunSuite:
-  
-  test("transform(media: Media)"):
-    val vs = TestUtils.build(1, 1, 1).head
-    val media = Media.from(vs.getVideoReferences().get(0))
-    val s = ToStringTransforms.transform(media)
-    
+
+    test("transform(media: Media)"):
+        val vs    = TestUtils.build(1, 1, 1).head
+        val media = Media.from(vs.getVideoReferences().get(0))
+        val s     = ToStringTransforms.transform(media)

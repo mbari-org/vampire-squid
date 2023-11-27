@@ -18,11 +18,10 @@ package org.mbari.vampiresquid.domain
 
 class HealthStatusSuite extends munit.FunSuite:
 
-  test("default"):
-    val default = HealthStatus.default
-    assert(default != null)
-    assert(default.application != null)
-    assert(default.availableProcessors > 0)
-    assert(default.description != null)
-    assert(default.freeMemory > 0)
-  
+    test("default"):
+        val default = HealthStatus.default
+        assert(default != null)
+        assert(default.application != null)
+        assert(default.availableProcessors > 0)
+        assert(default.description != null)
+        assert(default.freeMemory > 0)

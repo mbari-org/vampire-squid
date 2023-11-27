@@ -221,7 +221,7 @@ class VideoSequenceEndpoints(controller: VideoSequenceController)(using ec: Exec
             .out(statusCode(StatusCode.NoContent).and(emptyOutput))
             .name("deleteByUuid")
             .description("Delete a video sequence by UUID")
-            .tag("video sequence")
+            .tag("video sequences")
 
     val deleteOneVideoSequenceImpl: ServerEndpoint[Any, Future] =
         deleteOneVideoSequence
@@ -229,29 +229,29 @@ class VideoSequenceEndpoints(controller: VideoSequenceController)(using ec: Exec
             .serverLogic(_ => req => handleErrors(controller.delete(req).map(b => if b then Right(()) else Left(()))))
 
     override def all: List[Endpoint[?, ?, ?, ?, ?]] = List(
+        createOneVideoSequence,
+        updateOneVideoSequence,
+        deleteOneVideoSequence,
+        findAllCameraIds,
+        findAllVideoSequenceNames,
         findAllVideoSequences,
         findLastUpdateForVideoSequence,
         findVideoSequenceByName,
-        findAllVideoSequenceNames,
         findVideoSequenceNamesByCameraId,
-        findAllCameraIds,
         findVideoSequencesByCameraId,
-        findVideoSequencesByCameraIdAndTimestamp,
-        createOneVideoSequence,
-        updateOneVideoSequence,
-        deleteOneVideoSequence
+        findVideoSequencesByCameraIdAndTimestamp
     )
 
     override def allImpl: List[ServerEndpoint[Any, Future]] = List(
+        createOneVideoSequenceImpl,
+        updateOneVideoSequenceImpl,
+        deleteOneVideoSequenceImpl,
+        findAllCameraIdsImpl,
+        findAllVideoSequenceNamesImpl,
         findAllVideoSequencesImpl,
         findLastUpdateForVideoSequenceImpl,
         findVideoSequenceByNameImpl,
-        findAllVideoSequenceNamesImpl,
         findVideoSequenceNamesByCameraIdImpl,
-        findAllCameraIdsImpl,
-        findVideoSequencesByCameraIdImpl,
         findVideoSequencesByCameraIdAndTimestampImpl,
-        createOneVideoSequenceImpl,
-        updateOneVideoSequenceImpl,
-        deleteOneVideoSequenceImpl
+        findVideoSequencesByCameraIdImpl
     )

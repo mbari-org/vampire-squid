@@ -23,8 +23,11 @@ import sttp.tapir.CodecFormat.TextPlain
 import java.net.URI
 import java.time.Instant
 import scala.util.{Failure, Success, Try}
+import java.util.HexFormat
 
 object TapirCodecs:
+
+    private val hexFormat = HexFormat.of()
 
     private def decodeUri(s: String): DecodeResult[URI] =
         Try(URI.create(s)) match
@@ -39,3 +42,11 @@ object TapirCodecs:
             case Left(e)  => DecodeResult.Error("Failed to decode $s to an Instant", e)
     private def encodeInstant(i: Instant): String               = i.toString
     given instantCodec: Codec[String, Instant, TextPlain]       = Codec.string.mapDecode(decodeInstant)(encodeInstant)
+
+    private def decodeByteArray(s: String): DecodeResult[Array[Byte]] =
+        Try(hexFormat.parseHex(s)) match
+            case Success(bytes) => DecodeResult.Value(bytes)
+            case Failure(e)     => DecodeResult.Error(s"Failed to decode $s to a byte array", e)
+    private def encodeByteArray(bytes: Array[Byte]): String           = hexFormat.formatHex(bytes)
+    given byteArrayCodec: Codec[String, Array[Byte], TextPlain]       =
+        Codec.string.mapDecode(decodeByteArray)(encodeByteArray)

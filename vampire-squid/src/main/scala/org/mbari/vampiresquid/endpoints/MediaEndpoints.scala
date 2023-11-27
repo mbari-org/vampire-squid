@@ -29,6 +29,7 @@ import org.mbari.vampiresquid.etc.jdk.Logging
 import org.mbari.vampiresquid.etc.jdk.Logging.given
 import org.mbari.vampiresquid.etc.jwt.JwtService
 import org.mbari.vampiresquid.etc.tapir.TapirCodecs
+import org.mbari.vampiresquid.etc.tapir.TapirCodecs.given
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
@@ -56,11 +57,13 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
             case Failure(e)       => scala.util.Success(Left(ServerError(e.getMessage)))
 
     // POST v1/media ----------------------------------------
-    val createMedia: Endpoint[Option[String], Map[String, String], ErrorMsg, Media, Any] =
+    // val createMedia: Endpoint[Option[String], Map[String, String], ErrorMsg, Media, Any] =
+    val createMedia: Endpoint[Option[String], Media, ErrorMsg, Media, Any] =
         secureEndpoint
             .post
             .in("v1" / "media")
-            .in(formBody[Map[String, String]])
+            // .in(formBody[Map[String, String]])
+            .in(formBody[Media])
             .out(jsonBody[Media])
             .name("create")
             .description("Create a new media")
@@ -71,39 +74,42 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
             .serverSecurityLogic(jwtOpt => verify(jwtOpt))
             .serverLogic(_ =>
                 formMap =>
-                    val media = Media.fromFormMap(formMap)
-                    log.atTrace.log("createEndpointImpl received " + media)
-                    handleErrors(mediaController.createMedia(media))
+                    // val media = Media.fromFormMap(formMap)
+                    // log.atTrace.log("createEndpointImpl received " + media)
+                    // handleErrors(mediaController.createMedia(media))
+                    handleErrors(mediaController.createMedia(formMap))
             )
 
     // PUT v1/media ----------------------------------------
-    val updateMedia: Endpoint[Option[String], Map[String, String], ErrorMsg, Media, Any] =
+    val updateMedia: Endpoint[Option[String], Media, ErrorMsg, Media, Any] =
         secureEndpoint
             .put
             .in("v1" / "media")
-            .in(formBody[Map[String, String]])
+            .in(formBody[Media])
+            // .in(formBody[Map[String, String]])
             .out(jsonBody[Media])
             .name("update")
             .description("Update an existing media")
             .tag("media")
 
-    val updateMediaImpl: ServerEndpoint[Any, Future]                                                                 =
+    val updateMediaImpl: ServerEndpoint[Any, Future]                                                   =
         updateMedia
             .serverSecurityLogic(jwtOpt => verify(jwtOpt))
             .serverLogic(_ =>
-                formMap =>
-                    val media = Media.fromFormMap(formMap)
-                    // val mutableMedia = Media.toMutableMedia(media)
-                    log.atTrace.log("updateEndpointImpl received " + media)
+                media =>
+                    // formMap =>
+                    //     val media = Media.fromFormMap(formMap)
+                    //     // val mutableMedia = Media.toMutableMedia(media)
+                    //     log.atTrace.log("updateEndpointImpl received " + media)
                     handleMediaOption(mediaController.updateMedia(media))
             )
 
         // PUT v1/media/{videoReferenceUuid} ----------------------------------------
-    val updateMediaByVideoReferenceUuid: Endpoint[Option[String], (UUID, Map[String, String]), ErrorMsg, Media, Any] =
+    val updateMediaByVideoReferenceUuid: Endpoint[Option[String], (UUID, Media), ErrorMsg, Media, Any] =
         secureEndpoint
             .put
             .in("v1" / "media" / path[UUID]("videoReferenceUuid"))
-            .in(formBody[Map[String, String]])
+            .in(formBody[Media])
             .out(jsonBody[Media])
             .name("update by videoReferenceUuid")
             .description("Update an existing media by videoReferenceUuid and form data")
@@ -113,10 +119,16 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
         updateMediaByVideoReferenceUuid
             .serverSecurityLogic(jwtOpt => verify(jwtOpt))
             .serverLogic(_ =>
-                (videoReferenceUuid, formMap) =>
-                    val media = Media.fromFormMap(formMap)
+                // (videoReferenceUuid, formMap) =>
+                //     val media = Media.fromFormMap(formMap)
+                //     log.atTrace.log("updateEndpointImpl received " + media)
+                //     handleMediaOption(mediaController.findAndUpdateMedia(d => d.findByUUID(videoReferenceUuid), media))
+                (videoReferenceUuid, media) =>
                     log.atTrace.log("updateEndpointImpl received " + media)
-                    handleMediaOption(mediaController.findAndUpdateMedia(d => d.findByUUID(videoReferenceUuid), media))
+                    handleMediaOption(
+                        mediaController
+                            .findAndUpdateMedia(d => d.findByUUID(videoReferenceUuid), media)
+                    )
             )
 
     // PUT v1/media/move/{videoReferenceUuid} w/ Form Body --------------------------
@@ -338,15 +350,15 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
         updateMedia,
         updateMediaByVideoReferenceUuid,
         moveMediaByVideoReferenceUuid,
-        findMediaBySha512,
-        findMediaByVideoReferenceUuid,
-        findMediaByFileName,
-        findMediaByVideoSequenceName,
-        findMediaByVideoName,
-        findMediaByCameraIdAndTimestamps,
         findConcurrentMediaByVideoReferenceUuid,
         findMediaByCameraIdAndDatetime,
-        findMediaByUri
+        findMediaByCameraIdAndTimestamps,
+        findMediaByFileName,
+        findMediaBySha512,
+        findMediaByUri,
+        findMediaByVideoName,
+        findMediaByVideoReferenceUuid,
+        findMediaByVideoSequenceName
     )
 
     override def allImpl: List[ServerEndpoint[Any, concurrent.Future]] = List(
@@ -354,13 +366,13 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
         updateMediaImpl,
         updateMediaByVideoReferenceUuidImpl,
         moveMediaByVideoReferenceUuidImpl,
-        findMediaBySha512Impl,
-        findMediaByVideoReferenceUuidImpl,
-        findMediaByFileNameImpl,
-        findMediaByVideoSequenceNameImpl,
-        findMediaByVideoNameImpl,
-        findMediaByCameraIdAndTimestampsImpl,
         findConcurrentMediaByVideoReferenceUuidImpl,
         findMediaByCameraIdAndDatetimeImpl,
-        findMediaByUriImpl
+        findMediaByCameraIdAndTimestampsImpl,
+        findMediaByFileNameImpl,
+        findMediaBySha512Impl,
+        findMediaByUriImpl,
+        findMediaByVideoNameImpl,
+        findMediaByVideoReferenceUuidImpl,
+        findMediaByVideoSequenceNameImpl
     )

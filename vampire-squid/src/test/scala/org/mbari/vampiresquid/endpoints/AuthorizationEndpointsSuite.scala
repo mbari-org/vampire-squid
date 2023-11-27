@@ -61,9 +61,10 @@ class AuthorizationEndpointsSuite extends munit.FunSuite:
                 .exceptionHandler(exceptionHandler)
         // --- END: This block adds exception logging to the stub
 
-        val backendStub: SttpBackend[Future, Any] = TapirStubInterpreter(customOptions, SttpBackendStub.asynchronousFuture)
-            .whenServerEndpointRunLogic(authorizationEndpoints.authEndpointImpl)
-            .backend()
+        val backendStub: SttpBackend[Future, Any] =
+            TapirStubInterpreter(customOptions, SttpBackendStub.asynchronousFuture)
+                .whenServerEndpointRunLogic(authorizationEndpoints.authEndpointImpl)
+                .backend()
 
         val response = basicRequest
             .post(uri"http://test.com/v1/auth")

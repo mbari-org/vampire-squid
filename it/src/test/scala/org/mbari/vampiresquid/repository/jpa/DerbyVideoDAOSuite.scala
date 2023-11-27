@@ -17,4 +17,4 @@
 package org.mbari.vampiresquid.repository.jpa
 
 class DerbyVideoDAOSuite extends VideoDAOITSuite:
-  override val daoFactory = DerbyTestDAOFactory
+    override val daoFactory = DerbyTestDAOFactory

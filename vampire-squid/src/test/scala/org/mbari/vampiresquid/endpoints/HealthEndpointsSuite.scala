@@ -57,10 +57,10 @@ class HealthEndpointsSuite extends munit.FunSuite:
         // --- END: This block adds exception logging to the stub
         // println(HealthStatus.default)
 
-        val backendStub: SttpBackend[Future, Any] = TapirStubInterpreter(customOptions, SttpBackendStub.asynchronousFuture)
-            .whenServerEndpointRunLogic(healthEndpoints.healthEndpointImpl)
-            .backend()
-
+        val backendStub: SttpBackend[Future, Any] =
+            TapirStubInterpreter(customOptions, SttpBackendStub.asynchronousFuture)
+                .whenServerEndpointRunLogic(healthEndpoints.healthEndpointImpl)
+                .backend()
 
         val request  = basicRequest.get(uri"http://test.com/v1/health")
         val response = request.send(backendStub)

@@ -24,22 +24,21 @@ import scala.jdk.CollectionConverters.*
 
 class PostgresSuite extends munit.FunSuite:
 
-  val daoFactory = PostgresqlTestDAOFactory
+    val daoFactory = PostgresqlTestDAOFactory
 
-  override def beforeAll(): Unit = daoFactory.beforeAll()
-  override def afterAll(): Unit  = daoFactory.afterAll()
+    override def beforeAll(): Unit = daoFactory.beforeAll()
+    override def afterAll(): Unit  = daoFactory.afterAll()
 
-  test("Postgres container should be started"):
-    assert(daoFactory.container.isRunning())
-    val dao = daoFactory.newVideoDAO()
-    val all = dao.findAll()
-    assert(all.isEmpty)
-    dao.close()
+    test("Postgres container should be started"):
+        assert(daoFactory.container.isRunning())
+        val dao = daoFactory.newVideoDAO()
+        val all = dao.findAll()
+        assert(all.isEmpty)
+        dao.close()
 
-  test("Postgres init script should have been run"):
-    val em = daoFactory.entityManagerFactory.createEntityManager()
-    val q  = em.createNativeQuery("SELECT COUNT(*) FROM unique_videos")
-    val r = q.getResultList().asScala.toList.head.asInstanceOf[Long]
-    println("---------------------" + r)
-    assert(r == 0)
-    
+    test("Postgres init script should have been run"):
+        val em = daoFactory.entityManagerFactory.createEntityManager()
+        val q  = em.createNativeQuery("SELECT COUNT(*) FROM unique_videos")
+        val r  = q.getResultList().asScala.toList.head.asInstanceOf[Long]
+        println("---------------------" + r)
+        assert(r == 0)

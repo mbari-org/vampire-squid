@@ -21,30 +21,25 @@ import scala.concurrent.ExecutionContext
 
 class TestUtilsSuite extends munit.FunSuite:
 
-  given JPADAOFactory = TestDAOFactory.Instance
-  given ExecutionContext = ExecutionContext.global
+    given JPADAOFactory    = TestDAOFactory.Instance
+    given ExecutionContext = ExecutionContext.global
 
+    test("randomVideoReference"):
+        val videoReference = TestUtils.randomVideoReference()
+        assert(videoReference.getUri != null)
+        assert(videoReference.getUuid == null) // UUID not assigned until persisted
 
-  test("randomVideoReference"):
-    val videoReference = TestUtils.randomVideoReference()
-    assert(videoReference.getUri !=null)
-    assert(videoReference.getUuid == null) // UUID not assigned until persisted
+    test("randomSha512"):
+        val sha = TestUtils.randomSha512();
+        assertEquals(sha.length, 64)
 
-  test("randomSha512"):
-    val sha = TestUtils.randomSha512();
-    assertEquals(sha.length, 64)
-
-  test("create"):
-    for
-      i <- 1 to 4
-    do
-      val a = TestUtils.create(i, i, i)
-      assertEquals(a.size, i)
-      val vs = a.head
-      val v = vs.getVideos
-      assertEquals(v.size(), i)
-      val vr = v.get(0).getVideoReferences
-      assertEquals(vr.size(), i)
-
-
-
+    test("create"):
+        for i <- 1 to 4
+        do
+            val a  = TestUtils.create(i, i, i)
+            assertEquals(a.size, i)
+            val vs = a.head
+            val v  = vs.getVideos
+            assertEquals(v.size(), i)
+            val vr = v.get(0).getVideoReferences
+            assertEquals(vr.size(), i)

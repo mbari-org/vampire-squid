@@ -29,20 +29,42 @@ import org.mbari.vampiresquid.endpoints.MediaEndpoints
 import org.mbari.vampiresquid.endpoints.AuthorizationEndpoints
 import org.mbari.vampiresquid.endpoints.HealthEndpoints
 import scala.concurrent.ExecutionContext.Implicits.global
+import org.mbari.vampiresquid.domain.VideoSequence
+import org.mbari.vampiresquid.endpoints.VideoSequenceEndpoints
+import org.mbari.vampiresquid.controllers.VideoSequenceController
+import org.mbari.vampiresquid.controllers.VideoReferenceController
+import org.mbari.vampiresquid.controllers.VideoController
+import org.mbari.vampiresquid.endpoints.VideoEndpoints
+import org.mbari.vampiresquid.endpoints.VideoReferenceEndpoints
 
 object Endpoints:
 
     // ----------------------------
-    val daoFactory      = JPADAOFactory
-    val mediaController = new MediaController(daoFactory)
+    val daoFactory               = JPADAOFactory
+    val mediaController          = new MediaController(daoFactory)
+    val videoSequenceController  = new VideoSequenceController(daoFactory)
+    val videoController          = new VideoController(daoFactory)
+    val videoReferenceController = new VideoReferenceController(daoFactory)
 
-    val jwtParams       = AppConfig.JwtParameters
-    val jwtService      = new JwtService(jwtParams.issuer, jwtParams.clientSecret, jwtParams.signingSecret)
-    val mediaEndpoints  = new MediaEndpoints(mediaController, jwtService)
-    val authEndpoints   = new AuthorizationEndpoints(jwtService)
-    val healthEndpoints = new HealthEndpoints
+    // ----------------------------
+    val jwtParams                = AppConfig.JwtParameters
+    given jwtService: JwtService = new JwtService(jwtParams.issuer, jwtParams.clientSecret, jwtParams.signingSecret)
 
-    val apiEndpoints = mediaEndpoints.allImpl ++ authEndpoints.allImpl ++ healthEndpoints.allImpl
+    // ----------------------------
+    val mediaEndpoints          = new MediaEndpoints(mediaController, jwtService)
+    val authEndpoints           = new AuthorizationEndpoints(jwtService)
+    val healthEndpoints         = new HealthEndpoints
+    val videoSequenceEndpoints  = new VideoSequenceEndpoints(videoSequenceController)
+    val videoEndpoints          = new VideoEndpoints(videoController, videoSequenceController)
+    val videoReferenceEndpoints = new VideoReferenceEndpoints(videoReferenceController)
+
+    val apiEndpoints =
+        mediaEndpoints.allImpl ++
+            authEndpoints.allImpl ++
+            healthEndpoints.allImpl ++
+            videoSequenceEndpoints.allImpl ++
+            videoEndpoints.allImpl ++
+            videoReferenceEndpoints.allImpl
 
     val docEndpoints: List[ServerEndpoint[Any, Future]] = SwaggerInterpreter()
         .fromServerEndpoints[Future](apiEndpoints, "vampire-squid", "1.0.0")
