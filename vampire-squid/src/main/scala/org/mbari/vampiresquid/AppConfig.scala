@@ -23,7 +23,9 @@ import org.mbari.vampiresquid.etc.jwt.JwtService
 object AppConfig:
     val Name: String = "vampire-squid"
 
-    val Version: String = Try(getClass.getPackage.getImplementationVersion).getOrElse("0.0.0")
+    val Version: String =
+        val first = Try(getClass.getPackage.getImplementationVersion).getOrElse("0.0.0")
+        if first == null then "0.0.0" else first // getImplementationVersion returns null if not found
 
     val Description: String = "Video Asset Manager"
 

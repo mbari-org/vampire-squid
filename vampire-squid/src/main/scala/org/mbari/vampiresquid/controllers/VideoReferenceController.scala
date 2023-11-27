@@ -106,10 +106,10 @@ class VideoReferenceController(val daoFactory: JPADAOFactory) extends BaseContro
 
     def update(
         uuid: UUID,
-        videoUUID: Option[UUID],
-        uri: Option[URI],
+        videoUUID: Option[UUID] = None,
+        uri: Option[URI] = None,
         container: Option[String] = None,
-        videoCodec: Option[String],
+        videoCodec: Option[String] = None,
         audioCodec: Option[String] = None,
         width: Option[Int] = None,
         height: Option[Int] = None,

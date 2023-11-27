@@ -1,6 +1,6 @@
 package org.mbari.vampiresquid.repository.jpa
 
 class PostgresVideoReferenceDAOSuite extends VideoReferenceDAOITSuite {
-  override def daoFactory = PostgresqlDAOFactory
+  override def daoFactory = PostgresqlTestDAOFactory
 
 }

@@ -1,10 +1,10 @@
 package org.mbari.vampiresquid.controllers
 
 
-import org.mbari.vampiresquid.repository.jpa.PostgresqlDAOFactory
+import org.mbari.vampiresquid.repository.jpa.PostgresqlTestDAOFactory
 
 class PostgresVideoControllerITSuite extends VideoControllerITSuite:
-  override def daoFactory = PostgresqlDAOFactory
+  override def daoFactory = PostgresqlTestDAOFactory
   override def beforeAll(): Unit =
     super.beforeAll()
-    println(s"---- Is Postgres up? ${PostgresqlDAOFactory.container.isRunning()}")
+    println(s"---- Is Postgres up? ${PostgresqlTestDAOFactory.container.isRunning()}")

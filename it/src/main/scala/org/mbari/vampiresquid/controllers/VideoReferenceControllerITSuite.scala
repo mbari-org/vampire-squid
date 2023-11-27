@@ -140,11 +140,13 @@ trait VideoReferenceControllerITSuite extends BaseDAOSuite:
         val vss = TestUtils.create(1, 1, 1)
         val v   = vss.head.getVideos().get(0)
         val vr  = v.getVideoReferences().get(0)
-        val x   = exec(controller.create(v.getUuid(), URI.create("http://foo.com/bar/baz.mp4")))
+        val uri = URI.create("http://foo.com/bar/bar/bar/baz.mp4")
+        val x   = exec(controller.update(uuid = vr.getUuid(), uri = Some(uri)))
         assert(x.uuid != null)
         val y   = exec(controller.findByUUID(x.uuid))
         assert(y.isDefined)
         assertSameValues(x, y.get)
+        assertEquals(y.get.uri, uri)
 
     test("update (full)"):
         val vss = TestUtils.create(1, 1, 1)

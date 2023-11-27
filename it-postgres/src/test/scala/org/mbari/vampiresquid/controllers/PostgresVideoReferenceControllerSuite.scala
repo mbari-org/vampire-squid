@@ -1,8 +1,8 @@
 package org.mbari.vampiresquid.controllers
 
-import org.mbari.vampiresquid.repository.jpa.PostgresqlDAOFactory
+import org.mbari.vampiresquid.repository.jpa.PostgresqlTestDAOFactory
 
 class PostgresVideoReferenceControllerSuite extends VideoReferenceControllerITSuite {
-  override def daoFactory = PostgresqlDAOFactory
+  override def daoFactory = PostgresqlTestDAOFactory
 
 }

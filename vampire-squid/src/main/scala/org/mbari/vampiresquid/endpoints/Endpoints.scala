@@ -22,8 +22,10 @@ import org.mbari.vampiresquid.domain.MoveVideoParams
 import org.mbari.vampiresquid.domain.Video
 import org.mbari.vampiresquid.domain.VideoReference
 import org.mbari.vampiresquid.domain.{BadRequest, ErrorMsg, NotFound, ServerError, Unauthorized}
-import org.mbari.vampiresquid.etc.circe.CirceCodecs.given
+import org.mbari.vampiresquid.etc.circe.CirceCodecs.{*, given}
+
 import org.mbari.vampiresquid.etc.jwt.JwtService
+import org.mbari.vampiresquid.etc.jdk.Logging.given
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
@@ -56,14 +58,20 @@ trait Endpoints:
 
     def handleErrors[T](f: Future[T])(using ec: ExecutionContext): Future[Either[ErrorMsg, T]] =
         f.transform:
-            case Success(value)     => Success(Right(value))
-            case Failure(exception) => Success(Left(ServerError(exception.getMessage)))
+            case Success(value)     =>
+                // log.atError.log(value.toString())
+                Success(Right(value))
+            case Failure(exception) =>
+                log.atError.withCause(exception).log("Error")
+                Success(Left(ServerError(exception.getMessage)))
 
     def handleOption[T](f: Future[Option[T]])(using ec: ExecutionContext): Future[Either[ErrorMsg, T]] =
         f.transform:
             case Success(Some(value)) => Success(Right(value))
             case Success(None)        => Success(Left(NotFound("Not found")))
-            case Failure(exception)   => Success(Left(ServerError(exception.getMessage)))
+            case Failure(exception)   =>
+                log.atError.withCause(exception).log("Error")
+                Success(Left(ServerError(exception.getMessage)))
 
     val secureEndpoint: Endpoint[Option[String], Unit, ErrorMsg, Unit, Any] = endpoint
         .securityIn(auth.bearer[Option[String]](WWWAuthenticateChallenge.bearer))

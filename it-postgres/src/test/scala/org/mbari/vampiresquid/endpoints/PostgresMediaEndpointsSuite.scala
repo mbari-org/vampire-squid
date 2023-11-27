@@ -1,8 +1,8 @@
 package org.mbari.vampiresquid.endpoints
 
-import org.mbari.vampiresquid.repository.jpa.PostgresqlDAOFactory
+import org.mbari.vampiresquid.repository.jpa.PostgresqlTestDAOFactory
 
 class PostgresMediaEndpointsSuite extends MediaEndpointsITSuite {
-  override def daoFactory = PostgresqlDAOFactory
+  override def daoFactory = PostgresqlTestDAOFactory
 
 }

@@ -26,6 +26,13 @@ import sttp.tapir.server.ServerEndpoint
 import sttp.tapir.server.stub.TapirStubInterpreter
 
 import scala.concurrent.Future
+import sttp.capabilities.WebSockets
+import sttp.tapir.server.vertx.VertxFutureServerOptions
+import sttp.tapir.server.interceptor.exception.ExceptionHandler
+import sttp.tapir.server.interceptor.CustomiseInterceptors
+import sttp.model.StatusCode
+import sttp.client3.SttpBackend
+import sttp.tapir.server.model.ValuedEndpointOutput
 
 trait EndpointsSuite extends BaseDAOSuite:
 
@@ -34,13 +41,11 @@ trait EndpointsSuite extends BaseDAOSuite:
         uri: String,
         assertions: Response[Either[String, String]] => Unit
     ): Unit =
-        val backendStub: SttpBackend[Future, Any] = TapirStubInterpreter(SttpBackendStub.asynchronousFuture)
-            .whenServerEndpointRunLogic(ep)
-            .backend()
-        val u                                     = uri"$uri"
+        val backendStub = newBackendStub(ep)
+        val u           = uri"$uri"
 //    println(u)
-        val request                               = basicRequest.get(u)
-        val response                              = request.send(backendStub).join
+        val request     = basicRequest.get(u)
+        val response    = request.send(backendStub).join
         assertions(response)
 
     def checkResponse[T: Decoder](responseBody: Either[String, String]): T =
@@ -50,3 +55,29 @@ trait EndpointsSuite extends BaseDAOSuite:
                 decode[T](json) match
                     case Left(error)  => fail(error.getLocalizedMessage)
                     case Right(value) => value
+
+    /**
+     * Creates a stubbed backend for testing endpoints. Adds exception logging to the stub.
+     * @param serverEndpoint
+     * @return
+     */
+    def newBackendStub(serverEndpoint: ServerEndpoint[Any, Future]): SttpBackend[Future, Any] =
+        // --- START: This block adds exception logging to the stub
+        val exceptionHandler = ExceptionHandler.pure[Future](ctx =>
+            Some(
+                ValuedEndpointOutput(
+                    sttp.tapir.stringBody.and(sttp.tapir.statusCode),
+                    (s"failed due to ${ctx.e.getMessage}", StatusCode.InternalServerError)
+                )
+            )
+        )
+
+        val customOptions: CustomiseInterceptors[Future, VertxFutureServerOptions] =
+            import scala.concurrent.ExecutionContext.Implicits.global
+            VertxFutureServerOptions
+                .customiseInterceptors
+                .exceptionHandler(exceptionHandler)
+        // --- END: This block adds exception logging to the stub
+        TapirStubInterpreter(customOptions, SttpBackendStub.asynchronousFuture)
+            .whenServerEndpointRunLogic(serverEndpoint)
+            .backend()

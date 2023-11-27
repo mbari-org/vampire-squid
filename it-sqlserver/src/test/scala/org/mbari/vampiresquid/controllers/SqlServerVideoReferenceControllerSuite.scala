@@ -1,8 +1,8 @@
 package org.mbari.vampiresquid.controllers
 
-import org.mbari.vampiresquid.repository.jpa.SqlServerDAOFactory
+import org.mbari.vampiresquid.repository.jpa.SqlServerTestDAOFactory
 
 class SqlServerVideoReferenceControllerSuite extends VideoReferenceControllerITSuite {
-  override def daoFactory = SqlServerDAOFactory
+  override def daoFactory = SqlServerTestDAOFactory
 
 }

@@ -23,22 +23,21 @@ import scala.jdk.CollectionConverters.*
 
 class SqlServerSuite extends munit.FunSuite:
 
-  val daoFactory = SqlServerDAOFactory
+    val daoFactory = SqlServerTestDAOFactory
 
-  override def beforeAll(): Unit = daoFactory.beforeAll()
-  override def afterAll(): Unit  = daoFactory.afterAll()
+    override def beforeAll(): Unit = daoFactory.beforeAll()
+    override def afterAll(): Unit  = daoFactory.afterAll()
 
-  test("SqlServer container should be started"):
-    assert(daoFactory.container.isRunning())
-    val dao = daoFactory.newVideoDAO()
-    val all = dao.findAll()
-    assert(all.isEmpty)
-    dao.close()
+    test("SqlServer container should be started"):
+        assert(daoFactory.container.isRunning())
+        val dao = daoFactory.newVideoDAO()
+        val all = dao.findAll()
+        assert(all.isEmpty)
+        dao.close()
 
-  test("SqlServer init script should have been run"):
-    val em = daoFactory.entityManagerFactory.createEntityManager()
-    val q  = em.createNativeQuery("SELECT COUNT(*) FROM unique_videos")
-    val r = q.getResultList().asScala.toList.head.asInstanceOf[Int]
-    println("---------------------" + r)
-    assert(r == 0)
-    
+    test("SqlServer init script should have been run"):
+        val em = daoFactory.entityManagerFactory.createEntityManager()
+        val q  = em.createNativeQuery("SELECT COUNT(*) FROM unique_videos")
+        val r  = q.getResultList().asScala.toList.head.asInstanceOf[Int]
+        // println("---------------------" + r)
+        assert(r == 0)

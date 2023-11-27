@@ -16,26 +16,27 @@
 
 package org.mbari.vampiresquid.endpoints
 
+import java.net.URI
+import java.util.HexFormat
+import java.util.UUID
 import org.mbari.vampiresquid.controllers.VideoReferenceController
-import org.mbari.vampiresquid.etc.jwt.JwtService
-import scala.concurrent.ExecutionContext
+import org.mbari.vampiresquid.domain.BadRequest
+import org.mbari.vampiresquid.domain.ErrorMsg
+import org.mbari.vampiresquid.domain.LastUpdatedTime
 import org.mbari.vampiresquid.domain.VideoReference
+import org.mbari.vampiresquid.etc.circe.CirceCodecs.given
+import org.mbari.vampiresquid.etc.jdk.Logging
+import org.mbari.vampiresquid.etc.jdk.Logging.given
+import org.mbari.vampiresquid.etc.jwt.JwtService
+import org.mbari.vampiresquid.etc.tapir.TapirCodecs.given
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
+import sttp.model.StatusCode
 import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 import sttp.tapir.server.ServerEndpoint
-import org.mbari.vampiresquid.etc.jdk.Logging
-import org.mbari.vampiresquid.etc.jdk.Logging.given
-import java.net.URI
-import java.util.HexFormat
-import org.mbari.vampiresquid.domain.ErrorMsg
-import org.mbari.vampiresquid.etc.circe.CirceCodecs.given
-import java.util.UUID
-import org.mbari.vampiresquid.domain.LastUpdatedTime
-import org.mbari.vampiresquid.etc.tapir.TapirCodecs.given
-import sttp.model.StatusCode
-import scala.concurrent.Future
-import org.mbari.vampiresquid.domain.BadRequest
+import scala.util.chaining.*
 
 class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: ExecutionContext, jwtService: JwtService)
     extends Endpoints:
@@ -165,7 +166,7 @@ class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: Ex
         createOneVideoReference
             .serverSecurityLogic(jwtOpt => verify(jwtOpt))
             .serverLogic { _ => form =>
-                val videoUuid = form.get("description").map(UUID.fromString)
+                val videoUuid = form.get("video_uuid").map(UUID.fromString)
                 val uri       = form.get("uri").map(URI.create)
                 if videoUuid.isEmpty || uri.isEmpty then
                     Future(Left(BadRequest("Missing required parameters: video_uuid, uri ")))
@@ -211,7 +212,7 @@ class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: Ex
         updateOneVideoReference
             .serverSecurityLogic(jwtOpt => verify(jwtOpt))
             .serverLogic { _ => (uuid, form) =>
-                val videoUuid   = form.get("description").map(UUID.fromString)
+                val videoUuid   = form.get("video_uuid").map(UUID.fromString)
                 val uri         = form.get("uri").map(URI.create)
                 val description = form.get("description")
                 val container   = form.get("container")

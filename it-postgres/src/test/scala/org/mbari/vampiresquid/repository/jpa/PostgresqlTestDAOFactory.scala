@@ -4,7 +4,7 @@ package org.mbari.vampiresquid.repository.jpa
 import jakarta.persistence.EntityManagerFactory
 import org.testcontainers.containers.PostgreSQLContainer
 
-object PostgresqlDAOFactory extends SpecDAOFactory:
+object PostgresqlTestDAOFactory extends SpecDAOFactory:
 
   // TODO - intialize the container with SQL so UUID type gets correctly created
   val container = new PostgreSQLContainer("postgres:16")
