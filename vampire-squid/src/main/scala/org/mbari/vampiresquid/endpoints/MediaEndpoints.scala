@@ -66,7 +66,7 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
             .in(formBody[Media])
             .out(jsonBody[Media])
             .name("create")
-            .description("Create a new media")
+            .description("Create a new media.(The `uuid` param will be ignored if present.)")
             .tag("media")
 
     val createMediaImpl: ServerEndpoint[Any, Future] =
@@ -89,7 +89,7 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
             // .in(formBody[Map[String, String]])
             .out(jsonBody[Media])
             .name("update")
-            .description("Update an existing media")
+            .description("Update an existing media. (All uuid params will be ignored if present.)")
             .tag("media")
 
     val updateMediaImpl: ServerEndpoint[Any, Future]                                                   =

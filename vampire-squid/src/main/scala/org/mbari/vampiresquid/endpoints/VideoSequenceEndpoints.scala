@@ -32,6 +32,8 @@ import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 import sttp.tapir.server.ServerEndpoint
+import org.mbari.vampiresquid.domain.VideoSequenceCreate
+import org.mbari.vampiresquid.domain.VideoSequenceUpdate
 
 class VideoSequenceEndpoints(controller: VideoSequenceController)(using ec: ExecutionContext, jwtService: JwtService)
     extends Endpoints:
@@ -167,11 +169,11 @@ class VideoSequenceEndpoints(controller: VideoSequenceController)(using ec: Exec
             }
 
     // POST v1/videosequences (form body)
-    val createOneVideoSequence: Endpoint[Option[String], Map[String, String], ErrorMsg, VideoSequence, Any] =
+    val createOneVideoSequence: Endpoint[Option[String], VideoSequenceCreate, ErrorMsg, VideoSequence, Any] =
         secureEndpoint
             .post
             .in("v1" / "videosequences")
-            .in(formBody[Map[String, String]])
+            .in(formBody[VideoSequenceCreate])
             .out(jsonBody[VideoSequence])
             .name("create")
             .description("Create a video sequence")
@@ -181,22 +183,15 @@ class VideoSequenceEndpoints(controller: VideoSequenceController)(using ec: Exec
         createOneVideoSequence
             .serverSecurityLogic(jwtOpt => verify(jwtOpt))
             .serverLogic(_ =>
-                req =>
-                    val name     = req.get("name")
-                    val cameraId = req.get("camera_id")
-                    if name.isEmpty || cameraId.isEmpty then
-                        Future.successful(Left(BadRequest("Missing name or camera_id")))
-                    else
-                        val description = req.get("description")
-                        handleErrors(controller.create(name.get, cameraId.get, description))
+                req => handleErrors(controller.create(req.name, req.camera_id, req.description))
             )
 
     // PUT v1/videosequences/:uuid (form body)
-    val updateOneVideoSequence: Endpoint[Option[String], (UUID, Map[String, String]), ErrorMsg, VideoSequence, Any] =
+    val updateOneVideoSequence: Endpoint[Option[String], (UUID, VideoSequenceUpdate), ErrorMsg, VideoSequence, Any] =
         secureEndpoint
             .put
             .in("v1" / "videosequences" / path[UUID]("uuid"))
-            .in(formBody[Map[String, String]])
+            .in(formBody[VideoSequenceUpdate])
             .out(jsonBody[VideoSequence])
             .name("update")
             .description("Update a video sequence")
@@ -206,11 +201,8 @@ class VideoSequenceEndpoints(controller: VideoSequenceController)(using ec: Exec
         updateOneVideoSequence
             .serverSecurityLogic(jwtOpt => verify(jwtOpt))
             .serverLogic(_ =>
-                (uuid, form) =>
-                    val name        = form.get("name")
-                    val cameraId    = form.get("camera_id")
-                    val description = form.get("description")
-                    handleErrors(controller.update(uuid, name, cameraId, description))
+                (uuid, req) =>
+                    handleErrors(controller.update(uuid, req.name, req.camera_id, req.description))
             )
 
     // DELETE v1/videosequences/:uuid

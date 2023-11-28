@@ -202,7 +202,7 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
             .in(formBody[Map[String, String]])
             .out(jsonBody[Video])
             .name("createOne")
-            .description("Create a video")
+            .description("Create a video. Required form fields: name, video_sequence_uuid, start_timestamp (or start), duration_millis. Optional fields: description")
             .tag("videos")
 
     val createOneVideoImpl: ServerEndpoint[Any, Future] =
@@ -256,7 +256,7 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
             .in(formBody[Map[String, String]])
             .out(jsonBody[Video])
             .name("update")
-            .description("Update a video by UUID")
+            .description("Update a video by UUID. Updateable fields: name, video_sequence_uuid, start_timestamp (or start), duration_millis, description")
             .tag("videos")
 
     val updateVideoImpl: ServerEndpoint[Any, Future] =

@@ -22,6 +22,34 @@ import java.net.URI
 import java.time.Instant
 import java.util.UUID
 
+case class VideoReferenceCreate(
+    video_uuid: UUID,
+    uri: URI,
+    container: Option[String] = None,
+    video_codec: Option[String] = None,
+    audio_codec: Option[String] = None,
+    width: Option[Int] = None,
+    height: Option[Int] = None,
+    frame_rate: Option[Double] = None,
+    size_bytes: Option[Long] = None,
+    sha512: Option[Array[Byte]] = None,
+    description: Option[String] = None
+)
+
+case class VideoReferenceUpdate(
+    video_uuid: Option[UUID] = None,
+    uri: Option[URI] = None,
+    container: Option[String] = None,
+    video_codec: Option[String] = None,
+    audio_codec: Option[String] = None,
+    width: Option[Int] = None,
+    height: Option[Int] = None,
+    frame_rate: Option[Double] = None,
+    size_bytes: Option[Long] = None,
+    sha512: Option[Array[Byte]] = None,
+    description: Option[String] = None
+)
+
 case class VideoReference(
     uuid: UUID,
     uri: URI,

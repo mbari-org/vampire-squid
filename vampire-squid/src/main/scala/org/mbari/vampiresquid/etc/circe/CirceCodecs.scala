@@ -33,12 +33,17 @@ import org.mbari.vampiresquid.domain.{
     Unauthorized,
     Video,
     VideoReference,
-    VideoSequence
+    VideoSequence,
+    VideoSequenceCreate,
+    VideoSequenceUpdate
 }
 import java.net.{URI, URL}
 import java.util.HexFormat
 import scala.util.Try
 import java.time.Duration
+import org.mbari.vampiresquid.domain.VideoReferenceCreate
+import org.mbari.vampiresquid.domain.VideoReferenceUpdate
+
 
 object CirceCodecs:
 
@@ -108,11 +113,23 @@ object CirceCodecs:
     given Decoder[VideoReference] = deriveDecoder
     given Encoder[VideoReference] = deriveEncoder
 
+    given Decoder[VideoReferenceCreate] = deriveDecoder
+    given Encoder[VideoReferenceCreate] = deriveEncoder
+
+    given Decoder[VideoReferenceUpdate] = deriveDecoder
+    given Encoder[VideoReferenceUpdate] = deriveEncoder
+
     given Decoder[Video] = deriveDecoder
     given Encoder[Video] = deriveEncoder
 
     given Decoder[VideoSequence] = deriveDecoder
     given Encoder[VideoSequence] = deriveEncoder
+
+    given Decoder[VideoSequenceCreate] = deriveDecoder
+    given Encoder[VideoSequenceCreate] = deriveEncoder
+
+    given Decoder[VideoSequenceUpdate] = deriveDecoder
+    given Encoder[VideoSequenceUpdate] = deriveEncoder
 
     private val printer = Printer.noSpaces.copy(dropNullValues = true)
 

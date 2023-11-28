@@ -37,6 +37,8 @@ import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 import sttp.tapir.server.ServerEndpoint
 import scala.util.chaining.*
+import org.mbari.vampiresquid.domain.VideoReferenceCreate
+import org.mbari.vampiresquid.domain.VideoReferenceUpdate
 
 class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: ExecutionContext, jwtService: JwtService)
     extends Endpoints:
@@ -152,11 +154,11 @@ class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: Ex
             }
 
     // POST "v1/videoreferences" (form body)
-    val createOneVideoReference: Endpoint[Option[String], Map[String, String], ErrorMsg, VideoReference, Any] =
+    val createOneVideoReference: Endpoint[Option[String], VideoReferenceCreate, ErrorMsg, VideoReference, Any] =
         secureEndpoint
             .post
             .in("v1" / "videoreferences")
-            .in(formBody[Map[String, String]])
+            .in(formBody[VideoReferenceCreate])
             .out(jsonBody[VideoReference])
             .name("create")
             .description("Create a video reference")
@@ -165,44 +167,30 @@ class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: Ex
     val createOneVideoReferenceImpl: ServerEndpoint[Any, Future] =
         createOneVideoReference
             .serverSecurityLogic(jwtOpt => verify(jwtOpt))
-            .serverLogic { _ => form =>
-                val videoUuid = form.get("video_uuid").map(UUID.fromString)
-                val uri       = form.get("uri").map(URI.create)
-                if videoUuid.isEmpty || uri.isEmpty then
-                    Future(Left(BadRequest("Missing required parameters: video_uuid, uri ")))
-                else
-                    val description = form.get("description")
-                    val container   = form.get("container")
-                    val videoCodec  = form.get("video_codec")
-                    val audioCodec  = form.get("audio_codec")
-                    val width       = form.get("width").map(_.toInt)
-                    val height      = form.get("height").map(_.toInt)
-                    val frameRate   = form.get("frame_rate").map(_.toDouble)
-                    val sizeBytes   = form.get("size_bytes").map(_.toLong)
-                    val sha512      = form.get("sha512").map(hex.parseHex)
-                    handleErrors(
-                        controller.create(
-                            videoUuid.get,
-                            uri.get,
-                            container,
-                            videoCodec,
-                            audioCodec,
-                            width,
-                            height,
-                            frameRate,
-                            sizeBytes,
-                            description,
-                            sha512
-                        )
+            .serverLogic { _ => req =>
+                handleErrors(
+                    controller.create(
+                        req.video_uuid,
+                        req.uri,
+                        req.container,
+                        req.video_codec,
+                        req.audio_codec,
+                        req.width,
+                        req.height,
+                        req.frame_rate,
+                        req.size_bytes,
+                        req.description,
+                        req.sha512
                     )
+                )
             }
 
     // PUT "v1/videoreferences/:uuid" (form body)
-    val updateOneVideoReference: Endpoint[Option[String], (UUID, Map[String, String]), ErrorMsg, VideoReference, Any] =
+    val updateOneVideoReference: Endpoint[Option[String], (UUID, VideoReferenceUpdate), ErrorMsg, VideoReference, Any] =
         secureEndpoint
             .put
             .in("v1" / "videoreferences" / path[UUID]("uuid"))
-            .in(formBody[Map[String, String]])
+            .in(formBody[VideoReferenceUpdate])
             .out(jsonBody[VideoReference])
             .name("update")
             .description("Update a video reference by UUID")
@@ -211,32 +199,21 @@ class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: Ex
     val updateOneVideoReferenceImpl: ServerEndpoint[Any, Future] =
         updateOneVideoReference
             .serverSecurityLogic(jwtOpt => verify(jwtOpt))
-            .serverLogic { _ => (uuid, form) =>
-                val videoUuid   = form.get("video_uuid").map(UUID.fromString)
-                val uri         = form.get("uri").map(URI.create)
-                val description = form.get("description")
-                val container   = form.get("container")
-                val videoCodec  = form.get("video_codec")
-                val audioCodec  = form.get("audio_codec")
-                val width       = form.get("width").map(_.toInt)
-                val height      = form.get("height").map(_.toInt)
-                val frameRate   = form.get("frame_rate").map(_.toDouble)
-                val sizeBytes   = form.get("size_bytes").map(_.toLong)
-                val sha512      = form.get("sha512").map(hex.parseHex)
+            .serverLogic { _ => (uuid, req) =>
                 handleErrors(
                     controller.update(
                         uuid,
-                        videoUuid,
-                        uri,
-                        container,
-                        videoCodec,
-                        audioCodec,
-                        width,
-                        height,
-                        frameRate,
-                        sizeBytes,
-                        description,
-                        sha512
+                        req.video_uuid,
+                        req.uri,
+                        req.container,
+                        req.video_codec,
+                        req.audio_codec,
+                        req.width,
+                        req.height,
+                        req.frame_rate,
+                        req.size_bytes,
+                        req.description,
+                        req.sha512
                     )
                 )
             }
