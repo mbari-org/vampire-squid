@@ -23,7 +23,6 @@ import java.util.UUID
 import scala.jdk.CollectionConverters.*
 import java.time.Duration
 
-
 case class Video(
     uuid: UUID,
     name: String,

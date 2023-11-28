@@ -62,8 +62,7 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
         secureEndpoint
             .post
             .in("v1" / "media")
-            // .in(formBody[Map[String, String]])
-            .in(formBody[Media])
+            .in(oneOfBody(formBody[Media], jsonBody[Media]))
             .out(jsonBody[Media])
             .name("create")
             .description("Create a new media.(The `uuid` param will be ignored if present.)")
@@ -73,11 +72,8 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
         createMedia
             .serverSecurityLogic(jwtOpt => verify(jwtOpt))
             .serverLogic(_ =>
-                formMap =>
-                    // val media = Media.fromFormMap(formMap)
-                    // log.atTrace.log("createEndpointImpl received " + media)
-                    // handleErrors(mediaController.createMedia(media))
-                    handleErrors(mediaController.createMedia(formMap))
+                media =>
+                    handleErrors(mediaController.createMedia(media))
             )
 
     // PUT v1/media ----------------------------------------
@@ -85,8 +81,7 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
         secureEndpoint
             .put
             .in("v1" / "media")
-            .in(formBody[Media])
-            // .in(formBody[Map[String, String]])
+            .in(oneOfBody(formBody[Media], jsonBody[Media]))
             .out(jsonBody[Media])
             .name("update")
             .description("Update an existing media. (All uuid params will be ignored if present.)")
@@ -97,10 +92,6 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
             .serverSecurityLogic(jwtOpt => verify(jwtOpt))
             .serverLogic(_ =>
                 media =>
-                    // formMap =>
-                    //     val media = Media.fromFormMap(formMap)
-                    //     // val mutableMedia = Media.toMutableMedia(media)
-                    //     log.atTrace.log("updateEndpointImpl received " + media)
                     handleMediaOption(mediaController.updateMedia(media))
             )
 
@@ -109,7 +100,7 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
         secureEndpoint
             .put
             .in("v1" / "media" / path[UUID]("videoReferenceUuid"))
-            .in(formBody[Media])
+            .in(oneOfBody(formBody[Media], jsonBody[Media]))
             .out(jsonBody[Media])
             .name("update by videoReferenceUuid")
             .description("Update an existing media by videoReferenceUuid and form data")

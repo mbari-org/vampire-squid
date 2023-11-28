@@ -173,7 +173,7 @@ class VideoSequenceEndpoints(controller: VideoSequenceController)(using ec: Exec
         secureEndpoint
             .post
             .in("v1" / "videosequences")
-            .in(formBody[VideoSequenceCreate])
+            .in(oneOfBody(formBody[VideoSequenceCreate], jsonBody[VideoSequenceCreate]))
             .out(jsonBody[VideoSequence])
             .name("create")
             .description("Create a video sequence")
@@ -191,7 +191,7 @@ class VideoSequenceEndpoints(controller: VideoSequenceController)(using ec: Exec
         secureEndpoint
             .put
             .in("v1" / "videosequences" / path[UUID]("uuid"))
-            .in(formBody[VideoSequenceUpdate])
+            .in(oneOfBody(formBody[VideoSequenceUpdate], jsonBody[VideoSequenceUpdate]))
             .out(jsonBody[VideoSequence])
             .name("update")
             .description("Update a video sequence")

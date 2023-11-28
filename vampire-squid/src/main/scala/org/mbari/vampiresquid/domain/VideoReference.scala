@@ -50,6 +50,22 @@ case class VideoReferenceUpdate(
     description: Option[String] = None
 )
 
+object VideoReferenceUpdate:
+    def from(v: VideoReference, videoUuid: Option[UUID] = None): VideoReferenceUpdate =
+        VideoReferenceUpdate(
+            videoUuid,
+            Option(v.uri),
+            v.container,
+            v.videoCodec,
+            v.audioCodec,
+            v.width,
+            v.height,
+            v.frameRate,
+            v.sizeBytes,
+            v.sha512,
+            v.description
+        )
+
 case class VideoReference(
     uuid: UUID,
     uri: URI,

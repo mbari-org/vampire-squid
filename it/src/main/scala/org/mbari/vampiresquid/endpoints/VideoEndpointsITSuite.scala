@@ -186,14 +186,13 @@ trait VideoEndpointsITSuite extends EndpointsSuite:
         assert(jwt != null)
 
         // given
-        val backendStub = TapirStubInterpreter(SttpBackendStub.asynchronousFuture)
-            .whenServerEndpointRunLogic(videoEndpoints.createOneVideoImpl)
-            .backend()
+        val backendStub = newBackendStub(videoEndpoints.createOneVideoImpl)
 
         // when
         val response = basicRequest
             .post(uri"http://test.com/v1/videos")
             .header("Authorization", s"Bearer $jwt")
+            .header("Content-Type", "application/x-www-form-urlencoded")
             .body(
                 Map(
                     "name"                -> "test video",

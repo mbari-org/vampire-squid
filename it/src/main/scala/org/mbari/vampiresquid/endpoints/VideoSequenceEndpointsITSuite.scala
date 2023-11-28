@@ -18,8 +18,8 @@ package org.mbari.vampiresquid.endpoints
 
 import java.util.UUID
 import org.mbari.vampiresquid.controllers.VideoSequenceController
-import org.mbari.vampiresquid.domain.{LastUpdatedTime, VideoSequence}
-import org.mbari.vampiresquid.etc.circe.CirceCodecs.given
+import org.mbari.vampiresquid.domain.{LastUpdatedTime, VideoSequence, VideoSequenceCreate}
+import org.mbari.vampiresquid.etc.circe.CirceCodecs.{given, *}
 import org.mbari.vampiresquid.etc.jdk.{Instants, Logging}
 import org.mbari.vampiresquid.etc.jdk.Logging.given
 import org.mbari.vampiresquid.etc.jwt.JwtService
@@ -32,6 +32,7 @@ import sttp.client3.SttpBackend
 import sttp.client3.testing.SttpBackendStub
 import sttp.model.StatusCode
 import sttp.tapir.server.stub.TapirStubInterpreter
+import org.mbari.vampiresquid.domain.VideoSequenceUpdate
 
 trait VideoSequenceEndpointsITSuite extends EndpointsSuite:
 
@@ -148,13 +149,11 @@ trait VideoSequenceEndpointsITSuite extends EndpointsSuite:
                 AssertUtil.deepAssertSameVideoSequence(xs.head, v1)
         )
 
-    test("createOneVideoSequence"):
+    test("createOneVideoSequence using form body"):
 
         val jwt = jwtService.authorize("foo").orNull
 
-        val backendStub: SttpBackend[Future, Any] = TapirStubInterpreter(SttpBackendStub.asynchronousFuture)
-            .whenServerEndpointRunLogic(endpoints.createOneVideoSequenceImpl)
-            .backend()
+        val backendStub = newBackendStub(endpoints.createOneVideoSequenceImpl)
 
         val videoSequence = new VideoSequence(UUID.randomUUID(), "foobarbaz", "brian's cam")
         val formMap       = VideoSequence.toFormMap(videoSequence)
@@ -162,6 +161,7 @@ trait VideoSequenceEndpointsITSuite extends EndpointsSuite:
         val request = basicRequest
             .post(uri"http://test.com/v1/videosequences")
             .header("Authorization", s"Bearer $jwt")
+            .header("Content-Type", "application/x-www-form-urlencoded")
             .body(formMap)
 
         log.atDebug.log(request.toRfc2616Format(Set()))
@@ -175,13 +175,41 @@ trait VideoSequenceEndpointsITSuite extends EndpointsSuite:
             )
             .join
 
-    test("updateOneVideoSequence"):
+    test("createOneVideoSequence using JSON body"):
+
+        val jwt = jwtService.authorize("foo").orNull
+
+        val backendStub = newBackendStub(endpoints.createOneVideoSequenceImpl)
+
+        val videoSequence = new VideoSequence(UUID.randomUUID(), "foobarbaz", "brian's cam")
+        val create = VideoSequenceCreate(
+            videoSequence.name,
+            videoSequence.camera_id,
+            videoSequence.description
+        )
+
+        val request = basicRequest
+            .post(uri"http://test.com/v1/videosequences")
+            .header("Authorization", s"Bearer $jwt")
+            .header("Content-Type", "application/json")
+            .body(create.stringify)
+
+        log.atDebug.log(request.toRfc2616Format(Set()))
+
+        val response = request.send(backendStub)
+
+        response
+            .map(r =>
+                assertEquals(r.code, StatusCode.Ok)
+                assert(r.body.isRight)
+            )
+            .join
+
+    test("updateOneVideoSequence using form body"):
         val videoSequence = TestUtils.create(1, 1, 1).head
         val jwt           = jwtService.authorize("foo").orNull
 
-        val backendStub: SttpBackend[Future, Any] = TapirStubInterpreter(SttpBackendStub.asynchronousFuture)
-            .whenServerEndpointRunLogic(endpoints.updateOneVideoSequenceImpl)
-            .backend()
+        val backendStub = newBackendStub(endpoints.updateOneVideoSequenceImpl)
 
         val v0      = VideoSequence
             .from(videoSequence)
@@ -191,7 +219,36 @@ trait VideoSequenceEndpointsITSuite extends EndpointsSuite:
         val request = basicRequest
             .put(uri"http://test.com/v1/videosequences/${videoSequence.getUuid}")
             .header("Authorization", s"Bearer $jwt")
+            .header("Content-Type", "application/x-www-form-urlencoded")
             .body(formMap)
+
+        log.atDebug.log(request.toRfc2616Format(Set()))
+
+        val response = request.send(backendStub).join
+        assertEquals(response.code, StatusCode.Ok)
+        val v1       = checkResponse[VideoSequence](response.body)
+        AssertUtil.deepAssertSameVideoSequence(v0, v1)
+
+    test("updateOneVideoSequence using JSON body"):
+        val videoSequence = TestUtils.create(1, 1, 1).head
+        val jwt           = jwtService.authorize("foo").orNull
+
+        val backendStub = newBackendStub(endpoints.updateOneVideoSequenceImpl)
+
+        val v0      = VideoSequence
+            .from(videoSequence)
+            .copy(camera_id = "foogady", name = "brian was here once again", description = Some("testy tester"))
+        val update = VideoSequenceUpdate(
+            Some(v0.name),
+            Some(v0.camera_id),
+            v0.description
+        )
+
+        val request = basicRequest
+            .put(uri"http://test.com/v1/videosequences/${videoSequence.getUuid}")
+            .header("Authorization", s"Bearer $jwt")
+            .header("Content-Type", "application/json")
+            .body(update.stringify)
 
         log.atDebug.log(request.toRfc2616Format(Set()))
 

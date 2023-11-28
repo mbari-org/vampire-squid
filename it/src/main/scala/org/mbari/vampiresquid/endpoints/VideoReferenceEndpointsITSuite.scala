@@ -42,6 +42,9 @@ import sttp.tapir.server.vertx.VertxFutureServerOptions
 import sttp.tapir.server.interceptor.exception.ExceptionHandler
 import sttp.tapir.server.model.ValuedEndpointOutput
 import sttp.tapir.server.interceptor.CustomiseInterceptors
+import org.mbari.vampiresquid.domain.VideoReferenceCreate
+import org.mbari.vampiresquid.etc.circe.CirceCodecs.*
+import org.mbari.vampiresquid.domain.VideoReferenceUpdate
 
 trait VideoReferenceEndpointsITSuite extends EndpointsSuite:
 
@@ -150,7 +153,7 @@ trait VideoReferenceEndpointsITSuite extends EndpointsSuite:
         val response    = request.send(backendStub).join
         assertEquals(response.code, StatusCode.NoContent)
 
-    test("createOneVideoReference"):
+    test("createOneVideoReference using form body"):
         val vrs   = TestUtils.create(1, 1, 1).head
         val video = vrs.getVideos().get(0)
         val jwt   = jwtService.authorize("foo").orNull
@@ -177,6 +180,7 @@ trait VideoReferenceEndpointsITSuite extends EndpointsSuite:
         val request = basicRequest
             .post(uri"http://test.com/v1/videoreferences")
             .header("Authorization", s"Bearer $jwt")
+            .header("Content-Type", "application/x-www-form-urlencoded")
             .body(form)
 
         val response = request.send(backendStub)
@@ -188,7 +192,43 @@ trait VideoReferenceEndpointsITSuite extends EndpointsSuite:
             )
             .join
 
-    test("updateOneVideoReference"):
+    test("createOneVideoReference using JSON body"):
+        val vrs   = TestUtils.create(1, 1, 1).head
+        val video = vrs.getVideos().get(0)
+        val jwt   = jwtService.authorize("foo").orNull
+
+        val backendStub = newBackendStub(endpoints.createOneVideoReferenceImpl)
+
+        val videoReference = new VideoReferenceCreate(
+            video.getUuid(),
+            new URI("http://yourvideo/is/here/foodefafa.mp4"),
+            Some("mp4"),
+            Some("h264"),
+            Some("aac"),
+            Some(1920),
+            Some(1080),
+            Some(29.97),
+            Some(1000000),
+            Some(TestUtils.randomSha512()),
+            Some("bar")
+        )
+
+        val request = basicRequest
+            .post(uri"http://test.com/v1/videoreferences")
+            .header("Authorization", s"Bearer $jwt")
+            .header("Content-Type", "application/json")
+            .body(videoReference.stringify)
+
+        val response = request.send(backendStub)
+
+        response
+            .map(r =>
+                assertEquals(r.code, StatusCode.Ok)
+                assert(r.body.isRight)
+            )
+            .join
+
+    test("updateOneVideoReference using form body"):
         val vrs = TestUtils.create(1, 1, 1).head
         val vr  = vrs.getVideoReferences().get(0)
         val jwt = jwtService.authorize("foo").orNull
@@ -203,6 +243,7 @@ trait VideoReferenceEndpointsITSuite extends EndpointsSuite:
         val request = basicRequest
             .put(uri"http://test.com/v1/videoreferences/${vr.getUuid}")
             .header("Authorization", s"Bearer $jwt")
+            .header("Content-Type", "application/x-www-form-urlencoded")
             .body(form)
 
         val response = request
@@ -212,6 +253,35 @@ trait VideoReferenceEndpointsITSuite extends EndpointsSuite:
                 assertEquals(r.code, StatusCode.Ok)
                 assert(r.body.isRight)
                 val v1 = checkResponse[VideoReference](r.body)
-                AssertUtil.assertSameVideoReference(v1, videoReference)
+                AssertUtil.assertSameVideoReference(videoReference, v1)
+            )
+            .join
+
+    test("updateOneVideoReference using JSON body"):
+        val vrs = TestUtils.create(1, 1, 1).head
+        val vr  = vrs.getVideoReferences().get(0)
+        val jwt = jwtService.authorize("foo").orNull
+
+        val backendStub = newBackendStub(endpoints.updateOneVideoReferenceImpl)
+
+        val videoReference = VideoReference.from(vr).copy(uri = new URI("http://yourvideo/is/now/here/foodebobo.mp4"))
+        val update = VideoReferenceUpdate.from(videoReference, Some(vr.getVideo().getUuid()))
+
+        // println(form)
+
+        val request = basicRequest
+            .put(uri"http://test.com/v1/videoreferences/${vr.getUuid}")
+            .header("Authorization", s"Bearer $jwt")
+            .header("Content-Type", "application/json")
+            .body(update.stringify)
+
+        val response = request
+            .send(backendStub)
+            .map(r =>
+                // println(r.body)
+                assertEquals(r.code, StatusCode.Ok)
+                assert(r.body.isRight)
+                val v1 = checkResponse[VideoReference](r.body)
+                AssertUtil.assertSameVideoReference(videoReference, v1)
             )
             .join

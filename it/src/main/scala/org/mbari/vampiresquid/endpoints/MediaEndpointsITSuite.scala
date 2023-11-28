@@ -42,6 +42,7 @@ import sttp.client3.SttpBackend
 import sttp.client3.testing.SttpBackendStub
 import sttp.model.StatusCode
 import sttp.tapir.server.stub.TapirStubInterpreter
+import org.checkerframework.checker.units.qual.m
 
 trait MediaEndpointsITSuite extends EndpointsSuite:
 
@@ -55,10 +56,7 @@ trait MediaEndpointsITSuite extends EndpointsSuite:
     test("createMedia - Create a new media using form body"):
 
         val jwt = jwtService.authorize("foo").orNull
-
-        val backendStub: SttpBackend[Future, Any] = TapirStubInterpreter(SttpBackendStub.asynchronousFuture)
-            .whenServerEndpointRunLogic(mediaEndpoints.createMediaImpl)
-            .backend()
+        val backendStub = newBackendStub(mediaEndpoints.createMediaImpl)
 
         val now   = Instant.now()
         val media = new Media(
@@ -72,7 +70,72 @@ trait MediaEndpointsITSuite extends EndpointsSuite:
         val request = basicRequest
             .post(uri"http://test.com/v1/media")
             .header("Authorization", s"Bearer $jwt")
+            .header("Content-Type", "application/x-www-form-urlencoded")
             .body(Media.toFormMap(media))
+
+        log.atDebug.log(request.toRfc2616Format(Set()))
+
+        val response = request.send(backendStub)
+
+        response
+            .map(r =>
+                assertEquals(r.code, StatusCode.Ok)
+                assert(r.body.isRight)
+            )
+            .join
+
+    test("createMedia - Create a new media using JSON body"):
+
+        val jwt = jwtService.authorize("foo").orNull
+        val backendStub = newBackendStub(mediaEndpoints.createMediaImpl)
+
+        val now   = Instant.now()
+        val media = new Media(
+            video_sequence_name = Some("Test Dive 01"),
+            video_name = Some("Test Dive 01 " + now),
+            camera_id = Some("Tester 01"),
+            uri = Some(URI.create("http://foo.org/v1/movie01.mp4")),
+            start_timestamp = Some(now)
+        )
+
+        val request = basicRequest
+            .post(uri"http://test.com/v1/media")
+            .header("Authorization", s"Bearer $jwt")
+            .header("Content-Type", "application/json")
+            .body(media.stringify)
+
+        val response = request.send(backendStub)
+
+        response
+            .map(r =>
+                assertEquals(r.code, StatusCode.Ok)
+                assert(r.body.isRight)
+            )
+            .join
+
+    test("updateMedia - Update an existing media using form body"):
+        val jwt = jwtService.authorize("foo").orNull
+
+        val now    = Instant.now()
+        val media0 = new Media(
+            video_sequence_name = Some("Test Dive 02"),
+            video_name = Some("Test Dive 02 " + now),
+            camera_id = Some("Tester 02"),
+            uri = Some(URI.create("http://test.me/movie02.mp4")),
+            start_timestamp = Some(now),
+            sha512 = Some(Array[Byte](1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
+        )
+
+        val media1 = controller.createMedia(media0).join
+        val media2 = media1.copy(uri = Some(URI.create("http://test.me/movie02_changed.mp4")))
+
+        val backendStub = newBackendStub(mediaEndpoints.updateMediaImpl)
+
+        val request = basicRequest
+            .put(uri"http://test.com/v1/media")
+            .header("Authorization", s"Bearer $jwt")
+            .header("Content-Type", "application/x-www-form-urlencoded")
+            .body(Media.toFormMap(media2))
 
         log.atDebug.log(request.toRfc2616Format(Set()))
 
@@ -101,14 +164,13 @@ trait MediaEndpointsITSuite extends EndpointsSuite:
         val media1 = controller.createMedia(media0).join
         val media2 = media1.copy(uri = Some(URI.create("http://test.me/movie02_changed.mp4")))
 
-        val backendStub: SttpBackend[Future, Any] = TapirStubInterpreter(SttpBackendStub.asynchronousFuture)
-            .whenServerEndpointRunLogic(mediaEndpoints.updateMediaImpl)
-            .backend()
+        val backendStub = newBackendStub(mediaEndpoints.updateMediaImpl)
 
         val request = basicRequest
             .put(uri"http://test.com/v1/media")
             .header("Authorization", s"Bearer $jwt")
-            .body(Media.toFormMap(media2))
+            .header("Content-Type", "application/json")
+            .body(media2.stringify)
 
         log.atDebug.log(request.toRfc2616Format(Set()))
 
@@ -136,16 +198,60 @@ trait MediaEndpointsITSuite extends EndpointsSuite:
 
         val media1 = controller.createMedia(media0).join
         val media2 = media1.copy(uri = Some(URI.create("http://test.me/movie03_changed.mp4")))
-//        println(media2.stringify)
 
-        val backendStub: SttpBackend[Future, Any] = TapirStubInterpreter(SttpBackendStub.asynchronousFuture)
-            .whenServerEndpointRunLogic(mediaEndpoints.updateMediaByVideoReferenceUuidImpl)
-            .backend()
+        val backendStub = newBackendStub(mediaEndpoints.updateMediaByVideoReferenceUuidImpl)
 
         val request = basicRequest
             .put(uri"http://test.com/v1/media/${media2.videoReferenceUuid}")
             .header("Authorization", s"Bearer $jwt")
+            .header("Content-Type", "application/x-www-form-urlencoded")
             .body(Media.toFormMap(media2))
+
+        log.atDebug.log(request.toRfc2616Format(Set()))
+
+        val response = request.send(backendStub)
+
+        response
+            .map(r =>
+                assertEquals(r.code, StatusCode.Ok)
+                assert(r.body.isRight)
+                val body = r.body.getOrElse(fail("no body was returned"))
+                val e    = decode[Media](body)
+                e match
+                    case Left(e)  => fail("")
+                    case Right(m) =>
+                        assert(m.video_sequence_uuid.isDefined)
+                        assert(m.video_uuid.isDefined)
+                        assert(m.video_reference_uuid.isDefined)
+                        assert(m.uri.isDefined)
+                        assertEquals(media2.uri.get, m.uri.get)
+            )
+            .join
+    
+    test("updateMediaByVideoReferenceUuid - Update an existing media using JSON body"):
+        val jwt    = jwtService.authorize("foo").orNull
+        val now    = Instant.now()
+        val media0 = new Media(
+            video_sequence_name = Some("Test Dive 03"),
+            video_name = Some("Test Dive 03 " + now),
+            camera_id = Some("Tester 03"),
+            uri = Some(URI.create("http://test.me/movie03.mp4")),
+            start_timestamp = Some(now),
+            duration_millis = Some(30000),
+            sha512 = Some(Array[Byte](1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11))
+        )
+
+        val media1 = controller.createMedia(media0).join
+        val media2 = media1.copy(uri = Some(URI.create("http://test.me/movie03_changed.mp4")))
+//        println(media2.stringify)
+
+        val backendStub = newBackendStub(mediaEndpoints.updateMediaByVideoReferenceUuidImpl)
+
+        val request = basicRequest
+            .put(uri"http://test.com/v1/media/${media2.videoReferenceUuid}")
+            .header("Authorization", s"Bearer $jwt")
+            .header("Content-Type", "application/json")
+            .body(media2.stringify)
 
         log.atDebug.log(request.toRfc2616Format(Set()))
 

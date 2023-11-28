@@ -158,7 +158,7 @@ class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: Ex
         secureEndpoint
             .post
             .in("v1" / "videoreferences")
-            .in(formBody[VideoReferenceCreate])
+            .in(oneOfBody(formBody[VideoReferenceCreate], jsonBody[VideoReferenceCreate]))
             .out(jsonBody[VideoReference])
             .name("create")
             .description("Create a video reference")
@@ -190,7 +190,7 @@ class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: Ex
         secureEndpoint
             .put
             .in("v1" / "videoreferences" / path[UUID]("uuid"))
-            .in(formBody[VideoReferenceUpdate])
+            .in(oneOfBody(formBody[VideoReferenceUpdate], jsonBody[VideoReferenceUpdate]))
             .out(jsonBody[VideoReference])
             .name("update")
             .description("Update a video reference by UUID")
