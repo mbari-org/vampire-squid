@@ -82,6 +82,7 @@ import java.util.UUID;
                 )
         }
 )
+@org.hibernate.envers.Audited
 public class VideoSequenceEntity implements IPersistentObject {
 
     @Id

@@ -103,3 +103,59 @@ ALTER TABLE "dbo"."videos"
 	REFERENCES "dbo"."video_sequences"("uuid")
 	ON DELETE NO ACTION 
 	ON UPDATE NO ACTION ;
+
+CREATE TABLE REVINFO (
+  REV int identity NOT NULL, 
+  REVTSTMP bigint, 
+  PRIMARY KEY (REV)
+);
+
+CREATE TABLE video_sequences_AUD (
+  REV int not null, 
+  REVTYPE smallint, 
+  uuid uniqueidentifier not null, 
+  camera_id varchar(256), 
+  name varchar(512), 
+  description varchar(2048), 
+  primary key (REV, uuid)
+);
+ALTER TABLE video_sequences_AUD 
+  ADD CONSTRAINT FKishwxaxtpmol5qei61s52ocmp FOREIGN KEY (REV) references REVINFO;
+
+CREATE TABLE videos_AUD (
+  REV int not null, 
+  REVTYPE smallint, 
+  duration_millis bigint, 
+  start_time datetimeoffset(6),
+  uuid uniqueidentifier not null, 
+  video_sequence_uuid uniqueidentifier, 
+  name varchar(512), 
+  description varchar(2048), 
+  primary key (REV, uuid)
+);
+ALTER TABLE videos_AUD 
+  ADD CONSTRAINT FKqjjatv07dopiut98rkojnxnx5 FOREIGN KEY (REV) REFERENCES REVINFO;
+
+
+CREATE TABLE video_references_AUD (
+  REV int not null, 
+  REVTYPE smallint, 
+  frame_rate float(53), 
+  height int, 
+  width int, 
+  size_bytes bigint, 
+  uuid uniqueidentifier not null, 
+  video_uuid uniqueidentifier, 
+  audio_codec varchar(128), 
+  container varchar(128), 
+  sha512 varchar(128), 
+  video_codec varchar(128), 
+  uri varchar(1024), 
+  description varchar(2048), 
+  primary key (REV, uuid)
+);
+ALTER TABLE video_references_AUD 
+  ADD CONSTRAINT FKmcod7ar30v0ifle9gtfwh7ews FOREIGN KEY (REV) REFERENCES REVINFO;
+
+
+

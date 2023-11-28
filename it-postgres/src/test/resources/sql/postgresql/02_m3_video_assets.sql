@@ -91,4 +91,52 @@ FROM
     videos AS v ON v.video_sequence_uuid = s.uuid LEFT JOIN
     video_references AS r ON r.video_uuid = v.uuid;
 
+create sequence REVINFO_SEQ start with 1 increment by 50;
+create table REVINFO (REV integer not null, REVTSTMP bigint, primary key (REV));
+
+create table video_sequences_AUD (
+  REV integer not null, 
+  REVTYPE smallint, 
+  uuid uuid not null, 
+  camera_id varchar(256), 
+  name varchar(512), 
+  description varchar(2048), 
+  primary key (REV, uuid)
+);
+alter table if exists video_sequences_AUD add constraint FKishwxaxtpmol5qei61s52ocmp foreign key (REV) references REVINFO;
+
+create table videos_AUD (
+  REV integer not null, 
+  REVTYPE smallint, 
+  duration_millis bigint, 
+  start_time timestamp(6) with time zone, 
+  uuid uuid not null, 
+  video_sequence_uuid uuid, 
+  name varchar(512), 
+  description varchar(2048), 
+  primary key (REV, uuid)
+);
+alter table if exists videos_AUD add constraint FKqjjatv07dopiut98rkojnxnx5 foreign key (REV) references REVINFO;
+
+create table video_references_AUD (
+  REV integer not null, 
+  REVTYPE smallint, 
+  frame_rate float(53), 
+  height integer, 
+  width integer, 
+  size_bytes bigint, 
+  uuid uuid not null, 
+  video_uuid uuid, 
+  audio_codec varchar(128), 
+  container varchar(128), 
+  sha512 varchar(128), 
+  video_codec varchar(128), 
+  uri varchar(1024), 
+  description varchar(2048), 
+  primary key (REV, uuid)
+);
+alter table if exists video_references_AUD add constraint FKmcod7ar30v0ifle9gtfwh7ews foreign key (REV) references REVINFO;
+
+
+
 

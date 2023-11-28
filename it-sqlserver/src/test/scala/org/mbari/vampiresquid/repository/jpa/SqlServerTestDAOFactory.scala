@@ -41,7 +41,8 @@ object SqlServerTestDAOFactory extends SpecDAOFactory:
             Map(
                 "hibernate.dialect"            -> "org.hibernate.dialect.SQLServerDialect",
                 "hibernate.hikari.idleTimeout" -> "1000",
-                "hibernate.hikari.maxLifetime" -> "3000"
+                "hibernate.hikari.maxLifetime" -> "3000",
+                "jakarta.persistence.schema-generation.scripts.action" -> "drop-and-create"
             )
 
     lazy val entityManagerFactory: EntityManagerFactory =

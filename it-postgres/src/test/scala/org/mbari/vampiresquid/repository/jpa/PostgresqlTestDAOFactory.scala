@@ -37,7 +37,8 @@ object PostgresqlTestDAOFactory extends SpecDAOFactory:
     override def testProps(): Map[String, String] =
         TestDAOFactory.TestProperties ++
             Map(
-                "hibernate.dialect" -> "org.hibernate.dialect.PostgreSQLDialect"
+                "hibernate.dialect" -> "org.hibernate.dialect.PostgreSQLDialect",
+                "jakarta.persistence.schema-generation.scripts.action" -> "drop-and-create"
             )
 
     lazy val entityManagerFactory: EntityManagerFactory =

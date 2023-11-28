@@ -59,6 +59,7 @@ lazy val vampireSquid = (project in file("vampire-squid"))
                 derbyShared     % Test,
                 derbyTools      % Test,
                 hibernateCore,
+                hibernateEnvers,
                 hibernateHikari,
                 javaJwt,
                 logbackClassic,
