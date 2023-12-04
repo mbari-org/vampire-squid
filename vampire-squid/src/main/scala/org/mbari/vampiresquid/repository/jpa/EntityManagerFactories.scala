@@ -67,7 +67,7 @@ object EntityManagerFactories:
 
     def apply(configNode: String): EntityManagerFactory =
         val driver      = config.getString(configNode + ".driver")
-        val logLevel    = config.getString(".loglevel")
+        val logLevel    = config.getString(configNode + ".loglevel")
         val password    = config.getString(configNode + ".password")
         val productName = config.getString(configNode + ".name")
         val url         = config.getString(configNode + ".url")

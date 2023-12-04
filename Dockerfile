@@ -17,8 +17,8 @@ ENV APP_HOME /opt/vampire-squid
 
 RUN mkdir -p ${APP_HOME}
 
-COPY target/pack/ ${APP_HOME}/
+COPY vampire-squid/target/universal/stage/bin ${APP_HOME}/
 
 EXPOSE 8080
 
-ENTRYPOINT $APP_HOME/bin/jetty-main
+ENTRYPOINT $APP_HOME/bin/vampire-squid
