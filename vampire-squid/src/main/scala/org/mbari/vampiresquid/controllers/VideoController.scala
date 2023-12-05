@@ -36,8 +36,8 @@ class VideoController(val daoFactory: JPADAOFactory) extends BaseController:
 
     private type VDAO = VideoDAO[VideoEntity]
 
-    def findAll()(implicit ec: ExecutionContext): Future[Seq[VDTO]] =
-        exec(d => d.findAll().toSeq.map(VDTO.from))
+    def findAll(offset: Int, limit: Int)(implicit ec: ExecutionContext): Future[Seq[VDTO]] =
+        exec(d => d.findAll(offset, limit).toSeq.map(VDTO.from))
 
     def findByUUID(uuid: UUID)(implicit ec: ExecutionContext): Future[Option[VDTO]] =
         exec(d => d.findByUUID(uuid).map(VDTO.from))

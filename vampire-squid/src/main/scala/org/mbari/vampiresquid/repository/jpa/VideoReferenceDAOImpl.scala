@@ -44,8 +44,8 @@ class VideoReferenceDAOImpl(entityManager: EntityManager)
     override def findByFileName(filename: String): Iterable[VideoReferenceEntity] =
         findByNamedQuery("VideoReference.findByFileName", Map("filename" -> s"%$filename"))
 
-    override def findAll(): Iterable[VideoReferenceEntity] =
-        findByNamedQuery("VideoReference.findAll")
+    override def findAll(offset: Int, limit: Int): Iterable[VideoReferenceEntity] =
+        findByNamedQuery("VideoReference.findAll", offset = Some(offset), limit = Some(limit))
 
     override def findAllURIs(): Iterable[URI] =
         val query = entityManager.createNamedQuery("VideoReference.findAllURIs")

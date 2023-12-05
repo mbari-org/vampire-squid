@@ -24,7 +24,7 @@ CREATE TABLE videos  (
 	"start_time"         	timestamp NOT NULL,	/* start_time is the start time of the video */	
 	"last_updated_time"  	timestamp NOT NULL DEFAULT now(),
 	UNIQUE("name"),
-	CONSTRAINT fk_videos__video_seqeunces 
+	CONSTRAINT fk__videos__video_sequences__uuid 
 	  FOREIGN KEY(video_sequence_uuid) 
 		REFERENCES video_sequences("uuid"));
 
@@ -43,29 +43,29 @@ CREATE TABLE video_references  (
 	"width"            	integer NULL,
 	"last_updated_time"	timestamp NOT NULL DEFAULT now(),
 	UNIQUE("uri"),
-	CONSTRAINT fk_videos_references__videos
+	CONSTRAINT fk__videos_references__videos__uuid
 	  FOREIGN KEY(video_uuid) 
 		REFERENCES videos("uuid"));
 
-CREATE INDEX "idx_video_references__uri"
+CREATE INDEX "idx__video_references__uri"
 	ON "video_references"("uri");
 
-CREATE INDEX "idx_video_references__video_uuid"
+CREATE INDEX "idx__video_references__video_uuid"
 	ON "video_references"("video_uuid");
 
-CREATE INDEX "idx_video_sequences__camera_id"
+CREATE INDEX "idx__video_sequences__camera_id"
 	ON "video_sequences"("camera_id");
 
-CREATE INDEX "idx_video_sequences__name"
+CREATE INDEX "idx__video_sequences__name"
 	ON "video_sequences"("name");
 
-CREATE INDEX "idx_videos__name"
+CREATE INDEX "idx__videos__name"
 	ON "videos"("name");
 
-CREATE INDEX "idx_videos__start_time"
+CREATE INDEX "idx__videos__start_time"
 	ON "videos"("start_time");
 
-CREATE INDEX "idx_videos__video_sequence_uuid"
+CREATE INDEX "idx__videos__video_sequence_uuid"
 	ON "videos"("video_sequence_uuid");
 
 CREATE VIEW "unique_videos"
@@ -103,7 +103,7 @@ create table video_sequences_AUD (
   description varchar(2048), 
   primary key (REV, uuid)
 );
-alter table if exists video_sequences_AUD add constraint FKishwxaxtpmol5qei61s52ocmp foreign key (REV) references REVINFO;
+alter table if exists video_sequences_AUD add constraint fk__video_seqs_aud__revinfo foreign key (REV) references REVINFO;
 
 create table videos_AUD (
   REV integer not null, 
@@ -116,7 +116,7 @@ create table videos_AUD (
   description varchar(2048), 
   primary key (REV, uuid)
 );
-alter table if exists videos_AUD add constraint FKqjjatv07dopiut98rkojnxnx5 foreign key (REV) references REVINFO;
+alter table if exists videos_AUD add constraint fk__videos_aud__revinfo foreign key (REV) references REVINFO;
 
 create table video_references_AUD (
   REV integer not null, 
@@ -135,7 +135,7 @@ create table video_references_AUD (
   description varchar(2048), 
   primary key (REV, uuid)
 );
-alter table if exists video_references_AUD add constraint FKmcod7ar30v0ifle9gtfwh7ews foreign key (REV) references REVINFO;
+alter table if exists video_references_AUD add constraint fk__video_refs_aud__revinfo foreign key (REV) references REVINFO;
 
 
 

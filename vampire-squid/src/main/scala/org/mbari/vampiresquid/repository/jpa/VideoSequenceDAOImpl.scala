@@ -136,7 +136,7 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
                 (a.isBefore(timestamp) && b.isAfter(timestamp))
             }
 
-    override def findAll(): Iterable[VideoSequenceEntity] = findByNamedQuery("VideoSequence.findAll")
+    override def findAll(offset: Int, limit: Int): Iterable[VideoSequenceEntity] = findByNamedQuery("VideoSequence.findAll", offset = Some(offset), limit = Some(limit))
 
     override def findAllNames(): Iterable[String] =
         entityManager

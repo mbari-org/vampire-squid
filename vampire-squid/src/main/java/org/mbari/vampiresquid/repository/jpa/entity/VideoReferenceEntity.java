@@ -127,7 +127,7 @@ public class VideoReferenceEntity implements IPersistentObject {
     byte[] sha512;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH}, optional = false)
-    @JoinColumn(name = "video_uuid", nullable = false)
+    @JoinColumn(name = "video_uuid", nullable = false, foreignKey = @ForeignKey(name = "fk_video_references__video_uuid"))
     VideoEntity video;
 
     @Column(name = "description", length = 2048)

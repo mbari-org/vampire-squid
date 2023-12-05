@@ -106,7 +106,7 @@ public class VideoEntity implements IPersistentObject {
     Duration duration;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH}, optional = false)
-    @JoinColumn(name = "video_sequence_uuid", nullable = false)
+    @JoinColumn(name = "video_sequence_uuid", nullable = false, foreignKey = @ForeignKey(name = "fk_videos__video_sequence_uuid"))
     VideoSequenceEntity videoSequence;
 
     @Column(name = "description", length = 2048)

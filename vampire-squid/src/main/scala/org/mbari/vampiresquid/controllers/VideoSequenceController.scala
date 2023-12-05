@@ -35,8 +35,8 @@ class VideoSequenceController(val daoFactory: JPADAOFactory) extends BaseControl
 
     private type VSDAO = VideoSequenceDAO[VideoSequenceEntity]
 
-    def findAll()(implicit ec: ExecutionContext): Future[List[VSDTO]] =
-        exec(d => d.findAll().toList.sortBy(_.getName()).map(VSDTO.from))
+    def findAll(offset: Int, limit: Int)(implicit ec: ExecutionContext): Future[List[VSDTO]] =
+        exec(d => d.findAll(offset, limit).toList.sortBy(_.getName()).map(VSDTO.from))
 
     def findAllNames()(implicit ec: ExecutionContext): Future[Seq[String]] =
         exec(d => d.findAllNames().toSeq.sorted)

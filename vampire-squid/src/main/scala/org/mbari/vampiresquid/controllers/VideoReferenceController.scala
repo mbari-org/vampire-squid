@@ -34,8 +34,8 @@ class VideoReferenceController(val daoFactory: JPADAOFactory) extends BaseContro
 
     private type VRDAO = VideoReferenceDAO[VideoReferenceEntity]
 
-    def findAll()(implicit ec: ExecutionContext): Future[Seq[VRDTO]] =
-        exec(d => d.findAll().toSeq.map(VRDTO.from))
+    def findAll(offset: Int, limit: Int)(implicit ec: ExecutionContext): Future[Seq[VRDTO]] =
+        exec(d => d.findAll(offset, limit).toSeq.map(VRDTO.from))
 
     def findAllURIs()(implicit ec: ExecutionContext): Future[Seq[URI]] =
         exec(d => d.findAllURIs().toSeq)

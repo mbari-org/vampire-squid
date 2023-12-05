@@ -46,18 +46,19 @@ class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: Ex
     private val hex = HexFormat.of()
 
     // GET "v1/videoreferences"
-    val findAllVideoReferences: Endpoint[Unit, Unit, ErrorMsg, List[VideoReference], Any] =
+    val findAllVideoReferences: Endpoint[Unit, Paging, ErrorMsg, List[VideoReference], Any] =
         openEndpoint
             .get
             .in("v1" / "videoreferences")
+            .in(paging)
             .out(jsonBody[List[VideoReference]])
-            .name("findAll")
+            .name("findAllVideoReferences")
             .description("Find all video references")
             .tag("video references")
 
     val findAllVideoReferencesImpl: ServerEndpoint[Any, Future] =
-        findAllVideoReferences.serverLogic { _ =>
-            handleErrors(controller.findAll().map(_.toList))
+        findAllVideoReferences.serverLogic { page =>
+            handleErrors(controller.findAll(page.from.getOrElse(0), page.limit.getOrElse(100)).map(_.toList))
         }
 
     // GET "v1/videoreferences/:uuid"
@@ -66,7 +67,7 @@ class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: Ex
             .get
             .in("v1" / "videoreferences" / path[UUID]("uuid"))
             .out(jsonBody[VideoReference])
-            .name("findOne")
+            .name("findOneVideoReference")
             .description("Find a video reference by UUID")
             .tag("video references")
 
@@ -81,7 +82,7 @@ class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: Ex
             .get
             .in("v1" / "videoreferences" / "lastupdate" / path[UUID]("uuid"))
             .out(jsonBody[LastUpdatedTime])
-            .name("findLastUpdate")
+            .name("findLastUpdateForVideoReference")
             .description("Find the last update time for a video reference by UUID")
             .tag("video references")
 
@@ -98,7 +99,7 @@ class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: Ex
             .get
             .in("v1" / "videoreferences" / "uri" / path[URI]("uri"))
             .out(jsonBody[VideoReference])
-            .name("findByUri")
+            .name("findVideoReferenceByUri")
             .description("Find a video reference by URI")
             .tag("video references")
 
@@ -113,7 +114,7 @@ class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: Ex
             .get
             .in("v1" / "videoreferences" / "uris")
             .out(jsonBody[List[URI]])
-            .name("findByUris")
+            .name("findAllUris")
             .description("Find video references by URIs")
             .tag("video references")
 
@@ -128,7 +129,7 @@ class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: Ex
             .get
             .in("v1" / "videoreferences" / "sha512" / path[String]("sha512"))
             .out(jsonBody[VideoReference])
-            .name("findBySha512")
+            .name("findVideoReferenceBySha512")
             .description("Find a video reference by SHA512")
             .tag("video references")
     val findVideoReferenceBySha512Impl: ServerEndpoint[Any, Future]                       =
@@ -142,7 +143,7 @@ class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: Ex
             .delete
             .in("v1" / "videoreferences" / path[UUID]("uuid"))
             .out(statusCode(StatusCode.NoContent))
-            .name("delete")
+            .name("deleteOneVideoReference")
             .description("Delete a video reference by UUID")
             .tag("video references")
 
@@ -160,7 +161,7 @@ class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: Ex
             .in("v1" / "videoreferences")
             .in(oneOfBody(formBody[VideoReferenceCreate], jsonBody[VideoReferenceCreate]))
             .out(jsonBody[VideoReference])
-            .name("create")
+            .name("createOneVideoReference")
             .description("Create a video reference")
             .tag("video references")
 
@@ -219,24 +220,24 @@ class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: Ex
             }
 
     override val all: List[Endpoint[_, _, _, _, _]] = List(
-        findAllVideoReferences,
-        findOneVideoReference,
         findLastUpdateForVideoReference,
         findVideoReferenceByUri,
         findAllUris,
         findVideoReferenceBySha512,
+        findOneVideoReference,
+        findAllVideoReferences,
         deleteOneVideoReference,
         createOneVideoReference,
         updateOneVideoReference
     )
 
     override def allImpl: List[ServerEndpoint[Any, Future]] = List(
-        findAllVideoReferencesImpl,
-        findOneVideoReferenceImpl,
         findLastUpdateForVideoReferenceImpl,
         findVideoReferenceByUriImpl,
         findAllUrisImpl,
         findVideoReferenceBySha512Impl,
+        findOneVideoReferenceImpl,
+        findAllVideoReferencesImpl,
         deleteOneVideoReferenceImpl,
         createOneVideoReferenceImpl,
         updateOneVideoReferenceImpl

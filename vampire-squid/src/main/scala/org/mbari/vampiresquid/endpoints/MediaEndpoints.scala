@@ -64,7 +64,7 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
             .in("v1" / "media")
             .in(oneOfBody(formBody[Media], jsonBody[Media]))
             .out(jsonBody[Media])
-            .name("create")
+            .name("createMedia")
             .description("Create a new media.(The `uuid` param will be ignored if present.)")
             .tag("media")
 
@@ -83,7 +83,7 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
             .in("v1" / "media")
             .in(oneOfBody(formBody[Media], jsonBody[Media]))
             .out(jsonBody[Media])
-            .name("update")
+            .name("updateMedia")
             .description("Update an existing media. (All uuid params will be ignored if present.)")
             .tag("media")
 
@@ -102,7 +102,7 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
             .in("v1" / "media" / path[UUID]("videoReferenceUuid"))
             .in(oneOfBody(formBody[Media], jsonBody[Media]))
             .out(jsonBody[Media])
-            .name("update by videoReferenceUuid")
+            .name("updateMediaByVideoReferenceUuid")
             .description("Update an existing media by videoReferenceUuid and form data")
             .tag("media")
 
@@ -129,7 +129,7 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
             .in("v1" / "media" / "move" / path[UUID]("videoReferenceUuid"))
             .in(formBody[MoveVideoParams])
             .out(jsonBody[Media])
-            .name("move by videoReferenceUuid")
+            .name("moveMediaByVideoReferenceUuid")
             .description("Move an existing media by videoReferenceUuid and form data")
             .tag("media")
 
@@ -156,7 +156,7 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
             .get
             .in("v1" / "media" / "sha512" / path[String]("sha512"))
             .out(jsonBody[Media])
-            .name("findBySha512")
+            .name("findMediaBySha512")
             .description("Find media by sha512")
             .tag("media")
 
@@ -174,7 +174,7 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
             .get
             .in("v1" / "media" / "videoreference" / path[UUID]("videoReferenceUuid"))
             .out(jsonBody[Media])
-            .name("findByVideoReferenceUuid")
+            .name("findMediaByVideoReferenceUuid")
             .description("Find media by videoReferenceUuid")
             .tag("media")
 
@@ -191,7 +191,7 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
             .get
             .in("v1" / "media" / "videoreference" / "filename" / path[String]("filename"))
             .out(jsonBody[List[Media]])
-            .name("findByFileName")
+            .name("findMediaByFileName")
             .description("Find media by filename")
             .tag("media")
 
@@ -208,7 +208,7 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
             .get
             .in("v1" / "media" / "videosequence" / path[String]("name"))
             .out(jsonBody[List[Media]])
-            .name("findByVideoSequenceName")
+            .name("findMediaByVideoSequenceName")
             .description("Find media by video sequence name")
             .tag("media")
 
@@ -225,7 +225,7 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
             .get
             .in("v1" / "media" / "video" / path[String]("name"))
             .out(jsonBody[List[Media]])
-            .name("findByVideoName")
+            .name("findMediaByVideoName")
             .description("Find media by video name")
             .tag("media")
 
@@ -248,7 +248,7 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
                 )(TapirCodecs.instantCodec)
             )
             .out(jsonBody[List[Media]])
-            .name("findByCameraIdAndTimestamps")
+            .name("findMediaByCameraIdAndTimestamps")
             .description("Find media by cameraId and timestamps")
             .tag("media")
 
@@ -270,7 +270,7 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
             .get
             .in("v1" / "media" / "concurrent" / path[UUID]("videoReferenceUuid"))
             .out(jsonBody[List[Media]])
-            .name("findConcurrentByVideoReferenceUuid")
+            .name("findConcurrentMediaByVideoReferenceUuid")
             .description("Find concurrent media by videoReferenceUuid")
             .tag("media")
 
@@ -295,7 +295,7 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
                 )
             )
             .out(jsonBody[List[Media]])
-            .name("findByCameraIdAndDatetime")
+            .name("findMediaByCameraIdAndDatetime")
             .description("Find media by cameraId and datetime")
             .tag("media")
 
@@ -316,7 +316,7 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
             .get
             .in("v1" / "media" / "uri" / path[String]("uri"))
             .out(jsonBody[List[Media]])
-            .name("findByUri")
+            .name("findMediaByUri")
             .description("Find media by uri")
             .tag("media")
 

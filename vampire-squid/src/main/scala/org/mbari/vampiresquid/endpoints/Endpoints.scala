@@ -41,7 +41,7 @@ import sttp.tapir.server.ServerEndpoint
 
 import java.time.Instant
 
-case class Paging(from: Option[Int], limit: Option[Int])
+case class Paging(from: Option[Int] = Some(0), limit: Option[Int] = Some(100))
 
 trait Endpoints:
     val log = System.getLogger(getClass.getName)

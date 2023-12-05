@@ -43,19 +43,20 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
 ) extends Endpoints:
 
     // GET v1/videos
-    val findAllVideos: Endpoint[Unit, Unit, ErrorMsg, List[Video], Any] =
+    val findAllVideos: Endpoint[Unit, Paging, ErrorMsg, List[Video], Any] =
         openEndpoint
             .get
             .in("v1" / "videos")
+            .in(paging)
             .out(jsonBody[List[Video]])
-            .name("findAll")
+            .name("findAllVideos")
             .description("Find all videos")
             .tag("videos")
     // TODO add limit and offset params
 
     val findAllVideosImpl: ServerEndpoint[Any, Future] =
         findAllVideos
-            .serverLogic(_ => handleErrors(controller.findAll().map(_.toList)))
+            .serverLogic(page => handleErrors(controller.findAll(page.from.getOrElse(0), page.limit.getOrElse(100)).map(_.toList)))
 
     // GET v1/videos/:uuid
     val findOneVideo: Endpoint[Unit, UUID, ErrorMsg, Video, Any] =
@@ -63,7 +64,7 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
             .get
             .in("v1" / "videos" / path[UUID]("uuid"))
             .out(jsonBody[Video])
-            .name("findOne")
+            .name("findOneVideo")
             .description("Find a video by UUID")
             .tag("videos")
 
@@ -105,7 +106,7 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
             .get
             .in("v1" / "videos" / "lastupdate" / path[UUID]("uuid"))
             .out(jsonBody[LastUpdatedTime])
-            .name("findLastUpdate")
+            .name("findLastUpdateForVideo")
             .description("Find the last update time for a video by UUID")
             .tag("videos")
 
@@ -201,7 +202,7 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
             .in("v1" / "videos")
             .in(formBody[Map[String, String]])
             .out(jsonBody[Video])
-            .name("createOne")
+            .name("createOneVideo")
             .description("Create a video. Required form fields: name, video_sequence_uuid, start_timestamp (or start), duration_millis. Optional fields: description")
             .tag("videos")
 
@@ -239,7 +240,7 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
             .delete
             .in("v1" / "videos" / path[UUID]("uuid"))
             .out(statusCode(StatusCode.NoContent).and(emptyOutput))
-            .name("deleteByUuid")
+            .name("deleteVideoByUuid")
             .description("Delete a video by UUID")
             .tag("videos")
 
@@ -255,7 +256,7 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
             .in("v1" / "videos" / path[UUID]("uuid"))
             .in(formBody[Map[String, String]])
             .out(jsonBody[Video])
-            .name("update")
+            .name("updateVideo")
             .description("Update a video by UUID. Updateable fields: name, video_sequence_uuid, start_timestamp (or start), duration_millis, description")
             .tag("videos")
 
@@ -279,30 +280,30 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
             )
 
     override def all: List[Endpoint[?, ?, ?, ?, ?]] = List(
-        findAllVideos,
-        findOneVideo,
+        findVideoByVideoSequenceName,
         findVideoByVideoSequenceUuid,
         findVideoByVideoReferenceUuid,
         findLastUpdateForVideo,
         findVideoByName,
-        findVideoByVideoSequenceName,
-        findVideoByTimestamp,
         findVideoByTimestampRange,
+        findVideoByTimestamp,
+        findAllVideos,
+        findOneVideo,
         createOneVideo,
         deleteVideoByUuid,
         updateVideo
     )
 
     override def allImpl: List[ServerEndpoint[Any, Future]] = List(
-        findAllVideosImpl,
-        findOneVideoImpl,
+        findVideoByVideoSequenceByNameImpl,
         findVideoByVideoSequenceUuidImpl,
         findVideoByVideoReferenceUuidImpl,
         findLastUpdateForVideoImpl,
         findVideoByNameImpl,
-        findVideoByVideoSequenceByNameImpl,
-        findVideoByTimestampImpl,
         findVideoByTimestampRangeImpl,
+        findVideoByTimestampImpl,
+        findAllVideosImpl,
+        findOneVideoImpl,
         createOneVideoImpl,
         deleteVideoByUuidImpl,
         updateVideoImpl

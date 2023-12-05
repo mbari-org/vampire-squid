@@ -39,18 +39,19 @@ class VideoSequenceEndpoints(controller: VideoSequenceController)(using ec: Exec
     extends Endpoints:
 
     // GET v1/videosequences
-    val findAllVideoSequences: Endpoint[Unit, Unit, ErrorMsg, List[VideoSequence], Any] =
+    val findAllVideoSequences: Endpoint[Unit, Paging, ErrorMsg, List[VideoSequence], Any] =
         openEndpoint
             .get
             .in("v1" / "videosequences")
+            .in(paging)
             .out(jsonBody[List[VideoSequence]])
-            .name("findAll")
+            .name("findAllVideoSequences")
             .description("Find all video sequences")
             .tag("video sequences")
 
     val findAllVideoSequencesImpl: ServerEndpoint[Any, Future] =
         findAllVideoSequences
-            .serverLogic { _ => handleErrors(controller.findAll()) }
+            .serverLogic { page => handleErrors(controller.findAll(page.from.getOrElse(0), page.limit.getOrElse(100))) }
 
     // GET v1/videosequences/lastudpate/:uuid
     val findLastUpdateForVideoSequence: Endpoint[Unit, UUID, ErrorMsg, LastUpdatedTime, Any] =
@@ -58,7 +59,7 @@ class VideoSequenceEndpoints(controller: VideoSequenceController)(using ec: Exec
             .get
             .in("v1" / "videosequences" / "lastupdate" / path[UUID]("uuid"))
             .out(jsonBody[LastUpdatedTime])
-            .name("findLastUpdate")
+            .name("findLastUpdateForVideoSequence")
             .description("Find last update for a video sequence")
             .tag("video sequences")
 
@@ -83,7 +84,7 @@ class VideoSequenceEndpoints(controller: VideoSequenceController)(using ec: Exec
             .get
             .in("v1" / "videosequences" / "name" / path[String]("name"))
             .out(jsonBody[VideoSequence])
-            .name("findByName")
+            .name("findVideoSequenceByName")
             .description("Find video sequences by name")
             .tag("video sequences")
 
@@ -97,7 +98,7 @@ class VideoSequenceEndpoints(controller: VideoSequenceController)(using ec: Exec
             .get
             .in("v1" / "videosequences" / "names")
             .out(jsonBody[List[String]])
-            .name("findAllNames")
+            .name("findAllVideoSequenceNames")
             .description("Find all video sequence names")
             .tag("video sequences")
 
@@ -111,7 +112,7 @@ class VideoSequenceEndpoints(controller: VideoSequenceController)(using ec: Exec
             .get
             .in("v1" / "videosequences" / "names" / "camera" / path[String]("cameraid"))
             .out(jsonBody[List[String]])
-            .name("findNamesByCameraId")
+            .name("findVideoSequenceNamesByCameraId")
             .description("Find video sequences by camera id")
             .tag("video sequences")
 
@@ -139,7 +140,7 @@ class VideoSequenceEndpoints(controller: VideoSequenceController)(using ec: Exec
             .get
             .in("v1" / "videosequences" / "camera" / path[String]("cameraid"))
             .out(jsonBody[List[VideoSequence]])
-            .name("findByCameraId")
+            .name("findVideoSequencesByCameraId")
             .description("Find video sequences by camera id")
             .tag("video sequences")
 
@@ -158,7 +159,7 @@ class VideoSequenceEndpoints(controller: VideoSequenceController)(using ec: Exec
                 )
             )
             .out(jsonBody[List[VideoSequence]])
-            .name("findByCameraIdAndTimestamp")
+            .name("findVideoSequencesByCameraIdAndTimestamp")
             .description("Find video sequences by camera id and timestamp")
             .tag("video sequences")
 
@@ -175,7 +176,7 @@ class VideoSequenceEndpoints(controller: VideoSequenceController)(using ec: Exec
             .in("v1" / "videosequences")
             .in(oneOfBody(formBody[VideoSequenceCreate], jsonBody[VideoSequenceCreate]))
             .out(jsonBody[VideoSequence])
-            .name("create")
+            .name("createOneVideoSequence")
             .description("Create a video sequence")
             .tag("video sequences")
 
@@ -193,7 +194,7 @@ class VideoSequenceEndpoints(controller: VideoSequenceController)(using ec: Exec
             .in("v1" / "videosequences" / path[UUID]("uuid"))
             .in(oneOfBody(formBody[VideoSequenceUpdate], jsonBody[VideoSequenceUpdate]))
             .out(jsonBody[VideoSequence])
-            .name("update")
+            .name("updateOneVideoSequence")
             .description("Update a video sequence")
             .tag("video sequences")
 
@@ -211,7 +212,7 @@ class VideoSequenceEndpoints(controller: VideoSequenceController)(using ec: Exec
             .delete
             .in("v1" / "videosequences" / path[UUID]("uuid"))
             .out(statusCode(StatusCode.NoContent).and(emptyOutput))
-            .name("deleteByUuid")
+            .name("deleteOneVideoSequence")
             .description("Delete a video sequence by UUID")
             .tag("video sequences")
 
@@ -226,12 +227,12 @@ class VideoSequenceEndpoints(controller: VideoSequenceController)(using ec: Exec
         deleteOneVideoSequence,
         findAllCameraIds,
         findAllVideoSequenceNames,
-        findAllVideoSequences,
         findLastUpdateForVideoSequence,
         findVideoSequenceByName,
+        findVideoSequencesByCameraIdAndTimestamp,
         findVideoSequenceNamesByCameraId,
         findVideoSequencesByCameraId,
-        findVideoSequencesByCameraIdAndTimestamp
+        findAllVideoSequences
     )
 
     override def allImpl: List[ServerEndpoint[Any, Future]] = List(
@@ -240,10 +241,10 @@ class VideoSequenceEndpoints(controller: VideoSequenceController)(using ec: Exec
         deleteOneVideoSequenceImpl,
         findAllCameraIdsImpl,
         findAllVideoSequenceNamesImpl,
-        findAllVideoSequencesImpl,
         findLastUpdateForVideoSequenceImpl,
         findVideoSequenceByNameImpl,
-        findVideoSequenceNamesByCameraIdImpl,
         findVideoSequencesByCameraIdAndTimestampImpl,
-        findVideoSequencesByCameraIdImpl
+        findVideoSequenceNamesByCameraIdImpl,
+        findVideoSequencesByCameraIdImpl,
+        findAllVideoSequencesImpl
     )
