@@ -50,7 +50,8 @@ trait SpecDAOFactory extends JPADAOFactory:
         val dao = newVideoSequenceDAO()
 
         val f = dao.runTransaction(d =>
-            val all = dao.findAll()
+            // TODO we need a count method for each DAO
+            val all = dao.findAll(0, 1000000)
             all.foreach(dao.delete)
         )
         f.onComplete(t => dao.close())

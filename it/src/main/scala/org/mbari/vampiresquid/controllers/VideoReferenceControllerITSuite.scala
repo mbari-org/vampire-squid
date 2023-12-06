@@ -50,7 +50,7 @@ trait VideoReferenceControllerITSuite extends BaseDAOSuite:
     test("findAll"):
         val vss = TestUtils.create(2, 4, 1)
         val vrs = vss.flatMap(_.getVideoReferences().asScala)
-        val xs  = exec(controller.findAll())
+        val xs  = exec(controller.findAll(0, 10000))
         assert(xs.nonEmpty)
         assertEquals(xs.size, vrs.size)
 

@@ -98,7 +98,7 @@ trait VideoDAOITSuite extends BaseDAOSuite:
     test("findAll"):
         given dao: VideoDAOImpl = daoFactory.newVideoDAO()
         val videoSequence       = TestUtils.create(3, 3, 1).head
-        val xs                  = run(() => dao.findAll().toSeq)
+        val xs                  = run(() => dao.findAll(0, 10000).toSeq)
         assertEquals(xs.size, 9)
         dao.close()
 

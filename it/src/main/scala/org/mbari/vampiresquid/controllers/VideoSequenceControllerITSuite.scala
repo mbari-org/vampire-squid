@@ -39,7 +39,7 @@ trait VideoSequenceControllerITSuite extends BaseDAOSuite:
 
     test("findAll"):
         val vss = TestUtils.create(2, 4, 1)
-        val xs  = exec(controller.findAll())
+        val xs  = exec(controller.findAll(0, 10000))
         assert(xs.size >= vss.size) // some may be created in other tests
 
     test("findAllNames"):

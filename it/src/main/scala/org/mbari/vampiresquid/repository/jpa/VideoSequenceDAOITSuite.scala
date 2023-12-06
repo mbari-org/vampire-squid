@@ -121,7 +121,7 @@ trait VideoSequenceDAOITSuite extends BaseDAOSuite:
     test("findAll"):
         given dao: VideoSequenceDAOImpl = daoFactory.newVideoSequenceDAO()
         val videoSequences              = TestUtils.create(3, 4, 3)
-        val xs                          = run(() => dao.findAll().toSeq)
+        val xs                          = run(() => dao.findAll(0, 10000).toSeq)
         assertEquals(xs.size, 3)
         val expected                    = videoSequences.flatMap(_.getVideoReferences.asScala)
         val found                       = xs.flatMap(_.getVideoReferences.asScala)

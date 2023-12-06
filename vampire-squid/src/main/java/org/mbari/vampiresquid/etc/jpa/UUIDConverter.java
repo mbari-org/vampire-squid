@@ -30,6 +30,7 @@ import java.util.UUID;
  * @since 2016-05-12
  */
 @Converter(autoApply = true)
+@Deprecated
 public class UUIDConverter implements AttributeConverter<UUID, Object> {
 
     private static final String databaseProductName = DatabaseProductName.name();

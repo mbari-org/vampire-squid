@@ -32,7 +32,7 @@ class PostgresSuite extends munit.FunSuite:
     test("Postgres container should be started"):
         assert(daoFactory.container.isRunning())
         val dao = daoFactory.newVideoDAO()
-        val all = dao.findAll()
+        val all = dao.findAll(0, 100)
         assert(all.isEmpty)
         dao.close()
 

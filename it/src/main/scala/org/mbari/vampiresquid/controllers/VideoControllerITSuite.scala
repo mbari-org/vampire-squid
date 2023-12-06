@@ -43,7 +43,7 @@ trait VideoControllerITSuite extends BaseDAOSuite:
     test("findAll"):
         val vss    = TestUtils.create(2, 4, 1)
         val videos = vss.flatMap(_.getVideos().asScala)
-        val xs     = exec(controller.findAll())
+        val xs     = exec(controller.findAll(0, 10000))
         assertEquals(xs.size, videos.size)
 
     test("findByUUID"):
