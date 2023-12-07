@@ -17,7 +17,7 @@ ENV APP_HOME /opt/vampire-squid
 
 RUN mkdir -p ${APP_HOME}
 
-COPY vampire-squid/target/universal/stage/bin ${APP_HOME}/
+COPY vampire-squid/target/universal/stage/ ${APP_HOME}/
 
 EXPOSE 8080
 
