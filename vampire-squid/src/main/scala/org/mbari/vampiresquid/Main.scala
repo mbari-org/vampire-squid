@@ -25,9 +25,16 @@ import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.concurrent.duration.Duration
 import ExecutionContext.Implicits.global
 import scala.io.StdIn
+import sttp.tapir.server.interceptor.log.ServerLog
+import org.mbari.vampiresquid.etc.jdk.Logging
+import org.mbari.vampiresquid.etc.jdk.Logging.{given, *}
+import sttp.tapir.server.interceptor.log.DefaultServerLog
+
 
 @main
 def run(): Unit =
+
+    val log = Logging("Main")
 
     val serverOptions = VertxFutureServerOptions
         .customiseInterceptors
@@ -39,6 +46,11 @@ def run(): Unit =
     val vertx  = Vertx.vertx()
     val server = vertx.createHttpServer()
     val router = Router.router(vertx)
+
+    // Log all requests
+    router.route().handler(ctx => {
+        log.atInfo.log(s"${ctx.request().method()} ${ctx.request().path()}")
+    })
 
     Endpoints
         .all
