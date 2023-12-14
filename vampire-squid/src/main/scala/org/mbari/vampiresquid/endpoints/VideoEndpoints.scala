@@ -56,7 +56,9 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
 
     val findAllVideosImpl: ServerEndpoint[Any, Future] =
         findAllVideos
-            .serverLogic(page => handleErrors(controller.findAll(page.from.getOrElse(0), page.limit.getOrElse(100)).map(_.toList)))
+            .serverLogic(page =>
+                handleErrors(controller.findAll(page.offset.getOrElse(0), page.limit.getOrElse(100)).map(_.toList))
+            )
 
     // GET v1/videos/:uuid
     val findOneVideo: Endpoint[Unit, UUID, ErrorMsg, Video, Any] =
@@ -203,7 +205,9 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
             .in(formBody[Map[String, String]])
             .out(jsonBody[Video])
             .name("createOneVideo")
-            .description("Create a video. Required form fields: name, video_sequence_uuid, start_timestamp (or start), duration_millis. Optional fields: description")
+            .description(
+                "Create a video. Required form fields: name, video_sequence_uuid, start_timestamp (or start), duration_millis. Optional fields: description"
+            )
             .tag("videos")
 
     val createOneVideoImpl: ServerEndpoint[Any, Future] =
@@ -257,7 +261,9 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
             .in(formBody[Map[String, String]])
             .out(jsonBody[Video])
             .name("updateVideo")
-            .description("Update a video by UUID. Updateable fields: name, video_sequence_uuid, start_timestamp (or start), duration_millis, description")
+            .description(
+                "Update a video by UUID. Updateable fields: name, video_sequence_uuid, start_timestamp (or start), duration_millis, description"
+            )
             .tag("videos")
 
     val updateVideoImpl: ServerEndpoint[Any, Future] =

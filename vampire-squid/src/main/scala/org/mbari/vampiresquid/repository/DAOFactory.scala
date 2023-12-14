@@ -28,6 +28,8 @@ import org.mbari.vampiresquid.repository.jpa.entity.IPersistentObject
  */
 trait DAOFactory[A <: IPersistentObject, B <: IPersistentObject, C <: IPersistentObject]:
 
+    def newMediaDAO(): MediaDAO
+
     def newVideoSequenceDAO(): VideoSequenceDAO[A]
 
     /**

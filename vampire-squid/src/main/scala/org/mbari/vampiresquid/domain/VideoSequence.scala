@@ -26,7 +26,11 @@ import scala.jdk.CollectionConverters.*
 
 case class VideoSequenceCreate(name: String, camera_id: String, description: Option[String] = None)
 
-case class VideoSequenceUpdate(name: Option[String] = None, camera_id: Option[String] = None, description: Option[String] = None)
+case class VideoSequenceUpdate(
+    name: Option[String] = None,
+    camera_id: Option[String] = None,
+    description: Option[String] = None
+)
 
 case class VideoSequence(
     uuid: UUID,

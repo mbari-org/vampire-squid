@@ -265,7 +265,7 @@ trait VideoReferenceEndpointsITSuite extends EndpointsSuite:
         val backendStub = newBackendStub(endpoints.updateOneVideoReferenceImpl)
 
         val videoReference = VideoReference.from(vr).copy(uri = new URI("http://yourvideo/is/now/here/foodebobo.mp4"))
-        val update = VideoReferenceUpdate.from(videoReference, Some(vr.getVideo().getUuid()))
+        val update         = VideoReferenceUpdate.from(videoReference, Some(vr.getVideo().getUuid()))
 
         // println(form)
 

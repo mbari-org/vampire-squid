@@ -20,6 +20,7 @@ import org.mbari.vampiresquid.repository.jpa.entity.IPersistentObject
 
 import java.time.{Duration, Instant}
 import java.util.UUID
+import org.mbari.vampiresquid.domain.Media
 
 /**
  * Defines the API methods used for accessing VideoSequence objects

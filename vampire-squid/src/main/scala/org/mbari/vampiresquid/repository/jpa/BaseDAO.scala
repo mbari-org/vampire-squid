@@ -46,7 +46,12 @@ abstract class BaseDAO[B <: IPersistentObject: ClassTag](val entityManager: Enti
     def find(obj: B): Option[B] =
         obj.primaryKey.flatMap(pk => Option(entityManager.find(obj.getClass, pk)))
 
-    def findByNamedQuery(name: String, namedParameters: Map[String, Any] = Map.empty, offset: Option[Int] = None, limit: Option[Int] = None): List[B] =
+    def findByNamedQuery(
+        name: String,
+        namedParameters: Map[String, Any] = Map.empty,
+        offset: Option[Int] = None,
+        limit: Option[Int] = None
+    ): List[B] =
         val query = entityManager.createNamedQuery(name)
         namedParameters.foreach { case (a, b) => query.setParameter(a, b) }
         offset.foreach(query.setFirstResult)

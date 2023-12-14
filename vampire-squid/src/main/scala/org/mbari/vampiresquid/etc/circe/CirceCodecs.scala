@@ -44,7 +44,6 @@ import java.time.Duration
 import org.mbari.vampiresquid.domain.VideoReferenceCreate
 import org.mbari.vampiresquid.domain.VideoReferenceUpdate
 
-
 object CirceCodecs:
 
     private val hex = HexFormat.of()

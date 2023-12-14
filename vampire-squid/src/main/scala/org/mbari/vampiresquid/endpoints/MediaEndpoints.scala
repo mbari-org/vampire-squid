@@ -71,10 +71,7 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
     val createMediaImpl: ServerEndpoint[Any, Future] =
         createMedia
             .serverSecurityLogic(jwtOpt => verify(jwtOpt))
-            .serverLogic(_ =>
-                media =>
-                    handleErrors(mediaController.createMedia(media))
-            )
+            .serverLogic(_ => media => handleErrors(mediaController.createMedia(media)))
 
     // PUT v1/media ----------------------------------------
     val updateMedia: Endpoint[Option[String], Media, ErrorMsg, Media, Any] =
@@ -90,10 +87,7 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
     val updateMediaImpl: ServerEndpoint[Any, Future]                                                   =
         updateMedia
             .serverSecurityLogic(jwtOpt => verify(jwtOpt))
-            .serverLogic(_ =>
-                media =>
-                    handleMediaOption(mediaController.updateMedia(media))
-            )
+            .serverLogic(_ => media => handleMediaOption(mediaController.updateMedia(media)))
 
         // PUT v1/media/{videoReferenceUuid} ----------------------------------------
     val updateMediaByVideoReferenceUuid: Endpoint[Option[String], (UUID, Media), ErrorMsg, Media, Any] =
@@ -217,6 +211,25 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
             .serverLogic((videoSequenceName: String) =>
                 log.atTrace.log("findByVideoSequenceName received " + videoSequenceName)
                 handleErrors(mediaController.findByVideoSequenceName(videoSequenceName).map(_.toList))
+            )
+
+    // POST v1/media/videoreference/videosequence -----------------------
+    val findMediaByVideoSequenceNames: Endpoint[Unit, (Paging, Seq[String]), ErrorMsg, List[Media], Any] =
+        openEndpoint
+            .post
+            .in("v1" / "media" / "videosequence")
+            .in(paging)
+            .in(jsonBody[Seq[String]])
+            .out(jsonBody[List[Media]])
+            .name("findMediaByVideoSequenceNames")
+            .description("Find media by a list of video sequence names")
+            .tag("media")
+
+    val findMediaByVideoSequenceNamesImpl: ServerEndpoint[Any, Future] =
+        findMediaByVideoSequenceNames
+            .serverLogic((paging: Paging, videoSequenceNames: Seq[String]) =>
+                log.atTrace.log("findByVideoSequenceNames received " + videoSequenceNames)
+                handleErrors(mediaController.findByVideoSequenceNames(videoSequenceNames, paging.offset, paging.limit).map(_.toList))
             )
 
     // GET v1/media/video/{name} ---------------------------------------------

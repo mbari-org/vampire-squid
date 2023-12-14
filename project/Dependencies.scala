@@ -29,7 +29,7 @@ object Dependencies {
   lazy val mssqlJdbc  = "com.microsoft.sqlserver" % "mssql-jdbc" % "12.4.2.jre11"
   lazy val munit      = "org.scalameta"          %% "munit"      % "1.0.0-M10"
   lazy val oracleJdbc = "com.oracle.ojdbc"        % "ojdbc8"     % "19.3.0.0"
-  lazy val postgresql = "org.postgresql"          % "postgresql" % "42.7.0"
+  lazy val postgresql = "org.postgresql"          % "postgresql" % "42.7.1"
   lazy val scalatest  = "org.scalatest"          %% "scalatest"  % "3.2.17"
 
   val slf4jVersion     = "2.0.9"
@@ -37,7 +37,7 @@ object Dependencies {
   lazy val slf4jLog4j  = "org.slf4j" % "log4j-over-slf4j"           % slf4jVersion
   lazy val slf4jSystem = "org.slf4j" % "slf4j-jdk-platform-logging" % slf4jVersion
 
-  private val tapirVersion = "1.9.4"
+  private val tapirVersion = "1.9.5"
   lazy val tapirSttpCirce  = "com.softwaremill.sttp.client3" %% "circe"                    % "3.9.1"
   lazy val tapirCirce      = "com.softwaremill.sttp.tapir"   %% "tapir-json-circe"         % tapirVersion
   lazy val tapirPrometheus = "com.softwaremill.sttp.tapir"   %% "tapir-prometheus-metrics" % tapirVersion

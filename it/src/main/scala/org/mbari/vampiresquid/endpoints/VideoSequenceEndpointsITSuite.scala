@@ -19,7 +19,7 @@ package org.mbari.vampiresquid.endpoints
 import java.util.UUID
 import org.mbari.vampiresquid.controllers.VideoSequenceController
 import org.mbari.vampiresquid.domain.{LastUpdatedTime, VideoSequence, VideoSequenceCreate}
-import org.mbari.vampiresquid.etc.circe.CirceCodecs.{given, *}
+import org.mbari.vampiresquid.etc.circe.CirceCodecs.{*, given}
 import org.mbari.vampiresquid.etc.jdk.{Instants, Logging}
 import org.mbari.vampiresquid.etc.jdk.Logging.given
 import org.mbari.vampiresquid.etc.jwt.JwtService
@@ -182,7 +182,7 @@ trait VideoSequenceEndpointsITSuite extends EndpointsSuite:
         val backendStub = newBackendStub(endpoints.createOneVideoSequenceImpl)
 
         val videoSequence = new VideoSequence(UUID.randomUUID(), "foobarbaz", "brian's cam")
-        val create = VideoSequenceCreate(
+        val create        = VideoSequenceCreate(
             videoSequence.name,
             videoSequence.camera_id,
             videoSequence.description
@@ -235,7 +235,7 @@ trait VideoSequenceEndpointsITSuite extends EndpointsSuite:
 
         val backendStub = newBackendStub(endpoints.updateOneVideoSequenceImpl)
 
-        val v0      = VideoSequence
+        val v0     = VideoSequence
             .from(videoSequence)
             .copy(camera_id = "foogady", name = "brian was here once again", description = Some("testy tester"))
         val update = VideoSequenceUpdate(

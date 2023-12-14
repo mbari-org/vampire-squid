@@ -61,7 +61,8 @@ class VideoDAOImpl(entityManager: EntityManager) extends BaseDAO[VideoEntity](en
     override def findBetweenTimestamps(t0: Instant, t1: Instant): Iterable[VideoEntity] =
         findByNamedQuery("Video.findBetweenDates", Map("startDate" -> t0, "endDate" -> t1))
 
-    override def findAll(offset: Int, limit: Int): Iterable[VideoEntity] = findByNamedQuery("Video.findAll", offset = Some(offset), limit = Some(limit))
+    override def findAll(offset: Int, limit: Int): Iterable[VideoEntity] =
+        findByNamedQuery("Video.findAll", offset = Some(offset), limit = Some(limit))
 
     override def deleteByUUID(primaryKey: UUID): Unit =
         val video = findByUUID(primaryKey)

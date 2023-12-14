@@ -26,7 +26,7 @@ object DerbyTestDAOFactory extends SpecDAOFactory:
                 "hibernate.dialect"                                     -> "org.hibernate.dialect.DerbyDialect",
                 "hibernate.hbm2ddl.auto"                                -> "create",
                 "jakarta.persistence.schema-generation.database.action" -> "create",
-                "jakarta.persistence.schema-generation.scripts.action" -> "drop-and-create"
+                "jakarta.persistence.schema-generation.scripts.action"  -> "drop-and-create"
             )
 
     lazy val entityManagerFactory: EntityManagerFactory =

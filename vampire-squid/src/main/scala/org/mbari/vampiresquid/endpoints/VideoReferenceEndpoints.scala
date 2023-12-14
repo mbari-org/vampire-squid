@@ -58,7 +58,7 @@ class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: Ex
 
     val findAllVideoReferencesImpl: ServerEndpoint[Any, Future] =
         findAllVideoReferences.serverLogic { page =>
-            handleErrors(controller.findAll(page.from.getOrElse(0), page.limit.getOrElse(100)).map(_.toList))
+            handleErrors(controller.findAll(page.offset.getOrElse(0), page.limit.getOrElse(100)).map(_.toList))
         }
 
     // GET "v1/videoreferences/:uuid"

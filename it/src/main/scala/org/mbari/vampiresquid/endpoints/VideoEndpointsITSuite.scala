@@ -51,7 +51,7 @@ trait VideoEndpointsITSuite extends EndpointsSuite:
     lazy val videoEndpoints          = new VideoEndpoints(videoController, videoSequenceController)
 
     test("findAllVideos"):
-        val videoSequence = TestUtils.create(1, 1, 1).head
+        val videoSequence = TestUtils.create(1, 4, 1).head
         val video         = videoSequence.getVideos.get(0)
         runGet(
             videoEndpoints.findAllVideosImpl,
@@ -60,7 +60,18 @@ trait VideoEndpointsITSuite extends EndpointsSuite:
                 assertEquals(response.code, StatusCode.Ok)
                 val videos = checkResponse[List[Video]](response.body)
                 assert(videos.nonEmpty)
+                assertEquals(videos.size, videoSequence.getVideos.size)
         )
+        runGet(
+            videoEndpoints.findAllVideosImpl,
+            "http://test.com/v1/videos?limit=2&offset=1",
+            response =>
+                assertEquals(response.code, StatusCode.Ok)
+                val videos = checkResponse[List[Video]](response.body)
+                assert(videos.nonEmpty)
+                assertEquals(videos.size, 2)
+        )
+
 
     test("findOne"):
         val videoSequence = TestUtils.create(1, 1, 1).head

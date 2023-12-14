@@ -16,7 +16,7 @@
 
 package org.mbari.vampiresquid.domain
 
-import org.mbari.vampiresquid.repository.jpa.entity.VideoReferenceEntity
+import org.mbari.vampiresquid.repository.jpa.entity.{Media as MediaDTO, VideoReferenceEntity}
 
 import java.net.URI
 import java.time.{Duration, Instant}
@@ -93,6 +93,30 @@ case class Media(
 object Media:
 
     private val hex = HexFormat.of()
+
+    def from(mediaDto: MediaDTO): Media =
+        Media(
+            Option(mediaDto.videoSequenceUuid),
+            Option(mediaDto.videoUuid),
+            Option(mediaDto.videoReferenceUuid),
+            Option(mediaDto.videoSequenceName),
+            Option(mediaDto.cameraId),
+            Option(mediaDto.videoName),
+            Option(mediaDto.uri),
+            Option(mediaDto.startTimestamp),
+            Option(mediaDto.duration).map(_.toMillis),
+            Option(mediaDto.container),
+            Option(mediaDto.videoCodec),
+            Option(mediaDto.audioCodec),
+            Try(mediaDto.width.toInt).toOption,
+            Try(mediaDto.height.toInt).toOption,
+            Try(mediaDto.frameRate.toDouble).toOption,
+            Try(mediaDto.sizeBytes.toLong).toOption,
+            Option(mediaDto.description),
+            Option(mediaDto.videoSequenceDescription),
+            Option(mediaDto.videoDescription),
+            Option(mediaDto.sha512)
+        )
 
     def from(videoReferenceEntity: VideoReferenceEntity): Media =
         // To avoid instantiating all the JPA lazy relations, we use

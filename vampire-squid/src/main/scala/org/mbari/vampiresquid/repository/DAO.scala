@@ -30,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
  * @tparam B
  *   The type of the entity
  */
-trait DAO[B <: IPersistentObject]:
+trait DAO[B <: IPersistentObject] extends AutoCloseable:
 
     def create(entity: B): Unit
     def update(entity: B): B

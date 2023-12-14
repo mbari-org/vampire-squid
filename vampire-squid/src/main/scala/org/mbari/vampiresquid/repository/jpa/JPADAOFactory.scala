@@ -33,6 +33,9 @@ trait JPADAOFactory extends DAOFactory[VideoSequenceEntity, VideoEntity, VideoRe
 
     def entityManagerFactory: EntityManagerFactory
 
+    override def newMediaDAO(): MediaDAOImpl =
+        new MediaDAOImpl(newVideoSequenceDAO())
+
     override def newVideoSequenceDAO(): VideoSequenceDAOImpl =
         new VideoSequenceDAOImpl(entityManagerFactory.createEntityManager())
 

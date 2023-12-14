@@ -55,7 +55,7 @@ trait MediaEndpointsITSuite extends EndpointsSuite:
 
     test("createMedia - Create a new media using form body"):
 
-        val jwt = jwtService.authorize("foo").orNull
+        val jwt         = jwtService.authorize("foo").orNull
         val backendStub = newBackendStub(mediaEndpoints.createMediaImpl)
 
         val now   = Instant.now()
@@ -86,7 +86,7 @@ trait MediaEndpointsITSuite extends EndpointsSuite:
 
     test("createMedia - Create a new media using JSON body"):
 
-        val jwt = jwtService.authorize("foo").orNull
+        val jwt         = jwtService.authorize("foo").orNull
         val backendStub = newBackendStub(mediaEndpoints.createMediaImpl)
 
         val now   = Instant.now()
@@ -227,7 +227,7 @@ trait MediaEndpointsITSuite extends EndpointsSuite:
                         assertEquals(media2.uri.get, m.uri.get)
             )
             .join
-    
+
     test("updateMediaByVideoReferenceUuid - Update an existing media using JSON body"):
         val jwt    = jwtService.authorize("foo").orNull
         val now    = Instant.now()
@@ -358,6 +358,51 @@ trait MediaEndpointsITSuite extends EndpointsSuite:
                 assert(xs.size == 1)
                 assertSameMedia(xs.head, media0)
         )
+
+    test("findMediaByVideoSequenceNames"):
+        val videoSequences = TestUtils.create(2, 2, 2)
+        val names = videoSequences.map(_.getName())
+
+        val backendStub = newBackendStub(mediaEndpoints.findMediaByVideoSequenceNamesImpl)
+
+        // -- Request all
+        val request = basicRequest
+            .post(uri"http://test.com/v1/media/videosequence")
+            .header("Content-Type", "application/json")
+            .header("Accept", "application/json")
+            .body(names.stringify)
+        
+        val response = request.send(backendStub)
+        response
+            .map(r =>
+                assertEquals(r.code, StatusCode.Ok)
+                assert(r.body.isRight)
+                val media        = checkResponse[List[Media]](r.body)
+                val expectedSize = videoSequences
+                    .map(_.getVideoReferences().size())
+                    .sum
+                assertEquals(expectedSize, media.size)
+            )
+            .join
+
+        // -- Request page
+        val request1 = basicRequest
+            .post(uri"http://test.com/v1/media/videosequence?offset=1&limit=2")
+            .header("Content-Type", "application/json")
+            .header("Accept", "application/json")
+            .body(names.stringify)
+        
+        val response1 = request1.send(backendStub)
+        response1
+            .map(r =>
+                assertEquals(r.code, StatusCode.Ok)
+                assert(r.body.isRight)
+                val media        = checkResponse[List[Media]](r.body)
+                assertEquals(media.size, 2)
+            )
+            .join
+
+        
 
     test("findMediaByVideoName"):
         val videoSequence  = TestUtils.create(1, 1, 1).head

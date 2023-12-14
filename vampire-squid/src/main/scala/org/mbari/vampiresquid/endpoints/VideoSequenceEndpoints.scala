@@ -51,7 +51,7 @@ class VideoSequenceEndpoints(controller: VideoSequenceController)(using ec: Exec
 
     val findAllVideoSequencesImpl: ServerEndpoint[Any, Future] =
         findAllVideoSequences
-            .serverLogic { page => handleErrors(controller.findAll(page.from.getOrElse(0), page.limit.getOrElse(100))) }
+            .serverLogic { page => handleErrors(controller.findAll(page.offset.getOrElse(0), page.limit.getOrElse(100))) }
 
     // GET v1/videosequences/lastudpate/:uuid
     val findLastUpdateForVideoSequence: Endpoint[Unit, UUID, ErrorMsg, LastUpdatedTime, Any] =
@@ -183,9 +183,7 @@ class VideoSequenceEndpoints(controller: VideoSequenceController)(using ec: Exec
     val createOneVideoSequenceImpl: ServerEndpoint[Any, Future] =
         createOneVideoSequence
             .serverSecurityLogic(jwtOpt => verify(jwtOpt))
-            .serverLogic(_ =>
-                req => handleErrors(controller.create(req.name, req.camera_id, req.description))
-            )
+            .serverLogic(_ => req => handleErrors(controller.create(req.name, req.camera_id, req.description)))
 
     // PUT v1/videosequences/:uuid (form body)
     val updateOneVideoSequence: Endpoint[Option[String], (UUID, VideoSequenceUpdate), ErrorMsg, VideoSequence, Any] =
@@ -202,8 +200,7 @@ class VideoSequenceEndpoints(controller: VideoSequenceController)(using ec: Exec
         updateOneVideoSequence
             .serverSecurityLogic(jwtOpt => verify(jwtOpt))
             .serverLogic(_ =>
-                (uuid, req) =>
-                    handleErrors(controller.update(uuid, req.name, req.camera_id, req.description))
+                (uuid, req) => handleErrors(controller.update(uuid, req.name, req.camera_id, req.description))
             )
 
     // DELETE v1/videosequences/:uuid

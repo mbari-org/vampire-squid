@@ -220,6 +220,11 @@ trait MediaControllerITSuite extends BaseDAOSuite:
         assertEquals(xs.size, 1)
         assertSameValues(xs.head, m0)
 
+    test("findByVideoSequenceNames"):
+        val xs = TestUtils.create(10, 1, 1).flatMap(vs => vs.getVideoReferences().asScala.map(Media.from))
+        val ys = exec(controller.findByVideoSequenceNames(xs.map(_.video_sequence_name.get).toSet))
+        assertEquals(ys.size, xs.size)
+
     test("findByVideoSequenceNameAndTimestamp"):
         val m0 = createMedia()
         val xs = exec(

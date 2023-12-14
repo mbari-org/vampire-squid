@@ -494,6 +494,17 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController:
         f.onComplete(_ => dao.close())
         f
 
+    def findByVideoSequenceNames(
+        names: Iterable[String],
+        offset: Option[Int] = None,
+        limit: Option[Int] = None
+    )(implicit ec: ExecutionContext): Future[Seq[Media]] =
+        import org.mbari.vampiresquid.repository.jpa.extensions.* // add runTransaction to EntityManager
+        val dao = daoFactory.newMediaDAO()
+        val f   = dao.entityManager.runTransaction(_ => dao.findByNames(names, offset, limit))
+        f.onComplete(_ => dao.close())
+        f
+
     def findByVideoSequenceNameAndTimestamp(name: String, ts: Instant)(implicit
         ec: ExecutionContext
     ): Future[Iterable[Media]] =

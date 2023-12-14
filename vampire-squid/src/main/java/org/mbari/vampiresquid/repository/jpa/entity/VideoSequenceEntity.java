@@ -79,6 +79,11 @@ import java.util.UUID;
                         name = "VideoSequence.findByCameraIDAndBetweenDates",
                         query =
                                 "SELECT v FROM VideoSequence v LEFT JOIN v.videos w WHERE v.cameraID = :cameraID AND w.start BETWEEN :startDate AND :endDate"
+                ),
+                @NamedQuery(
+                        name = "VideoSequence.findMediaByNames",
+                        query = "SELECT new org.mbari.vampiresquid.repository.jpa.entity.Media(v.uuid, w.uuid, x.uuid, v.name, v.cameraID, w.name, x.uri, w.start, w.duration, x.container, x.videoCodec, x.audioCodec, x.width, x.height, x.frameRate, x.size, x.description, v.description, w.description, x.sha512) FROM VideoSequence v LEFT JOIN v.videos w LEFT JOIN w.videoReferences x WHERE v.name IN :names ORDER BY w.start ASC"
+
                 )
         }
 )
