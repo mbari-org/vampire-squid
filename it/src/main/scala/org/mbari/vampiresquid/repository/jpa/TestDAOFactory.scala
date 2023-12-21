@@ -30,7 +30,6 @@ import scala.concurrent.duration.Duration
 object TestDAOFactory:
 
     val TestProperties = EntityManagerFactories.PRODUCTION_PROPS ++ Map(
-        "eclipselink.logging.level"                                   -> "FINE",
         "jakarta.persistence.schema-generation.scripts.create-target" -> "target/test-database-create.ddl",
         "jakarta.persistence.schema-generation.scripts.drop-target"   -> "target/test-database-drop.ddl"
     )

@@ -13,7 +13,7 @@ object Dependencies {
   lazy val derbyShared = "org.apache.derby" % "derbyshared" % derbyVersion
   lazy val derbyTools  = "org.apache.derby" % "derbytools"  % derbyVersion
 
-  val hibernateVersion     = "6.4.0.Final"
+  val hibernateVersion     = "6.4.1.Final"
   lazy val hibernateCore   = "org.hibernate.orm" % "hibernate-core"     % hibernateVersion
   lazy val hibernateEnvers = "org.hibernate.orm" % "hibernate-envers"   % hibernateVersion
   lazy val hibernateHikari = "org.hibernate.orm" % "hibernate-hikaricp" % hibernateVersion

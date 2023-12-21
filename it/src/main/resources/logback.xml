@@ -10,8 +10,7 @@
 
   <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
     <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-      <pattern>%gray(%d{HH:mm:ss.SSS}) %highlight(%-5level) [%green(%-25thread)]
-        %blue(%-40logger{40}) %gray(|) %msg%n</pattern>
+      <pattern>%gray(%d{HH:mm:ss.SSS}) %highlight(%-5level) [%green(%-25thread)] %blue(%-40logger{40}) %gray(|) %msg%n</pattern>
     </encoder>
   </appender>
 
