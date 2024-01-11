@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 MBARI
+ * Copyright 2021 Monterey Bay Aquarium Research Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,7 +71,6 @@ trait VideoEndpointsITSuite extends EndpointsSuite:
                 assert(videos.nonEmpty)
                 assertEquals(videos.size, 2)
         )
-
 
     test("findOne"):
         val videoSequence = TestUtils.create(1, 1, 1).head

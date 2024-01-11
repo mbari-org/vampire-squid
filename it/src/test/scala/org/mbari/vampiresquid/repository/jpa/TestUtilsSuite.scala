@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 MBARI
+ * Copyright 2021 Monterey Bay Aquarium Research Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ class TestUtilsSuite extends munit.FunSuite:
             val a  = TestUtils.create(i, i, i)
             assertEquals(a.size, i)
             val vs = a.head
+            assert(vs.getUuid() != null)
             val v  = vs.getVideos
             assertEquals(v.size(), i)
             val vr = v.get(0).getVideoReferences

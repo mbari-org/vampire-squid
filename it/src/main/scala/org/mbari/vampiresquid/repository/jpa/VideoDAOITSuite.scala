@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 MBARI
+ * Copyright 2021 Monterey Bay Aquarium Research Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ trait VideoDAOITSuite extends BaseDAOSuite:
         run(() => dao.create(video))
         val videoEntity         = run(() => dao.findByUUID(video.getUuid))
         assert(videoEntity.isDefined)
+        assertEquals(videoEntity.get.getDuration(), video.getDuration())
         dao.close()
 
     test("update"):

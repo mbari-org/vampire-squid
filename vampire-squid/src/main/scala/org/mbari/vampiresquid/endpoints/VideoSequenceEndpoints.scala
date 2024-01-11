@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 MBARI
+ * Copyright 2021 Monterey Bay Aquarium Research Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,7 +51,9 @@ class VideoSequenceEndpoints(controller: VideoSequenceController)(using ec: Exec
 
     val findAllVideoSequencesImpl: ServerEndpoint[Any, Future] =
         findAllVideoSequences
-            .serverLogic { page => handleErrors(controller.findAll(page.offset.getOrElse(0), page.limit.getOrElse(100))) }
+            .serverLogic { page =>
+                handleErrors(controller.findAll(page.offset.getOrElse(0), page.limit.getOrElse(100)))
+            }
 
     // GET v1/videosequences/lastudpate/:uuid
     val findLastUpdateForVideoSequence: Endpoint[Unit, UUID, ErrorMsg, LastUpdatedTime, Any] =

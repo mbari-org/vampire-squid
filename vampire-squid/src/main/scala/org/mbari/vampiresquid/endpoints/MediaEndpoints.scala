@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 MBARI
+ * Copyright 2021 Monterey Bay Aquarium Research Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -229,7 +229,11 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
         findMediaByVideoSequenceNames
             .serverLogic((paging: Paging, videoSequenceNames: Seq[String]) =>
                 log.atTrace.log("findByVideoSequenceNames received " + videoSequenceNames)
-                handleErrors(mediaController.findByVideoSequenceNames(videoSequenceNames, paging.offset, paging.limit).map(_.toList))
+                handleErrors(
+                    mediaController
+                        .findByVideoSequenceNames(videoSequenceNames, paging.offset, paging.limit)
+                        .map(_.toList)
+                )
             )
 
     // GET v1/media/video/{name} ---------------------------------------------

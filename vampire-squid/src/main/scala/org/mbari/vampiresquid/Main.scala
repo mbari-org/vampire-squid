@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 MBARI
+ * Copyright 2021 Monterey Bay Aquarium Research Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,9 +27,8 @@ import ExecutionContext.Implicits.global
 import scala.io.StdIn
 import sttp.tapir.server.interceptor.log.ServerLog
 import org.mbari.vampiresquid.etc.jdk.Logging
-import org.mbari.vampiresquid.etc.jdk.Logging.{given, *}
+import org.mbari.vampiresquid.etc.jdk.Logging.{*, given}
 import sttp.tapir.server.interceptor.log.DefaultServerLog
-
 
 @main
 def run(): Unit =
@@ -48,9 +47,7 @@ def run(): Unit =
     val router = Router.router(vertx)
 
     // Log all requests
-    router.route().handler(ctx => {
-        log.atInfo.log(s"${ctx.request().method()} ${ctx.request().path()}")
-    })
+    router.route().handler(ctx => log.atInfo.log(s"${ctx.request().method()} ${ctx.request().path()}"))
 
     Endpoints
         .all

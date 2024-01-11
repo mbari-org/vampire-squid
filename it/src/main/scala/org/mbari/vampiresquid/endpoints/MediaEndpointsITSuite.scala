@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 MBARI
+ * Copyright 2021 Monterey Bay Aquarium Research Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -361,7 +361,7 @@ trait MediaEndpointsITSuite extends EndpointsSuite:
 
     test("findMediaByVideoSequenceNames"):
         val videoSequences = TestUtils.create(2, 2, 2)
-        val names = videoSequences.map(_.getName())
+        val names          = videoSequences.map(_.getName())
 
         val backendStub = newBackendStub(mediaEndpoints.findMediaByVideoSequenceNamesImpl)
 
@@ -371,7 +371,7 @@ trait MediaEndpointsITSuite extends EndpointsSuite:
             .header("Content-Type", "application/json")
             .header("Accept", "application/json")
             .body(names.stringify)
-        
+
         val response = request.send(backendStub)
         response
             .map(r =>
@@ -391,18 +391,16 @@ trait MediaEndpointsITSuite extends EndpointsSuite:
             .header("Content-Type", "application/json")
             .header("Accept", "application/json")
             .body(names.stringify)
-        
+
         val response1 = request1.send(backendStub)
         response1
             .map(r =>
                 assertEquals(r.code, StatusCode.Ok)
                 assert(r.body.isRight)
-                val media        = checkResponse[List[Media]](r.body)
+                val media = checkResponse[List[Media]](r.body)
                 assertEquals(media.size, 2)
             )
             .join
-
-        
 
     test("findMediaByVideoName"):
         val videoSequence  = TestUtils.create(1, 1, 1).head

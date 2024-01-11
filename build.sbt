@@ -8,10 +8,11 @@ val testcontainersVersion = "0.41.0"
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
+ThisBuild / licenses         := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
 ThisBuild / scalaVersion     := "3.3.1"
 // ThisBuild / version          := "0.0.1"
 ThisBuild / organization     := "org.mbari"
-ThisBuild / organizationName := "MBARI"
+ThisBuild / organizationName := "Monterey Bay Aquarium Research Institute"
 ThisBuild / startYear        := Some(2021)
 ThisBuild / versionScheme    := Some("semver-spec")
 
@@ -51,7 +52,7 @@ lazy val vampireSquid = (project in file("vampire-squid"))
             },
             git.useGitDescribe        := true,
             javacOptions ++= Seq("-target", "17", "-source", "17"),
-            licenses += ("Apache-2.0", URI.create("https://www.apache.org/licenses/LICENSE-2.0.txt").toURL),
+            // licenses += ("Apache-2.0", URI.create("https://www.apache.org/licenses/LICENSE-2.0.txt").toURL),
             libraryDependencies ++= Seq(
                 derby,
                 derbyClient,
@@ -112,7 +113,7 @@ lazy val integrationTests = (project in file("it"))
             tapirServerStub,
             testcontainersCore
         ),
-        licenses += ("Apache-2.0", URI.create("https://www.apache.org/licenses/LICENSE-2.0.txt").toURL)
+        // licenses += ("Apache-2.0", URI.create("https://www.apache.org/licenses/LICENSE-2.0.txt").toURL)
     )
 
 // lazy val itOracle = (project in file("it-oracle"))
@@ -132,7 +133,7 @@ lazy val itPostgres = (project in file("it-postgres"))
         libraryDependencies ++= Seq(
             testcontainersPostgres
         ),
-        licenses += ("Apache-2.0", URI.create("https://www.apache.org/licenses/LICENSE-2.0.txt").toURL),
+        // licenses += ("Apache-2.0", URI.create("https://www.apache.org/licenses/LICENSE-2.0.txt").toURL),
     )
 
 lazy val itSqlserver = (project in file("it-sqlserver"))
@@ -144,5 +145,5 @@ lazy val itSqlserver = (project in file("it-sqlserver"))
         libraryDependencies ++= Seq(
             testcontainersSqlserver
         ),
-        licenses += ("Apache-2.0", URI.create("https://www.apache.org/licenses/LICENSE-2.0.txt").toURL),
+        // licenses += ("Apache-2.0", URI.create("https://www.apache.org/licenses/LICENSE-2.0.txt").toURL),
     )
