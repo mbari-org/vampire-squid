@@ -15,6 +15,11 @@ update dbo.video_references
   set video_uuid_fixed = CONVERT(UNIQUEIDENTIFIER, uuid)
 go
 
+alter table dbo.video_references
+    alter column size_bytes BIGINT null
+go
+
+
 -- videos: Copy varchar uuids into uniqueidentifiers
 alter table dbo.videos
     add uuid_fixed UNIQUEIDENTIFIER
@@ -28,6 +33,11 @@ go
 update dbo.videos
   set video_sequence_uuid_fixed = CONVERT(UNIQUEIDENTIFIER, video_sequence_uuid)
 go
+
+alter table dbo.videos
+    alter column duration_millis BIGINT null
+go
+
 
 -- videos_sequences: Copy varchar uuids into uniqueidentifiers
 alter table dbo.video_sequences
@@ -179,6 +189,12 @@ drop index IDX__videos__start_time on dbo.video_references
 go
 ALTER TABLE dbo.videos ALTER COLUMN start_time datetimeoffset(6)
 go
+
+UPDATE dbo.videos
+  SET start_time = CONVERT(datetime2, start_time) AT TIME ZONE 'UTC'
+GO
+
+
 CREATE NONCLUSTERED INDEX "IDX__videos__start_time"
 	ON "dbo"."videos"("start_time")
 go
@@ -190,4 +206,71 @@ go
 CREATE NONCLUSTERED INDEX "IDX__videos__video_sequence_uuid"
 	ON "dbo"."videos"("video_sequence_uuid")
 go
+
+-- Add Audit tables
+CREATE TABLE REVINFO (
+  REV int identity NOT NULL, 
+  REVTSTMP bigint, 
+  PRIMARY KEY (REV)
+)
+GO
+
+CREATE TABLE video_sequences_AUD (
+  REV int not null, 
+  REVTYPE smallint, 
+  uuid uniqueidentifier not null, 
+  camera_id varchar(256), 
+  name varchar(512), 
+  description varchar(2048), 
+  primary key (REV, uuid)
+)
+GO
+
+ALTER TABLE video_sequences_AUD 
+  ADD CONSTRAINT "FK__video_seqs_aud__revinfo" FOREIGN KEY (REV) references REVINFO
+GO
+
+CREATE TABLE videos_AUD (
+  REV int not null, 
+  REVTYPE smallint, 
+  duration_millis bigint, 
+  start_time datetimeoffset(6),
+  uuid uniqueidentifier not null, 
+  video_sequence_uuid uniqueidentifier, 
+  name varchar(512), 
+  description varchar(2048), 
+  primary key (REV, uuid)
+)
+GO
+
+ALTER TABLE videos_AUD 
+  ADD CONSTRAINT "FK__videos_aud__revinfo" FOREIGN KEY (REV) REFERENCES REVINFO
+GO
+
+
+CREATE TABLE video_references_AUD (
+  REV int not null, 
+  REVTYPE smallint, 
+  frame_rate float(53), 
+  height int, 
+  width int, 
+  size_bytes bigint, 
+  uuid uniqueidentifier not null, 
+  video_uuid uniqueidentifier, 
+  audio_codec varchar(128), 
+  container varchar(128), 
+  sha512 varchar(128), 
+  video_codec varchar(128), 
+  uri varchar(1024), 
+  description varchar(2048), 
+  primary key (REV, uuid)
+)
+GO
+
+ALTER TABLE video_references_AUD 
+  ADD CONSTRAINT "FK__video_refs_aud__revinfo" FOREIGN KEY (REV) REFERENCES REVINFO
+GO
+
+
+
 

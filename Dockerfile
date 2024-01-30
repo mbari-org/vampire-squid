@@ -1,4 +1,4 @@
-FROM openjdk:17
+FROM eclipse-temurin:21-ubi9-minimal
 
 ARG BUILD_DATE
 ARG VCS_REF

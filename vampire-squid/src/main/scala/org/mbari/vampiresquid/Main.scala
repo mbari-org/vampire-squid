@@ -34,8 +34,18 @@ import sttp.tapir.server.interceptor.log.DefaultServerLog
 def run(): Unit =
 
     System.setProperty("user.timezone", "UTC")
+    val s =
+      """
+      | ____   ____                     .__                   _________            .__    .___
+      | \   \ /   /____    _____ ______ |__|______   ____    /   _____/ ________ __|__| __| _/
+      |  \   Y   /\__  \  /     \\____ \|  \_  __ \_/ __ \   \_____  \ / ____/  |  \  |/ __ | 
+      |   \     /  / __ \|  Y Y  \  |_> >  ||  | \/\  ___/   /        < <_|  |  |  /  / /_/ | 
+      |    \___/  (____  /__|_|  /   __/|__||__|    \___  > /_______  /\__   |____/|__\____ | 
+      |                \/      \/|__|                   \/          \/    |__|             \/ """.stripMargin + s"  v${AppConfig.Version}"
+    println(s)
 
-    val log = Logging("Main")
+    val log = Logging("org.mbari.vampiresquid.Main")
+    log.atInfo.log(s"Starting ${AppConfig.Name} v${AppConfig.Version}")
 
     val serverOptions = VertxFutureServerOptions
         .customiseInterceptors
@@ -59,16 +69,23 @@ def run(): Unit =
                 .apply(router)
         )
 
-    val program = for
-        binding <- server.requestHandler(router).listen(port).asScala
-        _       <- Future:
-                       println(
-                           s"Go to http://localhost:${binding.actualPort()}/docs to open SwaggerUI. Press ENTER key to exit."
-                       )
-                       StdIn.readLine()
-        stop    <- binding.close().asScala
-    yield stop
+    router
+        .getRoutes()
+        .forEach(r => log.atDebug.log(f"Adding route: ${r.methods()}%8s ${r.getPath}%s"))
 
-    program.onComplete(_ => vertx.close())
+    // val program = for
+    //     binding <- server.requestHandler(router).listen(port).asScala
+    //     _       <- Future:
+    //                    println(
+    //                        s"Go to http://localhost:${binding.actualPort()}/docs to open SwaggerUI. Press ENTER key to exit."
+    //                    )
+    //                    StdIn.readLine()
+    //     stop    <- binding.close().asScala
+    // yield stop
+
+    // program.onComplete(_ => vertx.close())
+
+    val program = server.requestHandler(router).listen(port).asScala
+
 
     Await.result(program, Duration.Inf)
