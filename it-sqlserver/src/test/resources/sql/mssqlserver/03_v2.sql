@@ -185,7 +185,7 @@ ALTER TABLE dbo.video_references ALTER COLUMN size_bytes bigint
 go
 ALTER TABLE dbo.videos ALTER COLUMN duration_millis bigint
 go
-drop index IDX__videos__start_time on dbo.video_references
+drop index idx_videos__start_time on dbo.video_references
 go
 ALTER TABLE dbo.videos ALTER COLUMN start_time datetimeoffset(6)
 go

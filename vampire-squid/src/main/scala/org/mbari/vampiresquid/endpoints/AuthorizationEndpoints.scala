@@ -38,7 +38,7 @@ class AuthorizationEndpoints(jwtService: JwtService)(using ec: ExecutionContext)
         endpoint
             .post
             .in("v1" / "auth")
-            .securityIn(header[String]("APIKEY"))
+            .securityIn(header[String]("Authorization").description("Header format is `Authorization: APIKEY <key>`"))
             .out(jsonBody[Authorization])
             .errorOut(
                 oneOf[ErrorMsg](
@@ -49,15 +49,20 @@ class AuthorizationEndpoints(jwtService: JwtService)(using ec: ExecutionContext)
                 )
             )
             .name("authenticate")
-            .description("Exchange an API key for a JWT")
+            .description("Exchange an API key for a JWT. Header format is `Authorization: APIKEY <key>`")
             .tag("auth")
 
     val authEndpointImpl: ServerEndpoint[Any, Future] =
         authEndpoint
-            .serverSecurityLogic(apiKey =>
-                jwtService.authorize(apiKey) match
-                    case None      => Future(Left(Unauthorized("Invalid API key")))
-                    case Some(jwt) => Future(Right(Authorization.bearer(jwt)))
+            .serverSecurityLogic(authHeader =>
+                val parts = authHeader.split(" ")
+                if parts.length != 2 || parts(0).toUpperCase() != "APIKEY" then
+                    Future(Left(Unauthorized("Invalid Authorization header")))
+                else
+                    val apiKey = parts(1)
+                    jwtService.authorize(apiKey) match
+                        case None      => Future(Left(Unauthorized("Invalid API key")))
+                        case Some(jwt) => Future(Right(Authorization.bearer(jwt)))
             )
             .serverLogic(bearerAuth => Unit => Future(Right(bearerAuth)))
 
