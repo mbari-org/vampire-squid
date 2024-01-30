@@ -33,6 +33,8 @@ import sttp.tapir.server.interceptor.log.DefaultServerLog
 @main
 def run(): Unit =
 
+    System.setProperty("user.timezone", "UTC")
+
     val log = Logging("Main")
 
     val serverOptions = VertxFutureServerOptions
@@ -46,8 +48,8 @@ def run(): Unit =
     val server = vertx.createHttpServer()
     val router = Router.router(vertx)
 
-    // Log all requests
-    router.route().handler(ctx => log.atInfo.log(s"${ctx.request().method()} ${ctx.request().path()}"))
+    // NOTE: Don't add a handler. It will intercept all requests (Originally: Log all requests)
+    // router.route().handler(ctx => log.atInfo.log(s"${ctx.request().method()} ${ctx.request().path()}"))
 
     Endpoints
         .all
@@ -66,5 +68,7 @@ def run(): Unit =
                        StdIn.readLine()
         stop    <- binding.close().asScala
     yield stop
+
+    program.onComplete(_ => vertx.close())
 
     Await.result(program, Duration.Inf)

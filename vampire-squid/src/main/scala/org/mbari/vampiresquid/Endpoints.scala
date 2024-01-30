@@ -67,7 +67,7 @@ object Endpoints:
             videoReferenceEndpoints.allImpl
 
     val docEndpoints: List[ServerEndpoint[Any, Future]] = SwaggerInterpreter()
-        .fromServerEndpoints[Future](apiEndpoints, "vampire-squid", "1.0.0")
+        .fromServerEndpoints[Future](apiEndpoints, AppConfig.Name, AppConfig.Version)
 
     val prometheusMetrics: PrometheusMetrics[Future] = PrometheusMetrics.default[Future]()
     val metricsEndpoint: ServerEndpoint[Any, Future] = prometheusMetrics.metricsEndpoint

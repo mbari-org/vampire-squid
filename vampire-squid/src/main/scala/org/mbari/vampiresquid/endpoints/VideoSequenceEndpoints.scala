@@ -221,29 +221,29 @@ class VideoSequenceEndpoints(controller: VideoSequenceController)(using ec: Exec
             .serverLogic(_ => req => handleErrors(controller.delete(req).map(b => if b then Right(()) else Left(()))))
 
     override def all: List[Endpoint[?, ?, ?, ?, ?]] = List(
+        findVideoSequencesByCameraIdAndTimestamp,
+        findVideoSequencesByCameraId,
+        findAllCameraIds,
+        findLastUpdateForVideoSequence,
+        findVideoSequenceNamesByCameraId,
+        findVideoSequenceByName,
+        findAllVideoSequenceNames,
         createOneVideoSequence,
         updateOneVideoSequence,
         deleteOneVideoSequence,
-        findAllCameraIds,
-        findAllVideoSequenceNames,
-        findLastUpdateForVideoSequence,
-        findVideoSequenceByName,
-        findVideoSequencesByCameraIdAndTimestamp,
-        findVideoSequenceNamesByCameraId,
-        findVideoSequencesByCameraId,
         findAllVideoSequences
     )
 
     override def allImpl: List[ServerEndpoint[Any, Future]] = List(
+        findVideoSequencesByCameraIdAndTimestampImpl,
+        findVideoSequencesByCameraIdImpl,
+        findAllCameraIdsImpl,
+        findLastUpdateForVideoSequenceImpl,
+        findVideoSequenceNamesByCameraIdImpl,
+        findVideoSequenceByNameImpl,
+        findAllVideoSequenceNamesImpl,
         createOneVideoSequenceImpl,
         updateOneVideoSequenceImpl,
         deleteOneVideoSequenceImpl,
-        findAllCameraIdsImpl,
-        findAllVideoSequenceNamesImpl,
-        findLastUpdateForVideoSequenceImpl,
-        findVideoSequenceByNameImpl,
-        findVideoSequencesByCameraIdAndTimestampImpl,
-        findVideoSequenceNamesByCameraIdImpl,
-        findVideoSequencesByCameraIdImpl,
         findAllVideoSequencesImpl
     )

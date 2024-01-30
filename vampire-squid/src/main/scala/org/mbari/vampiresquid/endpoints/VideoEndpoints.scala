@@ -286,6 +286,8 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
             )
 
     override def all: List[Endpoint[?, ?, ?, ?, ?]] = List(
+        
+        
         findVideoByVideoSequenceName,
         findVideoByVideoSequenceUuid,
         findVideoByVideoReferenceUuid,
@@ -301,6 +303,8 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
     )
 
     override def allImpl: List[ServerEndpoint[Any, Future]] = List(
+        
+        
         findVideoByVideoSequenceByNameImpl,
         findVideoByVideoSequenceUuidImpl,
         findVideoByVideoReferenceUuidImpl,

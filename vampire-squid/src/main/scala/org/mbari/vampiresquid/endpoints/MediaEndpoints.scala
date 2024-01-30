@@ -354,33 +354,33 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
             )
 
     override def all: List[Endpoint[?, ?, ?, ?, ?]] = List(
-        createMedia,
-        updateMedia,
-        updateMediaByVideoReferenceUuid,
-        moveMediaByVideoReferenceUuid,
-        findConcurrentMediaByVideoReferenceUuid,
-        findMediaByCameraIdAndDatetime,
         findMediaByCameraIdAndTimestamps,
-        findMediaByFileName,
+        findMediaByCameraIdAndDatetime,
+        findConcurrentMediaByVideoReferenceUuid,
+        moveMediaByVideoReferenceUuid,
         findMediaBySha512,
         findMediaByUri,
-        findMediaByVideoName,
+        findMediaByFileName,
         findMediaByVideoReferenceUuid,
-        findMediaByVideoSequenceName
+        findMediaByVideoSequenceName,
+        findMediaByVideoName,
+        updateMediaByVideoReferenceUuid,
+        updateMedia,
+        createMedia
     )
 
     override def allImpl: List[ServerEndpoint[Any, concurrent.Future]] = List(
-        createMediaImpl,
-        updateMediaImpl,
-        updateMediaByVideoReferenceUuidImpl,
-        moveMediaByVideoReferenceUuidImpl,
-        findConcurrentMediaByVideoReferenceUuidImpl,
-        findMediaByCameraIdAndDatetimeImpl,
         findMediaByCameraIdAndTimestampsImpl,
-        findMediaByFileNameImpl,
+        findMediaByCameraIdAndDatetimeImpl,
+        findConcurrentMediaByVideoReferenceUuidImpl,
+        moveMediaByVideoReferenceUuidImpl,
         findMediaBySha512Impl,
         findMediaByUriImpl,
-        findMediaByVideoNameImpl,
+        findMediaByFileNameImpl,
         findMediaByVideoReferenceUuidImpl,
-        findMediaByVideoSequenceNameImpl
+        findMediaByVideoSequenceNameImpl,
+        findMediaByVideoNameImpl,
+        updateMediaByVideoReferenceUuidImpl,
+        updateMediaImpl,
+        createMediaImpl
     )

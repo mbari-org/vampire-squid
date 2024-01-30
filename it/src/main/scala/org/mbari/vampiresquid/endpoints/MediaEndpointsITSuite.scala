@@ -39,7 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.jdk.CollectionConverters.*
 import sttp.client3.*
 import sttp.client3.SttpBackend
-import sttp.client3.testing.SttpBackendStub
+import sttp.client3.testing.SttpBackendStub 
 import sttp.model.StatusCode
 import sttp.tapir.server.stub.TapirStubInterpreter
 import org.checkerframework.checker.units.qual.m
