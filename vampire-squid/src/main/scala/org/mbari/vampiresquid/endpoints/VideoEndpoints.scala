@@ -36,6 +36,7 @@ import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 import sttp.tapir.server.ServerEndpoint
 import sttp.model.StatusCode
+import org.mbari.vampiresquid.Endpoints.videoController
 
 class VideoEndpoints(controller: VideoController, videoSequenceController: VideoSequenceController)(using
     ec: ExecutionContext,
@@ -160,6 +161,23 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
                     xx <- controller.findByVideoSequenceUUID(vs.get.uuid)
                 yield xx.toList
 
+                handleErrors(future)
+            )
+
+    // GET v1/videos/names/videosequence/:name
+    val findVideoNamesByVideoSequenceName = 
+        openEndpoint
+            .get
+            .in("v1" / "videos" / "names" / "videosequence" / path[String]("videoSequenceName"))
+            .out(jsonBody[Seq[String]])
+            .name("findVideoNamesByVideoSequenceName")
+            .description("Find video names by its video sequence name")
+            .tag("videos")
+
+    val findVideoNamesByVideoSequenceNameImpl: ServerEndpoint[Any, Future] =
+        findVideoNamesByVideoSequenceName
+            .serverLogic(req =>
+                val future = videoController.findNamesByVideoSequenceName(req).map(_.toSeq)
                 handleErrors(future)
             )
 
@@ -293,6 +311,7 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
         findVideoByVideoReferenceUuid,
         findLastUpdateForVideo,
         findVideoByName,
+        findVideoNamesByVideoSequenceName,
         findVideoByTimestampRange,
         findVideoByTimestamp,
         findAllVideos,
@@ -310,6 +329,7 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
         findVideoByVideoReferenceUuidImpl,
         findLastUpdateForVideoImpl,
         findVideoByNameImpl,
+        findVideoNamesByVideoSequenceNameImpl,
         findVideoByTimestampRangeImpl,
         findVideoByTimestampImpl,
         findAllVideosImpl,
