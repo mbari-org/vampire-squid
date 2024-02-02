@@ -62,7 +62,7 @@ alter table
 go
 
 -- drop indices and contraints on the varchar uuids
-drop index idx_video_references__video_uuid on dbo.video_references
+drop index if exists idx_video_references__video_uuid on dbo.video_references
 go
 alter table
     dbo.video_references drop constraint PK__video_re__7F427930D0AE73A2
@@ -76,7 +76,7 @@ go
 alter table
     dbo.videos drop constraint UQ__videos__72E12F1B234A88FA
 go
-drop index idx_videos__video_sequence_uuid on dbo.videos
+drop index if exists idx_videos__video_sequence_uuid on dbo.videos
 go
 alter table
     dbo.video_sequences drop constraint PK__video_se__7F4279308D60CFC3
@@ -185,7 +185,7 @@ ALTER TABLE dbo.video_references ALTER COLUMN size_bytes bigint
 go
 ALTER TABLE dbo.videos ALTER COLUMN duration_millis bigint
 go
-drop index idx_videos__start_time on dbo.video_references
+drop index idx_videos__start_time on dbo.videos
 go
 ALTER TABLE dbo.videos ALTER COLUMN start_time datetimeoffset(6)
 go
