@@ -13,7 +13,7 @@ object Dependencies {
   lazy val derbyShared = "org.apache.derby" % "derbyshared" % derbyVersion
   lazy val derbyTools  = "org.apache.derby" % "derbytools"  % derbyVersion
 
-  val hibernateVersion     = "6.4.2.Final"
+  val hibernateVersion     = "6.4.3.Final"
   lazy val hibernateCore   = "org.hibernate.orm" % "hibernate-core"     % hibernateVersion
   lazy val hibernateEnvers = "org.hibernate.orm" % "hibernate-envers"   % hibernateVersion
   lazy val hibernateHikari = "org.hibernate.orm" % "hibernate-hikaricp" % hibernateVersion
@@ -26,8 +26,8 @@ object Dependencies {
   lazy val logbackClassic = "ch.qos.logback" % "logback-classic" % logbackVersion
   lazy val logbackCore    = "ch.qos.logback" % "logback-core"    % logbackVersion
 
-  lazy val mssqlJdbc  = "com.microsoft.sqlserver" % "mssql-jdbc" % "12.4.2.jre11"
-  lazy val munit      = "org.scalameta"          %% "munit"      % "1.0.0-M10"
+  lazy val mssqlJdbc  = "com.microsoft.sqlserver" % "mssql-jdbc" % "12.6.0.jre11"
+  lazy val munit      = "org.scalameta"          %% "munit"      % "1.0.0-M11"
   lazy val oracleJdbc = "com.oracle.ojdbc"        % "ojdbc8"     % "19.3.0.0"
   lazy val postgresql = "org.postgresql"          % "postgresql" % "42.7.1"
   lazy val scalatest  = "org.scalatest"          %% "scalatest"  % "3.2.17"
@@ -37,7 +37,7 @@ object Dependencies {
   lazy val slf4jLog4j  = "org.slf4j" % "log4j-over-slf4j"           % slf4jVersion
   lazy val slf4jSystem = "org.slf4j" % "slf4j-jdk-platform-logging" % slf4jVersion
 
-  private val tapirVersion = "1.9.8"
+  private val tapirVersion = "1.9.9"
   lazy val tapirSttpCirce  = "com.softwaremill.sttp.client3" %% "circe"                    % "3.9.2"
   lazy val tapirCirce      = "com.softwaremill.sttp.tapir"   %% "tapir-json-circe"         % tapirVersion
   lazy val tapirPrometheus = "com.softwaremill.sttp.tapir"   %% "tapir-prometheus-metrics" % tapirVersion
