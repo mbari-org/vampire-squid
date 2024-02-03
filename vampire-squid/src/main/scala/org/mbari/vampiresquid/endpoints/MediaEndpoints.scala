@@ -328,11 +328,11 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
             )
 
     // GET v1/media/uri/{uri} ---------------------------------------------------------
-    val findMediaByUri: Endpoint[Unit, String, ErrorMsg, List[Media], Any] =
+    val findMediaByUri: Endpoint[Unit, String, ErrorMsg, Media, Any] =
         openEndpoint
             .get
             .in("v1" / "media" / "uri" / path[String]("uri"))
-            .out(jsonBody[List[Media]])
+            .out(jsonBody[Media])
             .name("findMediaByUri")
             .description("Find media by uri")
             .tag("media")
@@ -346,10 +346,9 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
                     .toEither match
                     case Left(_)         => Future.successful(Left(BadRequest(s"Invalid URI: $uri")))
                     case Right(validUri) =>
-                        handleErrors(
+                        handleOption(
                             mediaController
                                 .findByURI(validUri)
-                                .map(_.toList)
                         )
             )
 

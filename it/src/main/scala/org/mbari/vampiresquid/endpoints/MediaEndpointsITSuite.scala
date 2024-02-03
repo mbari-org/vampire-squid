@@ -346,12 +346,12 @@ trait MediaEndpointsITSuite extends EndpointsSuite:
 
     test("findMediaByVideoSequenceName"):
         val videoSequence  = TestUtils.create(1, 1, 1).head
-        val videoReference = videoSequence.getVideoReferences().get(0)
+        val videoReference = videoSequence.getVideoReferences.get(0)
         val media0         = Media.from(videoReference)
 
         runGet(
             mediaEndpoints.findMediaByVideoSequenceNameImpl,
-            s"http://test.com/v1/media/videosequence/${videoSequence.getName()}",
+            s"http://test.com/v1/media/videosequence/${videoSequence.getName}",
             response =>
                 assertEquals(response.code, StatusCode.Ok)
                 val xs = checkResponse[List[Media]](response.body)
@@ -496,7 +496,6 @@ trait MediaEndpointsITSuite extends EndpointsSuite:
             s"http://test.com/v1/media/uri/${uri}",
             response =>
                 assertEquals(response.code, StatusCode.Ok)
-                val xs = checkResponse[List[Media]](response.body)
-                assert(xs.size == 1)
-                assertSameMedia(xs.head, media0)
+                val xs = checkResponse[Media](response.body)
+                assertSameMedia(xs, media0)
         )

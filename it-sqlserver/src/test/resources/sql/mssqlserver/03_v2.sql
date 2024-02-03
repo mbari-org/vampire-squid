@@ -12,7 +12,7 @@ alter table dbo.video_references
     add video_uuid_fixed UNIQUEIDENTIFIER
 go
 update dbo.video_references
-  set video_uuid_fixed = CONVERT(UNIQUEIDENTIFIER, uuid)
+  set video_uuid_fixed = CONVERT(UNIQUEIDENTIFIER, video_uuid)
 go
 
 alter table dbo.video_references
