@@ -68,7 +68,7 @@ class AuthorizationEndpointsSuite extends munit.FunSuite:
 
         val response = basicRequest
             .post(uri"http://test.com/v1/auth")
-            .header("APIKEY", "foo")
+            .header("Authorization", "APIKEY foo")
             .send(backendStub)
 
         response

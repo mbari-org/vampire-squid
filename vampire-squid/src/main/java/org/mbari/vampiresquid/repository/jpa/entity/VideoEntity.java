@@ -17,7 +17,6 @@
 package org.mbari.vampiresquid.repository.jpa.entity;
 
 import org.mbari.vampiresquid.etc.jpa.TransactionLogger;
-import org.mbari.vampiresquid.etc.jpa.UUIDConverter;
 import org.mbari.vampiresquid.etc.jpa.InstantConverter;
 import org.mbari.vampiresquid.etc.jpa.DurationConverter;
 

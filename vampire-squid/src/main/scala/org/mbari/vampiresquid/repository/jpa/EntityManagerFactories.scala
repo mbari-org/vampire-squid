@@ -17,10 +17,11 @@
 package org.mbari.vampiresquid.repository.jpa
 
 import jakarta.persistence.{EntityManagerFactory, Persistence}
-
 import com.typesafe.config.ConfigFactory
 
+import java.lang.System.Logger.Level
 import scala.jdk.CollectionConverters.*
+import org.mbari.vampiresquid.etc.jdk.Logging.{given, *}
 
 /**
  * https://stackoverflow.com/questions/4106078/dynamic-jpa-connection
@@ -35,6 +36,7 @@ import scala.jdk.CollectionConverters.*
 object EntityManagerFactories:
 
     private lazy val config = ConfigFactory.load()
+    private val log = System.getLogger(getClass.getName)
 
     // https://juliuskrah.com/tutorial/2017/02/16/getting-started-with-hikaricp-hibernate-and-jpa/
     val PRODUCTION_PROPS = Map(
@@ -47,7 +49,18 @@ object EntityManagerFactories:
 
     def apply(properties: Map[String, String]): EntityManagerFactory =
         val props = PRODUCTION_PROPS ++ properties
-        Persistence.createEntityManagerFactory("video-asset-manager", props.asJava)
+        val emf = Persistence.createEntityManagerFactory("video-asset-manager", props.asJava)
+        if (log.isLoggable(Level.INFO))
+            val props = emf
+                .getProperties
+                .asScala
+                .filter(a => a._1.startsWith("hibernate") || a._1.startsWith("jakarta"))
+                .map(a => s"${a._1} : ${a._2}")
+                .toList
+                .sorted
+                .mkString("\n")
+            log.atInfo.log(s"EntityManager Properties:\n${props}")
+        emf
 
     def apply(
         url: String,
@@ -69,11 +82,11 @@ object EntityManagerFactories:
         val driver      = config.getString(configNode + ".driver")
         val logLevel    = config.getString(configNode + ".loglevel")
         val password    = config.getString(configNode + ".password")
-        val productName = config.getString(configNode + ".name")
+//        val productName = config.getString(configNode + ".name")
         val url         = config.getString(configNode + ".url")
         val user        = config.getString(configNode + ".user")
         val props       = Map(
-            "hibernate.dialect"                 -> productName,
+//            "hibernate.dialect"                 -> productName,
             "jakarta.persistence.jdbc.driver"   -> driver,
             "jakarta.persistence.jdbc.password" -> password,
             "jakarta.persistence.jdbc.url"      -> url,

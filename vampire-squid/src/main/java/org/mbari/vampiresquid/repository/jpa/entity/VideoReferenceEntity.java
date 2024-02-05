@@ -19,7 +19,6 @@ package org.mbari.vampiresquid.repository.jpa.entity;
 import org.mbari.vampiresquid.etc.jpa.ByteArrayConverter;
 import org.mbari.vampiresquid.etc.jpa.TransactionLogger;
 import org.mbari.vampiresquid.etc.jpa.URIConverter;
-import org.mbari.vampiresquid.etc.jpa.UUIDConverter;
 
 import jakarta.persistence.*;
 import java.net.URI;
@@ -73,16 +72,9 @@ public class VideoReferenceEntity implements IPersistentObject {
 
 
     @Id
-    // @GeneratedValue(generator = "system-uuid")
     @Column(name = "uuid", nullable = false, updatable = false, length = 36)
-    // @Convert(converter = UUIDConverter.class)
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID uuid;
-
-//    def primaryKey: Option[UUID] = Option(uuid)
-
-//    def lastUpdated: Option[Instant] = Option(lastUpdatedTime).map(_.toInstant)
-
 
     @Basic(optional = false)
     @Column(name = "uri", unique = true, length = 1024, nullable = false)
