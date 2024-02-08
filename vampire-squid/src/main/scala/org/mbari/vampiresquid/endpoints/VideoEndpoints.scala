@@ -33,10 +33,11 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import sttp.tapir.*
 import sttp.tapir.generic.auto.*
-import sttp.tapir.json.circe.*
 import sttp.tapir.server.ServerEndpoint
 import sttp.model.StatusCode
 import org.mbari.vampiresquid.Endpoints.videoController
+
+import CustomTapirJsonCirce.*
 
 class VideoEndpoints(controller: VideoController, videoSequenceController: VideoSequenceController)(using
     ec: ExecutionContext,

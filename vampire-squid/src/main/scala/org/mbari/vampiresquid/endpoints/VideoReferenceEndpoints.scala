@@ -34,11 +34,12 @@ import scala.concurrent.Future
 import sttp.model.StatusCode
 import sttp.tapir.*
 import sttp.tapir.generic.auto.*
-import sttp.tapir.json.circe.*
 import sttp.tapir.server.ServerEndpoint
 import scala.util.chaining.*
 import org.mbari.vampiresquid.domain.VideoReferenceCreate
 import org.mbari.vampiresquid.domain.VideoReferenceUpdate
+
+import CustomTapirJsonCirce.*
 
 class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: ExecutionContext, jwtService: JwtService)
     extends Endpoints:

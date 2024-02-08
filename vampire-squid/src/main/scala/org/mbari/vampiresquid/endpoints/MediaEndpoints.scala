@@ -38,8 +38,9 @@ import scala.util.Success
 import scala.util.Try
 import sttp.tapir.*
 import sttp.tapir.generic.auto.*
-import sttp.tapir.json.circe.*
 import sttp.tapir.server.ServerEndpoint
+
+import CustomTapirJsonCirce.*
 
 class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(using ec: ExecutionContext)
     extends Endpoints:

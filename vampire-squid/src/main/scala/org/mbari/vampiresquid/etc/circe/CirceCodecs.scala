@@ -130,7 +130,10 @@ object CirceCodecs:
     given Decoder[VideoSequenceUpdate] = deriveDecoder
     given Encoder[VideoSequenceUpdate] = deriveEncoder
 
-    private val printer = Printer.noSpaces.copy(dropNullValues = true)
+    val CustomPrinter: Printer = Printer(
+        dropNullValues = true,
+        indent = ""
+    )
 
     /**
      * Convert a circe Json object to a JSON string
@@ -138,7 +141,7 @@ object CirceCodecs:
      * @param value
      *   Any value with an implicit circe coder in scope
      */
-    extension (json: Json) def stringify: String = printer.print(json)
+    extension (json: Json) def stringify: String = CustomPrinter.print(json)
 
     /**
      * Convert an object to a JSON string
@@ -146,9 +149,14 @@ object CirceCodecs:
      * @param value
      *   Any value with an implicit circe coder in scope
      */
-    extension [T: Encoder](value: T) def stringify: String = Encoder[T].apply(value).stringify
+    extension [T: Encoder](value: T) 
+        def stringify: String = Encoder[T]
+            .apply(value)
+            .deepDropNullValues
+            .stringify
 
-    extension [T: Decoder](jsonString: String) def toJson: Either[ParsingFailure, Json] = parser.parse(jsonString);
+    extension [T: Decoder](jsonString: String) 
+        def toJson: Either[ParsingFailure, Json] = parser.parse(jsonString);
 
     extension (jsonString: String)
         def reify[T: Decoder]: Either[Error, T] =

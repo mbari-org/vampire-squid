@@ -22,6 +22,7 @@ import org.mbari.vampiresquid.domain.MoveVideoParams
 import org.mbari.vampiresquid.domain.Video
 import org.mbari.vampiresquid.domain.VideoReference
 import org.mbari.vampiresquid.domain.{BadRequest, ErrorMsg, NotFound, ServerError, Unauthorized}
+import org.mbari.vampiresquid.etc.circe.CirceCodecs
 import org.mbari.vampiresquid.etc.circe.CirceCodecs.{*, given}
 
 import org.mbari.vampiresquid.etc.jwt.JwtService
@@ -40,10 +41,17 @@ import sttp.tapir.json.circe.*
 import sttp.tapir.server.ServerEndpoint
 
 import java.time.Instant
+import io.circe.Printer
 
 case class Paging(offset: Option[Int] = Some(0), limit: Option[Int] = Some(100))
 
+object CustomTapirJsonCirce extends TapirJsonCirce:
+    override def jsonPrinter: Printer = CirceCodecs.CustomPrinter
+
 trait Endpoints:
+
+    import CustomTapirJsonCirce.*
+
     val log = System.getLogger(getClass.getName)
 
     given Schema[URI]             = Schema.string

@@ -30,10 +30,11 @@ import scala.concurrent.Future
 import sttp.model.StatusCode
 import sttp.tapir.*
 import sttp.tapir.generic.auto.*
-import sttp.tapir.json.circe.*
 import sttp.tapir.server.ServerEndpoint
 import org.mbari.vampiresquid.domain.VideoSequenceCreate
 import org.mbari.vampiresquid.domain.VideoSequenceUpdate
+
+import CustomTapirJsonCirce.*
 
 class VideoSequenceEndpoints(controller: VideoSequenceController)(using ec: ExecutionContext, jwtService: JwtService)
     extends Endpoints:

@@ -23,9 +23,9 @@ import scala.concurrent.Future
 import org.mbari.vampiresquid.domain.HealthStatus
 import sttp.tapir.*
 import sttp.tapir.generic.auto.*
-import sttp.tapir.json.circe.*
 import org.mbari.vampiresquid.etc.circe.CirceCodecs.given
 import org.mbari.vampiresquid.domain.ErrorMsg
+import CustomTapirJsonCirce.*
 
 class HealthEndpoints(using ec: ExecutionContext) extends Endpoints:
 
