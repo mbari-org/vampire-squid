@@ -15,6 +15,8 @@
   </appender>
 
 
+  <logger name="sun" level="WARN" />
+  <logger name="jdk" level="WARN" />
   <logger name="org.apache.http" level="WARN" />
   <logger name="org.eclipse.jetty" level="WARN" />
   <logger name="com.zaxxer.hikari.pool" level="WARN" />
