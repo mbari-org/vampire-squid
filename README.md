@@ -1,4 +1,4 @@
-![MBARI logo](src/site/images/logo-mbari-3b.png)
+![MBARI logo](vampire-squid/src/site/images/logo-mbari-3b.png)
 
 # vampire-squid
 
