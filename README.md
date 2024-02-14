@@ -1,3 +1,7 @@
+# vampire-squid
+
+![Build](https://github.com/mbari-org/vampire-squid/actions/workflows/scala.yml/badge.svg)
+
 ## Quick start
 
 If you don't have [sbt](https://www.scala-sbt.org) installed already, you can use the provided wrapper script:
