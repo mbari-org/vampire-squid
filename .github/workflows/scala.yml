@@ -29,6 +29,6 @@ jobs:
           distribution: 'temurin'
           cache: 'sbt'
       - name: Run tests
-        run: sbt vampire-squid/test
+        run: sbt test
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
