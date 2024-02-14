@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Logging Configuration.
+-->
+<configuration scan="false" debug="false">
+
+  <!-- <statusListener class="ch.qos.logback.core.status.NopStatusListener" /> -->
+
+  <variable name="LOGBACK_LEVEL" value="${LOGBACK_LEVEL:-DEBUG}" />
+
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+      <pattern>%gray(%d{HH:mm:ss.SSS}) %highlight(%-5level) [%green(%-25thread)]
+        %blue(%-40logger{40}) %gray(|) %msg%n</pattern>
+    </encoder>
+  </appender>
+
+
+  <logger name="org.apache.http" level="WARN" />
+  <logger name="org.eclipse.jetty" level="WARN" />
+  <logger name="com.zaxxer.hikari.pool" level="WARN" />
+  <logger name="sun" level="WARN" />
+  <logger name="java" level="WARN" />
+  <logger name="jdk" level="WARN" />
+  <!-- Hibernate after 6 DEBUG -->
+  <logger name="org.hibernate.SQL" level="debug" />
+  <logger name="org.hibernate.orm.jdbc.bind" level="trace" />
+  <logger name="org.hibernate.stat" level="debug" />
+  <logger name="org.hibernate.SQL_SLOW" level="info" />
+  <logger name="org.hibernate.cache" level="debug" />
+
+
+  <root level="${LOGBACK_LEVEL}">
+    <appender-ref ref="CONSOLE" />
+  </root>
+
+</configuration>

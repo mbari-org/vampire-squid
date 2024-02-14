@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Hibernate after 6 DEBUG -->
+    <logger name="org.hibernate.SQL" level="debug" additivity="false" />
+    <logger name="org.hibernate.orm.jdbc.bind" level="trace" additivity="false" />
+    <logger name="org.hibernate.stat" level="debug" additivity="false" />
+    <logger name="org.hibernate.SQL_SLOW" level="info" additivity="false" />
+    <logger name="org.hibernate.cache" level="debug" additivity="false" />
+    <logger name="jdk" level="WARN" />
+    <logger name="sun" level="WARN" />s
+
+   <logger name="org.hibernate" level="error" additivity="false" />
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>
