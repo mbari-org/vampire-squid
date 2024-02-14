@@ -14,22 +14,16 @@
  * limitations under the License.
  */
 
-<<<<<<<< HEAD:vampire-squid/src/main/java/org/mbari/vampiresquid/etc/jpa/TransactionType.java
-package org.mbari.vampiresquid.etc.jpa;
+ package org.mbari.vampiresquid.etc.jpa;
 
-/**
- * @author Brian Schlining
- * @since 2016-05-06T13:55:00
- */
-public enum TransactionType {
-    REMOVE,
-    FIND,
-    CREATE,
-    MERGE;
-}
-========
-package org.mbari.vars.vam.domain
-
-
-abstract class Auth(tokenType: String)
->>>>>>>> main:src/main/scala/org/mbari/vars/vam/domain/Auth.scala
+ /**
+  * @author Brian Schlining
+  * @since 2016-05-06T13:55:00
+  */
+ public enum TransactionType {
+     REMOVE,
+     FIND,
+     CREATE,
+     MERGE;
+ }
+ 
