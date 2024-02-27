@@ -61,13 +61,30 @@ def run(): Unit =
     // NOTE: Don't add a handler. It will intercept all requests (Originally: Log all requests)
     // router.route().handler(ctx => log.atInfo.log(s"${ctx.request().method()} ${ctx.request().path()}"))
 
-    Endpoints
-        .all
+    val intepreter = VertxFutureServerInterpreter(serverOptions)
+
+    // For VertX, we need to separate the non-blocking endpoints from the blocking ones
+    Endpoints.nonBlockingEndpoints
         .foreach(endpoint =>
-            VertxFutureServerInterpreter(serverOptions)
+            intepreter
                 .route(endpoint)
                 .apply(router)
         )
+    
+    Endpoints.blockingEndpoints
+        .foreach(endpoint =>
+            intepreter
+                .blockingRoute(endpoint)
+                .apply(router)
+        )
+    
+//    Endpoints
+//        .all
+//        .foreach(endpoint =>
+//            VertxFutureServerInterpreter(serverOptions)
+//                .route(endpoint)
+//                .apply(router)
+//        )
 
     router
         .getRoutes()

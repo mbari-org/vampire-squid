@@ -58,13 +58,28 @@ object Endpoints:
     val videoEndpoints          = new VideoEndpoints(videoController, videoSequenceController)
     val videoReferenceEndpoints = new VideoReferenceEndpoints(videoReferenceController)
 
-    val apiEndpoints =
-        mediaEndpoints.allImpl ++
-            authEndpoints.allImpl ++
-            healthEndpoints.allImpl ++
-            videoSequenceEndpoints.allImpl ++
-            videoEndpoints.allImpl ++
-            videoReferenceEndpoints.allImpl
+    // For VertX, we need to separate the non-blocking endpoints from the blocking ones
+    val nonBlockingEndpoints = List(
+        authEndpoints.allImpl,
+        healthEndpoints.allImpl
+    ).flatten
+    
+    val blockingEndpoints = List(
+        mediaEndpoints.allImpl,
+        videoSequenceEndpoints.allImpl,
+        videoEndpoints.allImpl,
+        videoReferenceEndpoints.allImpl
+    ).flatten
+    
+    val apiEndpoints = nonBlockingEndpoints ++ blockingEndpoints
+    
+//    val apiEndpoints =
+//        mediaEndpoints.allImpl ++
+//            authEndpoints.allImpl ++
+//            healthEndpoints.allImpl ++
+//            videoSequenceEndpoints.allImpl ++
+//            videoEndpoints.allImpl ++
+//            videoReferenceEndpoints.allImpl
 
     val docEndpoints: List[ServerEndpoint[Any, Future]] = SwaggerInterpreter()
         .fromServerEndpoints[Future](apiEndpoints, AppConfig.Name, AppConfig.Version)
