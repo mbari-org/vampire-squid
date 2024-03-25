@@ -29,6 +29,7 @@ import sttp.tapir.server.interceptor.log.ServerLog
 import org.mbari.vampiresquid.etc.jdk.Logging
 import org.mbari.vampiresquid.etc.jdk.Logging.{*, given}
 import sttp.tapir.server.interceptor.log.DefaultServerLog
+import io.vertx.core.VertxOptions
 
 @main
 def run(): Unit =
@@ -54,7 +55,8 @@ def run(): Unit =
 
     val port = sys.env.get("HTTP_PORT").flatMap(_.toIntOption).getOrElse(8080)
 
-    val vertx  = Vertx.vertx()
+    val vertx  = Vertx.vertx(new VertxOptions().setWorkerPoolSize(AppConfig.NumberOfVertxWorkers))
+    // val vertx  = Vertx.vertx()
     val server = vertx.createHttpServer()
     val router = Router.router(vertx)
 
@@ -100,7 +102,7 @@ def run(): Unit =
 
     router
         .getRoutes()
-        .forEach(r => log.atDebug.log(f"Adding route: ${r.methods()}%8s ${r.getPath}%s"))
+        .forEach(r => log.atInfo.log(f"Adding route: ${r.methods()}%8s ${r.getPath}%s"))
 
     // val program = for
     //     binding <- server.requestHandler(router).listen(port).asScala

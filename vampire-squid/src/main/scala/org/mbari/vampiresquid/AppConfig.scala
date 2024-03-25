@@ -29,6 +29,8 @@ object AppConfig:
 
     val Description: String = "Video Asset Manager"
 
+    val NumberOfVertxWorkers: Int = 20
+
     private lazy val Config = ConfigFactory.load()
 
     lazy val JwtParameters: JwtParams =

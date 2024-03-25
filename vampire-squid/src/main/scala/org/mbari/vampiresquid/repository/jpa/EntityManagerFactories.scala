@@ -22,6 +22,7 @@ import com.typesafe.config.ConfigFactory
 import java.lang.System.Logger.Level
 import scala.jdk.CollectionConverters.*
 import org.mbari.vampiresquid.etc.jdk.Logging.{given, *}
+import org.mbari.vampiresquid.AppConfig
 
 /**
  * https://stackoverflow.com/questions/4106078/dynamic-jpa-connection
@@ -43,7 +44,7 @@ object EntityManagerFactories:
         "hibernate.connection.provider_class" -> "org.hibernate.hikaricp.internal.HikariCPConnectionProvider",
         "hibernate.hbm2ddl.auto"              -> "validate",
         "hibernate.hikari.idleTimeout"        -> "30000",
-        "hibernate.hikari.maximumPoolSize"    -> "16",
+        "hibernate.hikari.maximumPoolSize"    -> s"${AppConfig.NumberOfVertxWorkers}", 
         "hibernate.hikari.minimumIdle"        -> "2"
     )
 

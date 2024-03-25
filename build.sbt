@@ -9,7 +9,7 @@ val testcontainersVersion = "0.41.0"
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
 ThisBuild / licenses         := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
-ThisBuild / scalaVersion     := "3.3.1"
+ThisBuild / scalaVersion     := "3.3.3"
 // ThisBuild / version          := "0.0.1"
 ThisBuild / organization     := "org.mbari"
 ThisBuild / organizationName := "Monterey Bay Aquarium Research Institute"
