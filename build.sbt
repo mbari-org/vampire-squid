@@ -8,6 +8,7 @@ val testcontainersVersion = "0.41.0"
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
+ThisBuild / javacOptions ++= Seq("-target", "21", "-source", "21")
 ThisBuild / licenses         := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
 ThisBuild / scalaVersion     := "3.3.3"
 // ThisBuild / version          := "0.0.1"
