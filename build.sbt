@@ -1,7 +1,7 @@
 import java.net.URI
 import Dependencies.*
 
-val tapirVersion          = "1.9.8"
+val tapirVersion          = "1.10.7"
 val eclipselinkVersion    = "4.0.2"
 val derbyVersion          = "10.16.1.1"
 val testcontainersVersion = "0.41.0"
