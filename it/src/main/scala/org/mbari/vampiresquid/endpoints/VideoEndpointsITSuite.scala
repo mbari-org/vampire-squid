@@ -106,7 +106,7 @@ trait VideoEndpointsITSuite extends EndpointsSuite:
             s"http://test.com/v1/videos/videoreference/${videoReference.uuid}",
             response =>
                 assertEquals(response.code, StatusCode.Ok)
-                val video1 = checkResponse[List[Video]](response.body).head
+                val video1 = checkResponse[Video](response.body)
                 AssertUtil.assertSameVideo(video1, video)
         )
 

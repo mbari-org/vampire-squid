@@ -91,18 +91,18 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
             .serverLogic(req => handleErrors(controller.findByVideoSequenceUUID(req).map(_.toList)))
 
     // GET v1/videos/videoreference/:uuid/
-    val findVideoByVideoReferenceUuid: Endpoint[Unit, UUID, ErrorMsg, List[Video], Any] =
+    val findVideoByVideoReferenceUuid: Endpoint[Unit, UUID, ErrorMsg, Video, Any] =
         openEndpoint
             .get
             .in("v1" / "videos" / "videoreference" / path[UUID]("videoReferenceUuid"))
-            .out(jsonBody[List[Video]])
+            .out(jsonBody[Video])
             .name("findVideoByVideoReferenceUuid")
             .description("Find a videos by its video reference UUID")
             .tag("videos")
 
     val findVideoByVideoReferenceUuidImpl: ServerEndpoint[Any, Future] =
         findVideoByVideoReferenceUuid
-            .serverLogic(req => handleErrors(controller.findByVideoReferenceUUID(req).map(_.toList)))
+            .serverLogic(req => handleOption(controller.findByVideoReferenceUUID(req)))
 
     // get v1/videos/lastupdate/:uuid
     val findLastUpdateForVideo: Endpoint[Unit, UUID, ErrorMsg, LastUpdatedTime, Any] =
