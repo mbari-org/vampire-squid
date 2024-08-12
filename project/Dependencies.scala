@@ -1,7 +1,7 @@
 import sbt._
 object Dependencies {
 
-  val circeVersion      = "0.14.7"
+  val circeVersion      = "0.14.9"
   lazy val circeCore    = "io.circe" %% "circe-core"    % circeVersion
   lazy val circeGeneric = "io.circe" %% "circe-generic" % circeVersion
   lazy val circeParser  = "io.circe" %% "circe-parser"  % circeVersion
@@ -14,7 +14,7 @@ object Dependencies {
   lazy val derbyTools  = "org.apache.derby" % "derbytools"  % derbyVersion
 
 //   val hibernateVersion     = "6.4.8.Final"
-  val hibernateVersion     = "6.5.2.Final"
+  val hibernateVersion     = "6.6.0.Final"
   lazy val hibernateCore   = "org.hibernate.orm" % "hibernate-core"     % hibernateVersion
   lazy val hibernateEnvers = "org.hibernate.orm" % "hibernate-envers"   % hibernateVersion
   lazy val hibernateHikari = "org.hibernate.orm" % "hibernate-hikaricp" % hibernateVersion
@@ -33,13 +33,13 @@ object Dependencies {
   lazy val postgresql = "org.postgresql"          % "postgresql" % "42.7.3"
   lazy val scalatest  = "org.scalatest"          %% "scalatest"  % "3.2.19"
 
-  val slf4jVersion     = "2.0.13"
+  val slf4jVersion     = "2.0.16"
   lazy val slf4jApi    = "org.slf4j" % "slf4j-api"                  % slf4jVersion
   lazy val slf4jLog4j  = "org.slf4j" % "log4j-over-slf4j"           % slf4jVersion
   lazy val slf4jSystem = "org.slf4j" % "slf4j-jdk-platform-logging" % slf4jVersion
 
-  private val tapirVersion = "1.11.0"
-  lazy val tapirSttpCirce  = "com.softwaremill.sttp.client3" %% "circe"                    % "3.9.7"
+  private val tapirVersion = "1.11.1"
+  lazy val tapirSttpCirce  = "com.softwaremill.sttp.client3" %% "circe"                    % "3.9.8"
   lazy val tapirCirce      = "com.softwaremill.sttp.tapir"   %% "tapir-json-circe"         % tapirVersion
   lazy val tapirPrometheus = "com.softwaremill.sttp.tapir"   %% "tapir-prometheus-metrics" % tapirVersion
   lazy val tapirServerStub = "com.softwaremill.sttp.tapir"   %% "tapir-sttp-stub-server"   % tapirVersion
