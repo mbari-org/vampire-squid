@@ -50,9 +50,9 @@ class BasicJwtService(apiKey: String, issuer: String, signingSecret: String):
 
     def this(params: JwtParams) = this(params.clientSecret, params.issuer, params.signingSecret)
 
-    private[this] val algorithm = Algorithm.HMAC512(signingSecret)
+    private val algorithm = Algorithm.HMAC512(signingSecret)
 
-    private[this] val verifier = JWT
+    private val verifier = JWT
         .require(algorithm)
         .withIssuer(issuer)
         .build()

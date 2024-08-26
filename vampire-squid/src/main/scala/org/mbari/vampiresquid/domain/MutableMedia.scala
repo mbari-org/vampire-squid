@@ -28,47 +28,47 @@ import org.mbari.vampiresquid.repository.jpa.entity.VideoReferenceEntity
  */
 class MutableMedia:
 
-    var videoSequenceUuid: UUID = _
+    var videoSequenceUuid: UUID = scala.compiletime.uninitialized
 
-    var videoReferenceUuid: UUID = _
+    var videoReferenceUuid: UUID = scala.compiletime.uninitialized
 
-    var videoUuid: UUID = _
+    var videoUuid: UUID = scala.compiletime.uninitialized
 
-    var videoSequenceName: String = _
+    var videoSequenceName: String = scala.compiletime.uninitialized
 
-    var cameraId: String = _
+    var cameraId: String = scala.compiletime.uninitialized
 
-    var videoName: String = _
+    var videoName: String = scala.compiletime.uninitialized
 
-    var uri: URI = _
+    var uri: URI = scala.compiletime.uninitialized
 
-    var startTimestamp: Instant = _
+    var startTimestamp: Instant = scala.compiletime.uninitialized
 
-    var duration: Duration = _
+    var duration: Duration = scala.compiletime.uninitialized
 
     def duration_millis: Long | Null = Option(duration).map(_.toMillis).orNull
 
-    var container: String = _
+    var container: String = scala.compiletime.uninitialized
 
-    var videoCodec: String = _
+    var videoCodec: String = scala.compiletime.uninitialized
 
-    var audioCodec: String = _
+    var audioCodec: String = scala.compiletime.uninitialized
 
-    var width: Int = _
+    var width: Int = scala.compiletime.uninitialized
 
-    var height: Int = _
+    var height: Int = scala.compiletime.uninitialized
 
-    var frameRate: Double = _
+    var frameRate: Double = scala.compiletime.uninitialized
 
-    var sizeBytes: Long = _
+    var sizeBytes: Long = scala.compiletime.uninitialized
 
-    var description: String = _ // VideoReference description
+    var description: String = scala.compiletime.uninitialized // VideoReference description
 
-    var videoSequenceDescription: String = _
+    var videoSequenceDescription: String = scala.compiletime.uninitialized
 
-    var videoDescription: String = _
+    var videoDescription: String = scala.compiletime.uninitialized
 
-    var sha512: Array[Byte] = _
+    var sha512: Array[Byte] = scala.compiletime.uninitialized
 
     def endTimestamp: Option[Instant] =
         if startTimestamp != null && duration != null then Some(startTimestamp.plus(duration))

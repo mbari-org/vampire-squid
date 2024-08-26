@@ -36,7 +36,7 @@ import scala.reflect.classTag
  * @since 2016-05-06T11:18:00
  */
 abstract class BaseDAO[B <: IPersistentObject: ClassTag](val entityManager: EntityManager) extends DAO[B]:
-    private[this] val log = LoggerFactory.getLogger(getClass)
+    private val log = LoggerFactory.getLogger(getClass)
 
     if log.isInfoEnabled then
         val props = entityManager.getProperties

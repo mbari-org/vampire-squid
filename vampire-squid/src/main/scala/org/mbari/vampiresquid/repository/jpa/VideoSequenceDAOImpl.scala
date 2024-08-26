@@ -39,7 +39,7 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
     with VideoSequenceDAO[VideoSequenceEntity]:
 
     @Transient
-    private[this] val log = LoggerFactory.getLogger(getClass)
+    private val log = LoggerFactory.getLogger(getClass)
 
     override def findByCameraID(cameraID: String): Iterable[VideoSequenceEntity] =
         findByNamedQuery("VideoSequence.findByCameraID", Map("cameraID" -> cameraID))

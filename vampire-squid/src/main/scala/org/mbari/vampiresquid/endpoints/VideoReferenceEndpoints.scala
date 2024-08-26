@@ -220,7 +220,7 @@ class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: Ex
                 )
             }
 
-    override val all: List[Endpoint[_, _, _, _, _]] = List(
+    override val all: List[Endpoint[?, ?, ?, ?, ?]] = List(
         findLastUpdateForVideoReference,
         findVideoReferenceByUri,
         findAllUris,

@@ -52,7 +52,7 @@ trait JPADAOFactory extends DAOFactory[VideoSequenceEntity, VideoEntity, VideoRe
      * @return
      */
     override def newVideoDAO(dao: DAO[?]): VideoDAO[VideoEntity] =
-        new VideoDAOImpl(dao.asInstanceOf[BaseDAO[_]].entityManager)
+        new VideoDAOImpl(dao.asInstanceOf[BaseDAO[?]].entityManager)
 
     /**
      * Create a new DAO that share the underlying connection (e.g. EntityManager)
@@ -61,7 +61,7 @@ trait JPADAOFactory extends DAOFactory[VideoSequenceEntity, VideoEntity, VideoRe
      * @return
      */
     override def newVideoSequenceDAO(dao: DAO[?]): VideoSequenceDAO[VideoSequenceEntity] =
-        new VideoSequenceDAOImpl(dao.asInstanceOf[BaseDAO[_]].entityManager)
+        new VideoSequenceDAOImpl(dao.asInstanceOf[BaseDAO[?]].entityManager)
 
     /**
      * Create a new DAO that share the underlying connection (e.g. EntityManager)
@@ -70,7 +70,7 @@ trait JPADAOFactory extends DAOFactory[VideoSequenceEntity, VideoEntity, VideoRe
      * @return
      */
     override def newVideoReferenceDAO(dao: DAO[?]): VideoReferenceDAO[VideoReferenceEntity] =
-        new VideoReferenceDAOImpl(dao.asInstanceOf[BaseDAO[_]].entityManager)
+        new VideoReferenceDAOImpl(dao.asInstanceOf[BaseDAO[?]].entityManager)
 
 class JPADAOFactoryImpl(val entityManagerFactory: EntityManagerFactory) extends JPADAOFactory
 

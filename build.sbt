@@ -92,8 +92,7 @@ lazy val vampireSquid = (project in file("vampire-squid"))
                 "-indent",
                 "-rewrite",
                 "-unchecked",
-                "-Vprofile",
-                "-rewrite", "-source", "3.4-migration"
+                "-Vprofile"
             )
         )
     )
