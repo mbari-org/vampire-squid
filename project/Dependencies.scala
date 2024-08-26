@@ -23,14 +23,14 @@ object Dependencies {
   lazy val jansi   = "org.fusesource.jansi" % "jansi"    % "2.4.0"
   lazy val javaJwt = "com.auth0"            % "java-jwt" % "4.4.0"
 
-  val logbackVersion      = "1.5.6"
+  val logbackVersion      = "1.5.7"
   lazy val logbackClassic = "ch.qos.logback" % "logback-classic" % logbackVersion
   lazy val logbackCore    = "ch.qos.logback" % "logback-core"    % logbackVersion
 
-  lazy val mssqlJdbc  = "com.microsoft.sqlserver" % "mssql-jdbc" % "12.8.0.jre11"
+  lazy val mssqlJdbc  = "com.microsoft.sqlserver" % "mssql-jdbc" % "12.8.1.jre11"
   lazy val munit      = "org.scalameta"          %% "munit"      % "1.0.1"
   lazy val oracleJdbc = "com.oracle.ojdbc"        % "ojdbc8"     % "19.3.0.0"
-  lazy val postgresql = "org.postgresql"          % "postgresql" % "42.7.3"
+  lazy val postgresql = "org.postgresql"          % "postgresql" % "42.7.4"
   lazy val scalatest  = "org.scalatest"          %% "scalatest"  % "3.2.19"
 
   val slf4jVersion     = "2.0.16"

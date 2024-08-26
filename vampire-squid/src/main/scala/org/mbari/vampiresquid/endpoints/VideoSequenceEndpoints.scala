@@ -157,7 +157,7 @@ class VideoSequenceEndpoints(controller: VideoSequenceController)(using ec: Exec
         openEndpoint
             .get
             .in(
-                "v1" / "videosequences" / "camera" / path[String]("cameraid") / path[Instant]("timestamp")(
+                "v1" / "videosequences" / "camera" / path[String]("cameraid") / path[Instant]("timestamp")(using
                     TapirCodecs.instantCodec
                 )
             )

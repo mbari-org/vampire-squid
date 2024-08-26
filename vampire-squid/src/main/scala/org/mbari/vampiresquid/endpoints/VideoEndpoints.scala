@@ -166,7 +166,7 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
             )
 
     // GET v1/videos/names/videosequence/:name
-    val findVideoNamesByVideoSequenceName = 
+    val findVideoNamesByVideoSequenceName =
         openEndpoint
             .get
             .in("v1" / "videos" / "names" / "videosequence" / path[String]("videoSequenceName"))
@@ -186,7 +186,7 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
     val findVideoByTimestamp: Endpoint[Unit, Instant, ErrorMsg, List[Video], Any] =
         openEndpoint
             .get
-            .in("v1" / "videos" / "timestamp" / path[Instant]("timestamp")(TapirCodecs.instantCodec))
+            .in("v1" / "videos" / "timestamp" / path[Instant]("timestamp")(using TapirCodecs.instantCodec))
             .out(jsonBody[List[Video]])
             .name("findVideoByTimestamp")
             .description("Find videos by its timestamp")
@@ -201,7 +201,9 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
         openEndpoint
             .get
             .in(
-                "v1" / "videos" / "timestamp" / path[Instant]("start")(TapirCodecs.instantCodec) / path[Instant]("end")(
+                "v1" / "videos" / "timestamp" / path[Instant]("start")(using TapirCodecs.instantCodec) / path[Instant](
+                    "end"
+                )(using
                     TapirCodecs.instantCodec
                 )
             )
@@ -305,8 +307,6 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
             )
 
     override def all: List[Endpoint[?, ?, ?, ?, ?]] = List(
-        
-        
         findVideoByVideoSequenceName,
         findVideoByVideoSequenceUuid,
         findVideoByVideoReferenceUuid,
@@ -323,8 +323,6 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
     )
 
     override def allImpl: List[ServerEndpoint[Any, Future]] = List(
-        
-        
         findVideoByVideoSequenceByNameImpl,
         findVideoByVideoSequenceUuidImpl,
         findVideoByVideoReferenceUuidImpl,

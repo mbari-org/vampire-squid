@@ -259,11 +259,11 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
         openEndpoint
             .get
             .in(
-                "v1" / "media" / "camera" / path[String]("cameraId") / path[Instant]("startTimestamp")(
+                "v1" / "media" / "camera" / path[String]("cameraId") / path[Instant]("startTimestamp")(using
                     TapirCodecs.instantCodec
                 ) / path[Instant](
                     "endTimestamp"
-                )(TapirCodecs.instantCodec)
+                )(using TapirCodecs.instantCodec)
             )
             .out(jsonBody[List[Media]])
             .name("findMediaByCameraIdAndTimestamps")
@@ -308,7 +308,7 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
         openEndpoint
             .get
             .in(
-                "v1" / "media" / "camera" / path[String]("cameraId") / path[Instant]("datetime")(
+                "v1" / "media" / "camera" / path[String]("cameraId") / path[Instant]("datetime")(using
                     TapirCodecs.instantCodec
                 )
             )
