@@ -1,7 +1,7 @@
 import java.net.URI
 import Dependencies.*
 
-val tapirVersion          = "1.11.1"
+val tapirVersion          = "1.11.8"
 val eclipselinkVersion    = "4.0.2"
 val derbyVersion          = "10.16.1.1"
 val testcontainersVersion = "0.41.0"
@@ -10,7 +10,7 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 
 ThisBuild / javacOptions ++= Seq("-target", "21", "-source", "21")
 ThisBuild / licenses         := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
-ThisBuild / scalaVersion     := "3.5.0"
+ThisBuild / scalaVersion     := "3.5.2"
 // ThisBuild / version          := "0.0.1"
 ThisBuild / organization     := "org.mbari"
 ThisBuild / organizationName := "Monterey Bay Aquarium Research Institute"

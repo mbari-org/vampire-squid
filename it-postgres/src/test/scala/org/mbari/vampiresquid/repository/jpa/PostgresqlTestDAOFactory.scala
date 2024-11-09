@@ -22,7 +22,7 @@ import org.testcontainers.containers.PostgreSQLContainer
 object PostgresqlTestDAOFactory extends SpecDAOFactory:
 
     // TODO - intialize the container with SQL so UUID type gets correctly created
-    val container = new PostgreSQLContainer("postgres:16")
+    val container = new PostgreSQLContainer("postgres:17")
     container.withInitScript("sql/postgresql/02_m3_video_assets.sql")
     container.withReuse(true)
     container.start()
