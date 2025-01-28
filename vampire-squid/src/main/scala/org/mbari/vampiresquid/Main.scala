@@ -17,6 +17,7 @@
 package org.mbari.vampiresquid
 
 import io.vertx.core.Vertx
+import io.vertx.core.http.HttpServerOptions
 import io.vertx.ext.web.Router
 import sttp.tapir.server.vertx.{VertxFutureServerInterpreter, VertxFutureServerOptions}
 import sttp.tapir.server.vertx.VertxFutureServerInterpreter.VertxFutureToScalaFuture
@@ -56,8 +57,8 @@ def run(): Unit =
     val port = sys.env.get("HTTP_PORT").flatMap(_.toIntOption).getOrElse(8080)
 
     val vertx  = Vertx.vertx(new VertxOptions().setWorkerPoolSize(AppConfig.NumberOfVertxWorkers))
-    // val vertx  = Vertx.vertx()
-    val server = vertx.createHttpServer()
+    val httpServerOptions = new HttpServerOptions().setCompressionSupported(true)
+    val server = vertx.createHttpServer(httpServerOptions)
     val router = Router.router(vertx)
 
     // NOTE: Don't add a handler. It will intercept all requests (Originally: Log all requests)
