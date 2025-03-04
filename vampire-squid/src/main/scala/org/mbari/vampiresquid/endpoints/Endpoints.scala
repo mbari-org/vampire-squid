@@ -42,6 +42,7 @@ import sttp.tapir.server.ServerEndpoint
 
 import java.time.Instant
 import io.circe.Printer
+import org.mbari.vampiresquid.domain.VideoUpdate
 
 case class Paging(offset: Option[Int] = Some(0), limit: Option[Int] = Some(100))
 
@@ -58,6 +59,7 @@ trait Endpoints:
     given Schema[Option[URI]]     = Schema.string
     given Schema[VideoReference]  = Schema.derived[VideoReference]
     given Schema[Video]           = Schema.derived[Video]
+    given Schema[VideoUpdate]     = Schema.derived[VideoUpdate]
     given Schema[Media]           = Schema.derived[Media]
     given Schema[MoveVideoParams] = Schema.derived[MoveVideoParams]
 

@@ -37,6 +37,7 @@ import sttp.client3.testing.SttpBackendStub
 import sttp.client3.{basicRequest, UriContext}
 import sttp.model.StatusCode
 import sttp.tapir.server.stub.TapirStubInterpreter
+import org.mbari.vampiresquid.domain.VideoUpdate
 
 trait VideoEndpointsITSuite extends EndpointsSuite:
 
@@ -253,7 +254,7 @@ trait VideoEndpointsITSuite extends EndpointsSuite:
         // then
         assertEquals(response.code, StatusCode.NoContent)
 
-    test("updateVideo") {
+    test("updateVideo - form body") {
         // given
         val videoSequence = TestUtils.create(1, 1, 1).head
         val jwt           = jwtService.authorize("foo").orNull
@@ -282,4 +283,67 @@ trait VideoEndpointsITSuite extends EndpointsSuite:
         assertEquals(response.code, StatusCode.Ok)
         //     response.map(_.body.value.name shouldBe "updated video").unwrap
         //     response.map(_.body.value.description shouldBe "updated description").unwrap
+    }
+
+    test("updateVideo - json body") {
+        // given
+        val videoSequence = TestUtils.create(1, 1, 1).head
+        val jwt           = jwtService.authorize("foo").orNull
+        assert(jwt != null)
+
+        val backendStub = TapirStubInterpreter(SttpBackendStub.asynchronousFuture)
+            .whenServerEndpointRunLogic(videoEndpoints.updateVideoImpl)
+            .backend()
+
+        // when
+        val video    = videoSequence.getVideos.asScala.head
+        val videoUpdate = VideoUpdate(
+            name        = Some("updated video"),
+            description = Some("updated description"),
+            start_timestamp = Some(Instant.now())
+        )
+        val response = basicRequest
+            .put(uri"http://test.com/v1/videos/${video.getUuid}")
+            .header("Authorization", s"Bearer $jwt")
+            .header("Content-Type", "application/json")
+            .body(videoUpdate.stringify)
+            .response(asJson[Video])
+            .send(backendStub)
+            .join
+
+        // then
+        assertEquals(response.code, StatusCode.Ok)
+    }
+
+    test("updateVideo - form body - update only start_timestamp") {
+        // given
+        val videoSequence = TestUtils.create(1, 1, 1).head
+        val jwt           = jwtService.authorize("foo").orNull
+        assert(jwt != null)
+
+        val backendStub = TapirStubInterpreter(SttpBackendStub.asynchronousFuture)
+            .whenServerEndpointRunLogic(videoEndpoints.updateVideoImpl)
+            .backend()
+
+        // when
+        val video    = videoSequence.getVideos.asScala.head
+        val videoUpdate = VideoUpdate(
+            start_timestamp = Some(Instant.now())
+        )
+        val response = basicRequest
+            .put(uri"http://test.com/v1/videos/${video.getUuid}")
+            .header("Authorization", s"Bearer $jwt")
+            .header("Content-Type", "application/json")
+            .body(videoUpdate.stringify)
+            .response(asJson[Video])
+            .send(backendStub)
+            .join
+
+        // then
+        assertEquals(response.code, StatusCode.Ok)
+        response.body match
+            case Left(e) => fail(e.getMessage())
+            case Right(b) =>
+                assertEquals(b.start_timestamp, videoUpdate.start_timestamp.get)
+        
     }

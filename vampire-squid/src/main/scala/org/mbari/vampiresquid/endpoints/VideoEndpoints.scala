@@ -38,6 +38,7 @@ import sttp.model.StatusCode
 import org.mbari.vampiresquid.Endpoints.videoController
 
 import CustomTapirJsonCirce.*
+import org.mbari.vampiresquid.domain.VideoUpdate
 
 class VideoEndpoints(controller: VideoController, videoSequenceController: VideoSequenceController)(using
     ec: ExecutionContext,
@@ -275,11 +276,11 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
             .serverLogic(_ => req => handleErrors(controller.delete(req).map(b => if b then Right(()) else Left(()))))
 
         // PUT v1/videos/:uuid (form body)
-    val updateVideo: Endpoint[Option[String], (UUID, Map[String, String]), ErrorMsg, Video, Any] =
+    val updateVideo: Endpoint[Option[String], (UUID, VideoUpdate), ErrorMsg, Video, Any] =
         secureEndpoint
             .put
             .in("v1" / "videos" / path[UUID]("uuid"))
-            .in(formBody[Map[String, String]])
+            .in(oneOfBody(formBody[VideoUpdate], jsonBody[VideoUpdate]))
             .out(jsonBody[Video])
             .name("updateVideo")
             .description(
@@ -291,18 +292,18 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
         updateVideo
             .serverSecurityLogic(jwtOpt => verify(jwtOpt))
             .serverLogic(_ =>
-                (videoUuid, formData) =>
-                    val videoName         = formData.get("name")
-                    val videoSequenceUuid = formData.get("video_sequence_uuid").map(UUID.fromString)
-                    val start             = formData.get("start").orElse(formData.get("start_timestamp")).map(Instant.parse)
-                    val duration          = formData
-                        .get("duration_millis")
-                        .map(_.toLong)
-                        .map(Duration.ofMillis)
-                    val description       = formData.get("description")
+                (videoUuid, videoUpdate) =>
+                    // val videoName         = formData.get("name")
+                    // val videoSequenceUuid = formData.get("video_sequence_uuid").map(UUID.fromString)
+                    // val start             = formData.get("start").orElse(formData.get("start_timestamp")).map(Instant.parse)
+                    // val duration          = formData
+                    //     .get("duration_millis")
+                    //     .map(_.toLong)
+                    //     .map(Duration.ofMillis)
+                    // val description       = formData.get("description")
 
                     handleErrors(
-                        controller.update(videoUuid, videoName, start, duration, description, videoSequenceUuid)
+                        controller.update(videoUuid, videoUpdate)
                     )
             )
 

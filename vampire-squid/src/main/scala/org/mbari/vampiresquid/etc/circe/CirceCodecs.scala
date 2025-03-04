@@ -43,6 +43,7 @@ import scala.util.Try
 import java.time.Duration
 import org.mbari.vampiresquid.domain.VideoReferenceCreate
 import org.mbari.vampiresquid.domain.VideoReferenceUpdate
+import org.mbari.vampiresquid.domain.VideoUpdate
 
 object CirceCodecs:
 
@@ -120,6 +121,9 @@ object CirceCodecs:
 
     given Decoder[Video] = deriveDecoder
     given Encoder[Video] = deriveEncoder
+
+    given Decoder[VideoUpdate] = deriveDecoder
+    given Encoder[VideoUpdate] = deriveEncoder
 
     given Decoder[VideoSequence] = deriveDecoder
     given Encoder[VideoSequence] = deriveEncoder

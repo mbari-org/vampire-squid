@@ -26,6 +26,7 @@ import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 import org.mbari.vampiresquid.repository.jpa.entity.VideoEntity
 import org.mbari.vampiresquid.domain.{Video as VDTO, VideoSequence as VSDTO}
+import org.mbari.vampiresquid.domain.VideoUpdate
 
 /**
  * @author
@@ -102,6 +103,18 @@ class VideoController(val daoFactory: JPADAOFactory) extends BaseController:
                             dao.create(video)
                             VDTO.from(video)
         exec(fn)
+
+    def update(uuid: UUID, videoUpdate: VideoUpdate)(implicit
+        ec: ExecutionContext
+    ): Future[VDTO] =
+        update(
+            uuid,
+            videoUpdate.name,
+            videoUpdate.startTimestamp,
+            videoUpdate.duration,
+            videoUpdate.description,
+            videoUpdate.video_sequence_uuid
+        )
 
     def update(
         uuid: UUID,

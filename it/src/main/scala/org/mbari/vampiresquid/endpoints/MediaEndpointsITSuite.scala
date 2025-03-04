@@ -42,7 +42,7 @@ import sttp.client3.SttpBackend
 import sttp.client3.testing.SttpBackendStub 
 import sttp.model.StatusCode
 import sttp.tapir.server.stub.TapirStubInterpreter
-import org.checkerframework.checker.units.qual.m
+import org.junit.Assert.*
 
 trait MediaEndpointsITSuite extends EndpointsSuite:
 
@@ -106,6 +106,47 @@ trait MediaEndpointsITSuite extends EndpointsSuite:
 
         val response = request.send(backendStub)
 
+        response
+            .map(r =>
+                assertEquals(r.code, StatusCode.Ok)
+                assert(r.body.isRight)
+            )
+            .join
+
+    test("updateMedia - Update an existing media's start timestamp using form body"):
+        val jwt = jwtService
+            .authorize("foo")
+            .orNull
+        val now    = Instant.now()
+        val media0 = new Media(
+            video_sequence_name = Some("Test Dive 20250304"),
+            video_name = Some("Test Dive 20250304 " + now),
+            camera_id = Some("Tester 03"),
+            uri = Some(URI.create("http://test.me/movie20250304.mp4")),
+            start_timestamp = Some(now),
+            sha512 = Some(Array[Byte](1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 23))
+        )
+        val media1 = controller.createMedia(media0).join
+        assert(media1.video_reference_uuid.isDefined)
+        assert(media1.video_sequence_name.isDefined)
+        assert(media1.camera_id.isDefined)
+        assert(media1.video_name.isDefined)
+        // NOTE: The following fields are all required to be set
+        //       in order to update the media
+        val media2 = Media(
+            video_sequence_name = media1.video_sequence_name,
+            camera_id = media1.camera_id,
+            video_name = media1.video_name,
+            start_timestamp = Some(now.plusSeconds(1000)) 
+        )
+        val backendStub = newBackendStub(mediaEndpoints.updateMediaByVideoReferenceUuidImpl)
+        val request = basicRequest
+            .put(uri"http://test.com/v1/media/${media1.videoReferenceUuid}")
+            .header("Authorization", s"Bearer $jwt")
+            .header("Content-Type", "application/x-www-form-urlencoded")
+            .body(Media.toFormMap(media2))
+        log.atDebug.log(request.toRfc2616Format(Set()))
+        val response = request.send(backendStub)
         response
             .map(r =>
                 assertEquals(r.code, StatusCode.Ok)
