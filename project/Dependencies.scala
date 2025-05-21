@@ -1,7 +1,7 @@
 import sbt._
 object Dependencies {
 
-  val circeVersion      = "0.14.10"
+  val circeVersion      = "0.14.13"
   lazy val circeCore    = "io.circe" %% "circe-core"    % circeVersion
   lazy val circeGeneric = "io.circe" %% "circe-generic" % circeVersion
   lazy val circeParser  = "io.circe" %% "circe-parser"  % circeVersion
@@ -13,7 +13,7 @@ object Dependencies {
   lazy val derbyShared = "org.apache.derby" % "derbyshared" % derbyVersion
   lazy val derbyTools  = "org.apache.derby" % "derbytools"  % derbyVersion
 
-  val hibernateVersion     = "6.6.9.Final"
+  val hibernateVersion     = "6.6.15.Final"
   lazy val hibernateCore   = "org.hibernate.orm" % "hibernate-core"     % hibernateVersion
   lazy val hibernateEnvers = "org.hibernate.orm" % "hibernate-envers"   % hibernateVersion
   lazy val hibernateHikari = "org.hibernate.orm" % "hibernate-hikaricp" % hibernateVersion
@@ -21,12 +21,12 @@ object Dependencies {
   lazy val jansi   = "org.fusesource.jansi" % "jansi"    % "2.4.0"
   lazy val javaJwt = "com.auth0"            % "java-jwt" % "4.5.0"
 
-  val logbackVersion      = "1.5.16"
+  val logbackVersion      = "1.5.18"
   lazy val logbackClassic = "ch.qos.logback" % "logback-classic" % logbackVersion
   lazy val logbackCore    = "ch.qos.logback" % "logback-core"    % logbackVersion
 
-  lazy val mssqlJdbc  = "com.microsoft.sqlserver" % "mssql-jdbc" % "12.8.1.jre11"
-  lazy val munit      = "org.scalameta"          %% "munit"      % "1.1.0"
+  lazy val mssqlJdbc  = "com.microsoft.sqlserver" % "mssql-jdbc" % "12.10.0.jre11"
+  lazy val munit      = "org.scalameta"          %% "munit"      % "1.1.1"
   lazy val oracleJdbc = "com.oracle.ojdbc"        % "ojdbc8"     % "19.3.0.0"
   lazy val postgresql = "org.postgresql"          % "postgresql" % "42.7.5"
   lazy val scalatest  = "org.scalatest"          %% "scalatest"  % "3.2.19"
@@ -36,15 +36,15 @@ object Dependencies {
   lazy val slf4jLog4j  = "org.slf4j" % "log4j-over-slf4j"           % slf4jVersion
   lazy val slf4jSystem = "org.slf4j" % "slf4j-jdk-platform-logging" % slf4jVersion
 
-  private val tapirVersion = "1.11.17"
-  lazy val tapirSttpCirce  = "com.softwaremill.sttp.client3" %% "circe"                    % "3.10.3"
+  private val tapirVersion = "1.11.29"
+  lazy val tapirSttpCirce  = "com.softwaremill.sttp.client3" %% "circe"                    % "3.11.0"
   lazy val tapirCirce      = "com.softwaremill.sttp.tapir"   %% "tapir-json-circe"         % tapirVersion
   lazy val tapirPrometheus = "com.softwaremill.sttp.tapir"   %% "tapir-prometheus-metrics" % tapirVersion
   lazy val tapirServerStub = "com.softwaremill.sttp.tapir"   %% "tapir-sttp-stub-server"   % tapirVersion
   lazy val tapirSwagger    = "com.softwaremill.sttp.tapir"   %% "tapir-swagger-ui-bundle"  % tapirVersion
   lazy val tapirVertex     = "com.softwaremill.sttp.tapir"   %% "tapir-vertx-server"       % tapirVersion
 
-  val testcontainersVersion        = "1.20.5"
+  val testcontainersVersion        = "1.21.0"
   lazy val testcontainersCore      = "org.testcontainers" % "testcontainers" % testcontainersVersion
   lazy val testcontainersSqlserver = "org.testcontainers" % "mssqlserver"    % testcontainersVersion
   lazy val testcontainersOracle    = "org.testcontainers" % "oracle-xe"      % testcontainersVersion
