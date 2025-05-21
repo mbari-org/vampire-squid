@@ -5,7 +5,7 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 
 ThisBuild / javacOptions ++= Seq("-target", "21", "-source", "21")
 ThisBuild / licenses         := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
-ThisBuild / scalaVersion     := "3.6.3"
+ThisBuild / scalaVersion     := "3.7.0"
 // ThisBuild / version          := "0.0.1"
 ThisBuild / organization     := "org.mbari"
 ThisBuild / organizationName := "Monterey Bay Aquarium Research Institute"
@@ -47,7 +47,6 @@ lazy val vampireSquid = (project in file("vampire-squid"))
                     if (tag matches "[0-9]+\\..*") Some(tag) else None
             },
             git.useGitDescribe        := true,
-            javacOptions ++= Seq("-target", "17", "-source", "17"),
             // licenses += ("Apache-2.0", URI.create("https://www.apache.org/licenses/LICENSE-2.0.txt").toURL),
             libraryDependencies ++= Seq(
                 hibernateCore,
