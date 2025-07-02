@@ -20,7 +20,6 @@ ThisBuild / Test / javaOptions ++= Seq(
 )
 
 
-
 lazy val vampireSquid = (project in file("vampire-squid"))
     .enablePlugins(
         AutomateHeaderPlugin,
@@ -49,6 +48,9 @@ lazy val vampireSquid = (project in file("vampire-squid"))
             git.useGitDescribe        := true,
             // licenses += ("Apache-2.0", URI.create("https://www.apache.org/licenses/LICENSE-2.0.txt").toURL),
             libraryDependencies ++= Seq(
+                flywayCore,
+                flywayPostgres,
+                flywaySqlserver,
                 hibernateCore,
                 hibernateEnvers,
                 hibernateHikari,
@@ -93,11 +95,6 @@ lazy val integrationTests = (project in file("it"))
     )
     .settings(
         libraryDependencies ++= Seq(
-            derby,
-            derbyClient,
-            derbyNet,
-            derbyShared,
-            derbyTools,
             munit,
             scalatest,
             tapirServerStub,

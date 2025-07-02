@@ -45,9 +45,26 @@ object AppConfig:
         apiKey = JwtParameters.clientSecret,
         signingSecret = JwtParameters.signingSecret
     )
+    
+    lazy val DatabaseParameters: DatabaseParams =
+        DatabaseParams(
+            driver = Config.getString("database.driver"),
+            logLevel = Config.getString("database.loglevel"),
+            password = Config.getString("database.password"),
+            url = Config.getString("database.url"),
+            user = Config.getString("database.user")
+        )
 
 final case class JwtParams(
     clientSecret: String,
     issuer: String,
     signingSecret: String
 )
+
+final case class DatabaseParams(
+    driver: String,
+    logLevel: String,
+    password: String,
+    url: String,
+    user: String)
+                               

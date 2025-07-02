@@ -17,6 +17,8 @@
 package org.mbari.vampiresquid.repository.jpa
 
 import jakarta.persistence.EntityManagerFactory
+import org.mbari.vampiresquid.DatabaseParams
+import org.mbari.vampiresquid.etc.flyway.FlywayMigrator
 import org.mbari.vampiresquid.etc.tc.AzureSqlEdgeContainerProvider
 import org.testcontainers.containers.MSSQLServerContainer
 import org.testcontainers.utility.DockerImageName
@@ -28,7 +30,7 @@ object SqlServerTestDAOFactory extends SpecDAOFactory:
     // The image name must match the one in src/test/resources/container-license-acceptance.txt
     // val container = new MSSQLServerContainer(DockerImageName.parse("mcr.microsoft.com/mssql/server:2019-latest"))
     // container.acceptLicense()
-    container.withInitScript("sql/mssqlserver/02_m3_video_assets.sql")
+//    container.withInitScript("sql/mssqlserver/02_m3_video_assets.sql")
     container.withReuse(true)
     container.start()
 
@@ -41,19 +43,30 @@ object SqlServerTestDAOFactory extends SpecDAOFactory:
     override def testProps(): Map[String, String] =
         TestDAOFactory.TestProperties ++
             Map(
-                "hibernate.dialect"            -> "org.hibernate.dialect.SQLServerDialect",
-                "hibernate.hikari.idleTimeout" -> "1000",
-                "hibernate.hikari.maxLifetime" -> "3000",
+                "hibernate.dialect"                                    -> "org.hibernate.dialect.SQLServerDialect",
+                "hibernate.hikari.idleTimeout"                         -> "1000",
+                "hibernate.hikari.maxLifetime"                         -> "3000",
                 "jakarta.persistence.schema-generation.scripts.action" -> "drop-and-create"
             )
 
     lazy val entityManagerFactory: EntityManagerFactory =
-        val driver = "com.microsoft.sqlserver.jdbc.SQLServerDriver"
-        Class.forName(driver)
-        EntityManagerFactories(
-            container.getJdbcUrl(),
-            container.getUsername(),
-            container.getPassword(),
-            container.getDriverClassName(),
-            testProps()
+        val databaseParams = DatabaseParams(
+            container.getDriverClassName,
+            "DEBUG",
+            container.getPassword,
+            container.getJdbcUrl,
+            container.getUsername
         )
+        FlywayMigrator.migrate(databaseParams) match
+            case Left(ex) =>
+                throw new RuntimeException(s"Failed to migrate database: ${ex.getMessage}", ex)
+            case Right(_) =>
+
+                Class.forName(container.getDriverClassName)
+                EntityManagerFactories(
+                    container.getJdbcUrl(),
+                    container.getUsername(),
+                    container.getPassword(),
+                    container.getDriverClassName(),
+                    testProps()
+                )

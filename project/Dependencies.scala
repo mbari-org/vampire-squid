@@ -5,15 +5,12 @@ object Dependencies {
   lazy val circeCore    = "io.circe" %% "circe-core"    % circeVersion
   lazy val circeGeneric = "io.circe" %% "circe-generic" % circeVersion
   lazy val circeParser  = "io.circe" %% "circe-parser"  % circeVersion
-
-  val derbyVersion     = "10.17.1.0"
-  lazy val derby       = "org.apache.derby" % "derby"       % derbyVersion //          % "test"
-  lazy val derbyClient = "org.apache.derby" % "derbyclient" % derbyVersion //          % "test"
-  lazy val derbyNet    = "org.apache.derby" % "derbynet"    % derbyVersion //          % "test"
-  lazy val derbyShared = "org.apache.derby" % "derbyshared" % derbyVersion
-  lazy val derbyTools  = "org.apache.derby" % "derbytools"  % derbyVersion
-
-  // val hibernateVersion     = "6.6.17.Final"
+    
+  val flywayVersion = "11.10.0"
+  lazy val flywayCore = "org.flywaydb" % "flyway-core" % flywayVersion
+  lazy val flywaySqlserver = "org.flywaydb" % "flyway-sqlserver" % flywayVersion
+  lazy val flywayPostgres = "org.flywaydb" % "flyway-database-postgresql" % flywayVersion
+    
   val hibernateVersion     = "7.0.4.Final"
   lazy val hibernateCore   = "org.hibernate.orm" % "hibernate-core"     % hibernateVersion
   lazy val hibernateEnvers = "org.hibernate.orm" % "hibernate-envers"   % hibernateVersion

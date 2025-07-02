@@ -17,13 +17,15 @@
 package org.mbari.vampiresquid.repository.jpa
 
 import jakarta.persistence.EntityManagerFactory
+import org.mbari.vampiresquid.DatabaseParams
+import org.mbari.vampiresquid.etc.flyway.FlywayMigrator
 import org.testcontainers.containers.PostgreSQLContainer
 
 object PostgresqlTestDAOFactory extends SpecDAOFactory:
 
     // TODO - intialize the container with SQL so UUID type gets correctly created
     val container = new PostgreSQLContainer("postgres:17")
-    container.withInitScript("sql/postgresql/02_m3_video_assets.sql")
+//    container.withInitScript("sql/postgresql/02_m3_video_assets.sql")
     container.withReuse(true)
     container.start()
 
@@ -42,12 +44,23 @@ object PostgresqlTestDAOFactory extends SpecDAOFactory:
             )
 
     lazy val entityManagerFactory: EntityManagerFactory =
-        val driver = "org.postgresql.Driver"
-        Class.forName(container.getDriverClassName)
-        EntityManagerFactories(
-            container.getJdbcUrl(),
-            container.getUsername(),
-            container.getPassword(),
-            container.getDriverClassName(),
-            testProps()
+        val databaseParams = DatabaseParams(
+            container.getDriverClassName,
+            "DEBUG",
+            container.getPassword,
+            container.getJdbcUrl,
+            container.getUsername
         )
+        FlywayMigrator.migrate(databaseParams) match
+            case Left(ex) =>
+                throw new RuntimeException(s"Failed to migrate database: ${ex.getMessage}", ex)
+            case Right(_) =>
+
+                Class.forName(container.getDriverClassName)
+                EntityManagerFactories(
+                    container.getJdbcUrl(),
+                    container.getUsername(),
+                    container.getPassword(),
+                    container.getDriverClassName(),
+                    testProps()
+                )

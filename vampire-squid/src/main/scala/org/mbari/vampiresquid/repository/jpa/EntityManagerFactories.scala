@@ -40,7 +40,7 @@ object EntityManagerFactories:
     private val log = System.getLogger(getClass.getName)
 
     // https://juliuskrah.com/tutorial/2017/02/16/getting-started-with-hikaricp-hibernate-and-jpa/
-    val PRODUCTION_PROPS = Map(
+    val PRODUCTION_PROPS: Map[String, String] = Map(
         "hibernate.connection.provider_class" -> "org.hibernate.hikaricp.internal.HikariCPConnectionProvider",
         "hibernate.hbm2ddl.auto"              -> "validate",
         "hibernate.hikari.idleTimeout"        -> "30000",
@@ -78,19 +78,13 @@ object EntityManagerFactories:
             "jakarta.persistence.jdbc.driver"   -> driverName
         )
         apply(map ++ properties)
-
-    def apply(configNode: String): EntityManagerFactory =
-        val driver      = config.getString(configNode + ".driver")
-        val logLevel    = config.getString(configNode + ".loglevel")
-        val password    = config.getString(configNode + ".password")
-//        val productName = config.getString(configNode + ".name")
-        val url         = config.getString(configNode + ".url")
-        val user        = config.getString(configNode + ".user")
-        val props       = Map(
-//            "hibernate.dialect"                 -> productName,
-            "jakarta.persistence.jdbc.driver"   -> driver,
-            "jakarta.persistence.jdbc.password" -> password,
-            "jakarta.persistence.jdbc.url"      -> url,
-            "jakarta.persistence.jdbc.user"     -> user
+    
+        
+    def apply(): EntityManagerFactory =
+        val dbParams = AppConfig.DatabaseParameters
+        apply(
+            url = dbParams.url,
+            username = dbParams.user,
+            password = dbParams.password,
+            driverName = dbParams.driver,
         )
-        apply(props)

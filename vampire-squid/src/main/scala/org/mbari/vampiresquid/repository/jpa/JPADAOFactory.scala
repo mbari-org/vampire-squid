@@ -17,6 +17,8 @@
 package org.mbari.vampiresquid.repository.jpa
 
 import jakarta.persistence.EntityManagerFactory
+import org.mbari.vampiresquid.AppConfig
+import org.mbari.vampiresquid.etc.flyway.FlywayMigrator
 import org.mbari.vampiresquid.repository.{DAO, DAOFactory, VideoDAO, VideoReferenceDAO, VideoSequenceDAO}
 import org.mbari.vampiresquid.repository.jpa.entity.VideoSequenceEntity
 import org.mbari.vampiresquid.repository.jpa.entity.VideoEntity
@@ -76,4 +78,9 @@ class JPADAOFactoryImpl(val entityManagerFactory: EntityManagerFactory) extends 
 
 object JPADAOFactory extends JPADAOFactory:
 
-    lazy val entityManagerFactory = EntityManagerFactories("database")
+    lazy val entityManagerFactory: EntityManagerFactory =
+        FlywayMigrator.migrate(AppConfig.DatabaseParameters) match
+            case Left(error) =>
+                throw new RuntimeException(s"Failed to migrate database: ${error.getMessage}", error)
+            case Right(_) =>
+                EntityManagerFactories()
