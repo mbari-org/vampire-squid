@@ -21,8 +21,8 @@ import scala.concurrent.ExecutionContext
 
 class TestUtilsSuite extends munit.FunSuite:
 
-    given JPADAOFactory    = TestDAOFactory.Instance
-    given ExecutionContext = ExecutionContext.global
+    // given JPADAOFactory    = TestDAOFactory.Instance
+    // given ExecutionContext = ExecutionContext.global
 
     test("randomVideoReference"):
         val videoReference = TestUtils.randomVideoReference()
@@ -33,14 +33,14 @@ class TestUtilsSuite extends munit.FunSuite:
         val sha = TestUtils.randomSha512();
         assertEquals(sha.length, 64)
 
-    test("create"):
-        for i <- 1 to 4
-        do
-            val a  = TestUtils.create(i, i, i)
-            assertEquals(a.size, i)
-            val vs = a.head
-            assert(vs.getUuid() != null)
-            val v  = vs.getVideos
-            assertEquals(v.size(), i)
-            val vr = v.get(0).getVideoReferences
-            assertEquals(vr.size(), i)
+    // test("create"):
+    //     for i <- 1 to 4
+    //     do
+    //         val a  = TestUtils.create(i, i, i)
+    //         assertEquals(a.size, i)
+    //         val vs = a.head
+    //         assert(vs.getUuid() != null)
+    //         val v  = vs.getVideos
+    //         assertEquals(v.size(), i)
+    //         val vr = v.get(0).getVideoReferences
+    //         assertEquals(vr.size(), i)

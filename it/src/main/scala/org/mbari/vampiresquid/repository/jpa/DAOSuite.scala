@@ -37,6 +37,6 @@ trait BaseDAOSuite extends munit.FunSuite:
         super.afterEach(context)
         daoFactory.cleanup()
 
-trait DAOSuite extends BaseDAOSuite:
+// trait DAOSuite extends BaseDAOSuite:
 
-    given daoFactory: SpecDAOFactory = TestDAOFactory.Instance
+//     given daoFactory: SpecDAOFactory = TestDAOFactory.Instance

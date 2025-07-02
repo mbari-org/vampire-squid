@@ -34,7 +34,7 @@ object TestDAOFactory:
         "jakarta.persistence.schema-generation.scripts.drop-target"   -> "target/test-database-drop.ddl"
     )
 
-    val Instance: SpecDAOFactory = DerbyTestDAOFactory
+//     val Instance: SpecDAOFactory = DerbyTestDAOFactory
 
 trait SpecDAOFactory extends JPADAOFactory:
 
