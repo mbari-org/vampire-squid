@@ -50,23 +50,11 @@ object SqlServerTestDAOFactory extends SpecDAOFactory:
             )
 
     lazy val entityManagerFactory: EntityManagerFactory =
-        val databaseParams = DatabaseParams(
-            container.getDriverClassName,
-            "DEBUG",
-            container.getPassword,
-            container.getJdbcUrl,
-            container.getUsername
+        Class.forName(container.getDriverClassName)
+        EntityManagerFactories(
+            container.getJdbcUrl(),
+            container.getUsername(),
+            container.getPassword(),
+            container.getDriverClassName(),
+            testProps()
         )
-        FlywayMigrator.migrate(databaseParams) match
-            case Left(ex) =>
-                throw new RuntimeException(s"Failed to migrate database: ${ex.getMessage}", ex)
-            case Right(_) =>
-
-                Class.forName(container.getDriverClassName)
-                EntityManagerFactories(
-                    container.getJdbcUrl(),
-                    container.getUsername(),
-                    container.getPassword(),
-                    container.getDriverClassName(),
-                    testProps()
-                )

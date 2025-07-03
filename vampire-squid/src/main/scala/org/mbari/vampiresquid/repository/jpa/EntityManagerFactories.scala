@@ -23,6 +23,8 @@ import java.lang.System.Logger.Level
 import scala.jdk.CollectionConverters.*
 import org.mbari.vampiresquid.etc.jdk.Logging.{given, *}
 import org.mbari.vampiresquid.AppConfig
+import org.mbari.vampiresquid.DatabaseParams
+import org.mbari.vampiresquid.etc.flyway.FlywayMigrator
 
 /**
  * https://stackoverflow.com/questions/4106078/dynamic-jpa-connection
@@ -71,13 +73,24 @@ object EntityManagerFactories:
         properties: Map[String, String] = Map.empty
     ): EntityManagerFactory =
 
-        val map = Map(
-            "jakarta.persistence.jdbc.url"      -> url,
-            "jakarta.persistence.jdbc.user"     -> username,
-            "jakarta.persistence.jdbc.password" -> password,
-            "jakarta.persistence.jdbc.driver"   -> driverName
+        val databaseParams = DatabaseParams(
+            driverName,
+            "INFO",
+            password,
+            url,
+            username
         )
-        apply(map ++ properties)
+        FlywayMigrator.migrate(databaseParams) match
+            case Left(ex) =>
+                throw new RuntimeException(s"Failed to migrate database: ${ex.getMessage}", ex)
+            case Right(_) =>
+                val map = Map(
+                    "jakarta.persistence.jdbc.url"      -> url,
+                    "jakarta.persistence.jdbc.user"     -> username,
+                    "jakarta.persistence.jdbc.password" -> password,
+                    "jakarta.persistence.jdbc.driver"   -> driverName
+                )
+                apply(map ++ properties)
     
         
     def apply(): EntityManagerFactory =
