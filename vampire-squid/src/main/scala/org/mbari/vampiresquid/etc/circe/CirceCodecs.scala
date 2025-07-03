@@ -153,14 +153,13 @@ object CirceCodecs:
      * @param value
      *   Any value with an implicit circe coder in scope
      */
-    extension [T: Encoder](value: T) 
+    extension [T: Encoder](value: T)
         def stringify: String = Encoder[T]
             .apply(value)
             .deepDropNullValues
             .stringify
 
-    extension [T: Decoder](jsonString: String) 
-        def toJson: Either[ParsingFailure, Json] = parser.parse(jsonString);
+    extension [T: Decoder](jsonString: String) def toJson: Either[ParsingFailure, Json] = parser.parse(jsonString);
 
     extension (jsonString: String)
         def reify[T: Decoder]: Either[Error, T] =

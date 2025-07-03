@@ -63,16 +63,16 @@ object Endpoints:
         authEndpoints.allImpl,
         healthEndpoints.allImpl
     ).flatten
-    
+
     val blockingEndpoints = List(
         mediaEndpoints.allImpl,
         videoSequenceEndpoints.allImpl,
         videoEndpoints.allImpl,
         videoReferenceEndpoints.allImpl
     ).flatten
-    
+
     val apiEndpoints = nonBlockingEndpoints ++ blockingEndpoints
-    
+
 //    val apiEndpoints =
 //        mediaEndpoints.allImpl ++
 //            authEndpoints.allImpl ++

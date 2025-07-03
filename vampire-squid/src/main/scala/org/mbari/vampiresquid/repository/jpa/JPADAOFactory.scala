@@ -82,5 +82,5 @@ object JPADAOFactory extends JPADAOFactory:
         FlywayMigrator.migrate(AppConfig.DatabaseParameters) match
             case Left(error) =>
                 throw new RuntimeException(s"Failed to migrate database: ${error.getMessage}", error)
-            case Right(_) =>
+            case Right(_)    =>
                 EntityManagerFactories()

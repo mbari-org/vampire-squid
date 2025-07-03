@@ -270,7 +270,7 @@ class VideoEndpoints(controller: VideoController, videoSequenceController: Video
             .description("Delete a video by UUID")
             .tag("videos")
 
-    val deleteVideoByUuidImpl: ServerEndpoint[Any, Future]                                       =
+    val deleteVideoByUuidImpl: ServerEndpoint[Any, Future]                               =
         deleteVideoByUuid
             .serverSecurityLogic(jwtOpt => verify(jwtOpt))
             .serverLogic(_ => req => handleErrors(controller.delete(req).map(b => if b then Right(()) else Left(()))))

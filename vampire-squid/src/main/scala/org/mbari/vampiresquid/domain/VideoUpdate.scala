@@ -30,4 +30,4 @@ case class VideoUpdate(
 ):
 
     def startTimestamp: Option[Instant] = start.orElse(start_timestamp)
-    def duration: Option[Duration] = duration_millis.map(Duration.ofMillis)
+    def duration: Option[Duration]      = duration_millis.map(Duration.ofMillis)

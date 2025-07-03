@@ -21,7 +21,7 @@ import com.typesafe.config.ConfigFactory
 
 import java.lang.System.Logger.Level
 import scala.jdk.CollectionConverters.*
-import org.mbari.vampiresquid.etc.jdk.Logging.{given, *}
+import org.mbari.vampiresquid.etc.jdk.Logging.{*, given}
 import org.mbari.vampiresquid.AppConfig
 import org.mbari.vampiresquid.DatabaseParams
 import org.mbari.vampiresquid.etc.flyway.FlywayMigrator
@@ -39,21 +39,21 @@ import org.mbari.vampiresquid.etc.flyway.FlywayMigrator
 object EntityManagerFactories:
 
     private lazy val config = ConfigFactory.load()
-    private val log = System.getLogger(getClass.getName)
+    private val log         = System.getLogger(getClass.getName)
 
     // https://juliuskrah.com/tutorial/2017/02/16/getting-started-with-hikaricp-hibernate-and-jpa/
     val PRODUCTION_PROPS: Map[String, String] = Map(
         "hibernate.connection.provider_class" -> "org.hibernate.hikaricp.internal.HikariCPConnectionProvider",
         "hibernate.hbm2ddl.auto"              -> "validate",
         "hibernate.hikari.idleTimeout"        -> "30000",
-        "hibernate.hikari.maximumPoolSize"    -> s"${AppConfig.NumberOfVertxWorkers}", 
+        "hibernate.hikari.maximumPoolSize"    -> s"${AppConfig.NumberOfVertxWorkers}",
         "hibernate.hikari.minimumIdle"        -> "2"
     )
 
     def apply(properties: Map[String, String]): EntityManagerFactory =
         val props = PRODUCTION_PROPS ++ properties
-        val emf = Persistence.createEntityManagerFactory("video-asset-manager", props.asJava)
-        if (log.isLoggable(Level.INFO))
+        val emf   = Persistence.createEntityManagerFactory("video-asset-manager", props.asJava)
+        if log.isLoggable(Level.INFO) then
             val props = emf
                 .getProperties
                 .asScala
@@ -91,13 +91,12 @@ object EntityManagerFactories:
                     "jakarta.persistence.jdbc.driver"   -> driverName
                 )
                 apply(map ++ properties)
-    
-        
+
     def apply(): EntityManagerFactory =
         val dbParams = AppConfig.DatabaseParameters
         apply(
             url = dbParams.url,
             username = dbParams.user,
             password = dbParams.password,
-            driverName = dbParams.driver,
+            driverName = dbParams.driver
         )

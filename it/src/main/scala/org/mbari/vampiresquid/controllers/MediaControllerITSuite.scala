@@ -55,7 +55,7 @@ trait MediaControllerITSuite extends BaseDAOSuite:
         assertEquals(m0.camera_id, m1.camera_id)
         // On a Github computer, comparing timestamps can fail as github actions
         // is returing presision out to value = 2024-02-14T17:37:16.568733220Z
-        assertEquals(m0.start_timestamp.map(_.toEpochMilli()), m1.start_timestamp.map(_.toEpochMilli())) 
+        assertEquals(m0.start_timestamp.map(_.toEpochMilli()), m1.start_timestamp.map(_.toEpochMilli()))
         assertEquals(m0.duration, m1.duration)
         assertEquals(m0.uri, m1.uri)
         assertEquals(m0.container, m1.container)

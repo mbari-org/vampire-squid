@@ -296,13 +296,13 @@ trait VideoEndpointsITSuite extends EndpointsSuite:
             .backend()
 
         // when
-        val video    = videoSequence.getVideos.asScala.head
+        val video       = videoSequence.getVideos.asScala.head
         val videoUpdate = VideoUpdate(
-            name        = Some("updated video"),
+            name = Some("updated video"),
             description = Some("updated description"),
             start_timestamp = Some(Instant.now())
         )
-        val response = basicRequest
+        val response    = basicRequest
             .put(uri"http://test.com/v1/videos/${video.getUuid}")
             .header("Authorization", s"Bearer $jwt")
             .header("Content-Type", "application/json")
@@ -326,11 +326,11 @@ trait VideoEndpointsITSuite extends EndpointsSuite:
             .backend()
 
         // when
-        val video    = videoSequence.getVideos.asScala.head
+        val video       = videoSequence.getVideos.asScala.head
         val videoUpdate = VideoUpdate(
             start_timestamp = Some(Instant.now())
         )
-        val response = basicRequest
+        val response    = basicRequest
             .put(uri"http://test.com/v1/videos/${video.getUuid}")
             .header("Authorization", s"Bearer $jwt")
             .header("Content-Type", "application/json")
@@ -342,8 +342,8 @@ trait VideoEndpointsITSuite extends EndpointsSuite:
         // then
         assertEquals(response.code, StatusCode.Ok)
         response.body match
-            case Left(e) => fail(e.getMessage())
+            case Left(e)  => fail(e.getMessage())
             case Right(b) =>
                 assertEquals(b.start_timestamp, videoUpdate.start_timestamp.get)
-        
+
     }

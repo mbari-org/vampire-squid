@@ -37,7 +37,7 @@ def run(): Unit =
 
     System.setProperty("user.timezone", "UTC")
     val s =
-      """
+        """
       | ____   ____                     .__                   _________            .__    .___
       | \   \ /   /____    _____ ______ |__|______   ____    /   _____/ ________ __|__| __| _/
       |  \   Y   /\__  \  /     \\____ \|  \_  __ \_/ __ \   \_____  \ / ____/  |  \  |/ __ | 
@@ -56,10 +56,10 @@ def run(): Unit =
 
     val port = sys.env.get("HTTP_PORT").flatMap(_.toIntOption).getOrElse(8080)
 
-    val vertx  = Vertx.vertx(new VertxOptions().setWorkerPoolSize(AppConfig.NumberOfVertxWorkers))
+    val vertx             = Vertx.vertx(new VertxOptions().setWorkerPoolSize(AppConfig.NumberOfVertxWorkers))
     val httpServerOptions = new HttpServerOptions().setCompressionSupported(true)
-    val server = vertx.createHttpServer(httpServerOptions)
-    val router = Router.router(vertx)
+    val server            = vertx.createHttpServer(httpServerOptions)
+    val router            = Router.router(vertx)
 
     // NOTE: Don't add a handler. It will intercept all requests (Originally: Log all requests)
     // router.route().handler(ctx => log.atInfo.log(s"${ctx.request().method()} ${ctx.request().path()}"))
@@ -67,32 +67,34 @@ def run(): Unit =
     val interpreter = VertxFutureServerInterpreter(serverOptions)
 
     // For VertX, we need to separate the non-blocking endpoints from the blocking ones
-    Endpoints.nonBlockingEndpoints
+    Endpoints
+        .nonBlockingEndpoints
         .foreach(endpoint =>
             interpreter
                 .route(endpoint)
                 .apply(router)
         )
-    
-    Endpoints.blockingEndpoints
+
+    Endpoints
+        .blockingEndpoints
         .foreach(endpoint =>
             interpreter
                 .blockingRoute(endpoint)
                 .apply(router)
         )
-    
+
     // Add our metrics endpoints
     interpreter.route(Endpoints.metricsEndpoint).apply(router)
-    
+
     // Add our documentation endpoints
-    Endpoints.docEndpoints
+    Endpoints
+        .docEndpoints
         .foreach(endpoint =>
             interpreter
                 .route(endpoint)
                 .apply(router)
         )
-    
-    
+
 //    Endpoints
 //        .all
 //        .foreach(endpoint =>
@@ -118,6 +120,5 @@ def run(): Unit =
     // program.onComplete(_ => vertx.close())
 
     val program = server.requestHandler(router).listen(port).asScala
-
 
     Await.result(program, Duration.Inf)

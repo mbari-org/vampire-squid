@@ -27,7 +27,7 @@ import org.mbari.vampiresquid.repository.jpa.entity.{VideoEntity, VideoReference
 import org.mbari.vampiresquid.repository.VideoReferenceDAO
 import scala.concurrent.{ExecutionContext, Future}
 import scala.jdk.CollectionConverters.*
-import org.mbari.vampiresquid.etc.jdk.Logging.{given, *}
+import org.mbari.vampiresquid.etc.jdk.Logging.{*, given}
 import scala.util.chaining.*
 
 /**
@@ -284,9 +284,10 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController:
                         vsDao.create(vss)
                         vss
                     case Some(vss) =>
-                        log.atInfo.log(
-                            s"Changing cameraId from ${vss.getCameraID} to $cameraId for VideoSequence ${vss.getUuid}"
-                        )
+                        log.atInfo
+                            .log(
+                                s"Changing cameraId from ${vss.getCameraID} to $cameraId for VideoSequence ${vss.getUuid}"
+                            )
                         vss.setCameraID(cameraId)
                         videoSequenceDescription.foreach(vss.setDescription)
                         vss
@@ -424,16 +425,18 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController:
                     None
                 case Some(videoReference) =>
                     if videoReference.getVideo.getName == videoName then
-                        log.atDebug.log(
-                            s"moveVideoReference: videoReference.uuid = ${videoReferenceUuid} already has video.name = $videoName. No changes made."
-                        )
+                        log.atDebug
+                            .log(
+                                s"moveVideoReference: videoReference.uuid = ${videoReferenceUuid} already has video.name = $videoName. No changes made."
+                            )
                         Some(Media.from(videoReference))
                     else
                         vDao.findByName(videoName) match
                             case None =>
-                                log.atDebug.log(
-                                    s"moveVideoReference: Creating new video named $videoName for videoReference.uuid = $videoReferenceUuid"
-                                )
+                                log.atDebug
+                                    .log(
+                                        s"moveVideoReference: Creating new video named $videoName for videoReference.uuid = $videoReferenceUuid"
+                                    )
                                 val oldVideo      = videoReference.getVideo
                                 val videoSequence = oldVideo.getVideoSequence
                                 oldVideo.removeVideoReference(videoReference)
@@ -441,22 +444,25 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController:
                                 videoSequence.addVideo(newVideo)
                                 vDao.create(newVideo)
                                 if oldVideo.getVideoReferences.isEmpty then
-                                    log.atDebug.log(s"moveVideoReference: Deleting empty video named ${oldVideo.getName}")
+                                    log.atDebug
+                                        .log(s"moveVideoReference: Deleting empty video named ${oldVideo.getName}")
                                     vDao.delete(oldVideo)
                                 Some(Media.from(videoReference))
 
                             case Some(video) =>
                                 if video.getDuration == duration && video.getStart == start then
-                                    log.atDebug.log(
-                                        s"moveVideoReference: Moving videoReference.uuid = $videoReferenceUuid to existing video.name = $videoName"
-                                    )
+                                    log.atDebug
+                                        .log(
+                                            s"moveVideoReference: Moving videoReference.uuid = $videoReferenceUuid to existing video.name = $videoName"
+                                        )
                                     videoReference.getVideo.removeVideoReference(videoReference)
                                     video.addVideoReference(videoReference)
                                     Some(Media.from(videoReference))
                                 else
-                                    log.atDebug.log(
-                                        s"moveVideoReference: videoReference.uuid = $videoReferenceUuid has different start or duration than an existing video.name = $videoName"
-                                    )
+                                    log.atDebug
+                                        .log(
+                                            s"moveVideoReference: videoReference.uuid = $videoReferenceUuid has different start or duration than an existing video.name = $videoName"
+                                        )
                                     None
         )
         f.onComplete(_ => vrDao.close())

@@ -19,14 +19,14 @@ package org.mbari.vampiresquid.etc.flyway
 import org.flywaydb.core.Flyway
 import org.mbari.vampiresquid.DatabaseParams
 import org.mbari.vampiresquid.etc.jdbc.Databases
-import org.mbari.vampiresquid.etc.jdk.Logging.given 
+import org.mbari.vampiresquid.etc.jdk.Logging.given
 
 import scala.util.Try
 
 object FlywayMigrator:
-    
+
     private val log = System.getLogger(getClass.getName)
-    
+
     def migrate(databaseParams: DatabaseParams): Either[Throwable, Unit] =
         // Implementation of Flyway migration logic
         Try {
@@ -35,9 +35,9 @@ object FlywayMigrator:
                 case Databases.DatabaseType.SQLServer  => "classpath:/db/migrations/sqlserver"
                 case Databases.DatabaseType.PostgreSQL => "classpath:/db/migrations/postgres"
                 case _                                 => throw new IllegalArgumentException(s"Unsupported database type: $databaseType")
-                
+
             log.atInfo.log("Starting Flyway migration using SQL in " + location)
-            val flyway       = Flyway
+            val flyway = Flyway
                 .configure()
                 .baselineOnMigrate(true)
                 .dataSource(databaseParams.url, databaseParams.user, databaseParams.password)
