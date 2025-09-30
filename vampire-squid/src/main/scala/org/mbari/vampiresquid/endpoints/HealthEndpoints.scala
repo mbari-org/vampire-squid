@@ -16,16 +16,14 @@
 
 package org.mbari.vampiresquid.endpoints
 
-import scala.concurrent.ExecutionContext
-import sttp.tapir.Endpoint
-import sttp.tapir.server.ServerEndpoint
-import scala.concurrent.Future
-import org.mbari.vampiresquid.domain.HealthStatus
-import sttp.tapir.*
-import sttp.tapir.generic.auto.*
+import org.mbari.vampiresquid.domain.{ErrorMsg, HealthStatus}
+import org.mbari.vampiresquid.endpoints.CustomTapirJsonCirce.*
 import org.mbari.vampiresquid.etc.circe.CirceCodecs.given
-import org.mbari.vampiresquid.domain.ErrorMsg
-import CustomTapirJsonCirce.*
+import sttp.tapir.generic.auto.*
+import sttp.tapir.server.ServerEndpoint
+import sttp.tapir.{Endpoint, *}
+
+import scala.concurrent.{ExecutionContext, Future}
 
 class HealthEndpoints(using ec: ExecutionContext) extends Endpoints:
 

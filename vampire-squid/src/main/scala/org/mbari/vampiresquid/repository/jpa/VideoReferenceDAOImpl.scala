@@ -16,15 +16,14 @@
 
 package org.mbari.vampiresquid.repository.jpa
 
+import jakarta.persistence.EntityManager
 import org.mbari.vampiresquid.repository.VideoReferenceDAO
+import org.mbari.vampiresquid.repository.jpa.entity.VideoReferenceEntity
 
 import java.net.URI
 import java.util.UUID
-import jakarta.persistence.EntityManager
 import scala.jdk.CollectionConverters.*
-
 import scala.util.control.NonFatal
-import org.mbari.vampiresquid.repository.jpa.entity.VideoReferenceEntity
 
 /**
  * @author

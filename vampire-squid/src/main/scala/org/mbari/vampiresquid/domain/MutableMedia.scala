@@ -16,10 +16,11 @@
 
 package org.mbari.vampiresquid.domain
 
+import org.mbari.vampiresquid.repository.jpa.entity.VideoReferenceEntity
+
 import java.net.URI
 import java.time.{Duration, Instant}
 import java.util.UUID
-import org.mbari.vampiresquid.repository.jpa.entity.VideoReferenceEntity
 
 /**
  * @author

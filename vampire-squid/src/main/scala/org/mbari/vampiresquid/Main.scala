@@ -16,21 +16,16 @@
 
 package org.mbari.vampiresquid
 
-import io.vertx.core.Vertx
 import io.vertx.core.http.HttpServerOptions
+import io.vertx.core.{Vertx, VertxOptions}
 import io.vertx.ext.web.Router
-import sttp.tapir.server.vertx.{VertxFutureServerInterpreter, VertxFutureServerOptions}
-import sttp.tapir.server.vertx.VertxFutureServerInterpreter.VertxFutureToScalaFuture
-
-import scala.concurrent.{Await, ExecutionContext, Future}
-import scala.concurrent.duration.Duration
-import ExecutionContext.Implicits.global
-import scala.io.StdIn
-import sttp.tapir.server.interceptor.log.ServerLog
 import org.mbari.vampiresquid.etc.jdk.Logging
-import org.mbari.vampiresquid.etc.jdk.Logging.{*, given}
-import sttp.tapir.server.interceptor.log.DefaultServerLog
-import io.vertx.core.VertxOptions
+import org.mbari.vampiresquid.etc.jdk.Logging.given
+import sttp.tapir.server.vertx.VertxFutureServerInterpreter.VertxFutureToScalaFuture
+import sttp.tapir.server.vertx.{VertxFutureServerInterpreter, VertxFutureServerOptions}
+
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
 
 @main
 def run(): Unit =

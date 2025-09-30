@@ -16,15 +16,13 @@
 
 package org.mbari.vampiresquid.domain
 
+import org.mbari.vampiresquid.etc.sdk.{FormTransform, ToStringTransforms}
 import org.mbari.vampiresquid.repository.jpa.entity.{Media as MediaDTO, VideoReferenceEntity}
 
 import java.net.URI
 import java.time.{Duration, Instant}
-import java.util.UUID
+import java.util.{HexFormat, UUID}
 import scala.util.Try
-import java.util.HexFormat
-import org.mbari.vampiresquid.etc.sdk.FormTransform
-import org.mbari.vampiresquid.etc.sdk.ToStringTransforms
 
 case class Media(
     video_sequence_uuid: Option[UUID] = None,

@@ -16,15 +16,14 @@
 
 package org.mbari.vampiresquid.repository.jpa
 
-import jakarta.persistence.{EntityManagerFactory, Persistence}
 import com.typesafe.config.ConfigFactory
+import jakarta.persistence.{EntityManagerFactory, Persistence}
+import org.mbari.vampiresquid.etc.flyway.FlywayMigrator
+import org.mbari.vampiresquid.etc.jdk.Logging.given
+import org.mbari.vampiresquid.{AppConfig, DatabaseParams}
 
 import java.lang.System.Logger.Level
 import scala.jdk.CollectionConverters.*
-import org.mbari.vampiresquid.etc.jdk.Logging.{*, given}
-import org.mbari.vampiresquid.AppConfig
-import org.mbari.vampiresquid.DatabaseParams
-import org.mbari.vampiresquid.etc.flyway.FlywayMigrator
 
 /**
  * https://stackoverflow.com/questions/4106078/dynamic-jpa-connection

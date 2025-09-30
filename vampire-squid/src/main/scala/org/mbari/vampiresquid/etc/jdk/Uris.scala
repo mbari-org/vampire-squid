@@ -16,10 +16,9 @@
 
 package org.mbari.vampiresquid.etc.jdk
 
-import java.net.URI
-import java.nio.file.Paths
-import java.net.URLEncoder
+import java.net.{URI, URLEncoder}
 import java.nio.charset.StandardCharsets
+import java.nio.file.Paths
 
 object Uris:
 

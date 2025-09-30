@@ -16,8 +16,8 @@
 
 package org.mbari.vampiresquid.repository.jpa
 
-import org.mbari.vampiresquid.domain.{Media, Video, VideoReference, VideoSequence}
 import org.junit.Assert.{assertArrayEquals, assertEquals, fail}
+import org.mbari.vampiresquid.domain.{Media, Video, VideoReference, VideoSequence}
 
 object AssertUtil:
 

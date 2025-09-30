@@ -18,10 +18,9 @@ package org.mbari.vampiresquid.domain
 
 import org.mbari.vampiresquid.repository.jpa.entity.VideoEntity
 
-import java.time.Instant
+import java.time.{Duration, Instant}
 import java.util.UUID
 import scala.jdk.CollectionConverters.*
-import java.time.Duration
 
 case class Video(
     uuid: UUID,

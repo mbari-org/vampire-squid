@@ -16,12 +16,13 @@
 
 package org.mbari.vampiresquid.repository.jpa
 
-import java.net.URI
-import java.time.{Duration, Instant}
 import org.mbari.vampiresquid.domain.Media
 import org.mbari.vampiresquid.etc.jdk.Uris
 import org.mbari.vampiresquid.repository.VideoReferenceDAO
 import org.mbari.vampiresquid.repository.jpa.entity.VideoReferenceEntity
+
+import java.net.URI
+import java.time.{Duration, Instant}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.jdk.CollectionConverters.*
 import scala.util.Random

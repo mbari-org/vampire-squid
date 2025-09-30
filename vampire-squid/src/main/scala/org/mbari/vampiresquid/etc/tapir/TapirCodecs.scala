@@ -17,13 +17,13 @@
 package org.mbari.vampiresquid.etc.tapir
 
 import org.mbari.vampiresquid.etc.jdk.Instants
-import sttp.tapir.{Codec, DecodeResult}
 import sttp.tapir.CodecFormat.TextPlain
+import sttp.tapir.{Codec, DecodeResult}
 
 import java.net.URI
 import java.time.Instant
-import scala.util.{Failure, Success, Try}
 import java.util.HexFormat
+import scala.util.{Failure, Success, Try}
 
 object TapirCodecs:
 

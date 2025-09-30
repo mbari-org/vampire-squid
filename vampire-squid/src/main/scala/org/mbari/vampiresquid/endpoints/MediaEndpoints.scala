@@ -16,31 +16,23 @@
 
 package org.mbari.vampiresquid.endpoints
 
-import java.net.URI
-import java.net.URLDecoder
-import java.time.Instant
-import java.util.HexFormat
-import java.util.UUID
 import org.mbari.vampiresquid.controllers.MediaController
-import org.mbari.vampiresquid.domain.{BadRequest, ErrorMsg, Media, NotFound, ServerError, Unauthorized}
-import org.mbari.vampiresquid.domain.MoveVideoParams
+import org.mbari.vampiresquid.domain.{BadRequest, ErrorMsg, Media, MoveVideoParams, NotFound, ServerError}
+import org.mbari.vampiresquid.endpoints.CustomTapirJsonCirce.*
 import org.mbari.vampiresquid.etc.circe.CirceCodecs.given
 import org.mbari.vampiresquid.etc.jdk.Logging
 import org.mbari.vampiresquid.etc.jdk.Logging.given
 import org.mbari.vampiresquid.etc.jwt.JwtService
 import org.mbari.vampiresquid.etc.tapir.TapirCodecs
 import org.mbari.vampiresquid.etc.tapir.TapirCodecs.given
-
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
-import scala.util.Failure
-import scala.util.Success
-import scala.util.Try
 import sttp.tapir.*
-import sttp.tapir.generic.auto.*
 import sttp.tapir.server.ServerEndpoint
 
-import CustomTapirJsonCirce.*
+import java.net.{URI, URLDecoder}
+import java.time.Instant
+import java.util.{HexFormat, UUID}
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success, Try}
 
 class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(using ec: ExecutionContext)
     extends Endpoints:

@@ -16,9 +16,10 @@
 
 package org.mbari.vampiresquid.etc.sdk
 
-import scala.deriving.*
-import scala.compiletime.summonAll
 import org.mbari.vampiresquid.etc.sdk.ToStringTransforms.Transformer
+
+import scala.compiletime.summonAll
+import scala.deriving.*
 
 /**
  * Contains a ToStringTransform for converting a case class to HTTP form data.

@@ -4,13 +4,28 @@ import Dependencies.*
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
 ThisBuild / javacOptions ++= Seq("-target", "21", "-source", "21")
-ThisBuild / licenses         := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
-ThisBuild / scalaVersion     := "3.7.1"
-// ThisBuild / version          := "0.0.1"
-ThisBuild / organization     := "org.mbari"
-ThisBuild / organizationName := "Monterey Bay Aquarium Research Institute"
-ThisBuild / startYear        := Some(2021)
-ThisBuild / versionScheme    := Some("semver-spec")
+ThisBuild / licenses          := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
+ThisBuild / scalaVersion      := "3.7.3"
+ThisBuild / organization      := "org.mbari"
+ThisBuild / organizationName  := "Monterey Bay Aquarium Research Institute"
+ThisBuild / startYear         := Some(2021)
+ThisBuild / versionScheme     := Some("semver-spec")
+ThisBuild / semanticdbEnabled := true
+ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
+ThisBuild / scalacOptions ++= Seq(
+    "-deprecation",    // Emit warning and location for usages of deprecated APIs.
+    "-encoding",
+    "UTF-8",           // yes, this is 2 args. Specify character encoding used by source files.
+    "-explain",        // Explain errors in more detail.
+    "-feature",        // Emit warning and location for usages of features that should be imported explicitly.
+    "-language:existentials",
+    "-language:higherKinds",
+    "-language:implicitConversions",
+    "-language:postfixOps",
+    "-unchecked",
+    "-Vprofile",
+    "-Wunused:imports" // Warn if an import selector is not referenced.
+)
 
 ThisBuild / Test / fork              := true
 ThisBuild / Test / parallelExecution := false
@@ -18,7 +33,6 @@ ThisBuild / Test / testOptions += Tests.Argument(TestFrameworks.MUnit, "-b")
 ThisBuild / Test / javaOptions ++= Seq(
     "-Duser.timeszone=UTC"
 )
-
 
 lazy val vampireSquid = (project in file("vampire-squid"))
     .enablePlugins(
@@ -69,21 +83,6 @@ lazy val vampireSquid = (project in file("vampire-squid"))
                 tapirSwagger,
                 tapirVertex,
                 typesafeConfig
-            ),
-            scalacOptions ++= Seq(
-                "-deprecation", // Emit warning and location for usages of deprecated APIs.
-                "-encoding",
-                "UTF-8",        // yes, this is 2 args. Specify character encoding used by source files.
-                "-explain",     // Explain errors in more detail.
-                "-feature",     // Emit warning and location for usages of features that should be imported explicitly.
-                "-language:existentials",
-                "-language:higherKinds",
-                "-language:implicitConversions",
-                "-language:postfixOps",
-                "-indent",
-                "-rewrite",
-                "-unchecked",
-                "-Vprofile"
             )
         )
     )
@@ -91,7 +90,7 @@ lazy val vampireSquid = (project in file("vampire-squid"))
 lazy val integrationTests = (project in file("it"))
     .dependsOn(vampireSquid)
     .enablePlugins(
-        AutomateHeaderPlugin,
+        AutomateHeaderPlugin
     )
     .settings(
         libraryDependencies ++= Seq(
@@ -99,7 +98,7 @@ lazy val integrationTests = (project in file("it"))
             scalatest,
             tapirServerStub,
             testcontainersCore
-        ),
+        )
         // licenses += ("Apache-2.0", URI.create("https://www.apache.org/licenses/LICENSE-2.0.txt").toURL)
     )
 
@@ -114,23 +113,23 @@ lazy val integrationTests = (project in file("it"))
 lazy val itPostgres = (project in file("it-postgres"))
     .dependsOn(integrationTests)
     .enablePlugins(
-        AutomateHeaderPlugin,
+        AutomateHeaderPlugin
     )
     .settings(
         libraryDependencies ++= Seq(
             testcontainersPostgres
-        ),
+        )
         // licenses += ("Apache-2.0", URI.create("https://www.apache.org/licenses/LICENSE-2.0.txt").toURL),
     )
 
 lazy val itSqlserver = (project in file("it-sqlserver"))
     .dependsOn(integrationTests)
     .enablePlugins(
-        AutomateHeaderPlugin,
+        AutomateHeaderPlugin
     )
     .settings(
         libraryDependencies ++= Seq(
             testcontainersSqlserver
-        ),
+        )
         // licenses += ("Apache-2.0", URI.create("https://www.apache.org/licenses/LICENSE-2.0.txt").toURL),
     )

@@ -16,17 +16,14 @@
 
 package org.mbari.vampiresquid.repository.jpa
 
+import jakarta.persistence.EntityManager
 import org.mbari.vampiresquid.Constants
 import org.mbari.vampiresquid.repository.VideoDAO
+import org.mbari.vampiresquid.repository.jpa.entity.{NameAndDate, VideoEntity}
 
 import java.time.{Duration, Instant}
 import java.util.UUID
-import jakarta.persistence.EntityManager
-
 import scala.jdk.CollectionConverters.*
-import org.mbari.vampiresquid.repository.jpa.entity.{NameAndDate, VideoEntity}
-
-import scala.util.chaining.*
 
 /**
  * @author

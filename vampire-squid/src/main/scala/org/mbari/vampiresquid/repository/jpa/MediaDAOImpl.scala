@@ -16,12 +16,12 @@
 
 package org.mbari.vampiresquid.repository.jpa
 
+import jakarta.persistence.EntityManager
 import org.mbari.vampiresquid.domain.Media
+import org.mbari.vampiresquid.repository.MediaDAO
 import org.mbari.vampiresquid.repository.jpa.entity.Media as MediaDTO
 
 import scala.jdk.CollectionConverters.*
-import org.mbari.vampiresquid.repository.MediaDAO
-import jakarta.persistence.EntityManager
 
 class MediaDAOImpl(videoSequenceDao: VideoSequenceDAOImpl) extends MediaDAO:
 

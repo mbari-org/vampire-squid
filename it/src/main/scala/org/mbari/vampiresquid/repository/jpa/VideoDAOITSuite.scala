@@ -16,8 +16,8 @@
 
 package org.mbari.vampiresquid.repository.jpa
 
-import scala.jdk.CollectionConverters.*
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.jdk.CollectionConverters.*
 
 trait VideoDAOITSuite extends BaseDAOSuite:
 

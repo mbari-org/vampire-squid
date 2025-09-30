@@ -16,35 +16,21 @@
 
 package org.mbari.vampiresquid.endpoints
 
-import org.mbari.vampiresquid.repository.jpa.BaseDAOSuite
-import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
 import org.mbari.vampiresquid.controllers.VideoReferenceController
-import org.mbari.vampiresquid.repository.jpa.TestUtils
-import scala.concurrent.ExecutionContext
-import org.mbari.vampiresquid.domain.VideoSequence
-import org.mbari.vampiresquid.repository.jpa.AssertUtil
-import org.mbari.vampiresquid.etc.jwt.JwtService
-import sttp.model.StatusCode
-import org.mbari.vampiresquid.domain.VideoReference
-import org.mbari.vampiresquid.etc.circe.CirceCodecs.given
-import org.mbari.vampiresquid.domain.LastUpdatedTime
-import java.time.Instant
-import sttp.client3.*
-import java.net.URI
-import java.util.HexFormat
-import org.mbari.vampiresquid.etc.sdk.FutureUtil.*
-import sttp.tapir.server.stub.TapirStubInterpreter
-import sttp.client3.testing.SttpBackendStub
-import scala.concurrent.Future
-import java.util.UUID
-import org.mbari.vampiresquid.etc.sdk.ToStringTransforms
-import sttp.tapir.server.vertx.VertxFutureServerOptions
-import sttp.tapir.server.interceptor.exception.ExceptionHandler
-import sttp.tapir.server.model.ValuedEndpointOutput
-import sttp.tapir.server.interceptor.CustomiseInterceptors
-import org.mbari.vampiresquid.domain.VideoReferenceCreate
+import org.mbari.vampiresquid.domain.{LastUpdatedTime, VideoReference, VideoReferenceCreate, VideoReferenceUpdate, VideoSequence}
 import org.mbari.vampiresquid.etc.circe.CirceCodecs.*
-import org.mbari.vampiresquid.domain.VideoReferenceUpdate
+import org.mbari.vampiresquid.etc.circe.CirceCodecs.given
+import org.mbari.vampiresquid.etc.jwt.JwtService
+import org.mbari.vampiresquid.etc.sdk.FutureUtil.*
+import org.mbari.vampiresquid.etc.sdk.ToStringTransforms
+import org.mbari.vampiresquid.repository.jpa.{AssertUtil, JPADAOFactory, TestUtils}
+import sttp.client3.*
+import sttp.model.StatusCode
+
+import java.net.URI
+import java.time.Instant
+import java.util.{HexFormat, UUID}
+import scala.concurrent.ExecutionContext
 
 trait VideoReferenceEndpointsITSuite extends EndpointsSuite:
 

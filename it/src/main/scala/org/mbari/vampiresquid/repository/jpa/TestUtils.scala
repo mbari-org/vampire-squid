@@ -21,9 +21,8 @@ import org.mbari.vampiresquid.repository.jpa.entity.{VideoEntity, VideoReference
 import java.net.URI
 import java.security.MessageDigest
 import java.time.{Duration, Instant}
-import java.util as ju
 import java.util.concurrent.TimeUnit
-import scala.concurrent.{duration, Await, ExecutionContext}
+import scala.concurrent.{Await, ExecutionContext, duration}
 import scala.util.Random
 
 /**

@@ -16,8 +16,6 @@
 
 package org.mbari.vampiresquid.domain
 
-import org.mbari.vampiresquid.etc.sdk.{FormTransform, ToStringTransforms}
-import org.mbari.vampiresquid.etc.sdk.ToStringTransforms.transform
 import org.mbari.vampiresquid.repository.jpa.entity.VideoSequenceEntity
 
 import java.time.Instant

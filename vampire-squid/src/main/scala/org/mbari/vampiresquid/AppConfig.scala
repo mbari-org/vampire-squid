@@ -16,9 +16,10 @@
 
 package org.mbari.vampiresquid
 
-import scala.util.Try
 import com.typesafe.config.ConfigFactory
 import org.mbari.vampiresquid.etc.jwt.JwtService
+
+import scala.util.Try
 
 object AppConfig:
     val Name: String = "vampire-squid"

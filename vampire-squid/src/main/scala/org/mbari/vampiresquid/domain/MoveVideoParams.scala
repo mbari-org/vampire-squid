@@ -16,8 +16,7 @@
 
 package org.mbari.vampiresquid.domain
 
-import java.time.Duration
-import java.time.Instant
+import java.time.{Duration, Instant}
 
 final case class MoveVideoParams(video_name: String, start_timestamp: Instant, duration_millis: Long):
     def duration: Duration = Duration.ofMillis(duration_millis)

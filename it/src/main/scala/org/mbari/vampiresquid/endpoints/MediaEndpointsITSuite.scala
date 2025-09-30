@@ -18,31 +18,28 @@ package org.mbari.vampiresquid.endpoints
 
 import io.circe.*
 import io.circe.parser.*
-import java.net.URI
-import java.time.{Duration, Instant}
-import java.util.HexFormat
 import org.mbari.vampiresquid.controllers.MediaController
 import org.mbari.vampiresquid.domain.{Media, MoveVideoParams}
 import org.mbari.vampiresquid.etc.circe.CirceCodecs.{*, given}
-import org.mbari.vampiresquid.etc.jdk.Logging
 import org.mbari.vampiresquid.etc.jdk.Logging.given
-import org.mbari.vampiresquid.etc.jdk.Uris
+import org.mbari.vampiresquid.etc.jdk.{Logging, Uris}
 import org.mbari.vampiresquid.etc.jwt.JwtService
 import org.mbari.vampiresquid.etc.sdk.FormTransform.given
 import org.mbari.vampiresquid.etc.sdk.FutureUtil.*
 import org.mbari.vampiresquid.etc.sdk.ToStringTransforms.{*, given}
 import org.mbari.vampiresquid.repository.jpa.AssertUtil.assertSameMedia
-import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
-import org.mbari.vampiresquid.repository.jpa.TestUtils
+import org.mbari.vampiresquid.repository.jpa.{JPADAOFactory, TestUtils}
+import sttp.client3.testing.SttpBackendStub
+import sttp.client3.{SttpBackend, *}
+import sttp.model.StatusCode
+import sttp.tapir.server.stub.TapirStubInterpreter
+
+import java.net.URI
+import java.time.{Duration, Instant}
+import java.util.HexFormat
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 import scala.jdk.CollectionConverters.*
-import sttp.client3.*
-import sttp.client3.SttpBackend
-import sttp.client3.testing.SttpBackendStub
-import sttp.model.StatusCode
-import sttp.tapir.server.stub.TapirStubInterpreter
-import org.junit.Assert.*
 
 trait MediaEndpointsITSuite extends EndpointsSuite:
 

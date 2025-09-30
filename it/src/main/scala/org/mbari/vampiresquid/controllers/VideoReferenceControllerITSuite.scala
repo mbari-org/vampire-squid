@@ -16,13 +16,11 @@
 
 package org.mbari.vampiresquid.controllers
 
-import java.net.URI
 import org.junit.Assert
-import org.mbari.vampiresquid.domain.Media
-import org.mbari.vampiresquid.domain.VideoReference
-import org.mbari.vampiresquid.repository.jpa.BaseDAOSuite
-import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
-import org.mbari.vampiresquid.repository.jpa.TestUtils
+import org.mbari.vampiresquid.domain.{Media, VideoReference}
+import org.mbari.vampiresquid.repository.jpa.{BaseDAOSuite, JPADAOFactory, TestUtils}
+
+import java.net.URI
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.jdk.CollectionConverters.*
 

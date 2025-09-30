@@ -16,19 +16,17 @@
 
 package org.mbari.vampiresquid.repository.jpa
 
-import org.mbari.vampiresquid.repository.jpa.entity.IPersistentObject
-import org.mbari.vampiresquid.repository.DAO
-import org.mbari.vampiresquid.domain.extensions.*
-import org.mbari.vampiresquid.repository.jpa.extensions.*
-
-import java.util.UUID
 import jakarta.persistence.EntityManager
+import org.mbari.vampiresquid.domain.extensions.*
+import org.mbari.vampiresquid.repository.DAO
+import org.mbari.vampiresquid.repository.jpa.entity.IPersistentObject
+import org.mbari.vampiresquid.repository.jpa.extensions.*
 import org.slf4j.LoggerFactory
 
-import scala.jdk.CollectionConverters.*
+import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
-import scala.reflect.ClassTag
-import scala.reflect.classTag
+import scala.jdk.CollectionConverters.*
+import scala.reflect.{ClassTag, classTag}
 
 /**
  * @author

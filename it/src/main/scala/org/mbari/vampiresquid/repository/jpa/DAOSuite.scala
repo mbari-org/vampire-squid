@@ -16,12 +16,12 @@
 
 package org.mbari.vampiresquid.repository.jpa
 
-import org.mbari.vampiresquid.repository.{DAO, VideoDAO}
+import org.mbari.vampiresquid.repository.DAO
 
 import java.util.concurrent.TimeUnit
-import scala.concurrent.{Await, Future}
-import scala.concurrent.duration.Duration as SDuration
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.Duration as SDuration
+import scala.concurrent.{Await, Future}
 
 trait BaseDAOSuite extends munit.FunSuite:
 

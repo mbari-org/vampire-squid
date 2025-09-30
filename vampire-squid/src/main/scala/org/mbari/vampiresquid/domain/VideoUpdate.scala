@@ -16,9 +16,8 @@
 
 package org.mbari.vampiresquid.domain
 
-import java.time.Instant
+import java.time.{Duration, Instant}
 import java.util.UUID
-import java.time.Duration
 
 case class VideoUpdate(
     name: Option[String] = None,

@@ -16,23 +16,21 @@
 
 package org.mbari.vampiresquid.endpoints
 
-import java.util.UUID
 import org.mbari.vampiresquid.controllers.VideoSequenceController
-import org.mbari.vampiresquid.domain.{LastUpdatedTime, VideoSequence, VideoSequenceCreate}
+import org.mbari.vampiresquid.domain.{LastUpdatedTime, VideoSequence, VideoSequenceCreate, VideoSequenceUpdate}
 import org.mbari.vampiresquid.etc.circe.CirceCodecs.{*, given}
-import org.mbari.vampiresquid.etc.jdk.{Instants, Logging}
 import org.mbari.vampiresquid.etc.jdk.Logging.given
+import org.mbari.vampiresquid.etc.jdk.{Instants, Logging}
 import org.mbari.vampiresquid.etc.jwt.JwtService
 import org.mbari.vampiresquid.etc.sdk.FutureUtil.*
-import org.mbari.vampiresquid.etc.sdk.FutureUtil.given
 import org.mbari.vampiresquid.repository.jpa.{AssertUtil, JPADAOFactory, TestUtils}
-import scala.concurrent.{ExecutionContext, Future}
-import sttp.client3.*
-import sttp.client3.SttpBackend
 import sttp.client3.testing.SttpBackendStub
+import sttp.client3.{SttpBackend, *}
 import sttp.model.StatusCode
 import sttp.tapir.server.stub.TapirStubInterpreter
-import org.mbari.vampiresquid.domain.VideoSequenceUpdate
+
+import java.util.UUID
+import scala.concurrent.{ExecutionContext, Future}
 
 trait VideoSequenceEndpointsITSuite extends EndpointsSuite:
 

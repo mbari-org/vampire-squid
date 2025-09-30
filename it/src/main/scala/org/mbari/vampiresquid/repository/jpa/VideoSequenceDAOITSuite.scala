@@ -16,9 +16,10 @@
 
 package org.mbari.vampiresquid.repository.jpa
 
+import org.mbari.vampiresquid.repository.jpa.entity.VideoEntity
+
 import java.time.Duration
 import java.util.UUID
-import org.mbari.vampiresquid.repository.jpa.entity.VideoEntity
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.jdk.CollectionConverters.*
 

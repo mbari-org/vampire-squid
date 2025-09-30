@@ -16,19 +16,18 @@
 
 package org.mbari.vampiresquid.controllers
 
-import java.net.URI
-import java.time.{Duration, Instant}
-import java.util.{Arrays as JArrays, UUID}
-import java.util as ju
 import org.mbari.vampiresquid.domain.Media
-import org.mbari.vampiresquid.etc.circe.CirceCodecs.{*, given}
+import org.mbari.vampiresquid.etc.jdk.Logging.given
+import org.mbari.vampiresquid.repository.VideoReferenceDAO
 import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
 import org.mbari.vampiresquid.repository.jpa.entity.{VideoEntity, VideoReferenceEntity, VideoSequenceEntity}
-import org.mbari.vampiresquid.repository.VideoReferenceDAO
+
+import java.net.URI
+import java.time.{Duration, Instant}
+import java.util as ju
+import java.util.{Arrays as JArrays, UUID}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.jdk.CollectionConverters.*
-import org.mbari.vampiresquid.etc.jdk.Logging.{*, given}
-import scala.util.chaining.*
 
 /**
  * Convenience API for registering a video

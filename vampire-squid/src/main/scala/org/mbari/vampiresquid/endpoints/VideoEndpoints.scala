@@ -16,29 +16,21 @@
 
 package org.mbari.vampiresquid.endpoints
 
-import java.time.Duration
-import java.time.Instant
-import java.util.UUID
-import org.mbari.vampiresquid.controllers.VideoController
-import org.mbari.vampiresquid.controllers.VideoSequenceController
-import org.mbari.vampiresquid.domain.BadRequest
-import org.mbari.vampiresquid.domain.ErrorMsg
-import org.mbari.vampiresquid.domain.LastUpdatedTime
-import org.mbari.vampiresquid.domain.Video
+import org.mbari.vampiresquid.Endpoints.videoController
+import org.mbari.vampiresquid.controllers.{VideoController, VideoSequenceController}
+import org.mbari.vampiresquid.domain.{BadRequest, ErrorMsg, LastUpdatedTime, Video, VideoUpdate}
+import org.mbari.vampiresquid.endpoints.CustomTapirJsonCirce.*
 import org.mbari.vampiresquid.etc.circe.CirceCodecs.given
 import org.mbari.vampiresquid.etc.jwt.JwtService
 import org.mbari.vampiresquid.etc.tapir.TapirCodecs
-
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
+import sttp.model.StatusCode
 import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.server.ServerEndpoint
-import sttp.model.StatusCode
-import org.mbari.vampiresquid.Endpoints.videoController
 
-import CustomTapirJsonCirce.*
-import org.mbari.vampiresquid.domain.VideoUpdate
+import java.time.{Duration, Instant}
+import java.util.UUID
+import scala.concurrent.{ExecutionContext, Future}
 
 class VideoEndpoints(controller: VideoController, videoSequenceController: VideoSequenceController)(using
     ec: ExecutionContext,

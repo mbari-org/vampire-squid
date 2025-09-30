@@ -17,11 +17,10 @@
 package org.mbari.vampiresquid.repository.jpa
 
 import jakarta.persistence.EntityManager
+import org.slf4j.LoggerFactory
 
 import scala.concurrent.{ExecutionContext, Future}
-import org.mbari.vampiresquid.etc.jdk.Logging.given
 import scala.util.control.NonFatal
-import org.slf4j.LoggerFactory
 
 /**
  * Implicits used in this package

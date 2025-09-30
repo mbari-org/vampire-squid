@@ -16,26 +16,28 @@
 
 package org.mbari.vampiresquid
 
-import sttp.tapir.*
-
-import scala.concurrent.Future
+import org.mbari.vampiresquid.controllers.{
+    MediaController,
+    VideoController,
+    VideoReferenceController,
+    VideoSequenceController
+}
+import org.mbari.vampiresquid.endpoints.{
+    AuthorizationEndpoints,
+    HealthEndpoints,
+    MediaEndpoints,
+    VideoEndpoints,
+    VideoReferenceEndpoints,
+    VideoSequenceEndpoints
+}
+import org.mbari.vampiresquid.etc.jwt.JwtService
+import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
 import sttp.tapir.server.ServerEndpoint
 import sttp.tapir.server.metrics.prometheus.PrometheusMetrics
 import sttp.tapir.swagger.bundle.SwaggerInterpreter
-import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
-import org.mbari.vampiresquid.controllers.MediaController
-import org.mbari.vampiresquid.etc.jwt.JwtService
-import org.mbari.vampiresquid.endpoints.MediaEndpoints
-import org.mbari.vampiresquid.endpoints.AuthorizationEndpoints
-import org.mbari.vampiresquid.endpoints.HealthEndpoints
+
 import scala.concurrent.ExecutionContext.Implicits.global
-import org.mbari.vampiresquid.domain.VideoSequence
-import org.mbari.vampiresquid.endpoints.VideoSequenceEndpoints
-import org.mbari.vampiresquid.controllers.VideoSequenceController
-import org.mbari.vampiresquid.controllers.VideoReferenceController
-import org.mbari.vampiresquid.controllers.VideoController
-import org.mbari.vampiresquid.endpoints.VideoEndpoints
-import org.mbari.vampiresquid.endpoints.VideoReferenceEndpoints
+import scala.concurrent.Future
 
 object Endpoints:
 

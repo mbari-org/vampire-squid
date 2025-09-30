@@ -19,10 +19,8 @@ package org.mbari.vampiresquid.repository.jpa
 import jakarta.persistence.EntityManagerFactory
 import org.mbari.vampiresquid.AppConfig
 import org.mbari.vampiresquid.etc.flyway.FlywayMigrator
+import org.mbari.vampiresquid.repository.jpa.entity.{VideoEntity, VideoReferenceEntity, VideoSequenceEntity}
 import org.mbari.vampiresquid.repository.{DAO, DAOFactory, VideoDAO, VideoReferenceDAO, VideoSequenceDAO}
-import org.mbari.vampiresquid.repository.jpa.entity.VideoSequenceEntity
-import org.mbari.vampiresquid.repository.jpa.entity.VideoEntity
-import org.mbari.vampiresquid.repository.jpa.entity.VideoReferenceEntity
 
 /**
  * Self-explanatory. THis class creates DAOs for the JPA implementation.

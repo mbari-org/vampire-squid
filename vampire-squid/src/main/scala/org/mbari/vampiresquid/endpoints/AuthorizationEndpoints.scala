@@ -16,19 +16,16 @@
 
 package org.mbari.vampiresquid.endpoints
 
-import org.mbari.vampiresquid.domain.{Authorization, ErrorMsg, Unauthorized}
+import org.mbari.vampiresquid.domain.{Authorization, BadRequest, ErrorMsg, NotFound, ServerError, Unauthorized}
 import org.mbari.vampiresquid.etc.circe.CirceCodecs.given
-import org.mbari.vampiresquid.etc.jdk.Logging.given
 import org.mbari.vampiresquid.etc.jwt.JwtService
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
 import sttp.model.StatusCode
-import sttp.tapir.*
-import sttp.tapir.Endpoint
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 import sttp.tapir.server.ServerEndpoint
-import org.mbari.vampiresquid.domain.{BadRequest, ErrorMsg, NotFound, ServerError, Unauthorized}
+import sttp.tapir.{Endpoint, *}
+
+import scala.concurrent.{ExecutionContext, Future}
 
 class AuthorizationEndpoints(jwtService: JwtService)(using ec: ExecutionContext) extends Endpoints:
 

@@ -16,8 +16,9 @@
 
 package org.mbari.vampiresquid.etc.jwt
 
-import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.JWT
+import com.auth0.jwt.algorithms.Algorithm
+
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.Date

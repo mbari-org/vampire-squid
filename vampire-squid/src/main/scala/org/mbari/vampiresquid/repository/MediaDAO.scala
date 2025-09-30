@@ -16,9 +16,8 @@
 
 package org.mbari.vampiresquid.repository
 
-import org.mbari.vampiresquid.domain.Media
-import java.io.Closeable
 import jakarta.persistence.EntityManager
+import org.mbari.vampiresquid.domain.Media
 
 trait MediaDAO extends AutoCloseable:
 

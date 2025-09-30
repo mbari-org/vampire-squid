@@ -16,9 +16,9 @@
 
 package org.mbari.vampiresquid.etc.sdk
 
-import scala.concurrent.{Await, Future}
-import scala.concurrent.duration.Duration
 import java.util.concurrent.TimeUnit
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, Future}
 
 object FutureUtil:
 

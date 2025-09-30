@@ -16,15 +16,15 @@
 
 package org.mbari.vampiresquid.etc.jwt
 
-import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.JWT
-import com.typesafe.config.ConfigFactory
+import com.auth0.jwt.algorithms.Algorithm
+import org.mbari.vampiresquid.JwtParams
+import org.mbari.vampiresquid.domain.Authorization
+
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.Date
 import scala.util.control.NonFatal
-import org.mbari.vampiresquid.JwtParams
-import org.mbari.vampiresquid.domain.Authorization
 
 /**
  * To use this authentication. The client and server should both have a shared secret (aka client secret). The client

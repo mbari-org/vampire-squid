@@ -16,33 +16,33 @@
 
 package org.mbari.vampiresquid.endpoints
 
-import java.net.URI
-import org.mbari.vampiresquid.domain.Media
-import org.mbari.vampiresquid.domain.MoveVideoParams
-import org.mbari.vampiresquid.domain.Video
-import org.mbari.vampiresquid.domain.VideoReference
-import org.mbari.vampiresquid.domain.{BadRequest, ErrorMsg, NotFound, ServerError, Unauthorized}
+import io.circe.Printer
+import org.mbari.vampiresquid.domain.{
+    BadRequest,
+    ErrorMsg,
+    Media,
+    MoveVideoParams,
+    NotFound,
+    ServerError,
+    Unauthorized,
+    Video,
+    VideoReference,
+    VideoUpdate
+}
 import org.mbari.vampiresquid.etc.circe.CirceCodecs
-import org.mbari.vampiresquid.etc.circe.CirceCodecs.{*, given}
-
-import org.mbari.vampiresquid.etc.jwt.JwtService
+import org.mbari.vampiresquid.etc.circe.CirceCodecs.given
 import org.mbari.vampiresquid.etc.jdk.Logging.given
-
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
-import scala.util.Failure
-import scala.util.Success
+import org.mbari.vampiresquid.etc.jwt.JwtService
 import sttp.model.StatusCode
 import sttp.model.headers.WWWAuthenticateChallenge
-import sttp.tapir.*
-import sttp.tapir.Endpoint
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 import sttp.tapir.server.ServerEndpoint
+import sttp.tapir.{Endpoint, *}
 
-import java.time.Instant
-import io.circe.Printer
-import org.mbari.vampiresquid.domain.VideoUpdate
+import java.net.URI
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 case class Paging(offset: Option[Int] = Some(0), limit: Option[Int] = Some(100))
 

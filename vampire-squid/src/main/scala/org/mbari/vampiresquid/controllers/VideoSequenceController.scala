@@ -17,14 +17,14 @@
 package org.mbari.vampiresquid.controllers
 
 import org.mbari.vampiresquid.Constants
+import org.mbari.vampiresquid.domain.VideoSequence as VSDTO
 import org.mbari.vampiresquid.repository.VideoSequenceDAO
+import org.mbari.vampiresquid.repository.jpa.entity.VideoSequenceEntity
 import org.mbari.vampiresquid.repository.jpa.{JPADAOFactory, NotFoundInDatastoreException}
+
 import java.time.{Duration, Instant}
 import java.util.UUID
-
 import scala.concurrent.{ExecutionContext, Future}
-import org.mbari.vampiresquid.repository.jpa.entity.VideoSequenceEntity
-import org.mbari.vampiresquid.domain.VideoSequence as VSDTO
 
 /**
  * @author

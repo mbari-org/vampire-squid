@@ -17,9 +17,8 @@
 package org.mbari.vampiresquid.controllers
 
 import org.mbari.vampiresquid.domain.VideoSequence
-import org.mbari.vampiresquid.repository.jpa.BaseDAOSuite
-import org.mbari.vampiresquid.repository.jpa.JPADAOFactory
-import org.mbari.vampiresquid.repository.jpa.TestUtils
+import org.mbari.vampiresquid.repository.jpa.{BaseDAOSuite, JPADAOFactory, TestUtils}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 trait VideoSequenceControllerITSuite extends BaseDAOSuite:

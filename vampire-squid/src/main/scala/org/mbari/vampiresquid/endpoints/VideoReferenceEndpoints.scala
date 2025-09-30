@@ -16,30 +16,26 @@
 
 package org.mbari.vampiresquid.endpoints
 
-import java.net.URI
-import java.util.HexFormat
-import java.util.UUID
 import org.mbari.vampiresquid.controllers.VideoReferenceController
-import org.mbari.vampiresquid.domain.BadRequest
-import org.mbari.vampiresquid.domain.ErrorMsg
-import org.mbari.vampiresquid.domain.LastUpdatedTime
-import org.mbari.vampiresquid.domain.VideoReference
+import org.mbari.vampiresquid.domain.{
+    ErrorMsg,
+    LastUpdatedTime,
+    VideoReference,
+    VideoReferenceCreate,
+    VideoReferenceUpdate
+}
+import org.mbari.vampiresquid.endpoints.CustomTapirJsonCirce.*
 import org.mbari.vampiresquid.etc.circe.CirceCodecs.given
-import org.mbari.vampiresquid.etc.jdk.Logging
-import org.mbari.vampiresquid.etc.jdk.Logging.given
 import org.mbari.vampiresquid.etc.jwt.JwtService
 import org.mbari.vampiresquid.etc.tapir.TapirCodecs.given
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
 import sttp.model.StatusCode
 import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.server.ServerEndpoint
-import scala.util.chaining.*
-import org.mbari.vampiresquid.domain.VideoReferenceCreate
-import org.mbari.vampiresquid.domain.VideoReferenceUpdate
 
-import CustomTapirJsonCirce.*
+import java.net.URI
+import java.util.{HexFormat, UUID}
+import scala.concurrent.{ExecutionContext, Future}
 
 class VideoReferenceEndpoints(controller: VideoReferenceController)(using ec: ExecutionContext, jwtService: JwtService)
     extends Endpoints:

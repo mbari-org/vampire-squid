@@ -16,12 +16,10 @@
 
 package org.mbari.vampiresquid.etc.sdk
 
-import java.net.URL
+import java.net.{URI, URL}
 import java.nio.file.Path
 import java.time.Instant
-import java.util.UUID
-import java.net.URI
-import java.util.HexFormat
+import java.util.{HexFormat, UUID}
 
 /**
  * This object contains type classes used to convert types to Strings.

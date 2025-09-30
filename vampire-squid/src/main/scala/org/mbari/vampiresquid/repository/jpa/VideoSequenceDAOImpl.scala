@@ -16,18 +16,16 @@
 
 package org.mbari.vampiresquid.repository.jpa
 
+import jakarta.persistence.{EntityManager, Transient}
 import org.mbari.vampiresquid.Constants
 import org.mbari.vampiresquid.repository.VideoSequenceDAO
+import org.mbari.vampiresquid.repository.jpa.entity.VideoSequenceEntity
+import org.slf4j.LoggerFactory
 
 import java.time.{Duration, Instant}
 import java.util.UUID
-import jakarta.persistence.{EntityManager, Transient}
-import org.slf4j.LoggerFactory
-
-import scala.util.Try
 import scala.jdk.CollectionConverters.*
-import org.mbari.vampiresquid.repository.jpa.entity.VideoSequenceEntity
-import org.mbari.vampiresquid.domain.Media
+import scala.util.Try
 
 /**
  * @author

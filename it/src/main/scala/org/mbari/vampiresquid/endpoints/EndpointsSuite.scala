@@ -20,19 +20,17 @@ import io.circe.*
 import io.circe.parser.*
 import org.mbari.vampiresquid.etc.sdk.FutureUtil.*
 import org.mbari.vampiresquid.repository.jpa.BaseDAOSuite
-import sttp.client3.*
 import sttp.client3.testing.SttpBackendStub
+import sttp.client3.{SttpBackend, *}
+import sttp.model.StatusCode
 import sttp.tapir.server.ServerEndpoint
+import sttp.tapir.server.interceptor.CustomiseInterceptors
+import sttp.tapir.server.interceptor.exception.ExceptionHandler
+import sttp.tapir.server.model.ValuedEndpointOutput
 import sttp.tapir.server.stub.TapirStubInterpreter
+import sttp.tapir.server.vertx.VertxFutureServerOptions
 
 import scala.concurrent.Future
-import sttp.capabilities.WebSockets
-import sttp.tapir.server.vertx.VertxFutureServerOptions
-import sttp.tapir.server.interceptor.exception.ExceptionHandler
-import sttp.tapir.server.interceptor.CustomiseInterceptors
-import sttp.model.StatusCode
-import sttp.client3.SttpBackend
-import sttp.tapir.server.model.ValuedEndpointOutput
 
 trait EndpointsSuite extends BaseDAOSuite:
 
@@ -73,7 +71,6 @@ trait EndpointsSuite extends BaseDAOSuite:
         )
 
         val customOptions: CustomiseInterceptors[Future, VertxFutureServerOptions] =
-            import scala.concurrent.ExecutionContext.Implicits.global
             VertxFutureServerOptions
                 .customiseInterceptors
                 .exceptionHandler(exceptionHandler)

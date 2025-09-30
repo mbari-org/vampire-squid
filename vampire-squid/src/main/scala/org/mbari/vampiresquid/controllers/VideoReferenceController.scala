@@ -16,14 +16,14 @@
 
 package org.mbari.vampiresquid.controllers
 
+import org.mbari.vampiresquid.domain.{Media, VideoReference as VRDTO}
 import org.mbari.vampiresquid.repository.VideoReferenceDAO
+import org.mbari.vampiresquid.repository.jpa.entity.VideoReferenceEntity
 import org.mbari.vampiresquid.repository.jpa.{JPADAOFactory, NotFoundInDatastoreException}
 
 import java.net.URI
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
-import org.mbari.vampiresquid.repository.jpa.entity.VideoReferenceEntity
-import org.mbari.vampiresquid.domain.{Media, VideoReference as VRDTO}
 
 /**
  * @author
