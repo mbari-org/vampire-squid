@@ -76,9 +76,4 @@ class JPADAOFactoryImpl(val entityManagerFactory: EntityManagerFactory) extends 
 
 object JPADAOFactory extends JPADAOFactory:
 
-    lazy val entityManagerFactory: EntityManagerFactory =
-        FlywayMigrator.migrate(AppConfig.DatabaseParameters) match
-            case Left(error) =>
-                throw new RuntimeException(s"Failed to migrate database: ${error.getMessage}", error)
-            case Right(_)    =>
-                EntityManagerFactories()
+    lazy val entityManagerFactory: EntityManagerFactory = EntityManagerFactories()

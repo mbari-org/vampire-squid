@@ -36,14 +36,26 @@ object FlywayMigrator:
                 case Databases.DatabaseType.PostgreSQL => "classpath:/db/migrations/postgres"
                 case _                                 => throw new IllegalArgumentException(s"Unsupported database type: $databaseType")
 
-            log.atInfo.log("Starting Flyway migration using SQL in " + location)
+
+            log.atInfo.log(s"Starting database migrations on ${databaseParams.url} using SQL in $location")
             val flyway = Flyway
                 .configure()
-                .baselineOnMigrate(true)
+                .table("schema_history_vampiresquid") // name of the metadata table
+                .locations(location) // migration scripts location
                 .dataSource(databaseParams.url, databaseParams.user, databaseParams.password)
-                .locations(location)
+                .baselineOnMigrate(true) // this makes Flyway baseline if no metadata table exists
                 .load()
 
             val result = flyway.migrate()
+            result.migrationsExecuted match
+                case 0          => log.atInfo.log("No database migrations were necessary")
+                case n if n > 0 => log.atInfo.log(s"Successfully applied $n database migrations")
+                case _          => log.atWarn.log("Database migration result was unexpected")
+
             if !result.success then throw new Exception("Migration failed using SQL in " + location)
+
+            log.atInfo
+                .log(
+                    "Flyway Database migrations applied. Current schema version: " + flyway.info().current().getVersion
+                )
         }.toEither
