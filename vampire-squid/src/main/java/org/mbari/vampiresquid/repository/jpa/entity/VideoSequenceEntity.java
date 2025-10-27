@@ -56,7 +56,7 @@ import java.util.UUID;
                 @NamedQuery(name = "VideoSequence.listEmptyNames", 
                            query = """
                             SELECT
-                              vs.name
+                              DISTINCT vs.name
                             FROM
                               VideoSequence vs
                               LEFT JOIN vs.videos v

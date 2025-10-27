@@ -13,7 +13,7 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
   org.label-schema.schema-version="1.0" \
   maintainer="Brian Schlining <brian@mbari.org>"
 
-ENV APP_HOME /opt/vampire-squid
+ENV APP_HOME=/opt/vampire-squid
 
 RUN mkdir -p ${APP_HOME}
 
