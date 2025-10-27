@@ -40,6 +40,9 @@ class VideoSequenceController(val daoFactory: JPADAOFactory) extends BaseControl
 
     def findAllNames()(implicit ec: ExecutionContext): Future[Seq[String]] =
         exec(d => d.findAllNames().toSeq.sorted)
+        
+    def findAllEmptyNames()(implicit ec: ExecutionContext): Future[Seq[String]] =
+        exec(d => d.findEmptyNames().toSeq.sorted)
 
     def findAllNamesByCameraID(cameraID: String)(implicit ec: ExecutionContext): Future[Seq[String]] =
         exec(d => d.findAllNamesByCameraID(cameraID).toSeq)

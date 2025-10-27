@@ -6,17 +6,17 @@ object Dependencies {
   lazy val circeGeneric = "io.circe" %% "circe-generic" % circeVersion
   lazy val circeParser  = "io.circe" %% "circe-parser"  % circeVersion
     
-  val flywayVersion = "11.14.1"
+  val flywayVersion = "11.15.0"
   lazy val flywayCore = "org.flywaydb" % "flyway-core" % flywayVersion
   lazy val flywaySqlserver = "org.flywaydb" % "flyway-sqlserver" % flywayVersion
   lazy val flywayPostgres = "org.flywaydb" % "flyway-database-postgresql" % flywayVersion
     
-  val hibernateVersion     = "7.1.4.Final"
+  val hibernateVersion     = "7.1.5.Final"
   lazy val hibernateCore   = "org.hibernate.orm" % "hibernate-core"     % hibernateVersion
   lazy val hibernateEnvers = "org.hibernate.orm" % "hibernate-envers"   % hibernateVersion
   lazy val hibernateHikari = "org.hibernate.orm" % "hibernate-hikaricp" % hibernateVersion
 
-  lazy val jansi   = "org.fusesource.jansi" % "jansi"    % "2.4.0"
+  lazy val jansi   = "org.fusesource.jansi" % "jansi"    % "2.4.2"
   lazy val javaJwt = "com.auth0"            % "java-jwt" % "4.5.0"
 
   val logbackVersion      = "1.5.20"

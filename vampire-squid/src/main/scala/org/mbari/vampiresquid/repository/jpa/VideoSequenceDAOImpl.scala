@@ -39,6 +39,12 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
     @Transient
     private val log = LoggerFactory.getLogger(getClass)
 
+    override def findEmptyNames(): Iterable[String] = 
+        val query = entityManager.createNamedQuery("VideoSequence.listEmptyNames", classOf[String])
+        query
+            .getResultList
+            .asScala
+
     override def findByCameraID(cameraID: String): Iterable[VideoSequenceEntity] =
         findByNamedQuery("VideoSequence.findByCameraID", Map("cameraID" -> cameraID))
 

@@ -41,5 +41,6 @@ trait VideoSequenceDAO[T <: IPersistentObject] extends DAO[T]:
         window: Duration
     ): Iterable[T]
     def findAllNames(): Iterable[String]
+    def findEmptyNames(): Iterable[String]
     def findAllCameraIDs(): Iterable[String]
     def findAllNamesByCameraID(cameraID: String): Iterable[String]

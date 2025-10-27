@@ -56,6 +56,21 @@ class VideoSequenceEndpoints(controller: VideoSequenceController)(using ec: Exec
             .serverLogic { page =>
                 handleErrors(controller.findAll(page.offset.getOrElse(0), page.limit.getOrElse(100)))
             }
+            
+    val findEmptyVideoSequenceNames: Endpoint[Unit, Unit, ErrorMsg, List[String], Any] = 
+        openEndpoint
+            .get
+            .in("v1" / "videosequences" / "names" / "empty")
+            .out(jsonBody[List[String]])
+            .name("findEmptyVideoSequenceNames")
+            .description("Find all video sequence that do not contain any video references.")
+            .tag("video sequences")
+            
+    val findEmptyVideoSequenceNamesImpl: ServerEndpoint[Any, Future] =
+        findEmptyVideoSequenceNames
+            .serverLogic(req => 
+                handleErrors(controller.findAllEmptyNames().map(_.toList))
+            )
 
     // GET v1/videosequences/lastudpate/:uuid
     val findLastUpdateForVideoSequence: Endpoint[Unit, UUID, ErrorMsg, LastUpdatedTime, Any] =
@@ -229,6 +244,7 @@ class VideoSequenceEndpoints(controller: VideoSequenceController)(using ec: Exec
         findLastUpdateForVideoSequence,
         findVideoSequenceNamesByCameraId,
         findVideoSequenceByName,
+        findEmptyVideoSequenceNames,
         findAllVideoSequenceNames,
         createOneVideoSequence,
         updateOneVideoSequence,
@@ -243,6 +259,7 @@ class VideoSequenceEndpoints(controller: VideoSequenceController)(using ec: Exec
         findLastUpdateForVideoSequenceImpl,
         findVideoSequenceNamesByCameraIdImpl,
         findVideoSequenceByNameImpl,
+        findEmptyVideoSequenceNamesImpl,       
         findAllVideoSequenceNamesImpl,
         createOneVideoSequenceImpl,
         updateOneVideoSequenceImpl,
