@@ -57,7 +57,6 @@ trait VideoSequenceControllerITSuite extends BaseDAOSuite:
         val xs = exec(controller.findAllEmptyNames())
         assertEquals(xs.size, 2)
         xs.foreach(x => assert(vss.map(_.getName()).contains(x.name)))
-        
 
     test("findAllNames"):
         val vss   = TestUtils.create(2, 4, 1)

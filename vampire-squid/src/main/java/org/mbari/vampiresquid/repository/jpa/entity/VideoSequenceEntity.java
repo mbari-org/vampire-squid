@@ -53,18 +53,21 @@ import java.util.UUID;
 @NamedQueries(
         {
                 @NamedQuery(name = "VideoSequence.findAll", query = "SELECT v FROM VideoSequence v"),
-                @NamedQuery(name = "VideoSequence.listEmptyNames", 
+                @NamedQuery(name = "VideoSequence.listEmpty", 
                            query = """
-                            SELECT
-                              DISTINCT vs.name
-                            FROM
-                              VideoSequence vs
-                              LEFT JOIN vs.videos v
-                              LEFT JOIN v.videoReferences vr
+                            SELECT vs
+                            FROM VideoSequence vs
                             WHERE
-                              vr IS NULL
+                              vs.videos IS EMPTY
+                              OR
+                              NOT EXISTS (
+                                SELECT v
+                                FROM Video v
+                                JOIN v.videoReferences vr
+                                WHERE v.videoSequence = vs
+                              )
                             """,
-                            resultClass = String.class),
+                            resultClass = VideoSequenceEntity.class),
                 @NamedQuery(
                         name = "VideoSequence.findByCameraID",
                         query = "SELECT v FROM VideoSequence v WHERE v.cameraID = :cameraID"
