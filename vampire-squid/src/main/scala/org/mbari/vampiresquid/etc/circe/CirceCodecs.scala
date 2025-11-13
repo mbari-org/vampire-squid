@@ -48,13 +48,16 @@ import scala.util.Try
 object CirceCodecs:
 
     private val hex = HexFormat.of()
+    private val base64Decoder = java.util.Base64.getDecoder()
 
     given Encoder[Array[Byte]] = new Encoder[Array[Byte]]:
         final def apply(xs: Array[Byte]): Json =
             Json.fromString(hex.formatHex(xs))
+
+    // Historically, byte arrays were encoded as hex strings. Now also accepts base64. (Kiota's default)
     given Decoder[Array[Byte]] = Decoder
         .decodeString
-        .emapTry(str => Try(hex.parseHex(str)))
+        .emapTry(str => Try(hex.parseHex(str)).orElse(Try(base64Decoder.decode(str))))
 
     given Decoder[URL] = Decoder
         .decodeString
