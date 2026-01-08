@@ -12,7 +12,7 @@ Vampire-squid is a video asset manager for tracking videos from mission-based ca
 - **Temporal Indexing**: Store and query precise timestamp information for each video frame, critical for scientific analysis
 - **Hierarchical Organization**: Three-level data model (VideoSequence → Video → VideoReference) maps to real-world deployment workflows
 - **RESTful API**: Language-agnostic HTTP API with comprehensive Swagger documentation at `/docs`
-- **Multi-Database Support**: Works with PostgreSQL, SQL Server, and Oracle
+- **Multi-Database Support**: Works with PostgreSQL and SQL Server
 - **JWT Authentication**: Secure endpoints with JSON Web Token authentication
 - **Checksum Verification**: SHA-512 checksums for video file integrity validation
 - **Concurrent Video Search**: Find videos recorded simultaneously across different cameras
