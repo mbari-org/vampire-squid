@@ -36,45 +36,45 @@ class VideoController(val daoFactory: JPADAOFactory) extends BaseController:
     private type VDAO = VideoDAO[VideoEntity]
 
     def findAll(offset: Int, limit: Int)(implicit ec: ExecutionContext): Future[Seq[VDTO]] =
-        exec(d => d.findAll(offset, limit).toSeq.map(VDTO.from))
+        execReadOnly(d => d.findAll(offset, limit).toSeq.map(VDTO.from))
 
     def findByUUID(uuid: UUID)(implicit ec: ExecutionContext): Future[Option[VDTO]] =
-        exec(d => d.findByUUID(uuid).map(VDTO.from))
+        execReadOnly(d => d.findByUUID(uuid).map(VDTO.from))
 
     def findVideoSequenceByVideoUuid(videoUuid: UUID)(implicit
         executionContext: ExecutionContext
     ): Future[Option[VSDTO]] =
-        exec(d => d.findByUUID(videoUuid).map(_.getVideoSequence).map(VSDTO.from))
+        execReadOnly(d => d.findByUUID(videoUuid).map(_.getVideoSequence).map(VSDTO.from))
 
     def findAllNames()(implicit ec: ExecutionContext): Future[Seq[String]] =
-        exec(d => d.findAllNames().toSeq)
+        execReadOnly(d => d.findAllNames().toSeq)
 
     def findAllNamesAndTimestamps()(implicit ec: ExecutionContext): Future[Seq[(String, Instant)]] =
-        exec(d => d.findAllNamesAndTimestamps().toSeq)
+        execReadOnly(d => d.findAllNamesAndTimestamps().toSeq)
 
     def findBetweenTimestamps(t0: Instant, t1: Instant)(implicit
         ec: ExecutionContext
     ): Future[Seq[VDTO]] =
-        exec(d => d.findBetweenTimestamps(t0, t1).toSeq.map(VDTO.from))
+        execReadOnly(d => d.findBetweenTimestamps(t0, t1).toSeq.map(VDTO.from))
 
     def findByTimestamp(t0: Instant, window: Duration = Constants.DEFAULT_DURATION_WINDOW)(implicit
         ec: ExecutionContext
     ): Future[Seq[VDTO]] =
-        exec(d => d.findByTimestamp(t0, window).toSeq.map(VDTO.from))
+        execReadOnly(d => d.findByTimestamp(t0, window).toSeq.map(VDTO.from))
 
     def findByVideoReferenceUUID(uuid: UUID)(implicit ec: ExecutionContext): Future[Option[VDTO]] =
-        exec(d => d.findByVideoReferenceUUID(uuid).map(VDTO.from))
+        execReadOnly(d => d.findByVideoReferenceUUID(uuid).map(VDTO.from))
 
     def findByVideoSequenceUUID(uuid: UUID)(implicit ec: ExecutionContext): Future[Seq[VDTO]] =
-        exec(d => d.findByVideoSequenceUUID(uuid).toSeq.map(VDTO.from))
+        execReadOnly(d => d.findByVideoSequenceUUID(uuid).toSeq.map(VDTO.from))
 
     def findByName(name: String)(implicit ec: ExecutionContext): Future[Option[VDTO]] =
-        exec(d => d.findByName(name).map(VDTO.from))
+        execReadOnly(d => d.findByName(name).map(VDTO.from))
 
     def findNamesByVideoSequenceName(
         videoSequenceName: String
     )(implicit ec: ExecutionContext): Future[Iterable[String]] =
-        exec(d => d.findNamesByVideoSequenceName(videoSequenceName))
+        execReadOnly(d => d.findNamesByVideoSequenceName(videoSequenceName))
 
     def create(
         videoSequenceUUID: UUID,
@@ -164,5 +164,11 @@ class VideoController(val daoFactory: JPADAOFactory) extends BaseController:
     private def exec[T](fn: VDAO => T)(implicit ec: ExecutionContext): Future[T] =
         val dao = daoFactory.newVideoDAO()
         val f   = dao.runTransaction(fn)
+        f.onComplete(t => dao.close())
+        f
+
+    private def execReadOnly[T](fn: VDAO => T)(implicit ec: ExecutionContext): Future[T] =
+        val dao = daoFactory.newVideoDAO()
+        val f   = dao.runReadOnlyTransaction(fn)
         f.onComplete(t => dao.close())
         f

@@ -35,29 +35,29 @@ class VideoReferenceController(val daoFactory: JPADAOFactory) extends BaseContro
     private type VRDAO = VideoReferenceDAO[VideoReferenceEntity]
 
     def findAll(offset: Int, limit: Int)(implicit ec: ExecutionContext): Future[Seq[VRDTO]] =
-        exec(d => d.findAll(offset, limit).toSeq.map(VRDTO.from))
+        execReadOnly(d => d.findAll(offset, limit).toSeq.map(VRDTO.from))
 
     def findAllURIs()(implicit ec: ExecutionContext): Future[Seq[URI]] =
-        exec(d => d.findAllURIs().toSeq)
+        execReadOnly(d => d.findAllURIs().toSeq)
 
     def findByUUID(uuid: UUID)(implicit ec: ExecutionContext): Future[Option[VRDTO]] =
-        exec(d => d.findByUUID(uuid).map(VRDTO.from))
+        execReadOnly(d => d.findByUUID(uuid).map(VRDTO.from))
 
     def findByVideoUUID(
         videoUUID: UUID
     )(implicit ec: ExecutionContext): Future[Iterable[VRDTO]] =
-        exec(d => d.findByVideoUUID(videoUUID).map(VRDTO.from))
+        execReadOnly(d => d.findByVideoUUID(videoUUID).map(VRDTO.from))
 
     def findByURI(uri: URI)(implicit ec: ExecutionContext): Future[Option[VRDTO]] =
-        exec(d => d.findByURI(uri).map(VRDTO.from))
+        execReadOnly(d => d.findByURI(uri).map(VRDTO.from))
 
     def findBySha512(
         sha512: Array[Byte]
     )(implicit ec: ExecutionContext): Future[Option[VRDTO]] =
-        exec(d => d.findBySha512(sha512).map(VRDTO.from))
+        execReadOnly(d => d.findBySha512(sha512).map(VRDTO.from))
 
     def findConcurrent(uuid: UUID)(implicit ec: ExecutionContext): Future[Iterable[VRDTO]] =
-        exec(d => d.findConcurrent(uuid).map(VRDTO.from))
+        execReadOnly(d => d.findConcurrent(uuid).map(VRDTO.from))
 
     def create(
         videoUUID: UUID,
@@ -163,5 +163,11 @@ class VideoReferenceController(val daoFactory: JPADAOFactory) extends BaseContro
     private def exec[T](fn: VRDAO => T)(implicit ec: ExecutionContext): Future[T] =
         val dao = daoFactory.newVideoReferenceDAO()
         val f   = dao.runTransaction(fn)
+        f.onComplete(t => dao.close())
+        f
+
+    private def execReadOnly[T](fn: VRDAO => T)(implicit ec: ExecutionContext): Future[T] =
+        val dao = daoFactory.newVideoReferenceDAO()
+        val f   = dao.runReadOnlyTransaction(fn)
         f.onComplete(t => dao.close())
         f

@@ -471,7 +471,7 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController:
         videoReferenceUuid: UUID
     )(implicit ec: ExecutionContext): Future[Option[Media]] =
         val dao = daoFactory.newVideoReferenceDAO()
-        val f   = dao.runTransaction(d =>
+        val f   = dao.runReadOnlyTransaction(d =>
             d.findByUUID(videoReferenceUuid)
                 .map(Media.from(_))
         )
@@ -480,7 +480,7 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController:
 
     def findBySha512(sha512: Array[Byte])(implicit ec: ExecutionContext): Future[Option[Media]] =
         val dao = daoFactory.newVideoReferenceDAO()
-        val f   = dao.runTransaction(d =>
+        val f   = dao.runReadOnlyTransaction(d =>
             d.findBySha512(sha512)
                 .map(Media.from(_))
         )
@@ -491,7 +491,7 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController:
         name: String
     )(implicit ec: ExecutionContext): Future[Iterable[Media]] =
         val dao = daoFactory.newVideoSequenceDAO()
-        val f   = dao.runTransaction(d =>
+        val f   = dao.runReadOnlyTransaction(d =>
             d.findByName(name)
                 .map(v => v.getVideoReferences.asScala)
                 .map(v => v.map(Media.from))
@@ -507,7 +507,7 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController:
     )(implicit ec: ExecutionContext): Future[Seq[Media]] =
         import org.mbari.vampiresquid.repository.jpa.extensions.* // add runTransaction to EntityManager
         val dao = daoFactory.newMediaDAO()
-        val f   = dao.entityManager.runTransaction(_ => dao.findByNames(names, offset, limit))
+        val f   = dao.entityManager.runReadOnlyTransaction(_ => dao.findByNames(names, offset, limit))
         f.onComplete(_ => dao.close())
         f
 
@@ -521,7 +521,7 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController:
         ec: ExecutionContext
     ): Future[Iterable[Media]] =
         val dao = daoFactory.newVideoSequenceDAO()
-        val f   = dao.runTransaction(d =>
+        val f   = dao.runReadOnlyTransaction(d =>
             d.findByCameraIDAndTimestamp(cameraId, ts)
                 .flatMap(vs => vs.getVideoReferences.asScala)
                 .map(Media.from(_))
@@ -534,7 +534,7 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController:
         ec: ExecutionContext
     ): Future[Iterable[Media]] =
         val dao = daoFactory.newVideoDAO()
-        val f   = dao.runTransaction(d =>
+        val f   = dao.runReadOnlyTransaction(d =>
             d.findBetweenTimestamps(startTime, endTime)
                 .filter(v => v.getVideoSequence.getCameraID == cameraId)
                 .flatMap(v => v.getVideoReferences.asScala)
@@ -558,7 +558,7 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController:
         videoReferenceUuid: UUID
     )(implicit ec: ExecutionContext): Future[Iterable[Media]] =
         val dao = daoFactory.newVideoReferenceDAO()
-        val f   = dao.runTransaction(d =>
+        val f   = dao.runReadOnlyTransaction(d =>
             d.findConcurrent(videoReferenceUuid)
                 .map(Media.from(_))
         )
@@ -567,7 +567,7 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController:
 
     def findByVideoName(name: String)(implicit ec: ExecutionContext): Future[Iterable[Media]] =
         val dao = daoFactory.newVideoDAO()
-        val f   = dao.runTransaction(d =>
+        val f   = dao.runReadOnlyTransaction(d =>
             d.findByName(name) match
                 case None    => Nil
                 case Some(v) => v.getVideoReferences.asScala.map(Media.from(_))
@@ -577,12 +577,12 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController:
 
     def findByURI(uri: URI)(implicit ec: ExecutionContext): Future[Option[Media]] =
         val dao = daoFactory.newVideoReferenceDAO()
-        val f   = dao.runTransaction(d => d.findByURI(uri).map(Media.from(_)))
+        val f   = dao.runReadOnlyTransaction(d => d.findByURI(uri).map(Media.from(_)))
         f.onComplete(_ => dao.close())
         f
 
     def findByFileName(filename: String)(implicit ec: ExecutionContext): Future[Iterable[Media]] =
         val dao = daoFactory.newVideoReferenceDAO()
-        val f   = dao.runTransaction(d => d.findByFileName(filename).map(Media.from(_)))
+        val f   = dao.runReadOnlyTransaction(d => d.findByFileName(filename).map(Media.from(_)))
         f.onComplete(_ => dao.close())
         f

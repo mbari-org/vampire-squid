@@ -36,35 +36,35 @@ class VideoSequenceController(val daoFactory: JPADAOFactory) extends BaseControl
     private type VSDAO = VideoSequenceDAO[VideoSequenceEntity]
 
     def findAll(offset: Int, limit: Int)(implicit ec: ExecutionContext): Future[List[VSDTO]] =
-        exec(d => d.findAll(offset, limit).toList.sortBy(_.getName()).map(VSDTO.from))
+        execReadOnly(d => d.findAll(offset, limit).toList.sortBy(_.getName()).map(VSDTO.from))
 
     def findAllNames()(implicit ec: ExecutionContext): Future[Seq[String]] =
-        exec(d => d.findAllNames().toSeq.sorted)
+        execReadOnly(d => d.findAllNames().toSeq.sorted)
         
     def findAllEmptyNames()(implicit ec: ExecutionContext): Future[Seq[String]] =
-        exec(d => d.findEmptyNames().toSeq.sorted)
+        execReadOnly(d => d.findEmptyNames().toSeq.sorted)
 
     def findAllNamesByCameraID(cameraID: String)(implicit ec: ExecutionContext): Future[Seq[String]] =
-        exec(d => d.findAllNamesByCameraID(cameraID).toSeq)
+        execReadOnly(d => d.findAllNamesByCameraID(cameraID).toSeq)
 
     def findAllCameraIDs()(implicit ec: ExecutionContext): Future[Seq[String]] =
-        exec(d => d.findAllCameraIDs().toSeq.sorted)
+        execReadOnly(d => d.findAllCameraIDs().toSeq.sorted)
 
     def findByUUID(uuid: UUID)(implicit ec: ExecutionContext): Future[Option[VSDTO]] =
-        exec(d => d.findByUUID(uuid).map(VSDTO.from))
+        execReadOnly(d => d.findByUUID(uuid).map(VSDTO.from))
 
     def findByName(name: String)(implicit ec: ExecutionContext): Future[Option[VSDTO]] =
-        exec(d => d.findByName(name).map(VSDTO.from))
+        execReadOnly(d => d.findByName(name).map(VSDTO.from))
 
     def findByCameraId(id: String)(implicit ec: ExecutionContext): Future[Seq[VSDTO]] =
-        exec(d => d.findByCameraID(id).toSeq.sortBy(_.getName()).map(VSDTO.from))
+        execReadOnly(d => d.findByCameraID(id).toSeq.sortBy(_.getName()).map(VSDTO.from))
 
     def findByCameraIDAndTimestamp(
         cameraID: String,
         timestamp: Instant,
         window: Duration = Constants.DEFAULT_DURATION_WINDOW
     )(implicit ec: ExecutionContext): Future[Seq[VSDTO]] =
-        exec(d => d.findByCameraIDAndTimestamp(cameraID, timestamp, window).toSeq.map(VSDTO.from))
+        execReadOnly(d => d.findByCameraIDAndTimestamp(cameraID, timestamp, window).toSeq.map(VSDTO.from))
 
     def create(name: String, cameraID: String, description: Option[String] = None)(implicit
         ec: ExecutionContext
@@ -111,5 +111,11 @@ class VideoSequenceController(val daoFactory: JPADAOFactory) extends BaseControl
     private def exec[T](fn: VSDAO => T)(implicit ec: ExecutionContext): Future[T] =
         val dao = daoFactory.newVideoSequenceDAO()
         val f   = dao.runTransaction(fn)
+        f.onComplete(t => dao.close())
+        f
+
+    private def execReadOnly[T](fn: VSDAO => T)(implicit ec: ExecutionContext): Future[T] =
+        val dao = daoFactory.newVideoSequenceDAO()
+        val f   = dao.runReadOnlyTransaction(fn)
         f.onComplete(t => dao.close())
         f

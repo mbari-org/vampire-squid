@@ -16,8 +16,10 @@
 
 package org.mbari.vampiresquid.repository.jpa
 
-import jakarta.persistence.EntityManager
+import jakarta.persistence.{EntityManager, FlushModeType}
 import org.slf4j.LoggerFactory
+import org.mbari.vampiresquid.etc.jdk.Logging.given
+
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
@@ -31,7 +33,7 @@ import scala.util.control.NonFatal
  */
 object extensions:
 
-    private val log = LoggerFactory.getLogger(getClass)
+    private val log = System.getLogger(getClass().getName)
 
     extension (entityManager: EntityManager)
         def runTransaction[R](fn: EntityManager => R)(implicit ec: ExecutionContext): Future[R] =
@@ -44,6 +46,50 @@ object extensions:
                     n
                 catch
                     case NonFatal(e) =>
-                        log.atError.setCause(e).log("Error running transaction")
+                        log.atError.withCause(e).log("Error running transaction")
                         throw e
                 finally if transaction.isActive then transaction.rollback()
+
+        /**
+         * Runs a read-only transaction that does not flush changes to the database. This prevents Hibernate from
+         * attempting to UPDATE entities that were loaded but not explicitly modified, which is important when running
+         * with a read-only database connection.
+         */
+        def runReadOnlyTransaction[R](fn: EntityManager => R)(implicit ec: ExecutionContext): Future[R] =
+            Future:
+                runReadOnlyTransactionSync(fn)
+
+        /**
+         * Synchronous version of runReadOnlyTransaction. Sets flush mode to COMMIT (no auto-flush) and rolls back the
+         * transaction instead of committing to ensure no changes are persisted. Also sets read-only hints at both the
+         * Hibernate session and JDBC connection levels.
+         */
+        def runReadOnlyTransactionSync[R](fn: EntityManager => R): R =
+            val originalFlushMode = entityManager.getFlushMode
+            val transaction       = entityManager.getTransaction
+
+            // Get underlying Hibernate session and set read-only hints
+            val session = entityManager.unwrap(classOf[org.hibernate.Session])
+            session.doWork { connection =>
+                connection.setReadOnly(true)
+            }
+            session.setDefaultReadOnly(true)
+
+            transaction.begin()
+            try
+                entityManager.setFlushMode(FlushModeType.COMMIT)
+                val n = fn.apply(entityManager)
+                // Rollback instead of commit to ensure no changes are persisted
+                transaction.rollback()
+                n
+            catch
+                case NonFatal(e) =>
+                    log.atError.withCause(e).log("Error running read-only transaction")
+                    throw e
+            finally
+                entityManager.setFlushMode(originalFlushMode)
+                session.doWork { connection =>
+                    connection.setReadOnly(false)
+                }
+                if transaction.isActive then transaction.rollback()
+
