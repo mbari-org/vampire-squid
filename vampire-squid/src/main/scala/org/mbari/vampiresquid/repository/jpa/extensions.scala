@@ -88,6 +88,7 @@ object extensions:
                     throw e
             finally
                 entityManager.setFlushMode(originalFlushMode)
+                session.setDefaultReadOnly(false)
                 session.doWork { connection =>
                     connection.setReadOnly(false)
                 }
