@@ -2,7 +2,7 @@
 
 # vampire-squid
 
-![Build](https://github.com/mbari-org/vampire-squid/actions/workflows/scala.yml/badge.svg)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/mbari-org/vampire-squid) ![Build](https://github.com/mbari-org/vampire-squid/actions/workflows/scala.yml/badge.svg)
 
 Vampire-squid is a video asset manager for tracking videos from mission-based camera deployments.
 
