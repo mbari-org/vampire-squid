@@ -162,9 +162,9 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController:
     def updateMedia(media: Media)(implicit ec: ExecutionContext): Future[Option[Media]] =
         update(
             media.sha512.orNull,
-            media.videoSequenceName,
-            media.cameraId,
-            media.videoName,
+            Option(media.videoSequenceName),
+            Option(media.cameraId),
+            Option(media.videoName),
             media.uri,
             Option(media.startTimestamp),
             media.duration,
@@ -188,9 +188,9 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController:
     ): Future[Option[Media]] =
         findAndUpdate(
             findFn,
-            media.videoSequenceName,
-            media.cameraId,
-            media.videoName,
+            Option(media.videoSequenceName),
+            Option(media.cameraId),
+            Option(media.videoName),
             media.sha512,
             media.uri,
             media.start_timestamp,
@@ -231,9 +231,9 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController:
      */
     def findAndUpdate(
         findFn: VideoReferenceDAO[VideoReferenceEntity] => Option[VideoReferenceEntity],
-        videoSequenceName: String,
-        cameraId: String,
-        videoName: String,
+        videoSequenceName: Option[String] = None,
+        cameraId: Option[String] = None,
+        videoName: Option[String] = None,
         sha512: Option[Array[Byte]] = None,
         uri: Option[URI] = None,
         start: Option[Instant] = None,
@@ -272,37 +272,40 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController:
                 )
 
         def updateVideoSequence(videoReference: VideoReferenceEntity): VideoSequenceEntity =
-            if videoReference.getVideo.getVideoSequence.getName != videoSequenceName then
-                val vs = vsDao.findByName(videoSequenceName)
+            val newName = videoSequenceName.getOrElse(videoReference.getVideo.getVideoSequence.getName)
+            if videoReference.getVideo.getVideoSequence.getName != newName then
+                val vs = vsDao.findByName(newName)
                 vs match
                     case None      =>
                         val vss = new VideoSequenceEntity
-                        vss.setName(videoSequenceName)
-                        vss.setCameraID(cameraId)
+                        vss.setName(newName)
+                        cameraId.foreach(vss.setCameraID)
                         videoSequenceDescription.foreach(vss.setDescription)
                         vsDao.create(vss)
                         vss
                     case Some(vss) =>
-                        log.atInfo
-                            .log(
-                                s"Changing cameraId from ${vss.getCameraID} to $cameraId for VideoSequence ${vss.getUuid}"
-                            )
-                        vss.setCameraID(cameraId)
+                        if (cameraId.isDefined && vss.getCameraID != cameraId.get) then
+                            log.atInfo
+                                .log(
+                                    s"Changing cameraId from ${vss.getCameraID} to $cameraId for VideoSequence ${vss.getUuid}"
+                                )
+                        cameraId.foreach(vss.setCameraID)
                         videoSequenceDescription.foreach(vss.setDescription)
                         vss
             else
                 val vs = videoReference.getVideo.getVideoSequence
-                vs.setCameraID(cameraId)
+                cameraId.foreach(vs.setCameraID)
                 videoSequenceDescription.foreach(vs.setDescription)
                 vs
 
         def updateVideo(videoSequence: VideoSequenceEntity, videoReference: VideoReferenceEntity): VideoEntity =
-            if videoReference.getVideo.getName != videoName then
-                val v = vDao.findByName(videoName)
+            val newName = videoName.getOrElse(videoReference.getVideo.getName)
+            if videoReference.getVideo.getName != newName then
+                val v = vDao.findByName(newName)
                 v match
                     case None     =>
                         val vv = new VideoEntity
-                        vv.setName(videoName)
+                        vv.setName(newName)
                         if start.isEmpty then
                             throw new RuntimeException(
                                 "The update request is moving to a new Video, but no new startTimestamp was provided."
@@ -362,9 +365,9 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController:
      */
     def update(
         sha512: Array[Byte],
-        videoSequenceName: String,
-        cameraId: String,
-        videoName: String,
+        videoSequenceName: Option[String] = None,
+        cameraId: Option[String] = None,
+        videoName: Option[String] = None,
         uri: Option[URI] = None,
         start: Option[Instant] = None,
         duration: Option[Duration] = None,

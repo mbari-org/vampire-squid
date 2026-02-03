@@ -122,9 +122,9 @@ trait MediaControllerITSuite extends BaseDAOSuite:
         val opt                                                                              = exec(
             controller.findAndUpdate(
                 findFn = find,
-                m1.video_sequence_name.get,
-                m1.camera_id.get,
-                m1.video_name.get,
+                m1.video_sequence_name,
+                m1.camera_id,
+                m1.video_name,
                 videoCodec = m1.video_codec,
                 videoSequenceDescription = m1.video_sequence_description,
                 videoDescription = m1.video_description,
@@ -146,9 +146,9 @@ trait MediaControllerITSuite extends BaseDAOSuite:
         val opt = exec(
             controller.update(
                 m1.sha512.get,
-                m1.video_sequence_name.get,
-                m1.camera_id.get,
-                m1.video_name.get,
+                m1.video_sequence_name,
+                m1.camera_id,
+                m1.video_name,
                 videoCodec = m1.video_codec,
                 videoSequenceDescription = m1.video_sequence_description,
                 videoDescription = m1.video_description,
