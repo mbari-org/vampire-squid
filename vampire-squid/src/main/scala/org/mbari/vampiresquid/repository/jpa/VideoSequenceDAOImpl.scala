@@ -56,6 +56,9 @@ class VideoSequenceDAOImpl(entityManager: EntityManager)
     override def findByVideoUUID(uuid: UUID): Option[VideoSequenceEntity] =
         findByNamedQuery("VideoSequence.findByVideoUUID", Map("uuid" -> uuid)).headOption
 
+    override def findByVideoReferenceUUID(uuid: UUID): Option[VideoSequenceEntity] =
+        findByNamedQuery("VideoSequence.findByVideoReferenceUUID", Map("uuid" -> uuid)).headOption
+
     /**
      * @param timestamp
      *   The moment of interest

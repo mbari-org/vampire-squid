@@ -66,6 +66,9 @@ class VideoSequenceController(val daoFactory: JPADAOFactory) extends BaseControl
     )(implicit ec: ExecutionContext): Future[Seq[VSDTO]] =
         execReadOnly(d => d.findByCameraIDAndTimestamp(cameraID, timestamp, window).toSeq.map(VSDTO.from))
 
+    def findByVideoReferenceUUID(uuid: UUID)(implicit ec: ExecutionContext): Future[Option[VSDTO]] =
+        execReadOnly(d => d.findByVideoReferenceUUID(uuid).map(VSDTO.from))
+
     def create(name: String, cameraID: String, description: Option[String] = None)(implicit
         ec: ExecutionContext
     ): Future[VSDTO] =

@@ -81,6 +81,10 @@ import java.util.UUID;
                         query = "SELECT v FROM VideoSequence v LEFT JOIN v.videos w WHERE w.uuid = :uuid"
                 ),
                 @NamedQuery(
+                        name = "VideoSequence.findByVideoReferenceUUID",
+                        query = "SELECT v FROM VideoSequence v LEFT JOIN v.videos w LEFT JOIN w.videoReferences x WHERE x.uuid = :uuid"
+                ),
+                @NamedQuery(
                         name = "VideoSequence.findBetweenDates",
                         query =
                                 "SELECT v FROM VideoSequence v LEFT JOIN v.videos w WHERE w.start BETWEEN :startDate AND :endDate"
