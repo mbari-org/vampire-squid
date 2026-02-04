@@ -271,13 +271,13 @@ class VideoSequenceEndpoints(controller: VideoSequenceController)(using ec: Exec
         findVideoSequenceNamesByCameraId,
         findVideoSequenceByName,
         findEmptyVideoSequenceNames,
-        findVideoSequenceByUuid,
         findAllVideoSequenceNames,
         findVideoSequenceByVideoReferenceUuid,
+        findVideoSequenceByUuid,
+        findAllVideoSequences,
         createOneVideoSequence,
         updateOneVideoSequence,
         deleteOneVideoSequence,
-        findAllVideoSequences
     )
 
     override def allImpl: List[ServerEndpoint[Any, Future]] = List(
@@ -288,11 +288,11 @@ class VideoSequenceEndpoints(controller: VideoSequenceController)(using ec: Exec
         findVideoSequenceNamesByCameraIdImpl,
         findVideoSequenceByNameImpl,
         findEmptyVideoSequenceNamesImpl,    
-        findVideoSequenceByUuidImpl,   
         findAllVideoSequenceNamesImpl,
         findVideoSequenceByVideoReferenceUuidImpl,
+        findVideoSequenceByUuidImpl,   
+        findAllVideoSequencesImpl,
         createOneVideoSequenceImpl,
         updateOneVideoSequenceImpl,
-        deleteOneVideoSequenceImpl,
-        findAllVideoSequencesImpl
+        deleteOneVideoSequenceImpl
     )
