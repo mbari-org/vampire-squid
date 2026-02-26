@@ -16,6 +16,7 @@
 
 package org.mbari.vampiresquid.repository.jpa.entity;
 
+import org.hibernate.annotations.UuidGenerator;
 import org.mbari.vampiresquid.etc.jpa.TransactionLogger;
 import org.mbari.vampiresquid.etc.jpa.InstantConverter;
 import org.mbari.vampiresquid.etc.jpa.DurationConverter;
@@ -82,10 +83,9 @@ import java.util.UUID;
 public class VideoEntity implements IPersistentObject {
 
     @Id
-    // @GeneratedValue(generator = "system-uuid")
-    @Column(name = "uuid", nullable = false, updatable = false, length = 36)
-    // @Convert(converter = UUIDConverter.class)
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue
+    @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
+    @Column(name = "uuid", nullable = false, updatable = false)
     UUID uuid;
 
     @Basic(optional = false)

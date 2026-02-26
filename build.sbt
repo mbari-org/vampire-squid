@@ -5,7 +5,7 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 
 ThisBuild / javacOptions ++= Seq("-target", "21", "-source", "21")
 ThisBuild / licenses          := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
-ThisBuild / scalaVersion      := "3.7.3"
+ThisBuild / scalaVersion      := "3.8.2"
 ThisBuild / organization      := "org.mbari"
 ThisBuild / organizationName  := "Monterey Bay Aquarium Research Institute"
 ThisBuild / startYear         := Some(2021)

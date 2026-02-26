@@ -72,8 +72,9 @@ public class VideoReferenceEntity implements IPersistentObject {
 
 
     @Id
-    @Column(name = "uuid", nullable = false, updatable = false, length = 36)
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue
+    @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
+    @Column(name = "uuid", nullable = false, updatable = false)
     UUID uuid;
 
     @Basic(optional = false)
