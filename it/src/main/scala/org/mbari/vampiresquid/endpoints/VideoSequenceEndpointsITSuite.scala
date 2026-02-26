@@ -147,6 +147,32 @@ trait VideoSequenceEndpointsITSuite extends EndpointsSuite:
                 AssertUtil.deepAssertSameVideoSequence(xs.head, v1)
         )
 
+    test("findVideoSequenceByUuid"):
+        val videoSequence = TestUtils.create(1, 1, 1).head
+        runGet(
+            endpoints.findVideoSequenceByUuidImpl,
+            s"http://test.com/v1/videosequences/${videoSequence.getUuid}",
+            response =>
+                assertEquals(response.code, StatusCode.Ok)
+                val v1 = checkResponse[VideoSequence](response.body)
+                val v0 = VideoSequence.from(videoSequence)
+                AssertUtil.deepAssertSameVideoSequence(v0, v1)
+        )
+
+    test("findVideoSequenceByVideoReferenceUuid"):
+        val videoSequence = TestUtils.create(1, 1, 2).head
+        val video         = videoSequence.getVideos.get(0)
+        val videoRef      = video.getVideoReferences.get(0)
+        runGet(
+            endpoints.findVideoSequenceByVideoReferenceUuidImpl,
+            s"http://test.com/v1/videosequences/videoreference/${videoRef.getUuid}",
+            response =>
+                assertEquals(response.code, StatusCode.Ok)
+                val v1 = checkResponse[VideoSequence](response.body)
+                val v0 = VideoSequence.from(videoSequence)
+                AssertUtil.deepAssertSameVideoSequence(v0, v1)
+        )
+
     test("createOneVideoSequence using form body"):
 
         val jwt = jwtService.authorize("foo").orNull

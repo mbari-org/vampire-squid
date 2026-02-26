@@ -111,6 +111,32 @@ class VideoSequenceEndpoints(controller: VideoSequenceController)(using ec: Exec
         findVideoSequenceByName
             .serverLogic { req => handleOption(controller.findByName(req)) }
 
+    val findVideoSequenceByUuid: Endpoint[Unit, UUID, ErrorMsg, VideoSequence, Any] =
+        openEndpoint
+            .get
+            .in("v1" / "videosequences" / path[UUID]("uuid"))
+            .out(jsonBody[VideoSequence])
+            .name("findVideoSequenceByUuid")
+            .description("Find video sequences by UUID")
+            .tag("video sequences")
+
+    val findVideoSequenceByUuidImpl: ServerEndpoint[Any, Future] =
+        findVideoSequenceByUuid
+            .serverLogic { req => handleOption(controller.findByUUID(req)) }
+
+    val findVideoSequenceByVideoReferenceUuid: Endpoint[Unit, UUID, ErrorMsg, VideoSequence, Any] =
+        openEndpoint
+            .get
+            .in("v1" / "videosequences" / "videoreference" / path[UUID]("videoreferenceuuid"))
+            .out(jsonBody[VideoSequence])
+            .name("findVideoSequenceByVideoReferenceUuid")
+            .description("Find video sequences by video reference UUID")
+            .tag("video sequences")
+
+    val findVideoSequenceByVideoReferenceUuidImpl: ServerEndpoint[Any, Future] =
+        findVideoSequenceByVideoReferenceUuid
+            .serverLogic { req => handleOption(controller.findByVideoReferenceUUID(req)) }
+
     // GET v1/videosequences/names
     val findAllVideoSequenceNames: Endpoint[Unit, Unit, ErrorMsg, List[String], Any] =
         openEndpoint
@@ -246,10 +272,12 @@ class VideoSequenceEndpoints(controller: VideoSequenceController)(using ec: Exec
         findVideoSequenceByName,
         findEmptyVideoSequenceNames,
         findAllVideoSequenceNames,
+        findVideoSequenceByVideoReferenceUuid,
+        findVideoSequenceByUuid,
+        findAllVideoSequences,
         createOneVideoSequence,
         updateOneVideoSequence,
         deleteOneVideoSequence,
-        findAllVideoSequences
     )
 
     override def allImpl: List[ServerEndpoint[Any, Future]] = List(
@@ -259,10 +287,12 @@ class VideoSequenceEndpoints(controller: VideoSequenceController)(using ec: Exec
         findLastUpdateForVideoSequenceImpl,
         findVideoSequenceNamesByCameraIdImpl,
         findVideoSequenceByNameImpl,
-        findEmptyVideoSequenceNamesImpl,       
+        findEmptyVideoSequenceNamesImpl,    
         findAllVideoSequenceNamesImpl,
+        findVideoSequenceByVideoReferenceUuidImpl,
+        findVideoSequenceByUuidImpl,   
+        findAllVideoSequencesImpl,
         createOneVideoSequenceImpl,
         updateOneVideoSequenceImpl,
-        deleteOneVideoSequenceImpl,
-        findAllVideoSequencesImpl
+        deleteOneVideoSequenceImpl
     )

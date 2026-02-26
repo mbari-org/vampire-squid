@@ -75,6 +75,10 @@ abstract class BaseDAO[B <: IPersistentObject: ClassTag](val entityManager: Enti
         def fn2(em: EntityManager): R = fn.apply(this)
         entityManager.runTransaction(fn2)
 
+    override def runReadOnlyTransaction[R](fn: this.type => R)(implicit ec: ExecutionContext): Future[R] =
+        def fn2(em: EntityManager): R = fn.apply(this)
+        entityManager.runReadOnlyTransaction(fn2)
+
     override def create(entity: B): Unit = entityManager.persist(entity)
 
     override def update(entity: B): B = entityManager.merge(entity)

@@ -33,6 +33,7 @@ trait VideoSequenceDAO[T <: IPersistentObject] extends DAO[T]:
     def findByName(name: String): Option[T]
     def findByCameraID(cameraID: String): Iterable[T]
     def findByVideoUUID(uuid: UUID): Option[T]
+    def findByVideoReferenceUUID(uuid: UUID): Option[T]
     def findByTimestamp(timestamp: Instant, window: Duration): Iterable[T]
     def findByNameAndTimestamp(name: String, timestamp: Instant, window: Duration): Iterable[T]
     def findByCameraIDAndTimestamp(

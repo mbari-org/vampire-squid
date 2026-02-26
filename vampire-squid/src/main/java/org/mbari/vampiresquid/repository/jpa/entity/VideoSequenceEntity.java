@@ -16,8 +16,9 @@
 
 package org.mbari.vampiresquid.repository.jpa.entity;
 
+import org.hibernate.annotations.UuidGenerator;
 import org.mbari.vampiresquid.etc.jpa.TransactionLogger;
-// import org.mbari.vampiresquid.etc.jpa.UUIDConverter;
+
 
 import jakarta.persistence.*;
 import java.sql.Timestamp;
@@ -81,6 +82,10 @@ import java.util.UUID;
                         query = "SELECT v FROM VideoSequence v LEFT JOIN v.videos w WHERE w.uuid = :uuid"
                 ),
                 @NamedQuery(
+                        name = "VideoSequence.findByVideoReferenceUUID",
+                        query = "SELECT v FROM VideoSequence v LEFT JOIN v.videos w LEFT JOIN w.videoReferences x WHERE x.uuid = :uuid"
+                ),
+                @NamedQuery(
                         name = "VideoSequence.findBetweenDates",
                         query =
                                 "SELECT v FROM VideoSequence v LEFT JOIN v.videos w WHERE w.start BETWEEN :startDate AND :endDate"
@@ -106,8 +111,9 @@ import java.util.UUID;
 public class VideoSequenceEntity implements IPersistentObject {
 
     @Id
+    @GeneratedValue
+    @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
     @Column(name = "uuid", nullable = false, updatable = false)
-    @GeneratedValue(strategy = GenerationType.UUID)
     UUID uuid;
 
     @Basic(optional = false)

@@ -39,4 +39,5 @@ trait DAO[B <: IPersistentObject] extends AutoCloseable:
     def findByUUID(primaryKey: UUID): Option[B]
     def findAll(offset: Int, limit: Int): Iterable[B]
     def runTransaction[R](fn: this.type => R)(using ec: ExecutionContext): Future[R]
+    def runReadOnlyTransaction[R](fn: this.type => R)(using ec: ExecutionContext): Future[R]
     def close(): Unit

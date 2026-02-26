@@ -2,29 +2,125 @@
 
 # vampire-squid
 
-![Build](https://github.com/mbari-org/vampire-squid/actions/workflows/scala.yml/badge.svg)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/mbari-org/vampire-squid) ![Build](https://github.com/mbari-org/vampire-squid/actions/workflows/scala.yml/badge.svg)
 
-Vampire-squid is a video asset manager.
+Vampire-squid is a video asset manager for tracking videos from mission-based camera deployments.
 
-## tl;dr
+## Key Features
 
-A web-service for creating managing videos from mission based camera deployments. Swagger docs are available in your instance at `http://yourhostname.domain:<port>/docs`. __Here's an example of how to launch it using Docker:__
+- **Multi-format Video Tracking**: Manage multiple representations (master, mezzanine, proxies) of video segments with different codecs, resolutions, and containers
+- **Temporal Indexing**: Store and query precise timestamp information for each video frame, critical for scientific analysis
+- **Hierarchical Organization**: Three-level data model (VideoSequence → Video → VideoReference) maps to real-world deployment workflows
+- **RESTful API**: Language-agnostic HTTP API with comprehensive Swagger documentation at `/docs`
+- **Multi-Database Support**: Works with PostgreSQL and SQL Server
+- **JWT Authentication**: Secure endpoints with JSON Web Token authentication
+- **Checksum Verification**: SHA-512 checksums for video file integrity validation
+- **Concurrent Video Search**: Find videos recorded simultaneously across different cameras
+- **Flyway Migrations**: Automated database schema management and versioning
+- **Prometheus Metrics**: Built-in metrics endpoint for monitoring at `/metrics`
+
+## Docker Deployment
+
+Vampire-squid is distributed as a Docker image: `mbari/vampire-squid`
+
+### Quick Start with SQL Server
 
 ```bash
 docker run -d \
     -p 8080:8080 \
-    -e BASICJWT_CLIENT_SECRET="xxxx" \
-    -e BASICJWT_SIGNING_SECRET="xxxx" \
+    -e BASICJWT_CLIENT_SECRET="your-client-secret" \
+    -e BASICJWT_SIGNING_SECRET="your-signing-secret" \
     -e DATABASE_DRIVER="com.microsoft.sqlserver.jdbc.SQLServerDriver" \
+    -e DATABASE_URL="jdbc:sqlserver://your-database-host:1433;databaseName=vampire_squid" \
+    -e DATABASE_USER="dbuser" \
+    -e DATABASE_PASSWORD="dbpassword" \
     -e DATABASE_LOG_LEVEL=INFO \
-    -e DATABASE_PASSWORD="xxx" \
-    -e DATABASE_URL="jdbc:sqlserver://database.mbari.org:1433;databaseName=M3_ANNOTATIONS" \
-    -e DATABASE_USER=dbuser \
     -e LOGBACK_LEVEL=WARN \
     --name=vampire-squid \
     --restart unless-stopped \
     mbari/vampire-squid
 ```
+
+### PostgreSQL Example
+
+```bash
+docker run -d \
+    -p 8080:8080 \
+    -e BASICJWT_CLIENT_SECRET="your-client-secret" \
+    -e BASICJWT_SIGNING_SECRET="your-signing-secret" \
+    -e DATABASE_DRIVER="org.postgresql.Driver" \
+    -e DATABASE_URL="jdbc:postgresql://your-database-host:5432/vampire_squid" \
+    -e DATABASE_USER="dbuser" \
+    -e DATABASE_PASSWORD="dbpassword" \
+    --name=vampire-squid \
+    --restart unless-stopped \
+    mbari/vampire-squid
+```
+
+### Required Environment Variables
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `BASICJWT_CLIENT_SECRET` | Secret for JWT client authentication | `your-client-secret` |
+| `BASICJWT_SIGNING_SECRET` | Secret for JWT token signing | `your-signing-secret` |
+| `DATABASE_DRIVER` | JDBC driver class name | `org.postgresql.Driver` |
+| `DATABASE_URL` | JDBC connection string | `jdbc:postgresql://host:5432/dbname` |
+| `DATABASE_USER` | Database username | `dbuser` |
+| `DATABASE_PASSWORD` | Database password | `dbpassword` |
+
+### Optional Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `HTTP_PORT` | HTTP server port | `8080` |
+| `DATABASE_LOG_LEVEL` | Hibernate logging level | `INFO` |
+| `LOGBACK_LEVEL` | Application logging level | `INFO` |
+| `BASICJWT_ISSUER` | JWT token issuer | `http://www.mbari.org` |
+
+### Docker Compose Example
+
+```yaml
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: vampire_squid
+      POSTGRES_USER: vam_user
+      POSTGRES_PASSWORD: vam_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  vampire-squid:
+    image: mbari/vampire-squid:latest
+    depends_on:
+      - postgres
+    environment:
+      BASICJWT_CLIENT_SECRET: "your-client-secret"
+      BASICJWT_SIGNING_SECRET: "your-signing-secret"
+      DATABASE_DRIVER: "org.postgresql.Driver"
+      DATABASE_URL: "jdbc:postgresql://postgres:5432/vampire_squid"
+      DATABASE_USER: "vam_user"
+      DATABASE_PASSWORD: "vam_password"
+      DATABASE_LOG_LEVEL: "INFO"
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+```
+
+### Accessing the API
+
+Once running, access:
+- **Swagger UI**: `http://localhost:8080/docs`
+- **API**: `http://localhost:8080/v1/`
+- **Metrics**: `http://localhost:8080/metrics`
+- **Health**: `http://localhost:8080/health`
 
 ## Overview
 

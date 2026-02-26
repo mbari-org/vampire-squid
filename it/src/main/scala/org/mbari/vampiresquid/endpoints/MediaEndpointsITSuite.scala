@@ -312,6 +312,56 @@ trait MediaEndpointsITSuite extends EndpointsSuite:
             )
             .join
 
+    test("updateMediaByVideoReferenceUuid - Update an existing media using JSON body - minimal update"):
+        val jwt    = jwtService.authorize("foo").orNull
+        val now    = Instant.now()
+        val media0 = new Media(
+            video_sequence_name = Some("Test Dive 04"),
+            video_name = Some("Test Dive 04 " + now),
+            camera_id = Some("Tester 04"),
+            uri = Some(URI.create("http://test.me/movie04.mp4")),
+            start_timestamp = Some(now),
+            duration_millis = Some(30000),
+            sha512 = Some(Array[Byte](2, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11))
+        )
+
+        val media1 = controller.createMedia(media0).join
+        val media2 = Media(
+            video_reference_uuid = media1.video_reference_uuid,
+            start_timestamp = Some(now.plusSeconds(5000))
+        )
+
+//        println(media2.stringify)
+
+        val backendStub = newBackendStub(mediaEndpoints.updateMediaByVideoReferenceUuidImpl)
+
+        val request = basicRequest
+            .put(uri"http://test.com/v1/media/${media2.videoReferenceUuid}")
+            .header("Authorization", s"Bearer $jwt")
+            .header("Content-Type", "application/json")
+            .body(media2.stringify)
+
+        log.atDebug.log(request.toRfc2616Format(Set()))
+
+        val response = request.send(backendStub)
+
+        response
+            .map(r =>
+                assertEquals(r.code, StatusCode.Ok)
+                assert(r.body.isRight)
+                val body = r.body.getOrElse(fail("no body was returned"))
+                val e    = decode[Media](body)
+                e match
+                    case Left(e)  => fail("")
+                    case Right(m) =>
+                        assert(m.video_sequence_uuid.isDefined)
+                        assert(m.video_uuid.isDefined)
+                        assert(m.video_reference_uuid.isDefined)
+                        assert(m.uri.isDefined)
+                        assertEquals(media2.start_timestamp.get, m.start_timestamp.get)
+            )
+            .join
+
     test("moveMediaByVideoReferenceUuidImpl"):
         val vs                                    = TestUtils.create(1, 1, 1).head
         val vr                                    = vs.getVideoReferences().get(0)

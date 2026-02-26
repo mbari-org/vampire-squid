@@ -16,6 +16,7 @@
 
 package org.mbari.vampiresquid.repository.jpa.entity;
 
+import org.hibernate.annotations.UuidGenerator;
 import org.mbari.vampiresquid.etc.jpa.ByteArrayConverter;
 import org.mbari.vampiresquid.etc.jpa.TransactionLogger;
 import org.mbari.vampiresquid.etc.jpa.URIConverter;

@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-ubi9-minimal
+FROM eclipse-temurin:25-ubi10-minimal
 
 ARG BUILD_DATE
 ARG VCS_REF
