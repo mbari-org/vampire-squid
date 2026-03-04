@@ -56,8 +56,24 @@ def run(): Unit =
     val server            = vertx.createHttpServer(httpServerOptions)
     val router            = Router.router(vertx)
 
-    // NOTE: Don't add a handler. It will intercept all requests (Originally: Log all requests)
-    // router.route().handler(ctx => log.atInfo.log(s"${ctx.request().method()} ${ctx.request().path()}"))
+    // Log all requests at DEBUG, and log the time taken for each request at INFO. This 
+    // gives us visibility into all requests and their performance without overwhelming 
+    // the logs with INFO-level messages.
+    val debugLogger = log.atDebug // Avoid object allocation
+    val infoLogger  = log.atInfo  // Avoid object allocation
+    router.route()
+        .handler(ctx => {
+            val start  = System.currentTimeMillis()
+            val method = ctx.request().method()
+            val path   = ctx.request().uri()
+            val remoteAddress = Option(ctx.request().getHeader("X-Real-IP")).getOrElse(ctx.request().remoteAddress().host())
+            debugLogger.log(s"→ $method $path from $remoteAddress")
+            ctx.addEndHandler(_ =>
+                val dt = System.currentTimeMillis() - start
+                infoLogger.log(s"← $method $path ${dt}ms from $remoteAddress")
+            )
+            ctx.next()
+        })
 
     val interpreter = VertxFutureServerInterpreter(serverOptions)
 
