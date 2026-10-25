@@ -294,6 +294,30 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
                         .map(_.toList)
                 )
             )
+            
+    val findConcurrentMediaByVideoReferenceUuidAtTimestamp: Endpoint[Unit, (UUID, Instant), ErrorMsg, List[Media], Any] =
+        openEndpoint
+            .get
+            .in(
+                "v1" / "media" / "concurrent" / path[UUID]("videoReferenceUuid") / path[Instant]("timestamp")(using
+                    TapirCodecs.instantCodec
+                )
+            )
+            .out(jsonBody[List[Media]])
+            .name("findConcurrentMediaByVideoReferenceUuidAtTimestamp")
+            .description("Find concurrent media by videoReferenceUuid at a specific timestamp")
+            .tag("media")
+            
+    val findConcurrentMediaByVideoReferenceUuidAtTimestampImpl: ServerEndpoint[Any, Future] =
+        findConcurrentMediaByVideoReferenceUuidAtTimestamp
+            .serverLogic((videoReferenceUuid: UUID, timestamp: Instant) =>
+                log.atTrace.log("findConcurrentByVideoReferenceUuidAtTimestamp received " + videoReferenceUuid + " " + timestamp)
+                handleErrors(
+                    mediaController
+                        .findConcurrentAtTimestamp(videoReferenceUuid, timestamp)
+                        .map(_.toList)
+                )
+            )
 
     // GET v1/media/camera/{cameraId}/{datetime} --------------------------------------
     val findMediaByCameraIdAndDatetime: Endpoint[Unit, (String, Instant), ErrorMsg, List[Media], Any] =
@@ -348,6 +372,7 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
     override def all: List[Endpoint[?, ?, ?, ?, ?]] = List(
         findMediaByCameraIdAndTimestamps,
         findMediaByCameraIdAndDatetime,
+        findConcurrentMediaByVideoReferenceUuidAtTimestamp,
         findConcurrentMediaByVideoReferenceUuid,
         moveMediaByVideoReferenceUuid,
         findMediaBySha512,
@@ -364,6 +389,7 @@ class MediaEndpoints(mediaController: MediaController, jwtService: JwtService)(u
     override def allImpl: List[ServerEndpoint[Any, concurrent.Future]] = List(
         findMediaByCameraIdAndTimestampsImpl,
         findMediaByCameraIdAndDatetimeImpl,
+        findConcurrentMediaByVideoReferenceUuidAtTimestampImpl,
         findConcurrentMediaByVideoReferenceUuidImpl,
         moveMediaByVideoReferenceUuidImpl,
         findMediaBySha512Impl,

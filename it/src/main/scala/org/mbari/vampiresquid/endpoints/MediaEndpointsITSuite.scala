@@ -36,7 +36,7 @@ import sttp.tapir.server.stub.TapirStubInterpreter
 
 import java.net.URI
 import java.time.{Duration, Instant}
-import java.util.HexFormat
+import java.util.{HexFormat, UUID}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 import scala.jdk.CollectionConverters.*
@@ -551,6 +551,116 @@ trait MediaEndpointsITSuite extends EndpointsSuite:
                 assertEquals(response.code, StatusCode.Ok)
                 val xs = checkResponse[List[Media]](response.body)
                 assertEquals(xs.size, befores.size)
+        )
+
+    /**
+     * Builds a video sequence with 10 videos, each with 2 video references. Videos 0-4 start at t0 + n * 100s and
+     * last 1000s (so they overlap each other). Videos 5-9 start at t1 + n * 100s and last 100s.
+     * @return
+     *   (the saved video sequence, the uuid of a video reference in video 0, t0, t1)
+     */
+    private def buildConcurrentFixture() =
+        val videoSequence = TestUtils.build(1, 10, 2).head
+        val t0            = Instant.parse("1968-09-22T00:00:00Z")
+        val t1            = Instant.parse("2002-08-27T00:00:00Z")
+        val videos        = videoSequence.getVideos().asScala.toList
+        for (v, n) <- videos.zipWithIndex
+        do
+            if n < 5 then
+                v.setStart(t0.plus(Duration.ofSeconds(n * 100)))
+                v.setDuration(Duration.ofSeconds(1000))
+            else
+                v.setStart(t1.plus(Duration.ofSeconds(n * 100)))
+                v.setDuration(Duration.ofSeconds(100))
+        TestUtils.save(videoSequence)
+        val videoReferenceUuid = videos.head.getVideoReferences().get(0).getUuid()
+        (videoSequence, videoReferenceUuid, t0, t1)
+
+    test("findConcurrentMediaByVideoReferenceUuidAtTimestamp - only the first video contains the timestamp"):
+        val (_, uuid, t0, _) = buildConcurrentFixture()
+        val ts               = t0.plusSeconds(50) // video 0 only (video 1 starts at t0 + 100s)
+
+        runGet(
+            mediaEndpoints.findConcurrentMediaByVideoReferenceUuidAtTimestampImpl,
+            s"http://test.com/v1/media/concurrent/${uuid}/${ts}",
+            response =>
+                assertEquals(response.code, StatusCode.Ok)
+                val xs = checkResponse[List[Media]](response.body)
+                assertEquals(xs.size, 2)
+                assert(xs.forall(_.contains(ts)))
+                assert(xs.exists(_.video_reference_uuid.contains(uuid)))
+        )
+
+    test("findConcurrentMediaByVideoReferenceUuidAtTimestamp - all overlapping videos contain the timestamp"):
+        val (_, uuid, t0, _) = buildConcurrentFixture()
+        val ts               = t0.plusSeconds(450) // videos 0-4
+
+        runGet(
+            mediaEndpoints.findConcurrentMediaByVideoReferenceUuidAtTimestampImpl,
+            s"http://test.com/v1/media/concurrent/${uuid}/${ts}",
+            response =>
+                assertEquals(response.code, StatusCode.Ok)
+                val xs = checkResponse[List[Media]](response.body)
+                assertEquals(xs.size, 10)
+                assert(xs.forall(_.contains(ts)))
+        )
+
+    test("findConcurrentMediaByVideoReferenceUuidAtTimestamp - excludes the source when it does not contain the timestamp"):
+        val (_, uuid, t0, _) = buildConcurrentFixture()
+        val ts               = t0.plusSeconds(1050) // video 0 ends at t0 + 1000s. Videos 1-4 match
+
+        runGet(
+            mediaEndpoints.findConcurrentMediaByVideoReferenceUuidAtTimestampImpl,
+            s"http://test.com/v1/media/concurrent/${uuid}/${ts}",
+            response =>
+                assertEquals(response.code, StatusCode.Ok)
+                val xs = checkResponse[List[Media]](response.body)
+                assertEquals(xs.size, 8)
+                assert(xs.forall(_.contains(ts)))
+                assert(!xs.exists(_.video_reference_uuid.contains(uuid)))
+        )
+
+    test("findConcurrentMediaByVideoReferenceUuidAtTimestamp - ignores non-concurrent media that contain the timestamp"):
+        val (_, uuid, _, t1) = buildConcurrentFixture()
+        val ts               = t1.plusSeconds(550) // inside video 5, but video 5 does not overlap video 0
+
+        runGet(
+            mediaEndpoints.findConcurrentMediaByVideoReferenceUuidAtTimestampImpl,
+            s"http://test.com/v1/media/concurrent/${uuid}/${ts}",
+            response =>
+                assertEquals(response.code, StatusCode.Ok)
+                val xs = checkResponse[List[Media]](response.body)
+                assert(xs.isEmpty)
+        )
+
+    test("findConcurrentMediaByVideoReferenceUuidAtTimestamp - accepts compact timestamp format"):
+        val (_, uuid, _, _) = buildConcurrentFixture()
+        val ts              = "19680922T000730Z" // t0 + 450s
+
+        runGet(
+            mediaEndpoints.findConcurrentMediaByVideoReferenceUuidAtTimestampImpl,
+            s"http://test.com/v1/media/concurrent/${uuid}/${ts}",
+            response =>
+                assertEquals(response.code, StatusCode.Ok)
+                val xs = checkResponse[List[Media]](response.body)
+                assertEquals(xs.size, 10)
+        )
+
+    test("findConcurrentMediaByVideoReferenceUuidAtTimestamp - unknown videoReferenceUuid returns empty list"):
+        runGet(
+            mediaEndpoints.findConcurrentMediaByVideoReferenceUuidAtTimestampImpl,
+            s"http://test.com/v1/media/concurrent/${UUID.randomUUID()}/${Instant.now()}",
+            response =>
+                assertEquals(response.code, StatusCode.Ok)
+                val xs = checkResponse[List[Media]](response.body)
+                assert(xs.isEmpty)
+        )
+
+    test("findConcurrentMediaByVideoReferenceUuidAtTimestamp - invalid timestamp returns 400"):
+        runGet(
+            mediaEndpoints.findConcurrentMediaByVideoReferenceUuidAtTimestampImpl,
+            s"http://test.com/v1/media/concurrent/${UUID.randomUUID()}/not-a-timestamp",
+            response => assertEquals(response.code, StatusCode.BadRequest)
         )
 
     test("findMediaByCameraIdAndDatetime"):

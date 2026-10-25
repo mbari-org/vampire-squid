@@ -39,7 +39,7 @@ object TapirCodecs:
     private def decodeInstant(s: String): DecodeResult[Instant] =
         Instants.parseIso8601(s) match
             case Right(i) => DecodeResult.Value(i)
-            case Left(e)  => DecodeResult.Error("Failed to decode $s to an Instant", e)
+            case Left(e)  => DecodeResult.Error(s"Failed to decode $s to an Instant", e)
     private def encodeInstant(i: Instant): String               = i.toString
     given instantCodec: Codec[String, Instant, TextPlain]       = Codec.string.mapDecode(decodeInstant)(encodeInstant)
 

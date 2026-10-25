@@ -568,6 +568,23 @@ class MediaController(val daoFactory: JPADAOFactory) extends BaseController:
         f.onComplete(_ => dao.close())
         f
 
+
+    /**
+     * Finds all videoreferences that overlap in time with the provided one, and filters them to 
+     * only those that contain the provided timestamp. Be aware that the returned media will 
+     * include the one with the matching UUID if it contains the timestamp.
+     * @param videoReferenceUuid The UUID for the videoreference of interest
+     * @param timestamp The timestamp of interest
+     * @param ec The execution context
+     * @return All videoreferences (as media) that overlap with the videoreference in time and contain the timestamp
+     */
+    def findConcurrentAtTimestamp(
+        videoReferenceUuid: UUID,
+        timestamp: Instant
+    )(implicit ec: ExecutionContext): Future[Iterable[Media]] =
+        findConcurrent(videoReferenceUuid)
+            .map(_.filter(m => m.contains(timestamp)))
+
     def findByVideoName(name: String)(implicit ec: ExecutionContext): Future[Iterable[Media]] =
         val dao = daoFactory.newVideoDAO()
         val f   = dao.runReadOnlyTransaction(d =>
